@@ -9,14 +9,14 @@
 
 struct DefaultPixelShader {
 
-	static void Init(GraphicsBase&);
+	static void Init(GraphicsBase&, LPCWSTR);
 
-	static void Bind(GraphicsBase& );
+	static void Bind(GraphicsBase&);
 
 	static void Release();
 
 	static wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	static const BYTE* data;
-	static const size_t dataSize;
+	static BYTE* data;
+	static size_t dataSize;
 
 };

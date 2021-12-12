@@ -8,11 +8,11 @@ struct VertexShaderOutput {
 	float4 color : Color;
 };
 
-//cbuffer externalData {
-//	matrix world;
-//	matrix view;
-//	matrix projection;
-//};
+cbuffer externalData {
+	matrix world;
+	matrix view;
+	matrix projection;
+};
 
 struct VSOut {
 	float3 color : Color;

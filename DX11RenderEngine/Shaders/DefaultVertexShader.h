@@ -31,15 +31,15 @@ struct VertexShaderCosntBuffer {
 struct DefaultVertexShader {
 	using mat = DirectX::SimpleMath::Matrix;
 
-	static void Init(GraphicsBase&);
+	static void Init(GraphicsBase&, LPCWSTR);
 	static void Bind(GraphicsBase&);
 	static void BindViewport(GraphicsBase&, D3D11_VIEWPORT);
 	static void Release();
 
 
 	static wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	static const BYTE* data;
-	static const size_t dataSize;
+	static BYTE* data;
+	static size_t dataSize;
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[ ];
 	static wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 

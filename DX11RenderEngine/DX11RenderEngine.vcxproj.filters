@@ -121,20 +121,6 @@
     <None Include="Utils\include\SimpleMath.inl">
       <Filter>Headers\Utils</Filter>
     </None>
-    <None Include="Shaders\PixelShader.inl">
-      <Filter>Sources\Shaders</Filter>
-    </None>
-    <None Include="Shaders\VertexShader.inl">
-      <Filter>Sources\Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\VertexShader.hlsl">
-      <Filter>Sources\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\PixelShader.hlsl">
-      <Filter>Sources\Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

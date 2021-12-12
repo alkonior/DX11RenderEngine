@@ -92,6 +92,7 @@ Window::Window(int width, int height, const char* name)
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	// create graphics object
 	RD.InitDevice(hWnd);
+	RD.InitShaders(L".\\Shaders");
 }
 
 Window::~Window() {

@@ -13,6 +13,8 @@ struct RenderDevice {
 	/* Quit */
 
 	void InitDevice(HWND hWnd);
+	void InitShaders(LPCWSTR);
+	void ReloadShaders(LPCWSTR);
 
 	/* Presentation */
 

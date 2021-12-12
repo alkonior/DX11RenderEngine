@@ -7,8 +7,20 @@ void RenderDevice::InitDevice(HWND hWnd) {
 	if (gfx!= nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd);
 
-	DefaultPixelShader::Init(*gfx);
-	DefaultVertexShader::Init(*gfx);
+
+}
+
+void RenderDevice::InitShaders(LPCWSTR dirr) {
+	DefaultPixelShader::Init(*gfx, dirr);
+	DefaultVertexShader::Init(*gfx, dirr);
+}
+
+void RenderDevice::ReloadShaders(LPCWSTR dirr) {
+	DefaultPixelShader::Release();
+	DefaultVertexShader::Release();
+
+	DefaultPixelShader::Init(*gfx, dirr);
+	DefaultVertexShader::Init(*gfx, dirr);
 }
 
 void RenderDevice::Present() {
