@@ -1,30 +1,44 @@
 ﻿#include "pch.h"
 #include "RenderEngine.h"
-#include "DefaultPixelShader.h"
-#include "DefaultVertexShader.h"
+#include "PixelShader2D.h"
+#include "VertexShader2D.h"
 
-void RenderDevice::InitDevice(HWND hWnd) {
+void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx!= nullptr) DestroyDevice();
-	gfx = new Graphics(hWnd);
+	gfx = new Graphics(hWnd, width, height);
 
 
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
-	DefaultPixelShader::Init(*gfx, dirr);
-	DefaultVertexShader::Init(*gfx, dirr);
+	PixelShader2D::Init(*gfx, dirr);
+	VertexShader2D::Init(*gfx, dirr);
 }
 
 void RenderDevice::ReloadShaders(LPCWSTR dirr) {
-	DefaultPixelShader::Release();
-	DefaultVertexShader::Release();
+	PixelShader2D::Release();
+	VertexShader2D::Release();
 
-	DefaultPixelShader::Init(*gfx, dirr);
-	DefaultVertexShader::Init(*gfx, dirr);
+	PixelShader2D::Init(*gfx, dirr);
+	VertexShader2D::Init(*gfx, dirr);
+}
+
+void RenderDevice::ReloadShader(ShaderData shD) {
+	switch (shD.type) {
+	case ShaderType::PixelShader2D :{
+			PixelShader2D::Release();
+			PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
+		}
+	default:
+		break;
+	}
 }
 
 void RenderDevice::Present() {
-	gfx->DrawTestTriangle(0, 1 , 1);
+	gfx->DrawTestRectangle(0, 0, 200, 200);
+	gfx->DrawTestRectangle(50, 50, 250, 250);
+	gfx->DrawTestRectangle(100, 100, 300, 300);
+	gfx->DrawTestRectangle(150,150, 350, 350);
 	gfx->EndFrame();
 }
 
@@ -34,8 +48,8 @@ void RenderDevice::Clear(float r, float g, float b) {
 
 void RenderDevice::DestroyDevice() {
 
-	DefaultPixelShader::Release();
-	DefaultVertexShader::Release();
+	PixelShader2D::Release();
+	VertexShader2D::Release();
 	if (!gfx) delete gfx;
 	gfx = nullptr;
 }

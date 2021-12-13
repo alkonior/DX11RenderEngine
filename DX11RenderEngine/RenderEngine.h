@@ -12,9 +12,21 @@ struct RenderDevice {
 
 	/* Quit */
 
-	void InitDevice(HWND hWnd);
+	void InitDevice(HWND hWnd, size_t width, size_t height);
+
+	enum ShaderType {
+		VertexShader2D,
+		PixelShader2D,
+	};
+	struct ShaderData {
+		ShaderType type;
+		BYTE* data;
+		size_t dataSize;
+	};
+
 	void InitShaders(LPCWSTR);
 	void ReloadShaders(LPCWSTR);
+	void ReloadShader(ShaderData shD);
 
 	/* Presentation */
 

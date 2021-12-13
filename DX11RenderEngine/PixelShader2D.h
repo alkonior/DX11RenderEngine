@@ -7,9 +7,10 @@
 #include "DxgiInfoManager.h"
 #endif
 
-struct DefaultPixelShader {
+struct PixelShader2D {
 
 	static void Init(GraphicsBase&, LPCWSTR);
+	static void Init(GraphicsBase&, LPVOID data, size_t size);
 
 	static void Bind(GraphicsBase&);
 

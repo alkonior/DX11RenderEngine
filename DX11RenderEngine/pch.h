@@ -22,12 +22,10 @@ Thanks to PlanetChili <http://www.planetchili.net>
 #define NOATOM
 #define NOCLIPBOARD
 #define NOCOLOR
-#define NOCTLMGR
 #define NODRAWTEXT
 #define NOKERNEL
 #define NONLS
 #define NOMEMMGR
-#define NOMETAFILE
 #define NOMINMAX
 #define NOOPENFILE
 #define NOSCROLL
@@ -58,13 +56,20 @@ Thanks to PlanetChili <http://www.planetchili.net>
 #define WINAPI_FAMILY_GAMES 6
 #endif
 
-#ifdef _GAMING_XBOX
-#error This version of DirectX Tool Kit not supported for GDK
-#elif defined(_XBOX_ONE) && defined(_TITLE)
-#include <d3d11_x.h>
-#else
-#include <d3d11_1.h>
-#endif
+
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#define FULL_WINTARD
+#include <wincodec.h>
+#include <commdlg.h>
+#include <algorithm>
+namespace Gdiplus
+{
+	using std::min;
+	using std::max;
+}
+#include <gdiplus.h>
+
 
 #include <algorithm>
 #include <array>

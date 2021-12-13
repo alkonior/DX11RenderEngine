@@ -3,6 +3,7 @@
 #include "GraphicsException.h"
 #include "GraphicsBase.h"
 #include "Geometry.h"
+#include "Manager2D.h"
 #include "SimpleMath.h"
 
 
@@ -15,17 +16,15 @@ namespace sm = DirectX::SimpleMath;
 class Graphics:public GraphicsBase{
 public:
 
-public:
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, size_t width, size_t height);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(sm::Vector4 color) noexcept;
-	void DrawTestTriangle(float angle, float x, float y);
-private:
+	void DrawTestRectangle(size_t x, size_t y, size_t width, size_t height);
 
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
+
+
+	Manager2D manager2D;
 };

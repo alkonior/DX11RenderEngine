@@ -89,5 +89,11 @@
     <FxCompile Include="Shaders\VertexShader.hlsl">
       <Filter>Исходные файлы\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\PixelShader2D.hlsl">
+      <Filter>Исходные файлы\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\VertexShader2D.hlsl">
+      <Filter>Исходные файлы\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

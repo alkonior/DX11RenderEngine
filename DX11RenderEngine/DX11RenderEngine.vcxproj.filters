@@ -40,6 +40,12 @@
     <Filter Include="Headers\Shaders">
       <UniqueIdentifier>{b65f962d-3ce4-4c1a-adc4-8d2b0e9022f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\Primitives">
+      <UniqueIdentifier>{92ed66fc-60d5-4eb9-b5f6-51ada43130b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Primitives">
+      <UniqueIdentifier>{add33d80-b5d2-44c2-accb-8ec93f7a4e52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderEngine.h">
@@ -57,9 +63,6 @@
     <ClInclude Include="Bezier.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Drawable.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Headers\Core</Filter>
     </ClInclude>
@@ -75,14 +78,26 @@
     <ClInclude Include="resource.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\DefaultPixelShader.h">
-      <Filter>Headers\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsBase.h">
       <Filter>Headers\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\DefaultVertexShader.h">
+    <ClInclude Include="Drawable.h">
+      <Filter>Headers\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader2D.h">
       <Filter>Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader2D.h">
+      <Filter>Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager2D.h">
+      <Filter>Headers\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesManager.h">
+      <Filter>Headers\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Headers\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,11 +125,26 @@
     <ClCompile Include="GraphicsException.cpp">
       <Filter>Sources\Core\Exceptions</Filter>
     </ClCompile>
-    <ClCompile Include="Shaders\DefaultPixelShader.cpp">
+    <ClCompile Include="GraphicsBase.cpp">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShader2D.cpp">
       <Filter>Sources\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="Shaders\DefaultVertexShader.cpp">
+    <ClCompile Include="VertexShader2D.cpp">
       <Filter>Sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager2D.cpp">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawable.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesManager.cpp">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Sources\Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

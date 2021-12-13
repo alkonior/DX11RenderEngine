@@ -36,12 +36,10 @@
 #define NOATOM
 #define NOCLIPBOARD
 #define NOCOLOR
-#define NOCTLMGR
 #define NODRAWTEXT
 #define NOKERNEL
 #define NONLS
 #define NOMEMMGR
-#define NOMETAFILE
 #define NOMINMAX
 #define NOOPENFILE
 #define NOSCROLL

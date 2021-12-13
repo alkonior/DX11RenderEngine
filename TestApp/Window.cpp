@@ -91,7 +91,7 @@ Window::Window(int width, int height, const char* name)
 	// newly created windows start off as hidden
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	// create graphics object
-	RD.InitDevice(hWnd);
+	RD.InitDevice(hWnd, width, height);
 	RD.InitShaders(L".\\Shaders");
 }
 

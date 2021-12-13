@@ -1,9 +1,11 @@
 #pragma once
 #include "pch.h"
+#include "GraphicsBase.h"
 
 class Drawable {
+public:
 	
-	virtual void Draw() = 0;
+	virtual void Present(GraphicsBase&) = 0;
 
-	virtual ~Drawable();
+	virtual ~Drawable() {};
 };

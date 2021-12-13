@@ -9,29 +9,20 @@
 #endif
 
 
-struct Vertex {
-	struct {
-		float x;
-		float y;
-	} pos;
-	struct {
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-		unsigned char a;
-	} color;
+struct Vertex2D {
+	DirectX::SimpleMath::Vector2 pos;
+	DirectX::SimpleMath::Vector2 uv;
 };
 
 struct VertexShaderCosntBuffer {
-	DirectX::SimpleMath::Matrix world;
-	DirectX::SimpleMath::Matrix view;
-	DirectX::SimpleMath::Matrix projection;
+	DirectX::SimpleMath::Matrix transform;
 };
 
-struct DefaultVertexShader {
+struct VertexShader2D {
 	using mat = DirectX::SimpleMath::Matrix;
 
 	static void Init(GraphicsBase&, LPCWSTR);
+	static void Init(GraphicsBase&, LPVOID data, size_t size);
 	static void Bind(GraphicsBase&);
 	static void BindViewport(GraphicsBase&, D3D11_VIEWPORT);
 	static void Release();
@@ -46,9 +37,7 @@ struct DefaultVertexShader {
 
 	static VertexShaderCosntBuffer localBuffer;
 	static wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
-	static void SetWorld(mat world);
-	static void SetView(mat view);
-	static void SetProjection(mat proj);
+	static void SetTransform(mat proj);
 	static void UpdateConstBuff(GraphicsBase&);
 
 };
