@@ -10,5 +10,5 @@ struct PSIn {
 
 float4 main(PSIn input) : SV_Target
 {
-	return float4(input.uv, 1.0f ,1.0f);
+	return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 }

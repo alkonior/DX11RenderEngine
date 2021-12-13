@@ -35,10 +35,10 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 }
 
 void RenderDevice::Present() {
-	gfx->DrawTestRectangle(0, 0, 200, 200);
-	gfx->DrawTestRectangle(50, 50, 250, 250);
-	gfx->DrawTestRectangle(100, 100, 300, 300);
-	gfx->DrawTestRectangle(150,150, 350, 350);
+	gfx->DrawTestRectangle(  0,  0,   200, 200);
+	gfx->DrawTestRectangle( 50, 50,   200, 200);
+	gfx->DrawTestRectangle(100,100,   200, 200);
+	gfx->DrawTestRectangle(150,150,   200, 200);
 	gfx->EndFrame();
 }
 

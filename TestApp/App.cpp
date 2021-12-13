@@ -3,7 +3,7 @@
 
 App::App()
 	:
-	wnd(800, 600, "The Donkey Fart Box") {}
+	wnd(600, 600, "The Donkey Fart Box") {}
 
 int App::Go() {
 	while (true) {
