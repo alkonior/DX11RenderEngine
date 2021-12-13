@@ -7,6 +7,8 @@ void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx!= nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
 
+	auto testText = Texture::FromFile("Img\\kappa50.png");
+	gfx->RegisterImg("test", testText);
 
 }
 
@@ -35,10 +37,11 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 }
 
 void RenderDevice::Present() {
-	gfx->DrawTestRectangle(  0,  0,   200, 200);
-	gfx->DrawTestRectangle( 50, 50,   200, 200);
-	gfx->DrawTestRectangle(100,100,   200, 200);
-	gfx->DrawTestRectangle(150,150,   200, 200);
+	//gfx->DrawTestRectangle(  0,  0,   200, 200);
+	//gfx->DrawTestRectangle( 50, 50,   200, 200);
+	//gfx->DrawTestRectangle(100,100,   200, 200);
+	//gfx->DrawTestRectangle(150,150,   200, 200);
+	gfx->DrawImg("test", 0, 0, 200, 200);
 	gfx->EndFrame();
 }
 

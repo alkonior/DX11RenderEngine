@@ -1,14 +1,18 @@
 #include "pch.h"
 #define FULL_WINTARD
 #include "Texture.h"
+#include "GDIPlusManager.h"
 #include <algorithm>
 #include <sstream>
+#include <filesystem>
 
-#pragma comment( lib,"gdiplus.lib" )
+
+GDIPlusManager gdip;
+
 
 Texture::Texture(unsigned int width, unsigned int height) noexcept
 	:
-	pBuffer(std::make_unique<Color[ ]>(width* height)),
+	pBuffer(std::make_unique<Color[ ]>(width * height)),
 	width(width),
 	height(height) {}
 
@@ -72,16 +76,19 @@ Texture Texture::FromFile(const std::string& name) {
 	unsigned int width = 0;
 	unsigned int height = 0;
 	std::unique_ptr<Color[ ]> pBuffer;
+	auto test = std::wstring(std::filesystem::current_path().c_str());
 
 	{
 		// convert filenam to wide string (for Gdiplus)
 		wchar_t wideName[512];
 		mbstowcs_s(nullptr, wideName, name.c_str(), _TRUNCATE);
-
+		test = test + wideName;
 		Gdiplus::Bitmap bitmap(wideName);
+		auto status = bitmap.GetLastStatus();
 		if (bitmap.GetLastStatus() != Gdiplus::Status::Ok) {
 			std::stringstream ss;
-			ss << "Loading image [" << name << "]: failed to load.";
+			ss << "Loading image [" << name << "]: failed to load.\n";
+			ss << "Status: [" << status << "].\n";
 			throw Exception(__LINE__, __FILE__, ss.str());
 		}
 

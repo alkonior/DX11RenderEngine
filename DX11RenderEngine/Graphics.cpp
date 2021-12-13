@@ -11,7 +11,7 @@
 
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(*this){}
+	:GraphicsBase(hWnd, width, height), manager2D(*this) {}
 
 void Graphics::EndFrame() {
 	HRESULT hr;
@@ -41,8 +41,12 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 
 
 
-void Graphics::DrawTestRectangle(size_t x, size_t y, size_t width, size_t height) {
-	manager2D.Draw("", x, y, width, height);
+void Graphics::DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height) {
+	manager2D.Draw(texturesManger.GetImg(*this, name), x, y, width, height);
+}
+
+void Graphics::RegisterImg(const char* name, const Texture& text) {
+	texturesManger.RegTexture(*this, text, name);
 }
 
 

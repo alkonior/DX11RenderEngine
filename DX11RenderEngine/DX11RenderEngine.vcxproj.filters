@@ -99,6 +99,9 @@
     <ClInclude Include="Texture.h">
       <Filter>Headers\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="GDIPlusManager.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderEngine.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Sources\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusManager.cpp">
+      <Filter>Sources\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

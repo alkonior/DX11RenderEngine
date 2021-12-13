@@ -6,10 +6,10 @@ Manager2D::Manager2D(GraphicsBase& gfx) {
 
 	Vertex2D vertices[ ] =
 	{
-		{  Vector2(-1.0f, 1.0f),  Vector2(0.0f, 0.0f), },
-		{  Vector2(-1.0f, 0.0f),  Vector2(1.0f, 0.0f), },
-		{  Vector2( 0.0f, 1.0f),  Vector2(0.0f, 1.0f), },
-		{  Vector2( 0.0f, 0.0f),  Vector2(1.0f, 1.0f), }
+		{  Vector2(-1.0f, 1.0f),  Vector2(0.0f, 1.0f), },
+		{  Vector2(-1.0f, 0.0f),  Vector2(0.0f, 0.0f), },
+		{  Vector2( 0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
+		{  Vector2( 0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
 	};
 
 	D3D11_BUFFER_DESC bd = {};
@@ -53,8 +53,8 @@ Manager2D::Manager2D(GraphicsBase& gfx) {
 
 }
 
-void Manager2D::Draw(const char* img, size_t x, size_t y, size_t width, size_t height) {
-	drawCalls.emplace_back(x, y, width, height);
+void Manager2D::Draw(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height) {
+	drawCalls.emplace_back(texture, x, y, width, height);
 }
 
 void Manager2D::Present(GraphicsBase& gfx) {
@@ -71,11 +71,32 @@ void Manager2D::Present(GraphicsBase& gfx) {
 	gfx.pContext->OMSetRenderTargets(1u, gfx.pTarget.GetAddressOf(), nullptr);
 
 	gfx.pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx.pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+
+
+
+	HRESULT hr;
+
+
+	// create the resource view on the texture
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+	wrl::ComPtr<ID3D11ShaderResourceView> pTextureView;
+
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
+		auto  pTexture = drawCalls[i].texture;
+
+		GFX_THROW_INFO(gfx.pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+		GFX_THROW_INFO_ONLY(gfx.pContext->PSSetShaderResources(0, 1u, pTextureView.GetAddressOf()));
 
 		VertexShader2D::SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height));
 		VertexShader2D::UpdateConstBuff(gfx);
+
+
 
 		GFX_THROW_INFO_ONLY(gfx.pContext->DrawIndexed(6u, 0u, 0u));
 	}
@@ -85,26 +106,16 @@ void Manager2D::Present(GraphicsBase& gfx) {
 
 Manager2D::~Manager2D() {}
 
-Manager2D::Rectangle::Rectangle(size_t x, size_t y, size_t width, size_t height)
-	:x(x), y(y),width(width),height(height) {}
+Manager2D::Rectangle::Rectangle(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height)
+	:x(x), y(y), width(width), height(height), texture(texture) {}
 
 dx::SimpleMath::Matrix Manager2D::Rectangle::getTransform(size_t screenW, size_t screenH) {
 	return
 
 		Matrix::CreateScale(width, height, 0) *
-		Matrix::CreateTranslation(x, y, 0)*
-		Matrix::CreateScale(2.0f / screenW, 2.0f / screenH, 0)*
-		Matrix::CreateTranslation(-1, -1, 0)*
-		Matrix::CreateScale(1, -1, 0)*
-		Matrix::CreateTranslation(width *2.0f/screenW, 0, 0)
-
-		//(Matrix::CreateTranslation( 100*2.0f / screenW, 100 * 2.0f / screenW, 0) *
-		
-			
-
-
-
-
-		//Matrix::CreateScale(100, 100, 0);
-		;
+		Matrix::CreateTranslation(x, y, 0) *
+		Matrix::CreateScale(2.0f / screenW, 2.0f / screenH, 0) *
+		Matrix::CreateTranslation(-1, -1, 0) *
+		Matrix::CreateScale(1, -1, 0) *
+		Matrix::CreateTranslation(width * 2.0f / screenW, 0, 0);
 }

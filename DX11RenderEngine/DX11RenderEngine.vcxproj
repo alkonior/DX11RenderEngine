@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Manager2D.h" />
     <ClInclude Include="PixelShader2D.h" />
     <ClInclude Include="Texture.h" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawable.cpp" />
+    <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Manager2D.cpp" />
     <ClCompile Include="PixelShader2D.cpp" />
     <ClCompile Include="Texture.cpp" />

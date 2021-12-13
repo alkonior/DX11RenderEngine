@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "GraphicsException.h"
+#include "TexturesManager.h"
 #include "GraphicsBase.h"
 #include "Geometry.h"
 #include "Manager2D.h"
@@ -22,9 +23,13 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(sm::Vector4 color) noexcept;
-	void DrawTestRectangle(size_t x, size_t y, size_t width, size_t height);
 
 
 
+	void DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height);
+	void RegisterImg(const char* name, const Texture& text);
+
+
+	TexturesManager texturesManger;
 	Manager2D manager2D;
 };

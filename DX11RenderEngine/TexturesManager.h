@@ -8,8 +8,8 @@ class TexturesManager {
 public:
 	TexturesManager();
 
-	void RegTexture(GraphicsBase gfx, Texture& tx, char* name);
-	wrl::ComPtr<ID3D11ShaderResourceView> BindImg(GraphicsBase gfx, char* name);
+	void RegTexture(GraphicsBase& gfx, const  Texture& tx, const char* name);
+	wrl::ComPtr<ID3D11Texture2D> GetImg(GraphicsBase& gfx, const char* name);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
 private:

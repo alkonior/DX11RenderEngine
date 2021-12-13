@@ -8,17 +8,18 @@
 class Manager2D : public Drawable {
 
 	struct Rectangle {
-		Rectangle(size_t x, size_t y, size_t width, size_t height);
+		Rectangle(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height);
 
 		dx::SimpleMath::Matrix getTransform(size_t screenW, size_t screenH);
 
 		size_t x; size_t y; size_t width; size_t height;
+		wrl::ComPtr<ID3D11Texture2D> texture;
 	};
 
 public:
 	Manager2D(GraphicsBase&);
 
-	void Draw(const char* img, size_t x, size_t y, size_t width, size_t height);
+	void Draw(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height);
 
 	virtual void Present(GraphicsBase&) override;
 

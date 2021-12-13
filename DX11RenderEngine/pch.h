@@ -67,9 +67,10 @@ namespace Gdiplus
 {
 	using std::min;
 	using std::max;
+	
 }
-#include <gdiplus.h>
 
+#include <gdiplus.h>
 
 #include <algorithm>
 #include <array>
