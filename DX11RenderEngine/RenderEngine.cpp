@@ -42,6 +42,8 @@ void RenderDevice::Present() {
 	//gfx->DrawTestRectangle(100,100,   200, 200);
 	//gfx->DrawTestRectangle(150,150,   200, 200);
 	gfx->DrawImg("test", 0, 0, 200, 200);
+	gfx->DrawImg("test", 50, 50, 200, 200);
+	gfx->DrawImg("test", 100, 100, 300, 300);
 	gfx->EndFrame();
 }
 

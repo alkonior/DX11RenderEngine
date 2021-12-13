@@ -112,8 +112,8 @@ Manager2D::Rectangle::Rectangle(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, 
 dx::SimpleMath::Matrix Manager2D::Rectangle::getTransform(size_t screenW, size_t screenH) {
 	return
 
-		Matrix::CreateScale(width, height, 0) *
-		Matrix::CreateTranslation(x, y, 0) *
+		Matrix::CreateScale(width*1.0f, height * 1.0f, 0) *
+		Matrix::CreateTranslation(x * 1.0f, y * 1.0f, 0) *
 		Matrix::CreateScale(2.0f / screenW, 2.0f / screenH, 0) *
 		Matrix::CreateTranslation(-1, -1, 0) *
 		Matrix::CreateScale(1, -1, 0) *

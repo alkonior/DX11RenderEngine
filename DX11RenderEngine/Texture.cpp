@@ -4,7 +4,6 @@
 #include "GDIPlusManager.h"
 #include <algorithm>
 #include <sstream>
-#include <filesystem>
 
 
 GDIPlusManager gdip;
@@ -76,13 +75,11 @@ Texture Texture::FromFile(const std::string& name) {
 	unsigned int width = 0;
 	unsigned int height = 0;
 	std::unique_ptr<Color[ ]> pBuffer;
-	auto test = std::wstring(std::filesystem::current_path().c_str());
 
 	{
 		// convert filenam to wide string (for Gdiplus)
 		wchar_t wideName[512];
 		mbstowcs_s(nullptr, wideName, name.c_str(), _TRUNCATE);
-		test = test + wideName;
 		Gdiplus::Bitmap bitmap(wideName);
 		auto status = bitmap.GetLastStatus();
 		if (bitmap.GetLastStatus() != Gdiplus::Status::Ok) {

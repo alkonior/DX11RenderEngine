@@ -7,8 +7,8 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	auto& gfx = *this;
 
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = width;
-	sd.BufferDesc.Height = height;
+	sd.BufferDesc.Width = (UINT)width;
+	sd.BufferDesc.Height = (UINT)height;
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
@@ -63,8 +63,8 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	// create depth stensil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = width;
-	descDepth.Height = height;
+	descDepth.Width = (UINT)width;
+	descDepth.Height = (UINT)height;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -85,8 +85,8 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
 	D3D11_VIEWPORT vp;
-	vp.Width = width;
-	vp.Height = height;
+	vp.Width = width*1.0f;
+	vp.Height = height * 1.0f;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;
