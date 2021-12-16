@@ -6,10 +6,6 @@
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx!= nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
-
-	auto testText = Texture::FromFile("Img\\kappa50.png");
-	gfx->RegisterImg("test", testText);
-
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
@@ -37,18 +33,33 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 }
 
 void RenderDevice::Present() {
-	//gfx->DrawTestRectangle(  0,  0,   200, 200);
-	//gfx->DrawTestRectangle( 50, 50,   200, 200);
-	//gfx->DrawTestRectangle(100,100,   200, 200);
-	//gfx->DrawTestRectangle(150,150,   200, 200);
-	gfx->DrawImg("test", 0, 0, 200, 200);
-	gfx->DrawImg("test", 50, 50, 200, 200);
-	gfx->DrawImg("test", 100, 100, 300, 300);
 	gfx->EndFrame();
 }
 
 void RenderDevice::Clear(float r, float g, float b) {
 	gfx->ClearBuffer(sm::Vector4(r,g,b,1));
+}
+
+void RenderDevice::RegisterTexture(const char* name, LPCWCH file) {
+
+	gfx->RegisterImg(name, Texture::FromFile(file));
+}
+
+void RenderDevice::RegisterTexture(const char* name, const char* file) {
+
+	gfx->RegisterImg(name, Texture::FromFile(file));
+}
+
+void RenderDevice::RegisterTexture(const char* name, const Texture& tex) {
+	gfx->RegisterImg(name, tex);
+}
+
+void RenderDevice::DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height) {
+	gfx->DrawImg(name, x, y, width, height);
+}
+
+void RenderDevice::DrawImg(const char* name, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
+	gfx->DrawImg(name, top, left, texW, texH, x, y, width, height);
 }
 
 void RenderDevice::DestroyDevice() {

@@ -21,10 +21,12 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, const char
 	sd.SysMemPitch = tx.GetWidth() *sizeof(Texture::Color);
 
 	auto&  pTexture = textures[std::string(name)];
-	GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture));
+	GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+	pTexture.width = tx.GetWidth();
+	pTexture.height = tx.GetHeight();
 }
 
-wrl::ComPtr<ID3D11Texture2D> TexturesManager::GetImg(GraphicsBase& gfx, const char* name) {
+TexturesManager::TextureCache TexturesManager::GetImg(GraphicsBase& gfx, const char* name) {
 	return textures[std::string(name)];;
 	
 }

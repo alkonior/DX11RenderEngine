@@ -53,7 +53,11 @@ Manager2D::Manager2D(GraphicsBase& gfx) {
 
 }
 
-void Manager2D::Draw(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height) {
+void Manager2D::Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
+	drawCalls.emplace_back(texture, top, left, texH, texW, x, y, width, height);
+}
+
+void Manager2D::Draw(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height) {
 	drawCalls.emplace_back(texture, x, y, width, height);
 }
 
@@ -88,12 +92,12 @@ void Manager2D::Present(GraphicsBase& gfx) {
 
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
-		auto  pTexture = drawCalls[i].texture;
+		auto  pTexture = drawCalls[i].texture.texture;
 
 		GFX_THROW_INFO(gfx.pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
 		GFX_THROW_INFO_ONLY(gfx.pContext->PSSetShaderResources(0, 1u, pTextureView.GetAddressOf()));
 
-		VertexShader2D::SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height));
+		VertexShader2D::SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height), drawCalls[i].getUVShift(), drawCalls[i].getUVScale());
 		VertexShader2D::UpdateConstBuff(gfx);
 
 
@@ -106,8 +110,11 @@ void Manager2D::Present(GraphicsBase& gfx) {
 
 Manager2D::~Manager2D() {}
 
-Manager2D::Rectangle::Rectangle(wrl::ComPtr<ID3D11Texture2D> texture, size_t x, size_t y, size_t width, size_t height)
-	:x(x), y(y), width(width), height(height), texture(texture) {}
+Manager2D::Rectangle::Rectangle(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height)
+	:x(x), y(y), width(width), height(height), texture(texture), top(top), left(left), texH(texH), texW(texW) {}
+
+Manager2D::Rectangle::Rectangle(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height)
+	:x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), texH(texture.height), texW(texture.width) {}
 
 dx::SimpleMath::Matrix Manager2D::Rectangle::getTransform(size_t screenW, size_t screenH) {
 	return
@@ -118,4 +125,12 @@ dx::SimpleMath::Matrix Manager2D::Rectangle::getTransform(size_t screenW, size_t
 		Matrix::CreateTranslation(-1, -1, 0) *
 		Matrix::CreateScale(1, -1, 0) *
 		Matrix::CreateTranslation(width * 2.0f / screenW, 0, 0);
+}
+
+dx::SimpleMath::Vector2 Manager2D::Rectangle::getUVShift() {
+	return dx::SimpleMath::Vector2(top*1.0f/texture.width, left*1.0f/texture.height);
+}
+
+dx::SimpleMath::Vector2 Manager2D::Rectangle::getUVScale() {
+	return dx::SimpleMath::Vector2(texW * 1.0f / texture.width, texH * 1.0f / texture.height);
 }

@@ -78,6 +78,9 @@ public:
 	const Color* GetBufferPtr() const noexcept;
 	const Color* GetBufferPtrConst() const noexcept;
 	static Texture FromFile(const std::string& name);
+#ifdef WIN32
+	static Texture FromFile(LPCWCH name);
+#endif
 	void Save(const std::string& filename) const;
 	void Copy(const Texture& src) noexcept(!_DEBUG);
 private:

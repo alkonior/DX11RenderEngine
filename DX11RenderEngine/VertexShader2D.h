@@ -16,10 +16,13 @@ struct Vertex2D {
 
 struct VertexShaderCosntBuffer {
 	DirectX::SimpleMath::Matrix transform;
+	DirectX::SimpleMath::Vector2 uvShift;
+	DirectX::SimpleMath::Vector2 uvScale;
 };
 
 struct VertexShader2D {
 	using mat = DirectX::SimpleMath::Matrix;
+	using vec2 = DirectX::SimpleMath::Vector2;
 
 	static void Init(GraphicsBase&, LPCWSTR);
 	static void Init(GraphicsBase&, LPVOID data, size_t size);
@@ -37,7 +40,7 @@ struct VertexShader2D {
 
 	static VertexShaderCosntBuffer localBuffer;
 	static wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
-	static void SetTransform(mat proj);
+	static void SetTransform(mat proj, vec2 uvShift, vec2 uvScale);
 	static void UpdateConstBuff(GraphicsBase&);
 
 };

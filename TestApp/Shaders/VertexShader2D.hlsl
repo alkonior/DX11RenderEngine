@@ -11,13 +11,15 @@ struct VSOut {
 
 cbuffer externalData {
 	matrix transform;
+	float2 uvShift;
+	float2 uvScale;
 }
 
 
 VSOut main(VSIn input) {
 	VSOut vso;
 	vso.pos = mul(float4(input.pos.x, input.pos.y, 0.0f, 1.0f), transform);
-	vso.uv = input.uv;
+	vso.uv = input.uv*uvScale+uvShift;
 	return vso;
 }
 

@@ -78,8 +78,10 @@ void VertexShader2D::Release() {
 	pVertexShader->Release();
 }
 
-void VertexShader2D::SetTransform(mat transform) {
+void VertexShader2D::SetTransform(mat transform, vec2 uvShift, vec2 uvScale) {
 	localBuffer.transform = transform.Transpose();
+	localBuffer.uvShift = uvShift;
+	localBuffer.uvScale = uvScale;
 }
 
 

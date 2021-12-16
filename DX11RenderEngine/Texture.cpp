@@ -105,6 +105,13 @@ Texture Texture::FromFile(const std::string& name) {
 	return Texture(width, height, std::move(pBuffer));
 }
 
+Texture Texture::FromFile(LPCWCH name) {
+	char output[256];
+	const WCHAR* wc = L"Hello World";
+	sprintf(output, "%ls", name);
+	return Texture::FromFile(output);
+}
+
 void Texture::Save(const std::string& filename) const {
 	auto GetEncoderClsid = [&filename](const WCHAR* format, CLSID* pClsid) -> void
 	{
