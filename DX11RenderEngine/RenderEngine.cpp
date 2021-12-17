@@ -32,6 +32,10 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	}
 }
 
+void RenderDevice::OnResize(size_t width, size_t height) {
+	gfx->OnResize(width, height);
+}
+
 void RenderDevice::Present() {
 	gfx->EndFrame();
 }

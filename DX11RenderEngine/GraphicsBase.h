@@ -10,6 +10,8 @@ class GraphicsBase {
 public:
 	GraphicsBase(HWND hWnd, size_t width, size_t height);
 
+	void OnResize(size_t width, size_t height);
+
 
 
 #ifdef _DEBUG
