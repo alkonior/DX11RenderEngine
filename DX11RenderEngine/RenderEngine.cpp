@@ -4,7 +4,7 @@
 #include "VertexShader2D.h"
 
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
-	if (gfx!= nullptr) DestroyDevice();
+	if (gfx != nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
 }
 
@@ -23,10 +23,19 @@ void RenderDevice::ReloadShaders(LPCWSTR dirr) {
 
 void RenderDevice::ReloadShader(ShaderData shD) {
 	switch (shD.type) {
-	case ShaderType::PixelShader2D :{
-			PixelShader2D::Release();
-			PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
-		}
+	case ShaderType::PixelShader2D:
+	{
+		PixelShader2D::Release();
+		PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
+	case ShaderType::VertexShader2D:
+	{
+		VertexShader2D::Release();
+		VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -41,7 +50,7 @@ void RenderDevice::Present() {
 }
 
 void RenderDevice::Clear(float r, float g, float b) {
-	gfx->ClearBuffer(sm::Vector4(r,g,b,1));
+	gfx->ClearBuffer(sm::Vector4(r, g, b, 1));
 }
 
 void RenderDevice::RegisterTexture(const char* name, LPCWCH file) {

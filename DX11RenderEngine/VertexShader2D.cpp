@@ -5,10 +5,8 @@
 
 wrl::ComPtr<ID3D11VertexShader> VertexShader2D::pVertexShader = nullptr;
 wrl::ComPtr<ID3D11InputLayout> VertexShader2D::pInputLayout = nullptr;
-BYTE* VertexShader2D::data = nullptr;
-size_t VertexShader2D::dataSize = 0;
 VertexShaderCosntBuffer VertexShader2D::localBuffer;
-wrl::ComPtr<ID3D11Buffer> VertexShader2D::pConstantBuffer;
+wrl::ComPtr<ID3D11Buffer> VertexShader2D::pConstantBuffer = nullptr;
 
 const D3D11_INPUT_ELEMENT_DESC VertexShader2D::inputLayout[ ] =
 {
@@ -38,12 +36,10 @@ void VertexShader2D::Init(GraphicsBase& gfx, LPVOID data, size_t size) {
 			}
 			GFX_THROW_INFO(hrt);
 		}
-		data = (BYTE*)VS->GetBufferPointer();
-		dataSize = VS->GetBufferSize();
 	}
 
-	GFX_THROW_INFO(gfx.pDevice->CreateVertexShader(data, dataSize, nullptr, &pVertexShader));
-	GFX_THROW_INFO(gfx.pDevice->CreateInputLayout(inputLayout, (UINT)std::size(inputLayout), data, dataSize, &pInputLayout));
+	GFX_THROW_INFO(gfx.pDevice->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), nullptr, &pVertexShader));
+	GFX_THROW_INFO(gfx.pDevice->CreateInputLayout(inputLayout, (UINT)std::size(inputLayout), VS->GetBufferPointer(), VS->GetBufferSize(), &pInputLayout));
 
 
 
@@ -73,9 +69,9 @@ void VertexShader2D::BindViewport(GraphicsBase& gfx, D3D11_VIEWPORT vp) {
 }
 
 void VertexShader2D::Release() {
-	pConstantBuffer->Release();
-	pInputLayout->Release();
-	pVertexShader->Release();
+	//pConstantBuffer->Release();
+	//pInputLayout->Release();
+	//pVertexShader->Release();
 }
 
 void VertexShader2D::SetTransform(mat transform, vec2 uvShift, vec2 uvScale) {

@@ -17,7 +17,5 @@ struct PixelShader2D {
 	static void Release();
 
 	static wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	static BYTE* data;
-	static size_t dataSize;
 
 };

@@ -3,9 +3,7 @@
 #include "PixelShader2D.h"
 
 
-wrl::ComPtr<ID3D11PixelShader> PixelShader2D::pPixelShader = nullptr;
-BYTE* PixelShader2D::data = nullptr;
-size_t PixelShader2D::dataSize = 0;
+wrl::ComPtr<ID3D11PixelShader> PixelShader2D::pPixelShader;
 
 wrl::ComPtr<ID3D10Blob> PS = nullptr;
 wrl::ComPtr<ID3D10Blob> psErrorBlob = nullptr;
@@ -26,11 +24,9 @@ void PixelShader2D::Init(GraphicsBase& gfx, LPVOID data, size_t size) {
 			}
 			GFX_THROW_INFO(hrt);
 		}
-		data = (BYTE*)PS->GetBufferPointer();
-		dataSize = PS->GetBufferSize();
 	}
 
-	GFX_THROW_INFO(gfx.pDevice->CreatePixelShader(data, dataSize, nullptr, &pPixelShader));
+	GFX_THROW_INFO(gfx.pDevice->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), nullptr, &pPixelShader));
 }
 
 void PixelShader2D::Bind(GraphicsBase& gfx) {
@@ -38,5 +34,5 @@ void PixelShader2D::Bind(GraphicsBase& gfx) {
 }
 
 void PixelShader2D::Release() {
-	pPixelShader->Release();
+	//pPixelShader->Release();
 }

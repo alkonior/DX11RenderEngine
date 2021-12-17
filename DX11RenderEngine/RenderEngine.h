@@ -31,6 +31,7 @@ struct RenderDevice {
 
 	/* Presentation */
 
+	void OnResize(size_t width, size_t height);
 	void Present();
 	void Clear(float r, float g, float b);
 

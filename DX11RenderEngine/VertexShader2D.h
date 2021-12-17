@@ -32,8 +32,6 @@ struct VertexShader2D {
 
 
 	static wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	static BYTE* data;
-	static size_t dataSize;
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[ ];
 	static wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 

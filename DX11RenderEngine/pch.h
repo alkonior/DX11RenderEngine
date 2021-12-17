@@ -56,11 +56,10 @@ Thanks to PlanetChili <http://www.planetchili.net>
 #define WINAPI_FAMILY_GAMES 6
 #endif
 
-
+#include <Mmreg.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #define FULL_WINTARD
-#include <wincodec.h>
 #include <commdlg.h>
 #include <algorithm>
 namespace Gdiplus
