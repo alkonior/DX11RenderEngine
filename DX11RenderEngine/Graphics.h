@@ -26,9 +26,9 @@ public:
 
 
 
-	void DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height);
-	void DrawImg(const char* name, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
-	void RegisterImg(const char* name, const Texture& text);
+	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height);
+	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
+	void RegisterImg(size_t id, const Texture& text);
 
 
 	TexturesManager texturesManger;

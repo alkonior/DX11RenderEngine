@@ -2,7 +2,7 @@
 
 TexturesManager::TexturesManager() {}
 
-void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, const char* name) {
+void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, size_t id) {
 	HRESULT hr;
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = tx.GetWidth();
@@ -20,14 +20,14 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, const char
 	sd.pSysMem = tx.GetBufferPtr();
 	sd.SysMemPitch = tx.GetWidth() *sizeof(Texture::Color);
 
-	auto&  pTexture = textures[std::string(name)];
+	auto&  pTexture = textures[id];
 	GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
 	pTexture.width = tx.GetWidth();
 	pTexture.height = tx.GetHeight();
 }
 
-TexturesManager::TextureCache TexturesManager::GetImg(GraphicsBase& gfx, const char* name) {
-	return textures[std::string(name)];;
+TexturesManager::TextureCache TexturesManager::GetImg(GraphicsBase& gfx, size_t id) {
+	return textures[id];
 	
 }
 

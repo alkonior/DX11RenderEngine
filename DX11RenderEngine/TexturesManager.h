@@ -17,12 +17,12 @@ public:
 public:
 	TexturesManager();
 
-	void RegTexture(GraphicsBase& gfx, const  Texture& tx, const char* name);
-	TextureCache GetImg(GraphicsBase& gfx, const char* name);
+	void RegTexture(GraphicsBase& gfx, const  Texture& tx, size_t id);
+	TextureCache GetImg(GraphicsBase& gfx, size_t id);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
 private:
-	std::map<std::string, TextureCache> textures;
+	std::map<size_t, TextureCache> textures;
 
 };
 

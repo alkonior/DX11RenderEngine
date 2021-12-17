@@ -53,26 +53,26 @@ void RenderDevice::Clear(float r, float g, float b) {
 	gfx->ClearBuffer(sm::Vector4(r, g, b, 1));
 }
 
-void RenderDevice::RegisterTexture(const char* name, LPCWCH file) {
+void RenderDevice::RegisterTexture(size_t id, LPCWCH file) {
 
-	gfx->RegisterImg(name, Texture::FromFile(file));
+	gfx->RegisterImg(id, Texture::FromFile(file));
 }
 
-void RenderDevice::RegisterTexture(const char* name, const char* file) {
+void RenderDevice::RegisterTexture(size_t id, const char* file) {
 
-	gfx->RegisterImg(name, Texture::FromFile(file));
+	gfx->RegisterImg(id, Texture::FromFile(file));
 }
 
-void RenderDevice::RegisterTexture(const char* name, const Texture& tex) {
-	gfx->RegisterImg(name, tex);
+void RenderDevice::RegisterTexture(size_t id, const Texture& tex) {
+	gfx->RegisterImg(id, tex);
 }
 
-void RenderDevice::DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height) {
-	gfx->DrawImg(name, x, y, width, height);
+void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height) {
+	gfx->DrawImg(id, x, y, width, height);
 }
 
-void RenderDevice::DrawImg(const char* name, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
-	gfx->DrawImg(name, top, left, texW, texH, x, y, width, height);
+void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
+	gfx->DrawImg(id, top, left, texW, texH, x, y, width, height);
 }
 
 void RenderDevice::DestroyDevice() {

@@ -41,17 +41,17 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 
 
 
-void Graphics::DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height) {
-	manager2D.Draw(texturesManger.GetImg(*this, name), x, y, width, height);
+void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height) {
+	manager2D.Draw(texturesManger.GetImg(*this, id), x, y, width, height);
 }
 
 
-void Graphics::DrawImg(const char* name, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
-	manager2D.Draw(texturesManger.GetImg(*this, name),top, left, texW, texH, x, y, width, height);
+void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
+	manager2D.Draw(texturesManger.GetImg(*this, id),top, left, texW, texH, x, y, width, height);
 }
 
-void Graphics::RegisterImg(const char* name, const Texture& text) {
-	texturesManger.RegTexture(*this, text, name);
+void Graphics::RegisterImg(size_t id, const Texture& text) {
+	texturesManger.RegTexture(*this, text, id);
 }
 
 

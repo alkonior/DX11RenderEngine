@@ -37,16 +37,16 @@ struct RenderDevice {
 
 	/* Resourse loading*/
 #ifdef WIN32
-	void RegisterTexture(const char* name, LPCWCH file);
+	void RegisterTexture(size_t id, LPCWCH file);
 #endif
-	void RegisterTexture(const char* name, const char* file);
-	void RegisterTexture(const char* name, const Texture&);
+	void RegisterTexture(size_t id, const char* file);
+	void RegisterTexture(size_t id, const Texture&);
 
 
 	/* Drawing */
 
-	void DrawImg(const char* name, size_t x, size_t y, size_t width, size_t height);
-	void DrawImg(const char* name, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
+	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height);
+	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
 
 };
 
