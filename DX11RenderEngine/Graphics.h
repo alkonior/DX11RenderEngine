@@ -29,7 +29,7 @@ public:
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height);
 	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
 	void RegisterImg(size_t id, const Texture& text);
-
+	void ReleaseImg(size_t id);
 
 	TexturesManager texturesManger;
 	Manager2D manager2D;

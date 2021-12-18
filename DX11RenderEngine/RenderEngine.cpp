@@ -67,6 +67,10 @@ void RenderDevice::RegisterTexture(size_t id, const Texture& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
+void RenderDevice::ReleaseTexture(size_t id) {
+	gfx->ReleaseImg(id);
+}
+
 void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height) {
 	gfx->DrawImg(id, x, y, width, height);
 }

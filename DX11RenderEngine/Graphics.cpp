@@ -54,6 +54,10 @@ void Graphics::RegisterImg(size_t id, const Texture& text) {
 	texturesManger.RegTexture(*this, text, id);
 }
 
+void Graphics::ReleaseImg(size_t id) {
+	texturesManger.ReeaseTexture(id);
+}
+
 
 
 /*

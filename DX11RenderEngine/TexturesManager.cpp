@@ -12,9 +12,9 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, size_t id)
 	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.Usage = D3D11_USAGE_DYNAMIC;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
+	textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	textureDesc.MiscFlags = 0;
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = tx.GetBufferPtr();
@@ -24,6 +24,10 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, size_t id)
 	GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
 	pTexture.width = tx.GetWidth();
 	pTexture.height = tx.GetHeight();
+}
+
+void TexturesManager::ReeaseTexture(size_t id) {
+	textures.erase(id);
 }
 
 TexturesManager::TextureCache TexturesManager::GetImg(GraphicsBase& gfx, size_t id) {

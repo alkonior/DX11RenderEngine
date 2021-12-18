@@ -41,6 +41,7 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const Texture&);
+	void ReleaseTexture(size_t id);
 
 
 	/* Drawing */
