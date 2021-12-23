@@ -9,31 +9,32 @@ void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
-	PixelShader2D::Init(*gfx, dirr);
-	VertexShader2D::Init(*gfx, dirr);
+	gfx->manager2D.CompileShaders(*gfx, dirr);
+	//PixelShader2D::Init(*gfx, dirr);
+	//VertexShader2D::Init(*gfx, dirr);
 }
 
 void RenderDevice::ReloadShaders(LPCWSTR dirr) {
-	PixelShader2D::Release();
-	VertexShader2D::Release();
-
-	PixelShader2D::Init(*gfx, dirr);
-	VertexShader2D::Init(*gfx, dirr);
+	//PixelShader2D::Release();
+	//VertexShader2D::Release();
+	//
+	//PixelShader2D::Init(*gfx, dirr);
+	//VertexShader2D::Init(*gfx, dirr);
 }
 
 void RenderDevice::ReloadShader(ShaderData shD) {
 	switch (shD.type) {
 	case ShaderType::PixelShader2D:
 	{
-		PixelShader2D::Release();
-		PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
-		break;
+		//PixelShader2D::Release();
+		//PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
+		//break;
 	}
 	case ShaderType::VertexShader2D:
 	{
-		VertexShader2D::Release();
-		VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
-		break;
+		//VertexShader2D::Release();
+		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		//break;
 	}
 
 	default:
@@ -55,15 +56,15 @@ void RenderDevice::Clear(float r, float g, float b) {
 
 void RenderDevice::RegisterTexture(size_t id, LPCWCH file) {
 
-	gfx->RegisterImg(id, Texture::FromFile(file));
+	gfx->RegisterImg(id, MyTexture::FromFile(file));
 }
 
 void RenderDevice::RegisterTexture(size_t id, const char* file) {
 
-	gfx->RegisterImg(id, Texture::FromFile(file));
+	gfx->RegisterImg(id, MyTexture::FromFile(file));
 }
 
-void RenderDevice::RegisterTexture(size_t id, const Texture& tex) {
+void RenderDevice::RegisterTexture(size_t id, const MyTexture& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
@@ -81,8 +82,8 @@ void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size
 
 void RenderDevice::DestroyDevice() {
 
-	PixelShader2D::Release();
-	VertexShader2D::Release();
+	//PixelShader2D::Release();
+	//VertexShader2D::Release();
 	if (!gfx) delete gfx;
 	gfx = nullptr;
 }

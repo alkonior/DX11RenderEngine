@@ -1,55 +1,101 @@
 #include "Manager2D.h"
+#include "D3D11Shaders.h"
+
 using namespace DirectX::SimpleMath;
+using namespace Renderer;
 
 Manager2D::Manager2D(GraphicsBase& gfx) {
 	HRESULT hr;
+	vp.h = gfx.height * 1.0f;
+	vp.w = gfx.width * 1.0f;
+	vp.minDepth = 0;
+	vp.maxDepth = 1;
+	vp.x = 0;
+	vp.y = 0;
+
 
 	Vertex2D vertices[ ] =
 	{
 		{  Vector2(-1.0f, 1.0f),  Vector2(0.0f, 1.0f), },
 		{  Vector2(-1.0f, 0.0f),  Vector2(0.0f, 0.0f), },
-		{  Vector2( 0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
-		{  Vector2( 0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
+		{  Vector2(0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
+		{  Vector2(0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
 	};
-
-	D3D11_BUFFER_DESC bd = {};
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.CPUAccessFlags = 0u;
-	bd.MiscFlags = 0u;
-	bd.ByteWidth = sizeof(vertices);
-	bd.StructureByteStride = sizeof(Vertex2D);
-	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = vertices;
-	GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-
+	//
+	//D3D11_BUFFER_DESC bd = {};
+	//bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//bd.Usage = D3D11_USAGE_DEFAULT;
+	//bd.CPUAccessFlags = 0u;
+	//bd.MiscFlags = 0u;
+	//bd.ByteWidth = sizeof(vertices);
+	//bd.StructureByteStride = sizeof(Vertex2D);
+	//D3D11_SUBRESOURCE_DATA sd = {};
+	//sd.pSysMem = vertices;
+	//
+	vertexBuffer.vertexBuffer = gfx.renderer.GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
+	gfx.renderer.SetVertexBufferData(vertexBuffer.vertexBuffer, 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
+	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
+	vertexBuffer.vertexOffset = 0;
+	vertexBuffer.vertexStride = sizeof(Vertex2D);
 	// Bind vertex buffer to pipeline
 
 
 	// create index buffer
-	const unsigned short indices[ ] =
+	const uint16_t indices[ ] =
 	{
 		0,1,2,
 		1,3,2
 	};
-	D3D11_BUFFER_DESC ibd = {};
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DEFAULT;
-	ibd.CPUAccessFlags = 0u;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = sizeof(indices);
-	ibd.StructureByteStride = sizeof(unsigned short);
-	D3D11_SUBRESOURCE_DATA isd = {};
-	isd.pSysMem = indices;
-	GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+	//D3D11_BUFFER_DESC ibd = {};
+	//ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//ibd.Usage = D3D11_USAGE_DEFAULT;
+	//ibd.CPUAccessFlags = 0u;
+	//ibd.MiscFlags = 0u;
+	//ibd.ByteWidth = sizeof(indices);
+	//ibd.StructureByteStride = sizeof(unsigned short);
+	//D3D11_SUBRESOURCE_DATA isd = {};
+	//isd.pSysMem = indices;
+	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+	indexBuffer = gfx.renderer.GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, 12);
+	gfx.renderer.SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
+
+	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
+	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 
 
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	GFX_THROW_INFO(gfx.pDevice->CreateSamplerState(&samplerDesc, &pSampler));
+
+	//D3D11_SAMPLER_DESC samplerDesc = {};
+	//samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	//GFX_THROW_INFO(gfx.pDevice->CreateSamplerState(&samplerDesc, &pSampler));
+}
+
+void Manager2D::CompileShaders(GraphicsBase& gfx, LPCWSTR dirr) {
+	{
+		wrl::ComPtr<ID3DBlob> buff;
+		D3DReadFileToBlob((std::wstring(dirr) + L"\\Shader2D.hlsl").c_str(), &buff);
+		auto data = buff->GetBufferPointer();
+		auto size = buff->GetBufferSize();
+
+		wrl::ComPtr<ID3D10Blob>pPSData;
+		wrl::ComPtr<ID3D10Blob>psErrorBlob;
+
+		D3DCompile(data, size, NULL, NULL, NULL, "psIn", "ps_4_0", NULL, NULL, &pPSData, &psErrorBlob);
+		pixelShader = gfx.renderer.CreatePixelShader(pPSData);
+
+		const D3D11_INPUT_ELEMENT_DESC inputLayout[ ] =
+		{
+				{"Position",  0, DXGI_FORMAT_R32G32_FLOAT,  0,                           0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,  0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		};
+		D3DCompile(data, size, NULL, NULL, NULL, "vsIn", "vs_4_0", NULL, NULL, &pPSData, &psErrorBlob);
+		vertexShader = gfx.renderer.CreateVertexShader(pPSData, inputLayout, (UINT)std::size(inputLayout));
+	}
+
 
 }
 
@@ -65,22 +111,23 @@ void Manager2D::Present(GraphicsBase& gfx) {
 
 	const UINT stride = sizeof(Vertex2D);
 	const UINT offset = 0u;
-	gfx.pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	//gfx.pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	
 
-	gfx.pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+	gfx.renderer.ApplyVertexBufferBinding(&vertexBuffer);
 
-	PixelShader2D::Bind(gfx);
-	VertexShader2D::Bind(gfx);
-
-	gfx.pContext->OMSetRenderTargets(1u, gfx.pTarget.GetAddressOf(), nullptr);
-
-	gfx.pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx.pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
-
-
-
-	HRESULT hr;
-
+	gfx.renderer.ApplyVertexShader(vertexShader);
+	gfx.renderer.ApplyPixelShader(pixelShader);
+	gfx.renderer.SetViewport(vp);
+	//gfx.pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+	//
+	//PixelShader2D::Bind(gfx);
+	//VertexShader2D::Bind(gfx);
+	//
+	//gfx.pContext->OMSetRenderTargets(1u, gfx.pTarget.GetAddressOf(), nullptr);
+	//
+	//gfx.pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//gfx.pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 
 	// create the resource view on the texture
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -94,21 +141,28 @@ void Manager2D::Present(GraphicsBase& gfx) {
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		auto  pTexture = drawCalls[i].texture.texture;
 
-		GFX_THROW_INFO(gfx.pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
-		GFX_THROW_INFO_ONLY(gfx.pContext->PSSetShaderResources(0, 1u, pTextureView.GetAddressOf()));
+		//GFX_THROW_INFO(gfx.pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
+		//GFX_THROW_INFO_ONLY(gfx.pContext->PSSetShaderResources(0, 1u, pTextureView.GetAddressOf()));
+		//
+		//VertexShader2D::SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height), drawCalls[i].getUVShift(), drawCalls[i].getUVScale());
+		//VertexShader2D::UpdateConstBuff(gfx);
+		//
+		//
+		//
+		vertexShader->SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height), drawCalls[i].getUVShift(), drawCalls[i].getUVScale());
+		gfx.renderer.UpdataVertexShader(vertexShader);
 
-		VertexShader2D::SetTransform(drawCalls[i].getTransform(gfx.width, gfx.height), drawCalls[i].getUVShift(), drawCalls[i].getUVScale());
-		VertexShader2D::UpdateConstBuff(gfx);
-
-
-
-		GFX_THROW_INFO_ONLY(gfx.pContext->DrawIndexed(6u, 0u, 0u));
+		gfx.renderer.DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
+			0, 0, 0, 0, 2, indexBuffer, 16);
+		//GFX_THROW_INFO_ONLY(gfx.pContext->DrawIndexed(6u, 0u, 0u));
 	}
 	drawCalls.clear();
 
 }
 
-Manager2D::~Manager2D() {}
+Manager2D::~Manager2D() {
+
+}
 
 Manager2D::Rectangle::Rectangle(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height)
 	:x(x), y(y), width(width), height(height), texture(texture), top(top), left(left), texH(texH), texW(texW) {}

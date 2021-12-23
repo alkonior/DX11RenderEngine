@@ -16,7 +16,7 @@ namespace Renderer {
 
 #define MAX_RENDERTARGET_BINDINGS	4
 
-struct Renderer {
+struct IRenderer {
 
 
 	/* Creates a rendering context for use on the calling thread.
@@ -28,12 +28,12 @@ struct Renderer {
 	 * Returns a device ready for use. Be sure to only call device functions from
 	 * the thread that it was created on!
 	 */
-	Renderer(const PresentationParameters& presentationParameters, uint8_t debugMode) {};
-	Renderer(const Renderer&) = delete;
-	Renderer(const Renderer&&) = delete;
+	IRenderer(const PresentationParameters& presentationParameters, uint8_t debugMode) {};
+	IRenderer(const IRenderer&) = delete;
+	IRenderer(const IRenderer&&) = delete;
 
 	/* Destroys a rendering context previously returned by CreateDevice. */
-	virtual ~Renderer() {};
+	virtual ~IRenderer() {};
 
 
 	/* After your window is created, call this to check for high-DPI support.
@@ -80,7 +80,7 @@ struct Renderer {
 		int32_t numVertices,
 		int32_t startIndex,
 		int32_t primitiveCount,
-		const Buffer& indices,
+		const Buffer* indices,
 		size_t indexElementSize
 	) = 0;
 
@@ -104,7 +104,7 @@ struct Renderer {
 		int32_t startIndex,
 		int32_t primitiveCount,
 		int32_t instanceCount,
-		const Buffer& indices,
+		const Buffer* indices,
 		size_t indexElementSize
 	) = 0;
 
@@ -343,7 +343,7 @@ struct Renderer {
 	 * Returns an allocated Texture* object. Note that the contents of the
 	 * texture are undefined, so you must call SetData at least once before drawing!
 	 */
-	virtual Texture CreateTexture2D(
+	virtual Texture* CreateTexture2D(
 		//SurfaceFormat format,
 		int32_t width,
 		int32_t height,
@@ -396,7 +396,7 @@ struct Renderer {
 	 *
 	 * texture: The Texture to be destroyed.
 	 */
-	virtual void AddDisposeTexture(Texture& texture) = 0;
+	virtual void AddDisposeTexture(Texture* texture) = 0;
 
 	/* Uploads image data to a 2D texture object.
 	 *
@@ -410,7 +410,7 @@ struct Renderer {
 	 * dataLength:	The size of the image data in bytes.
 	 */
 	virtual void SetTextureData2D(
-		Texture& texture,
+		Texture* texture,
 		int32_t x,
 		int32_t y,
 		int32_t w,
@@ -509,7 +509,7 @@ struct Renderer {
 	 * dataLength:	The size of the image data in bytes.
 	 */
 	virtual void GetTextureData2D(
-		const Texture& texture,
+		const Texture* texture,
 		int32_t x,
 		int32_t y,
 		int32_t w,
@@ -588,7 +588,7 @@ struct Renderer {
 	 *
 	 * Returns a color Renderbuffer object.
 	 */
-	virtual Renderbuffer GenColorRenderbuffer(
+	virtual Renderbuffer* GenColorRenderbuffer(
 		int32_t width,
 		int32_t height,
 		//SurfaceFormat format,
@@ -605,7 +605,7 @@ struct Renderer {
 	 *
 	 * Returns a depth/stencil Renderbuffer object.
 	 */
-	virtual Renderbuffer GenDepthStencilRenderbuffer(
+	virtual Renderbuffer* GenDepthStencilRenderbuffer(
 		int32_t width,
 		int32_t height,
 		DepthFormat format,
@@ -619,7 +619,7 @@ struct Renderer {
 	 *
 	 * renderbuffer: The Renderbuffer to be destroyed.
 	 */
-	virtual void AddDisposeRenderbuffer(Renderbuffer& renderbuffer) = 0;
+	virtual void AddDisposeRenderbuffer(Renderbuffer* renderbuffer) = 0;
 
 	/* Vertex Buffers */
 
@@ -632,7 +632,7 @@ struct Renderer {
 	 * Returns an allocated Buffer* object. Note that the contents of the
 	 * buffer are undefined, so you must call SetData at least once before drawing!
 	 */
-	virtual Buffer GenVertexBuffer(
+	virtual Buffer* GenVertexBuffer(
 		uint8_t dynamic,
 		BufferUsage usage,
 		int32_t sizeInBytes
@@ -645,7 +645,7 @@ struct Renderer {
 	 *
 	 * buffer: The Buffer to be destroyed.
 	 */
-	virtual void AddDisposeVertexBuffer(Buffer& buffer) = 0;
+	virtual void AddDisposeVertexBuffer(Buffer* buffer) = 0;
 
 	/* Sets a region of the vertex buffer with client data.
 	 *
@@ -664,7 +664,7 @@ struct Renderer {
 	 * options:		Try not to call NONE if this is a dynamic buffer!
 	 */
 	virtual void SetVertexBufferData(
-		Buffer& buffer,
+		Buffer* buffer,
 		int32_t offsetInBytes,
 		void* data,
 		int32_t elementCount,
@@ -689,7 +689,7 @@ struct Renderer {
 	 *			elementCount can just be the buffer length in bytes.
 	 */
 	virtual void GetVertexBufferData(
-		const Buffer& buffer,
+		const Buffer* buffer,
 		int32_t offsetInBytes,
 		void* data,
 		int32_t elementCount,
@@ -708,7 +708,7 @@ struct Renderer {
 	 * Returns an allocated Buffer* object. Note that the contents of the
 	 * buffer are undefined, so you must call SetData at least once before drawing!
 	 */
-	virtual Buffer GenIndexBuffer(
+	virtual Buffer* GenIndexBuffer(
 		uint8_t dynamic,
 		BufferUsage usage,
 		int32_t sizeInBytes
@@ -721,7 +721,7 @@ struct Renderer {
 	 *
 	 * buffer: The Buffer to be destroyed.
 	 */
-	virtual void AddDisposeIndexBuffer(Buffer& buffer) = 0;
+	virtual void AddDisposeIndexBuffer(Buffer* buffer) = 0;
 
 	/* Sets a region of the index buffer with client data.
 	 *
@@ -732,7 +732,7 @@ struct Renderer {
 	 * options:		Try not to call NONE if this is a dynamic buffer!
 	 */
 	virtual void SetIndexBufferData(
-		Buffer& buffer,
+		Buffer* buffer,
 		int32_t offsetInBytes,
 		void* data,
 		int32_t dataLength,
@@ -747,7 +747,7 @@ struct Renderer {
 	 * dataLength:		The size (in bytes) of the client data.
 	 */
 	virtual void GetIndexBufferData(
-		const Buffer& buffer,
+		const Buffer* buffer,
 		int32_t offsetInBytes,
 		void* data,
 		int32_t dataLength
@@ -755,7 +755,7 @@ struct Renderer {
 
 
 
-	virtual void ApplyVertexBufferBinding(const VertexBufferBinding& bindings) = 0;
+	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) = 0;
 
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "D3D11Renderer.h"
 #include "Drawable.h"
 #include "TexturesManager.h"
 #include "PixelShader2D.h"
@@ -23,6 +24,13 @@ class Manager2D : public Drawable {
 public:
 	Manager2D(GraphicsBase&);
 
+	void CompileShaders(GraphicsBase& gfx,LPCWSTR dirr);
+	Renderer::VertexShader* vertexShader;
+	Renderer::PixelShader* pixelShader;
+
+
+
+
 	void Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
 	void Draw(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height);
 
@@ -32,10 +40,13 @@ public:
 
 
 private:
-
-	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
+	Renderer::Viewport vp;
+	Renderer::D3D11VertexBufferBinding vertexBuffer;
+	Renderer::Buffer* indexBuffer;
+	Renderer::SamplerState sampler;
+	//wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
+	//wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
 	std::vector<Rectangle> drawCalls;
 };
 

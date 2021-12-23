@@ -10,6 +10,8 @@
 #pragma comment(lib,"D3DCompiler.lib")
 
 
+using namespace Renderer;
+
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height), manager2D(*this) {}
 
@@ -20,23 +22,25 @@ void Graphics::EndFrame() {
 	manager2D.Present(gfx);
 
 
-
-#ifndef NDEBUG
-	infoManager.Set();
-#endif
-	if (FAILED(hr = pSwap->Present(1u, 0u))) {
-		if (hr == DXGI_ERROR_DEVICE_REMOVED) {
-			throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
-		} else {
-			throw GFX_EXCEPT(hr);
-		}
-	}
+	renderer.SwapBuffers();
+//
+//
+//#ifndef NDEBUG
+//	infoManager.Set();
+//#endif
+//	if (FAILED(hr = pSwap->Present(1u, 0u))) {
+//		if (hr == DXGI_ERROR_DEVICE_REMOVED) {
+//			throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
+//		} else {
+//			throw GFX_EXCEPT(hr);
+//		}
+//	}
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
-
-	pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
-	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 0, 0u);
+	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
+	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 
@@ -50,7 +54,7 @@ void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t t
 	manager2D.Draw(texturesManger.GetImg(*this, id),top, left, texW, texH, x, y, width, height);
 }
 
-void Graphics::RegisterImg(size_t id, const Texture& text) {
+void Graphics::RegisterImg(size_t id, const MyTexture& text) {
 	texturesManger.RegTexture(*this, text, id);
 }
 

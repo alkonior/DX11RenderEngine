@@ -13,15 +13,15 @@ struct D3D11Renderbuffer : Renderbuffer {
 
 #define RENDERBUFFER_COLOR 0
 #define RENDERBUFFER_DEPTH 1
-	uint8_t type;
+	uint8_t type = 0;
 	union {
 		struct {
 			//FNA3D_SurfaceFormat format;
-			wrl::ComPtr<ID3D11RenderTargetView> rtView;
+			wrl::ComPtr<ID3D11RenderTargetView> rtView = nullptr;
 		} color;
 		struct {
-			DepthFormat format;
-			wrl::ComPtr<ID3D11DepthStencilView> dsView;
+			DepthFormat format = DepthFormat::DEPTHFORMAT_D16;
+			wrl::ComPtr<ID3D11DepthStencilView> dsView = nullptr;
 		} depth;
 	};
 

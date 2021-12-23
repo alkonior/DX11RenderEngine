@@ -2,6 +2,13 @@
 #include <cstdint>
 namespace Renderer {
 
+struct Texture {};
+struct Buffer {};
+struct ConstBuffer {};
+struct Renderbuffer {};
+//struct Shader {};
+struct VertexBufferBinding {};
+
 struct Color {
 	uint8_t r;
 	uint8_t g;
@@ -115,11 +122,6 @@ typedef struct RenderTargetBinding {
 
 
 
-struct Texture {};
-struct Buffer {};
-struct ConstBuffer {};
-struct Renderbuffer {};
-struct Shader {};
-struct VertexBufferBinding {};
+
 
 };

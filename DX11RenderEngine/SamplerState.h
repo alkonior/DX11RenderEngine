@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils.h"
-namespace Rederer
+namespace Renderer
 {
 
 enum TextureFilter {
@@ -25,7 +25,7 @@ struct SamplerState {
 	TextureFilter filter;
 	TextureAddressMode addressU;
 	TextureAddressMode addressV;
-	//TextureAddressMode addressW;
+	TextureAddressMode addressW;
 	float mipMapLevelOfDetailBias;
 	int32_t maxAnisotropy;
 	int32_t maxMipLevel;

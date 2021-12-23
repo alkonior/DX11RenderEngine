@@ -1,6 +1,7 @@
+#pragma once
 #include <cstdint>
 
-namespace Rederer
+namespace Renderer
 {
 
 enum FillMode {

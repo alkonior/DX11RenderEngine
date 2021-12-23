@@ -160,20 +160,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="BlendState.h" />
+    <ClInclude Include="D3D11BackBuffer.h" />
+    <ClInclude Include="D3D11Buffer.h" />
+    <ClInclude Include="D3D11RenderBuffer.h" />
     <ClInclude Include="D3D11Renderer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="D3D11Shader.h" />
     <ClInclude Include="D3D11Texture.h" />
+    <ClInclude Include="D3D11VertexBuffer.h" />
+    <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Manager2D.h" />
     <ClInclude Include="PixelShader2D.h" />
+    <ClInclude Include="RasterizerState.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturesManager.h" />
     <ClInclude Include="Utils.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="D3D11Shaders.h" />
     <ClInclude Include="VertexShader2D.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DxgiInfoManager.h" />
@@ -188,6 +199,7 @@
     <ClInclude Include="Utils\include\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlendState.cpp" />
     <ClCompile Include="D3D11Backbuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
@@ -201,6 +213,7 @@
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Manager2D.cpp" />
     <ClCompile Include="PixelShader2D.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="VertexShader2D.cpp" />

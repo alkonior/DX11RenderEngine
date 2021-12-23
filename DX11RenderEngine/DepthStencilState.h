@@ -1,9 +1,11 @@
+#pragma once
 #include "Utils.h"
 
 
 
-namespace Rederer
+namespace Renderer
 {
+
 enum StencilOperation {
 	STENCILOPERATION_KEEP,
 	STENCILOPERATION_ZERO,

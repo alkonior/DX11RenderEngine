@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "D3D11Texture.h"
-#include "D3D11Shader.h"
+//#include "D3D11Shader.h"
 #include "D3D11Buffer.h"
 #include "D3D11VertexBuffer.h"
 #include "D3D11RenderBuffer.h"
@@ -16,7 +16,7 @@
 namespace Renderer{
 
 
-class D3D11Renderer : public Renderer {
+class D3D11Renderer : public IRenderer {
 public:
 	/* Persistent D3D11 Objects */
 	wrl::ComPtr<ID3D11Device> device;
@@ -102,15 +102,15 @@ private:
 public:
 
 	virtual ~D3D11Renderer();
-	D3D11Renderer(const PresentationParameters& presentationParameters, uint8_t debugMode);
+	D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode);
 
 
-	// Унаследовано через Renderer
+	// Унаследовано через IRenderer
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
 	virtual void SwapBuffers() override;
 	virtual void Clear(ClearOptions options, FColor color, float depth, int32_t stencil) override;
-	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, const Buffer& indices, size_t indexElementSize) override;
-	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount, const Buffer& indices, size_t indexElementSize) override;
+	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, const Buffer* indices, size_t indexElementSize) override;
+	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount, const Buffer* indices, size_t indexElementSize) override;
 	virtual void DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) override;
 	virtual void SetViewport(const Viewport& viewport) override;
 	virtual void SetScissorRect(Rect scissor) override;
@@ -129,28 +129,27 @@ public:
 	virtual void ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, void* data, int32_t dataLength) override;
 	virtual void GetBackbufferSize(int32_t* w, int32_t* h) override;
 	virtual DepthFormat GetBackbufferDepthFormat() override;
-	virtual Texture CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) override;
-	virtual void AddDisposeTexture(Texture& texture) override;
-	virtual void SetTextureData2D(Texture& texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
-	virtual void GetTextureData2D(const Texture& texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
-	virtual Renderbuffer GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) override;
-	virtual Renderbuffer GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) override;
-	virtual void AddDisposeRenderbuffer(Renderbuffer& renderbuffer) override;
-	virtual Buffer GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) override;
-	virtual void AddDisposeVertexBuffer(Buffer& buffer) override;
-	virtual void SetVertexBufferData(Buffer& buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options) override;
-	virtual void GetVertexBufferData(const Buffer& buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride) override;
-	virtual Buffer GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) override;
-	virtual void AddDisposeIndexBuffer(Buffer& buffer) override;
-	virtual void SetIndexBufferData(Buffer& buffer, int32_t offsetInBytes, void* data, int32_t dataLength, SetDataOptions options) override;
-	virtual void GetIndexBufferData(const Buffer& buffer, int32_t offsetInBytes, void* data, int32_t dataLength) override;
+	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) override;
+	virtual void AddDisposeTexture(Texture* texture) override;
+	virtual void SetTextureData2D(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
+	virtual void GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
+	virtual Renderbuffer* GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) override;
+	virtual Renderbuffer* GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) override;
+	virtual void AddDisposeRenderbuffer(Renderbuffer* renderbuffer) override;
+	virtual Buffer* GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) override;
+	virtual void AddDisposeVertexBuffer(Buffer* buffer) override;
+	virtual void SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options) override;
+	virtual void GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride) override;
+	virtual Buffer* GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) override;
+	virtual void AddDisposeIndexBuffer(Buffer* buffer) override;
+	virtual void SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength, SetDataOptions options) override;
+	virtual void GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength) override;
 
 
 	/* Private Stuff*/
 private:
 	void SetPresentationInterval(PresentInterval presentInterval);
 	void CreateBackbuffer(const PresentationParameters& parameters);
-	void ResetBackbuffer(const PresentationParameters& parameters);
 	void CreateSwapChain(const PresentationParameters& pp);
 	void ResizeSwapChain(const PresentationParameters& pp);
 	wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
@@ -162,17 +161,15 @@ private:
 public:
 	/* Shader Stuff */
 
-	virtual void ApplyVertexBufferBinding(const VertexBufferBinding& bindings) override;
+	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) override;
 
-	void ApplyPixelShader(const PixelShader& shader);
-	void ApplyVertexShader(const VertexShader& shader);	
+	void ApplyPixelShader(const PixelShader* shader);
+	void ApplyVertexShader(const VertexShader* shader);	
 	
-	
-	
-	PixelShader CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData);
-	VertexShader CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize);
+	PixelShader* CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData);
+	VertexShader* CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize);
 
-	void UpdataVertexShader(const VertexShader& shader);
+	void UpdataVertexShader(const VertexShader* shader);
 
 };
 

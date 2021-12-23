@@ -40,7 +40,7 @@ struct RenderDevice {
 	void RegisterTexture(size_t id, LPCWCH file);
 #endif
 	void RegisterTexture(size_t id, const char* file);
-	void RegisterTexture(size_t id, const Texture&);
+	void RegisterTexture(size_t id, const MyTexture&);
 	void ReleaseTexture(size_t id);
 
 

@@ -31,9 +31,6 @@
     <Filter Include="Headers\Core">
       <UniqueIdentifier>{d4fdf230-daa8-4d13-a287-b105dc470733}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Core\Exceptions">
-      <UniqueIdentifier>{537a1489-1a3b-40dc-bfff-0047ead53dab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Drawables">
       <UniqueIdentifier>{24ea7f58-1074-4779-8a6c-f2d429b05094}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,15 @@
     </Filter>
     <Filter Include="Sources\D3D11Renderer">
       <UniqueIdentifier>{db08a748-d620-4db3-bc3e-94db34d8249e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Renderer">
+      <UniqueIdentifier>{3832cc19-e2b2-4518-b61c-5f159712ee92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Renderer">
+      <UniqueIdentifier>{2c543237-7fb5-4ecb-8b40-dc0b64c29bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Exceptions">
+      <UniqueIdentifier>{537a1489-1a3b-40dc-bfff-0047ead53dab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,10 +79,10 @@
       <Filter>Headers\Core</Filter>
     </ClInclude>
     <ClInclude Include="DxgiInfoManager.h">
-      <Filter>Headers\Core\Exceptions</Filter>
+      <Filter>Headers\Exceptions</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsException.h">
-      <Filter>Headers\Core\Exceptions</Filter>
+      <Filter>Headers\Exceptions</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Headers</Filter>
@@ -111,10 +117,43 @@
     <ClInclude Include="D3D11Renderer.h">
       <Filter>Headers\D3D11Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="D3D11Texture.h">
       <Filter>Headers\D3D11Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="D3D11Texture.h">
+    <ClInclude Include="Utils.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendState.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilState.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplerState.h">
+      <Filter>Headers\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11RenderBuffer.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Shader.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Buffer.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11BackBuffer.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11VertexBuffer.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Shaders.h">
       <Filter>Headers\D3D11Renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -175,6 +214,12 @@
     </ClCompile>
     <ClCompile Include="D3D11Texture.cpp">
       <Filter>Sources\D3D11Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendState.cpp">
+      <Filter>Sources\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Sources\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

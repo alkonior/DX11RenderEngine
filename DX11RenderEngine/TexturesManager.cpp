@@ -2,7 +2,7 @@
 
 TexturesManager::TexturesManager() {}
 
-void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, size_t id) {
+void TexturesManager::RegTexture(GraphicsBase& gfx,const MyTexture& tx, size_t id) {
 	HRESULT hr;
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = tx.GetWidth();
@@ -18,10 +18,10 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const Texture& tx, size_t id)
 	textureDesc.MiscFlags = 0;
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = tx.GetBufferPtr();
-	sd.SysMemPitch = tx.GetWidth() *sizeof(Texture::Color);
+	sd.SysMemPitch = tx.GetWidth() *sizeof(MyTexture::Color);
 
 	auto&  pTexture = textures[id];
-	GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+	//GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
 	pTexture.width = tx.GetWidth();
 	pTexture.height = tx.GetHeight();
 }

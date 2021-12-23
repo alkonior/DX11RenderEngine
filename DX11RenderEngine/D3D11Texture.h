@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-
+#include "Utils.h"
 namespace Renderer {
 
 struct D3D11Texture : public Texture{
@@ -24,17 +24,6 @@ struct D3D11Texture : public Texture{
 
 	wrl::ComPtr<ID3D11Texture2D> staging; /* ID3D11Texture2D or ID3D11Texture3D */
 	static D3D11Texture NullTexture;
-};
-
-D3D11Texture D3D11Texture::NullTexture = D3D11Texture
-{
-	nullptr,
-	nullptr,
-	-1,
-	0,
-	0,
-	0,
-	NULL
 };
 
 };

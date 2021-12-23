@@ -16,12 +16,22 @@ cbuffer externalData {
 }
 
 
-VSOut main(VSIn input) {
+VSOut vsIn(VSIn input) {
 	VSOut vso;
 	vso.pos = mul(float4(input.pos.x, input.pos.y, 0.0f, 1.0f), transform);
 	vso.uv = input.uv*uvScale+uvShift;
 	return vso;
 }
+
+
+float4 psIn(VSOut input) : SV_Target
+{
+	//return tex.Sample(basicSampler, input.uv);
+	return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
+}
+
+
+
 
 //VertexShaderOutput main(float2 pos : Position, float3 color : Color) {
 //	VertexShaderOutput vso;

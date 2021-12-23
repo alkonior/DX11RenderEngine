@@ -24,11 +24,22 @@ static inline int32_t PrimitiveVerts(
 }
 
 
+D3D11Texture D3D11Texture::NullTexture = D3D11Texture
+{
+	nullptr,
+	nullptr,
+	-1,
+	0,
+	0,
+	0,
+	NULL
+};
+
 
 
 void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h) {}
 
-D3D11Renderer::D3D11Renderer(const PresentationParameters& presentationParameters, uint8_t debugMode) :Renderer(presentationParameters, debugMode) {
+D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) : IRenderer(presentationParameters, debugMode) {
 
 	DXGI_ADAPTER_DESC adapterDesc;
 	D3D_FEATURE_LEVEL levels[ ] =
@@ -38,15 +49,13 @@ D3D11Renderer::D3D11Renderer(const PresentationParameters& presentationParameter
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0
 	};
-	uint32_t flags, supportsDxt3, supportsDxt5;
-	int32_t i;
-	HRESULT res;
+	uint32_t flags;
 
 	/* Load CreateDXGIFactory1 */
-	GFX_THROW_INFO(CreateDXGIFactory(__uuidof(IDXGIFactory), &factory));
-	factory->EnumAdapters(0, adapter.GetAddressOf());
-
-	adapter->GetDesc(&adapterDesc);
+	//GFX_THROW_INFO(CreateDXGIFactory(__uuidof(IDXGIFactory), &factory));
+	//factory->EnumAdapters(0, adapter.GetAddressOf());
+	//
+	//adapter->GetDesc(&adapterDesc);
 
 	/* Create the D3D11Device */
 	flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -55,14 +64,39 @@ D3D11Renderer::D3D11Renderer(const PresentationParameters& presentationParameter
 	}
 
 
-	GFX_THROW_INFO(D3D11CreateDevice(
+	DXGI_SWAP_CHAIN_DESC swapchainDesc;
+
+	/* Initialize swapchain descriptor */
+	swapchainDesc.BufferDesc.Width = 0;
+	swapchainDesc.BufferDesc.Height = 0;
+	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	swapchainDesc.SampleDesc.Count = 1;
+	swapchainDesc.SampleDesc.Quality = 0;
+	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapchainDesc.BufferCount = 3;
+	swapchainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	//swapchainDesc.BufferDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+	swapchainDesc.Flags = 0; 
+	swapchainDesc.OutputWindow = (HWND)presentationParameters.deviceWindowHandle;
+
+	/* Create the swap chain! */
+	//GFX_THROW_INFO(factory->CreateSwapChain(
+	//	device.Get(),
+	//	&swapchainDesc,
+	//	&swapchain
+	//));
+
+	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
 		NULL, /* FIXME: Should be renderer->adapter! */
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		flags,
-		levels,
-		sizeof(levels),
+		NULL,
+		0,
 		D3D11_SDK_VERSION,
+		&swapchainDesc,
+		&swapchain,
 		&device,
 		&featureLevel,
 		&context
@@ -75,6 +109,8 @@ D3D11Renderer::D3D11Renderer(const PresentationParameters& presentationParameter
 
 	pixelTextures.resize(MAX_TEXTURE_SAMPLERS, D3D11Texture::NullTexture);
 	pixelSamplers.resize(MAX_TEXTURE_SAMPLERS, nullptr);
+
+	renderTargetViews.resize(MAX_RENDERTARGET_BINDINGS);
 
 	/* Initialize SetStringMarker support, if available */  //TODO
 	//if (featureLevel == D3D_FEATURE_LEVEL_11_1) {
@@ -127,7 +163,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
 
 	/* Clear color? */
 	if (options & ClearOptions::CLEAROPTIONS_TARGET) {
-		for (i = 0; i < renderTargetViews.size(); i += 1) {
+		for (i = 0; i < numRenderTargets; i += 1) {
 			/* Clear! */
 			GFX_THROW_INFO_ONLY(context->ClearRenderTargetView(renderTargetViews[i].Get(), clearColor));
 		}
@@ -169,19 +205,19 @@ static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[ ] =
 	D3D_PRIMITIVE_TOPOLOGY_POINTLIST	    /* PrimitiveType.PointListEXT */
 };
 
-void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, const Buffer& indices, size_t indexElementSize) {
+void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, const Buffer* indices, size_t indexElementSize) {
 
-	D3D11Buffer& d3dIndices = (D3D11Buffer&)indices;
+	D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
 
 	ctxLock.lock();
 
 	/* Bind index buffer */
-	if (indexBuffer != d3dIndices.handle || indexElementSize != indexElementSize) {
-		indexBuffer = d3dIndices.handle;
+	if (indexBuffer != d3dIndices->handle || indexElementSize != indexElementSize) {
+		indexBuffer = d3dIndices->handle;
 		indexElementSize = indexElementSize;
 		context->IASetIndexBuffer(
-			d3dIndices.handle.Get(),
-			IndexType[indexElementSize],
+			d3dIndices->handle.Get(),
+			IndexType[indexElementSize/16-1],
 			0
 		);
 	}
@@ -204,18 +240,18 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount, const Buffer& indices, size_t indexElementSize) {
-	D3D11Buffer& d3dIndices = (D3D11Buffer&)indices;
+void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount, const Buffer* indices, size_t indexElementSize) {
+	D3D11Buffer*d3dIndices = (D3D11Buffer*)indices;
 
 	ctxLock.lock();
 
 	/* Bind index buffer */
-	if (indexBuffer != d3dIndices.handle || indexElementSize != indexElementSize) {
-		indexBuffer = d3dIndices.handle;
+	if (indexBuffer != d3dIndices->handle || indexElementSize != indexElementSize) {
+		indexBuffer = d3dIndices->handle;
 		indexElementSize = indexElementSize;
 		context->IASetIndexBuffer(
-			d3dIndices.handle.Get(),
-			IndexType[indexElementSize],
+			d3dIndices->handle.Get(),
+			IndexType[indexElementSize/16-1],
 			0
 		);
 	}
@@ -606,7 +642,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 }
 
 void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target) {
-	D3D11Texture& tex = (D3D11Texture&)target.texture;
+	D3D11Texture* tex = (D3D11Texture*)target.texture;
 	D3D11Renderbuffer& rb = (D3D11Renderbuffer&)target.colorBuffer;
 	uint32_t slice = 0;
 
@@ -617,8 +653,8 @@ void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target) {
 		//	slice = target->cube.face;
 		//}
 		GFX_THROW_INFO_ONLY(context->ResolveSubresource(
-			tex.handle.Get(),
-			0 + slice * tex.levelCount,
+			tex->handle.Get(),
+			0 + slice * tex->levelCount,
 			rb.handle.Get(),
 			0,
 			DXGI_FORMAT_R8G8B8A8_UNORM
@@ -628,31 +664,20 @@ void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target) {
 	/* If the target has mipmaps, regenerate them now */
 	if (target.levelCount > 1) {
 		GFX_THROW_INFO_ONLY(context->GenerateMips(
-			tex.shaderView.Get()
+			tex->shaderView.Get()
 		));
 	}
 
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::ResetBackbuffer(const PresentationParameters& presentationParameters) {
-
-	CreateBackbuffer(
-		presentationParameters
-	);
-	SetPresentationInterval(
-		presentationParameters.presentationInterval
-	);
-
-}
-
 void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, void* data, int32_t dataLength) {
-	D3D11Texture backbufferTexture;
+	D3D11Texture* backbufferTexture = new D3D11Texture();
 
 	GFX_THROW_INFO(swapchain->GetBuffer(
 		0,
 		__uuidof(ID3D11Texture2D),
-		&backbufferTexture.handle));
+		&backbufferTexture->handle));
 
 	GetTextureData2D(
 		backbufferTexture,
@@ -672,8 +697,8 @@ DepthFormat D3D11Renderer::GetBackbufferDepthFormat() {
 	return currentDepthFormat;
 }
 
-Texture D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) {
-	D3D11Texture result;
+Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) {
+	D3D11Texture* result = new D3D11Texture();
 	ID3D11Texture2D* texture;
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
@@ -701,66 +726,67 @@ Texture D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t le
 	GFX_THROW_INFO(device->CreateTexture2D(
 		&desc,
 		NULL,
-		&result.handle
+		&result->handle
 	));
 
 	/* Initialize D3D11Texture */
-	result.levelCount = levelCount;
-	result.isRenderTarget = isRenderTarget;
-	result.width = width;
-	result.height = height;
+	result->levelCount = levelCount;
+	result->isRenderTarget = isRenderTarget;
+	result->width = width;
+	result->height = height;
 
 	/* Create the shader resource view */
 	GFX_THROW_INFO(device->CreateShaderResourceView(
-		result.handle.Get(),
+		result->handle.Get(),
 		NULL,
-		&result.shaderView
+		&result->shaderView
 	));
 
 	/* Create the render target view, if applicable */
 	if (isRenderTarget) {
-		result.isRenderTarget = 1;
+		result->isRenderTarget = 1;
 		rtViewDesc.Format = desc.Format;
 		rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtViewDesc.Texture2D.MipSlice = 0;
 		GFX_THROW_INFO(device->CreateRenderTargetView(
-			result.handle.Get(),
+			result->handle.Get(),
 			&rtViewDesc,
-			&result.rtView
+			&result->rtView
 		));
 	}
 
 	return result;
 }
 
-void D3D11Renderer::AddDisposeTexture(Texture& texture) {
-	D3D11Texture& tex = (D3D11Texture&)texture;
+void D3D11Renderer::AddDisposeTexture(Texture* texture) {
+	D3D11Texture* tex = (D3D11Texture*)texture;
 	int32_t i, j;
 
 	/* Unbind the texture */
 	for (i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1) {
-		if (pixelTextures[i].handle == tex.handle) {
+		if (pixelTextures[i].handle == tex->handle) {
 			pixelTextures[i] = D3D11Texture::NullTexture;
 		}
 	}
 
 	/* Unbind and release the render target views, if applicable */
-	if (tex.isRenderTarget) {
+	if (tex->isRenderTarget) {
 		for (i = 0; i < numRenderTargets; i += 1) {
-			if (tex.rtView == renderTargetViews[i]) {
+			if (tex->rtView == renderTargetViews[i]) {
 				renderTargetViews[i] = nullptr;
 			}
 		}
-		tex.rtView->Release();
+		tex->rtView->Release();
 	}
 
 	/* Release the shader resource view and texture */
-	tex.shaderView->Release();
-	tex.handle->Release();
+	tex->shaderView->Release();
+	tex->handle->Release();
+	delete tex;
 }
 
-void D3D11Renderer::SetTextureData2D(Texture& texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
-	D3D11Texture& d3dTexture = (D3D11Texture&)texture;
+void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+	D3D11Texture* d3dTexture = (D3D11Texture*)texture;
 	D3D11_BOX dstBox;
 
 	/* DXT formats require w and h to be multiples of 4 */
@@ -780,7 +806,7 @@ void D3D11Renderer::SetTextureData2D(Texture& texture, int32_t x, int32_t y, int
 
 	ctxLock.lock();
 	GFX_THROW_INFO_ONLY(context->UpdateSubresource(
-		d3dTexture.handle.Get(),
+		d3dTexture->handle.Get(),
 		level,
 		&dstBox,
 		data,
@@ -790,13 +816,13 @@ void D3D11Renderer::SetTextureData2D(Texture& texture, int32_t x, int32_t y, int
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::GetTextureData2D(const Texture& texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
-	D3D11Texture& tex = (D3D11Texture&)texture;
+void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+	D3D11Texture* tex = (D3D11Texture*)texture;
 	D3D11_TEXTURE2D_DESC stagingDesc;
 	wrl::ComPtr<ID3D11Texture2D> stagingTexture;
 	uint32_t subresourceIndex = level;
-	int32_t texW = tex.width >> level;
-	int32_t texH = tex.height >> level;
+	int32_t texW = tex->width >> level;
+	int32_t texH = tex->height >> level;
 	D3D11_BOX srcBox = { 0, 0, 0, texW, texH, 1 };
 	D3D11_MAPPED_SUBRESOURCE subresource;
 	uint8_t* dataPtr = (uint8_t*)data;
@@ -805,15 +831,15 @@ void D3D11Renderer::GetTextureData2D(const Texture& texture, int32_t x, int32_t 
 	HRESULT res;
 
 	/* Create staging texture if needed */
-	if (tex.isRenderTarget) {
-		stagingTexture = tex.staging;
+	if (tex->isRenderTarget) {
+		stagingTexture = tex->staging;
 	} else {
 		stagingTexture = nullptr;
 	}
 	if (stagingTexture == nullptr) {
-		stagingDesc.Width = tex.width;
-		stagingDesc.Height = tex.height;
-		stagingDesc.MipLevels = tex.levelCount;
+		stagingDesc.Width = tex->width;
+		stagingDesc.Height = tex->height;
+		stagingDesc.MipLevels = tex->levelCount;
 		stagingDesc.ArraySize = 1;
 		stagingDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		stagingDesc.SampleDesc.Count = 1;
@@ -830,8 +856,8 @@ void D3D11Renderer::GetTextureData2D(const Texture& texture, int32_t x, int32_t 
 		));
 
 		/* Targets will probably call this a lot, so try to keep this all the time */
-		if (tex.isRenderTarget) {
-			tex.staging = stagingTexture;
+		if (tex->isRenderTarget) {
+			tex->staging = stagingTexture;
 		}
 	}
 
@@ -845,7 +871,7 @@ void D3D11Renderer::GetTextureData2D(const Texture& texture, int32_t x, int32_t 
 		0,
 		0,
 		0,
-		tex.handle.Get(),
+		tex->handle.Get(),
 		subresourceIndex,
 		&srcBox
 	));
@@ -875,15 +901,15 @@ void D3D11Renderer::GetTextureData2D(const Texture& texture, int32_t x, int32_t 
 	ctxLock.unlock();
 }
 
-Renderbuffer D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) {
+Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) {
 	D3D11_TEXTURE2D_DESC desc;
-	D3D11Renderbuffer result = D3D11Renderbuffer(RENDERBUFFER_COLOR);
+	D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_COLOR);
 	HRESULT res;
 
 	/* Initialize the renderbuffer */
-	result.multiSampleCount = multiSampleCount;
-	result.type = RENDERBUFFER_COLOR;
-	//result.color.format = format;
+	result->multiSampleCount = multiSampleCount;
+	result->type = RENDERBUFFER_COLOR;
+	//result->color.format = format;
 
 	/* Create the backing texture */
 	desc.Width = width;
@@ -903,14 +929,14 @@ Renderbuffer D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, 
 	GFX_THROW_INFO(device->CreateTexture2D(
 		&desc,
 		NULL,
-		&result.handle
+		&result->handle
 	));
 
 	/* Create the render target view */
 	GFX_THROW_INFO(device->CreateRenderTargetView(
-		result.handle.Get(),
+		result->handle.Get(),
 		NULL,
-		&result.color.rtView
+		&result->color.rtView
 	));
 
 	return result;
@@ -924,15 +950,15 @@ static DXGI_FORMAT D3D11DepthFormat[ ] =
 	DXGI_FORMAT_D24_UNORM_S8_UINT	/* DepthFormat.Depth24Stencil8 */
 };
 
-Renderbuffer D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) {
+Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) {
 	D3D11_TEXTURE2D_DESC desc;
-	D3D11Renderbuffer result = D3D11Renderbuffer(RENDERBUFFER_DEPTH);
+	D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_DEPTH);
 	HRESULT res;
 
 	/* Initialize the renderbuffer */
-	result.multiSampleCount = multiSampleCount;
-	result.type = RENDERBUFFER_DEPTH;
-	result.depth.format = format;
+	result->multiSampleCount = multiSampleCount;
+	result->type = RENDERBUFFER_DEPTH;
+	result->depth.format = format;
 
 	/* Create the backing texture */
 	desc.Width = width;
@@ -952,42 +978,43 @@ Renderbuffer D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t h
 	GFX_THROW_INFO(device->CreateTexture2D(
 		&desc,
 		NULL,
-		&result.handle
+		&result->handle
 	));
 
 	/* Create the render target view */
 	GFX_THROW_INFO(device->CreateDepthStencilView(
-		result.handle.Get(),
+		result->handle.Get(),
 		NULL,
-		&result.depth.dsView
+		&result->depth.dsView
 	));
 
 	return result;
 }
 
-void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer& renderbuffer) {
-	D3D11Renderbuffer& d3dRenderbuffer = (D3D11Renderbuffer&)renderbuffer;
+void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer) {
+	D3D11Renderbuffer* d3dRenderbuffer = (D3D11Renderbuffer*)renderbuffer;
 	int32_t i;
 
-	if (d3dRenderbuffer.type == RENDERBUFFER_DEPTH) {
-		if (d3dRenderbuffer.depth.dsView == depthStencilView) {
+	if (d3dRenderbuffer->type == RENDERBUFFER_DEPTH) {
+		if (d3dRenderbuffer->depth.dsView == depthStencilView) {
 			depthStencilView = nullptr;
 		}
-		d3dRenderbuffer.depth.dsView = nullptr;
+		d3dRenderbuffer->depth.dsView = nullptr;
 	} else {
 		for (i = 0; i < MAX_RENDERTARGET_BINDINGS; i += 1) {
-			if (d3dRenderbuffer.color.rtView == renderTargetViews[i]) {
+			if (d3dRenderbuffer->color.rtView == renderTargetViews[i]) {
 				renderTargetViews[i] = nullptr;
 			}
 		}
-		d3dRenderbuffer.color.rtView = nullptr;
+		d3dRenderbuffer->color.rtView = nullptr;
 	}
 
-	d3dRenderbuffer.handle = nullptr;
+	d3dRenderbuffer->handle = nullptr;
+	delete d3dRenderbuffer;
 }
 
-Buffer D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
-	D3D11Buffer result;
+Buffer* D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
+	D3D11Buffer* result = new D3D11Buffer();
 	D3D11_BUFFER_DESC desc;
 	HRESULT res;
 
@@ -1003,17 +1030,17 @@ Buffer D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_
 	GFX_THROW_INFO(device->CreateBuffer(
 		&desc,
 		NULL,
-		&result.handle
+		&result->handle
 	));
 
 	/* Return the result */
-	result.dynamic = dynamic;
-	result.size = desc.ByteWidth;
+	result->dynamic = dynamic;
+	result->size = desc.ByteWidth;
 	return result;
 }
 
-void D3D11Renderer::AddDisposeVertexBuffer(Buffer& buffer) {
-	D3D11Buffer& d3dBuffer = (D3D11Buffer&)buffer;
+void D3D11Renderer::AddDisposeVertexBuffer(Buffer* buffer) {
+	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	ID3D11Buffer* nullVertexBuffers[ ] = { NULL };
 	uint32_t whatever[1] = { 0 };
 	int32_t i;
@@ -1034,26 +1061,27 @@ void D3D11Renderer::AddDisposeVertexBuffer(Buffer& buffer) {
 	//	}
 	//}
 
-	d3dBuffer.handle = nullptr;
+	d3dBuffer->handle = nullptr;
+	delete d3dBuffer;
 }
 
-void D3D11Renderer::SetVertexBufferData(Buffer& buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options) {
-	D3D11Buffer& d3dBuffer = (D3D11Buffer&)buffer;
+void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options) {
+	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	D3D11_MAPPED_SUBRESOURCE subres = { 0, 0, 0 };
 	int32_t dataLen = vertexStride * elementCount;
 	D3D11_BOX dstBox = { offsetInBytes, 0, 0, offsetInBytes + dataLen, 1, 1 };
 	HRESULT res;
 
 	ctxLock.lock();
-	if (d3dBuffer.dynamic) {
+	if (d3dBuffer->dynamic) {
 		if (debugMode &&
 			options == SETDATAOPTIONS_NONE &&
-			dataLen < d3dBuffer.size) {
+			dataLen < d3dBuffer->size) {
 			throw InfoException(__LINE__, __FILE__, { "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!" });
 		}
 
 		GFX_THROW_INFO_ONLY(context->Map(
-			d3dBuffer.handle.Get(),
+			d3dBuffer->handle.Get(),
 			0,
 			options == SETDATAOPTIONS_NOOVERWRITE ?
 			D3D11_MAP_WRITE_NO_OVERWRITE :
@@ -1066,10 +1094,10 @@ void D3D11Renderer::SetVertexBufferData(Buffer& buffer, int32_t offsetInBytes, v
 			data,
 			dataLen
 		);
-		GFX_THROW_INFO_ONLY(context->Unmap(d3dBuffer.handle.Get(), 0));
+		GFX_THROW_INFO_ONLY(context->Unmap(d3dBuffer->handle.Get(), 0));
 	} else {
 		GFX_THROW_INFO_ONLY(context->UpdateSubresource(
-			d3dBuffer.handle.Get(),
+			d3dBuffer->handle.Get(),
 			0,
 			&dstBox,
 			data,
@@ -1080,8 +1108,8 @@ void D3D11Renderer::SetVertexBufferData(Buffer& buffer, int32_t offsetInBytes, v
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::GetVertexBufferData(const Buffer& buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride) {
-	const D3D11Buffer& d3dBuffer = (const D3D11Buffer&)buffer;
+void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride) {
+	const D3D11Buffer* d3dBuffer = (const D3D11Buffer*)buffer;
 	D3D11_BUFFER_DESC desc;
 	wrl::ComPtr<ID3D11Buffer> stagingBuffer;
 	int32_t dataLength = vertexStride * elementCount;
@@ -1092,7 +1120,7 @@ void D3D11Renderer::GetVertexBufferData(const Buffer& buffer, int32_t offsetInBy
 	HRESULT res;
 
 	/* Create staging buffer */
-	desc.ByteWidth = d3dBuffer.size;
+	desc.ByteWidth = d3dBuffer->size;
 	desc.Usage = D3D11_USAGE_STAGING;
 	desc.BindFlags = 0;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
@@ -1113,7 +1141,7 @@ void D3D11Renderer::GetVertexBufferData(const Buffer& buffer, int32_t offsetInBy
 		0,
 		0,
 		0,
-		d3dBuffer.handle.Get(),
+		d3dBuffer->handle.Get(),
 		0,
 		&srcBox
 	));
@@ -1150,8 +1178,8 @@ void D3D11Renderer::GetVertexBufferData(const Buffer& buffer, int32_t offsetInBy
 
 }
 
-Buffer D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
-	D3D11Buffer result;
+Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
+	D3D11Buffer* result = new D3D11Buffer();
 	D3D11_BUFFER_DESC desc;
 	HRESULT res;
 
@@ -1167,19 +1195,19 @@ Buffer D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t
 	device->CreateBuffer(
 		&desc,
 		NULL,
-		&result.handle
+		&result->handle
 	);
 
 	/* Return the result */
-	result.dynamic = dynamic;
-	result.size = desc.ByteWidth;
+	result->dynamic = dynamic;
+	result->size = desc.ByteWidth;
 	return result;
 }
 
-void D3D11Renderer::AddDisposeIndexBuffer(Buffer& buffer) {
-	D3D11Buffer& d3dBuffer = (D3D11Buffer&)buffer;
+void D3D11Renderer::AddDisposeIndexBuffer(Buffer* buffer) {
+	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 
-	if (d3dBuffer.handle == indexBuffer) {
+	if (d3dBuffer->handle == indexBuffer) {
 		indexBuffer = nullptr;
 		ctxLock.lock();
 		context->IASetIndexBuffer(
@@ -1190,27 +1218,28 @@ void D3D11Renderer::AddDisposeIndexBuffer(Buffer& buffer) {
 		ctxLock.unlock();
 	}
 
-	d3dBuffer.handle = nullptr;
+	d3dBuffer->handle = nullptr;
+	delete d3dBuffer;
 }
 
-void D3D11Renderer::SetIndexBufferData(Buffer& buffer, int32_t offsetInBytes, void* data, int32_t dataLength, SetDataOptions options) {
+void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength, SetDataOptions options) {
 
-	D3D11Buffer& d3dBuffer = (D3D11Buffer&)buffer;
+	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	D3D11_MAPPED_SUBRESOURCE subres = { 0, 0, 0 };
 	D3D11_BOX dstBox = { offsetInBytes, 0, 0, offsetInBytes + dataLength, 1, 1 };
 	HRESULT res;
 
 
 	ctxLock.lock();
-	if (d3dBuffer.dynamic) {
+	if (d3dBuffer->dynamic) {
 		if (debugMode &&
 			options == SETDATAOPTIONS_NONE &&
-			dataLength < d3dBuffer.size) {
+			dataLength < d3dBuffer->size) {
 			throw InfoException(__LINE__, __FILE__, { "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!" });
 		}
 
 		context->Map(
-			d3dBuffer.handle.Get(),
+			d3dBuffer->handle.Get(),
 			0,
 			options == SETDATAOPTIONS_NOOVERWRITE ?
 			D3D11_MAP_WRITE_NO_OVERWRITE :
@@ -1224,12 +1253,12 @@ void D3D11Renderer::SetIndexBufferData(Buffer& buffer, int32_t offsetInBytes, vo
 			dataLength
 		);
 		context->Unmap(
-			d3dBuffer.handle.Get(),
+			d3dBuffer->handle.Get(),
 			0
 		);
 	} else {
 		context->UpdateSubresource(
-			d3dBuffer.handle.Get(),
+			d3dBuffer->handle.Get(),
 			0,
 			&dstBox,
 			data,
@@ -1240,8 +1269,8 @@ void D3D11Renderer::SetIndexBufferData(Buffer& buffer, int32_t offsetInBytes, vo
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::GetIndexBufferData(const Buffer& buffer, int32_t offsetInBytes, void* data, int32_t dataLength) {
-	D3D11Buffer& d3dBuffer = (D3D11Buffer&)buffer;
+void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength) {
+	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	D3D11_BUFFER_DESC desc;
 	wrl::ComPtr<ID3D11Buffer> stagingBuffer;
 	D3D11_MAPPED_SUBRESOURCE subres;
@@ -1249,7 +1278,7 @@ void D3D11Renderer::GetIndexBufferData(const Buffer& buffer, int32_t offsetInByt
 	HRESULT res;
 
 	/* Create staging buffer */
-	desc.ByteWidth = d3dBuffer.size;
+	desc.ByteWidth = d3dBuffer->size;
 	desc.Usage = D3D11_USAGE_STAGING;
 	desc.BindFlags = 0;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
@@ -1269,7 +1298,7 @@ void D3D11Renderer::GetIndexBufferData(const Buffer& buffer, int32_t offsetInByt
 		0,
 		0,
 		0,
-		d3dBuffer.handle.Get(),
+		d3dBuffer->handle.Get(),
 		0,
 		&srcBox
 	);
@@ -1371,11 +1400,11 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 		&swapchainTexture
 	));
 
-	device->CreateRenderTargetView(
+	GFX_THROW_INFO(device->CreateRenderTargetView(
 		swapchainTexture.Get(),
-		&swapchainViewDesc,
+		NULL,
 		&swapchainRTView
-	);
+	));
 
 	/* This is the default render target */
 	SetRenderTargets(
@@ -1388,28 +1417,20 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 
 }
 
+
+void D3D11Renderer::ResetBackbuffer(const PresentationParameters& presentationParameters) {
+
+	CreateBackbuffer(
+		presentationParameters
+	);
+	SetPresentationInterval(
+		presentationParameters.presentationInterval
+	);
+
+}
+
 void D3D11Renderer::CreateSwapChain(const PresentationParameters& pp) {
-	DXGI_SWAP_CHAIN_DESC swapchainDesc;
-
-	/* Initialize swapchain descriptor */
-	swapchainDesc.BufferDesc.Width = 0;
-	swapchainDesc.BufferDesc.Height = 0;
-	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	swapchainDesc.SampleDesc.Count = 1;
-	swapchainDesc.SampleDesc.Quality = 0;
-	swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapchainDesc.BufferCount = 3;
-	swapchainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-	//swapchainDesc.BufferDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-	swapchainDesc.Flags = 0;
-
-	/* Create the swap chain! */
-	GFX_THROW_INFO(factory->CreateSwapChain(
-		device.Get(),
-		&swapchainDesc,
-		&swapchain
-	));
+	
 }
 void D3D11Renderer::ResizeSwapChain(const PresentationParameters& pp) {
 	int w, h;
@@ -1655,7 +1676,7 @@ wrl::ComPtr<ID3D11SamplerState> D3D11Renderer::FetchSamplerState(const SamplerSt
 	/* We have to make a new sampler state... */
 	desc.AddressU = Wrap[state.addressU];
 	desc.AddressV = Wrap[state.addressV];
-	//desc.AddressW = Wrap[state.addressW]; //TODO
+	desc.AddressW = Wrap[state.addressW]; 
 	desc.BorderColor[0] = 1.0f;
 	desc.BorderColor[1] = 1.0f;
 	desc.BorderColor[2] = 1.0f;
@@ -1835,42 +1856,42 @@ void D3D11Renderer::RestoreTargetTextures() {
 
 
 
-void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& bindings) {
-	D3D11VertexBufferBinding & vertexBuffer = (D3D11VertexBufferBinding&)bindings;
+void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* bindings) {
+	D3D11VertexBufferBinding* vertexBuffer = (D3D11VertexBufferBinding*)bindings;
 
 	ctxLock.lock();
-	context->IASetVertexBuffers(0u, 1u, vertexBuffer.vertexBuffer.handle.GetAddressOf(), &vertexBuffer.vertexStride, &vertexBuffer.vertexOffset);
+	context->IASetVertexBuffers(0u, 1u, ((D3D11Buffer*)vertexBuffer->vertexBuffer)->handle.GetAddressOf(), &vertexBuffer->vertexStride, &vertexBuffer->vertexOffset);
 	ctxLock.unlock();
 }
 
-void D3D11Renderer::ApplyPixelShader(const PixelShader& shader) {
-	context->PSSetShader(shader.pPixelShader.Get(), nullptr, 0u);
+void D3D11Renderer::ApplyPixelShader(const PixelShader* shader) {
+	context->PSSetShader(shader->pPixelShader.Get(), nullptr, 0u);
 }
 
-void D3D11Renderer::ApplyVertexShader(const VertexShader& shader) {
-	context->VSSetShader(shader.pVertexShader.Get(), nullptr, 0u);
-	context->IASetInputLayout(shader.pInputLayout.Get());
-	context->VSSetConstantBuffers(0u, 1u, shader.pConstantBuffer.GetAddressOf());
+void D3D11Renderer::ApplyVertexShader(const VertexShader* shader) {
+	context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u);
+	context->IASetInputLayout(shader->pInputLayout.Get());
+	context->VSSetConstantBuffers(0u, 1u, shader->pConstantBuffer.GetAddressOf());
 
 }
 
-PixelShader D3D11Renderer::CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData) {
-	PixelShader result;
-	result.pPSData = shaderData;
-	device->CreatePixelShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result.pPixelShader);
+PixelShader* D3D11Renderer::CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData) {
+	PixelShader* result = new PixelShader();
+	result->pPSData = shaderData;
+	device->CreatePixelShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result->pPixelShader);
 	return result;
 }
 
-VertexShader D3D11Renderer::CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize) {
-	VertexShader result;
-	result.pVSData = shaderData;
-	GFX_THROW_INFO(device->CreateVertexShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result.pVertexShader));
+VertexShader* D3D11Renderer::CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize) {
+	VertexShader* result = new VertexShader();
+	result->pVSData = shaderData;
+	GFX_THROW_INFO(device->CreateVertexShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result->pVertexShader));
 	GFX_THROW_INFO(device->CreateInputLayout(
 		inputLayout,
 		inputLayoutSize,
 		shaderData->GetBufferPointer(), 
 		shaderData->GetBufferSize(),
-		&result.pInputLayout));
+		&result->pInputLayout));
 
 
 
@@ -1879,18 +1900,17 @@ VertexShader D3D11Renderer::CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderDat
 	cbd.Usage = D3D11_USAGE_DEFAULT;
 	cbd.CPUAccessFlags = 0u;
 	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(result.localBuffer);
+	cbd.ByteWidth = sizeof(result->localBuffer);
 	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = {};
-	GFX_THROW_INFO(device->CreateBuffer(&cbd, &csd, &result.pConstantBuffer));
+	GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->pConstantBuffer));
 
 	return result;
 }
 
-void D3D11Renderer::UpdataVertexShader(const VertexShader& shader) {
+void D3D11Renderer::UpdataVertexShader(const VertexShader* shader) {
 	context->UpdateSubresource(
-		shader.pConstantBuffer.Get(), 0, 0,
-		&shader.localBuffer, 0, 0);
+		shader->pConstantBuffer.Get(), 0, 0,
+		&shader->localBuffer, 0, 0);
 }
 
 

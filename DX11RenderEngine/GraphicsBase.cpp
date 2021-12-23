@@ -1,8 +1,27 @@
 #include "GraphicsBase.h"
 
+using namespace Renderer;
+
+PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t height) {
+	PresentationParameters pp;
+
+	pp.isFullScreen = false;
+	pp.backBufferWidth = width;
+	pp.backBufferHeight = height;
+	pp.deviceWindowHandle = hWnd;
+	pp.multiSampleCount = 0;
+	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_NONE;
+	pp.presentationInterval = PresentInterval::PRESENTINTERVAL_DEFAULT;
+
+	return pp;
+}
+
 GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
-	:width(width), height(height){
+	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1) {
+	//auto pp = ;
+	//renderer = std::make_shared<D3D11Renderer>(pp);
 	// for checking results of d3d functions
+	/*
 	HRESULT hr;
 	auto& gfx = *this;
 
@@ -49,7 +68,10 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget));
 
-	// create depth stensil state
+	// create depth stensil state*/
+	
+	
+	/*
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
 	dsDesc.DepthEnable = TRUE;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -92,9 +114,12 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
+
+	*/
 }
 
 void GraphicsBase::OnResize(size_t width, size_t height) {
+	/*
 	this->width = width;
 	this->height = height;
 	// Release existing DirectX views and buffers
@@ -129,13 +154,13 @@ void GraphicsBase::OnResize(size_t width, size_t height) {
 	depthStencilDesc.SampleDesc.Count = 1;
 	depthStencilDesc.SampleDesc.Quality = 0;
 
-	// Create the depth buffer and its view, then 
+	// Create the depth buffer and its view, then
 	// release our reference to the texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthBuffer;
 	pDevice->CreateTexture2D(&depthStencilDesc, 0, &pDepthBuffer);
 	pDevice->CreateDepthStencilView(pDepthBuffer.Get(), 0, &pDSV);
 
-	// Bind the views to the pipeline, so rendering properly 
+	// Bind the views to the pipeline, so rendering properly
 	// uses their underlying textures
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 
@@ -149,4 +174,5 @@ void GraphicsBase::OnResize(size_t width, size_t height) {
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
+	*/
 }

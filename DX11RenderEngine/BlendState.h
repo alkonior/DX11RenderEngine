@@ -1,6 +1,7 @@
 #pragma once
 #include "Utils.h"
-
+namespace Renderer
+{
 enum Blend {
 	BLEND_ONE,
 	BLEND_ZERO,
@@ -49,5 +50,4 @@ struct BlendState {
 	int32_t multiSampleMask;
 };
 
-
-struct Buffer {};
+};

@@ -25,6 +25,6 @@ struct D3D11Backbuffer {
 		/* Multisample */
 		wrl::ComPtr<ID3D11Texture2D> resolveBuffer;
 	} d3d11;
-}
+};
 
 };
