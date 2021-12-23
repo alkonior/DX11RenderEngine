@@ -160,11 +160,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
+    <ClInclude Include="D3D11Renderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="D3D11Texture.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Manager2D.h" />
     <ClInclude Include="PixelShader2D.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturesManager.h" />
+    <ClInclude Include="Utils.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="VertexShader2D.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DxgiInfoManager.h" />
@@ -179,6 +188,15 @@
     <ClInclude Include="Utils\include\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D11Backbuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="D3D11Renderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="D3D11Texture.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Manager2D.cpp" />

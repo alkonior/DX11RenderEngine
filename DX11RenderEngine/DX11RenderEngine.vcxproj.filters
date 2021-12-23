@@ -46,6 +46,12 @@
     <Filter Include="Sources\Primitives">
       <UniqueIdentifier>{add33d80-b5d2-44c2-accb-8ec93f7a4e52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\D3D11Renderer">
+      <UniqueIdentifier>{c745519e-88f4-4632-a15c-d1265b4d3507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\D3D11Renderer">
+      <UniqueIdentifier>{db08a748-d620-4db3-bc3e-94db34d8249e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderEngine.h">
@@ -102,6 +108,15 @@
     <ClInclude Include="GDIPlusManager.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11Renderer.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Texture.h">
+      <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderEngine.cpp">
@@ -151,6 +166,15 @@
     </ClCompile>
     <ClCompile Include="GDIPlusManager.cpp">
       <Filter>Sources\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Renderer.cpp">
+      <Filter>Sources\D3D11Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Backbuffer.cpp">
+      <Filter>Sources\D3D11Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Texture.cpp">
+      <Filter>Sources\D3D11Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
