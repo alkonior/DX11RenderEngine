@@ -210,7 +210,7 @@ struct IRenderer {
 	 * texture:	The texture bound to this sampler.
 	 * sampler:	The new parameters to use for this slot's texture sampling.
 	 */
-	virtual void VerifyPixelSampler(int32_t index, const Texture& texture, const SamplerState& sampler) = 0;
+	virtual void VerifyPixelSampler(int32_t index, const Texture* texture, const SamplerState& sampler) = 0;
 
 	/* Updates a vertex sampler slot with new texture/sampler data for future draw
 	 * calls. This should only be called on slots that have modified texture/sampler
@@ -220,7 +220,7 @@ struct IRenderer {
 	 * texture:	The texture bound to this sampler.
 	 * sampler:	The new parameters to use for this slot's texture sampling.
 	 */
-	virtual void VerifyVertexSampler(int32_t index, const Texture& texture, const SamplerState& sampler) = 0;
+	virtual void VerifyVertexSampler(int32_t index, const Texture* texture, const SamplerState& sampler) = 0;
 
 	///* Updates the vertex attribute state to read from a set of vertex buffers. This
 	// * should be the very last thing you call before making a draw call, as this

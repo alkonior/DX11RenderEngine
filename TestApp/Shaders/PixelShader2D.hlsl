@@ -4,9 +4,6 @@ struct PSIn {
 };
 
 
-Texture2D tex : register(t0);
-
-SamplerState basicSampler : register(s0);
 
 
 float4 main(PSIn input) : SV_Target

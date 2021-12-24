@@ -8,7 +8,7 @@ class TexturesManager {
 public:
 
 	struct TextureCache {
-		wrl::ComPtr<ID3D11Texture2D> texture;
+		Renderer::Texture* texture;
 		size_t width;
 		size_t height;
 

@@ -60,8 +60,8 @@ private:
 	wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
 
 	/* Textures */
-	std::vector<D3D11Texture> vertexTextures;
-	std::vector<D3D11Texture> pixelTextures;
+	std::vector<D3D11Texture*> vertexTextures;
+	std::vector<D3D11Texture*> pixelTextures;
 	std::vector<wrl::ComPtr<ID3D11SamplerState>> vertexSamplers;
 	std::vector<wrl::ComPtr<ID3D11SamplerState>> pixelSamplers;
 
@@ -121,8 +121,8 @@ public:
 	virtual void SetBlendState(const BlendState& blendState) override;
 	virtual void SetDepthStencilState(const DepthStencilState& depthStencilState) override;
 	virtual void ApplyRasterizerState(const RasterizerState& rasterizerState) override;
-	virtual void VerifyPixelSampler(int32_t index, const Texture& texture, const SamplerState& sampler) override;
-	virtual void VerifyVertexSampler(int32_t index,const Texture& texture, const SamplerState& sampler) override;
+	virtual void VerifyPixelSampler(int32_t index, const Texture* texture, const SamplerState& sampler) override;
+	virtual void VerifyVertexSampler(int32_t index,const Texture* texture, const SamplerState& sampler) override;
 	virtual void SetRenderTargets(RenderTargetBinding* renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, uint8_t preserveTargetContents) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;

@@ -104,10 +104,10 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
 
 	/* Initialize texture and sampler collections */
-	vertexTextures.resize(MAX_VERTEXTEXTURE_SAMPLERS, D3D11Texture::NullTexture);
+	vertexTextures.resize(MAX_VERTEXTEXTURE_SAMPLERS, &D3D11Texture::NullTexture);
 	vertexSamplers.resize(MAX_VERTEXTEXTURE_SAMPLERS, nullptr);
 
-	pixelTextures.resize(MAX_TEXTURE_SAMPLERS, D3D11Texture::NullTexture);
+	pixelTextures.resize(MAX_TEXTURE_SAMPLERS, &D3D11Texture::NullTexture);
 	pixelSamplers.resize(MAX_TEXTURE_SAMPLERS, nullptr);
 
 	renderTargetViews.resize(MAX_RENDERTARGET_BINDINGS);
@@ -445,14 +445,14 @@ void D3D11Renderer::ApplyRasterizerState(const RasterizerState& rasterizerState)
 
 }
 
-void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture& texture, const SamplerState& sampler) {
+void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, const SamplerState& sampler) {
 	if (index < MAX_TEXTURE_SAMPLERS) {
-		const D3D11Texture& d3dTexture = (const D3D11Texture&)texture;
+		D3D11Texture* d3dTexture = (D3D11Texture*)texture;
 		wrl::ComPtr<ID3D11SamplerState> d3dSamplerState;
 
-		if (d3dTexture.levelCount == -1) {
-			if (pixelTextures[index].levelCount != -1) {
-				pixelTextures[index] = D3D11Texture::NullTexture;
+		if (d3dTexture->levelCount == -1) {
+			if (pixelTextures[index]->levelCount != -1) {
+				pixelTextures[index] = &D3D11Texture::NullTexture;
 				pixelSamplers[index] = nullptr;
 				ctxLock.lock();
 				if (index < MAX_TEXTURE_SAMPLERS) {
@@ -472,13 +472,13 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture& texture, co
 		}
 
 		/* Bind the correct texture */
-		if (d3dTexture.handle != pixelTextures[index].handle) {
+		if (d3dTexture->handle != pixelTextures[index]->handle) {
 			pixelTextures[index] = d3dTexture;
 			ctxLock.lock();
 			GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
 				index,
 				1,
-				d3dTexture.shaderView.GetAddressOf()));
+				d3dTexture->shaderView.GetAddressOf()));
 			ctxLock.unlock();
 		}
 
@@ -499,14 +499,14 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture& texture, co
 
 }
 
-void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture& texture, const  SamplerState& sampler) {
+void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture* texture, const  SamplerState& sampler) {
 	if (index < MAX_VERTEXTEXTURE_SAMPLERS) {
-		const D3D11Texture& d3dTexture = (const D3D11Texture&)texture;
+		D3D11Texture* d3dTexture = (D3D11Texture*)texture;
 		wrl::ComPtr<ID3D11SamplerState> d3dSamplerState;
 
-		if (d3dTexture.levelCount == -1) {
-			if (vertexTextures[index].levelCount != -1) {
-				vertexTextures[index] = D3D11Texture::NullTexture;
+		if (d3dTexture->levelCount == -1) {
+			if (vertexTextures[index]->levelCount != -1) {
+				vertexTextures[index] = &D3D11Texture::NullTexture;
 				vertexSamplers[index] = nullptr;
 				ctxLock.lock();
 				if (index < MAX_TEXTURE_SAMPLERS) {
@@ -526,13 +526,13 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture& texture, 
 		}
 
 		/* Bind the correct texture */
-		if (d3dTexture.handle != vertexTextures[index].handle) {
+		if (d3dTexture->handle != vertexTextures[index]->handle) {
 			vertexTextures[index] = d3dTexture;
 			ctxLock.lock();
 			GFX_THROW_INFO_ONLY(context->VSSetShaderResources(
 				index,
 				1,
-				d3dTexture.shaderView.GetAddressOf()));
+				d3dTexture->shaderView.GetAddressOf()));
 			ctxLock.unlock();
 		}
 
@@ -709,7 +709,7 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 	desc.Height = height;
 	desc.MipLevels = levelCount;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UINT;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -764,8 +764,8 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture) {
 
 	/* Unbind the texture */
 	for (i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1) {
-		if (pixelTextures[i].handle == tex->handle) {
-			pixelTextures[i] = D3D11Texture::NullTexture;
+		if (pixelTextures[i]->handle == tex->handle) {
+			pixelTextures[i] = &D3D11Texture::NullTexture;
 		}
 	}
 
@@ -1710,8 +1710,8 @@ void D3D11Renderer::DiscardTargetTextures(ID3D11RenderTargetView** views, int32_
 	for (i = 0; i < numViews; i += 1) {
 		auto view = views[i];
 		for (j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
-			const D3D11Texture& texture = pixelTextures[j];
-			if (!texture.isRenderTarget) {
+			const D3D11Texture* texture = pixelTextures[j];
+			if (!texture->isRenderTarget) {
 				continue;
 			}
 			//if (texture->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
@@ -1725,24 +1725,24 @@ void D3D11Renderer::DiscardTargetTextures(ID3D11RenderTargetView** views, int32_
 			//		}
 			//	}
 			//}
-			bound = (texture.rtView.Get() == view);
+			bound = (texture->rtView.Get() == view);
 			if (bound) {
 				context->PSSetShaderResources(
 					j,
 					1,
-					&D3D11Texture::NullTexture.shaderView
+					D3D11Texture::NullTexture.shaderView.GetAddressOf()
 				);
 				context->PSSetSamplers(
 					j,
 					1,
-					&pixelSamplers[j]
+					pixelSamplers[j].GetAddressOf()
 				);
 			}
 		}
 
 		for (j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
-			const D3D11Texture& texture = vertexTextures[j];
-			if (!texture.isRenderTarget) {
+			const D3D11Texture* texture = vertexTextures[j];
+			if (!texture->isRenderTarget) {
 				continue;
 			}
 			//if (texture->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
@@ -1756,17 +1756,17 @@ void D3D11Renderer::DiscardTargetTextures(ID3D11RenderTargetView** views, int32_
 			//		}
 			//	}
 			//}
-			bound = (texture.rtView.Get() == view);
+			bound = (texture->rtView.Get() == view);
 			if (bound) {
 				context->VSSetShaderResources(
 					j,
 					1,
-					&D3D11Texture::NullTexture.shaderView
+					D3D11Texture::NullTexture.shaderView.GetAddressOf()
 				);
 				context->VSSetSamplers(
 					j,
 					1,
-					&vertexSamplers[j]
+					vertexSamplers[j].GetAddressOf()
 				);
 			}
 		}
@@ -1785,7 +1785,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 		auto view = renderTargetViews[i];
 		for (j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
 			auto texture = pixelTextures[j];
-			if (!texture.isRenderTarget) {
+			if (!texture->isRenderTarget) {
 				continue;
 			}
 
@@ -1801,13 +1801,13 @@ void D3D11Renderer::RestoreTargetTextures() {
 			//	}
 			//}
 
-			bound = (texture.rtView == view);
+			bound = (texture->rtView == view);
 			if (bound) {
 				if (j < MAX_TEXTURE_SAMPLERS) {
 					context->PSSetShaderResources(
 						j,
 						1,
-						texture.shaderView.GetAddressOf()
+						texture->shaderView.GetAddressOf()
 					);
 					context->PSSetSamplers(
 						j,
@@ -1819,7 +1819,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 		}
 		for (j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
 			auto texture = vertexTextures[j];
-			if (!texture.isRenderTarget) {
+			if (!texture->isRenderTarget) {
 				continue;
 			}
 
@@ -1835,13 +1835,13 @@ void D3D11Renderer::RestoreTargetTextures() {
 			//	}
 			//}
 
-			bound = (texture.rtView == view);
+			bound = (texture->rtView == view);
 			if (bound) {
 				if (j < MAX_TEXTURE_SAMPLERS) {
 					context->VSSetShaderResources(
 						j,
 						1,
-						texture.shaderView.GetAddressOf()
+						texture->shaderView.GetAddressOf()
 					);
 					context->VSSetSamplers(
 						j,

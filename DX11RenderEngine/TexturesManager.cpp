@@ -22,11 +22,15 @@ void TexturesManager::RegTexture(GraphicsBase& gfx,const MyTexture& tx, size_t i
 
 	auto&  pTexture = textures[id];
 	//GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+	pTexture.texture = gfx.renderer.CreateTexture2D(tx.GetWidth(), tx.GetHeight(), 0, 0);
+	gfx.renderer.SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0, (void*)tx.GetBufferPtr(), tx.GetWidth()*tx.GetHeight() * 4);
 	pTexture.width = tx.GetWidth();
 	pTexture.height = tx.GetHeight();
 }
 
 void TexturesManager::ReeaseTexture(size_t id) {
+	auto& pTexture = textures[id];
+	//if (pTexture.texture =! nullptr) gfx.renderer.AddD
 	textures.erase(id);
 }
 

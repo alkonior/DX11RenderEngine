@@ -59,10 +59,7 @@ Manager2D::Manager2D(GraphicsBase& gfx) {
 	indexBuffer = gfx.renderer.GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, 12);
 	gfx.renderer.SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
 
-	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
-	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	
 
 
 
@@ -130,17 +127,20 @@ void Manager2D::Present(GraphicsBase& gfx) {
 	//gfx.pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 
 	// create the resource view on the texture
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
+	//D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//srvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	//srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	//srvDesc.Texture2D.MostDetailedMip = 0;
+	//srvDesc.Texture2D.MipLevels = 1;
 	wrl::ComPtr<ID3D11ShaderResourceView> pTextureView;
-
+	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
+	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		auto  pTexture = drawCalls[i].texture.texture;
-
+		gfx.renderer.VerifyPixelSampler(0, pTexture, sampler);
 		//GFX_THROW_INFO(gfx.pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pTextureView));
 		//GFX_THROW_INFO_ONLY(gfx.pContext->PSSetShaderResources(0, 1u, pTextureView.GetAddressOf()));
 		//
