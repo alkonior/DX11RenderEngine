@@ -4,6 +4,7 @@
 #include "DepthStencilState.h"
 #include "RasterizerState.h"
 #include "SamplerState.h"
+#include "PipelineState.h"
 
 namespace Renderer {
 
@@ -758,6 +759,38 @@ struct IRenderer {
 	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) = 0;
 
 
+	virtual PixelShader* CompilePixelShader(
+		void* shaderData, size_t dataSize, 
+		ShaderDefines defines[], size_t definesSize, 
+		void* includes,
+		const char* enteryPoint,
+		const char* target,
+		uint16_t flags
+	) = 0;
+	
+	virtual VertexShader* CompileVertexShader(
+		void* shaderData, size_t dataSize, 
+		ShaderDefines defines[], size_t definesSize, 
+		void* includes,
+		const char* enteryPoint,
+		const char* target,
+		uint16_t flags,
+		void* inpitLayout,
+		size_t inputLayoutSize
+	) = 0;
+
+	virtual void ApplyPixelShader(PixelShader* pixelShader) = 0;
+	virtual void ApplyVertexShader(VertexShader* vertexShader) = 0;
+	
+	virtual void AddDisposePixelShader(PixelShader* pixelShader) = 0;
+	virtual void AddDisposeVertexShader(VertexShader* vertexShader) = 0;
+
+	virtual ConstBuffer* CreateConstBuffer(size_t size) = 0;
+	virtual void VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) = 0;
+	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) = 0;
+	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) = 0;
+
+	virtual void ApplyPipelineState(PipelineState* piplineState) = 0;
 
 };
 

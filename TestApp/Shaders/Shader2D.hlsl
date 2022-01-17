@@ -31,6 +31,9 @@ SamplerState basicSampler : register(s0);
 
 float4 psIn(VSOut input) : SV_Target
 {
+
+	//return float4(1,0, 0.0f ,1.0f);
+	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 	return tex.Sample(basicSampler, input.uv);
 	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 }

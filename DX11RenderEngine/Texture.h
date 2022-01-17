@@ -4,7 +4,7 @@
 
 
 
-class MyTexture {
+class TextureData {
 public:
 	class Color {
 	public:
@@ -63,12 +63,12 @@ public:
 		std::string note;
 	};
 public:
-	MyTexture(unsigned int width, unsigned int height) noexcept;
-	MyTexture(MyTexture&& source) noexcept;
-	MyTexture(MyTexture&) = delete;
-	MyTexture& operator=(MyTexture&& donor) noexcept;
-	MyTexture& operator=(const MyTexture&) = delete;
-	~MyTexture();
+	TextureData(unsigned int width, unsigned int height) noexcept;
+	TextureData(TextureData&& source) noexcept;
+	TextureData(TextureData&) = delete;
+	TextureData& operator=(TextureData&& donor) noexcept;
+	TextureData& operator=(const TextureData&) = delete;
+	~TextureData();
 	void Clear(Color fillValue) noexcept;
 	void PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEBUG);
 	Color GetPixel(unsigned int x, unsigned int y) const noexcept(!_DEBUG);
@@ -77,14 +77,14 @@ public:
 	Color* GetBufferPtr() noexcept;
 	const Color* GetBufferPtr() const noexcept;
 	const Color* GetBufferPtrConst() const noexcept;
-	static MyTexture FromFile(const std::string& name);
+	static TextureData FromFile(const std::string& name);
 #ifdef WIN32
-	static MyTexture FromFile(LPCWCH name);
+	static TextureData FromFile(LPCWCH name);
 #endif
 	void Save(const std::string& filename) const;
-	void Copy(const MyTexture& src) noexcept(!_DEBUG);
+	void Copy(const TextureData& src) noexcept(!_DEBUG);
 private:
-	MyTexture(unsigned int width, unsigned int height, std::unique_ptr<Color[ ]> pBufferParam) noexcept;
+	TextureData(unsigned int width, unsigned int height, std::unique_ptr<Color[ ]> pBufferParam) noexcept;
 private:
 	std::unique_ptr<Color[ ]> pBuffer;
 	unsigned int width;

@@ -58,11 +58,17 @@
     <Filter Include="Headers\Exceptions">
       <UniqueIdentifier>{537a1489-1a3b-40dc-bfff-0047ead53dab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\Renderer\PipelineState">
+      <UniqueIdentifier>{2796c052-3746-4281-98f5-f3a0bcf9f2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Core\Rendereres">
+      <UniqueIdentifier>{62c91bf9-3958-4266-a933-c65cc110b229}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core\Renderes">
+      <UniqueIdentifier>{392cd0dc-a88c-4ed8-8137-108265de62b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderEngine.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\include\Geometry.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
@@ -132,9 +138,6 @@
     <ClInclude Include="DepthStencilState.h">
       <Filter>Headers\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="RasterizerState.h">
-      <Filter>Headers\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="SamplerState.h">
       <Filter>Headers\Renderer</Filter>
     </ClInclude>
@@ -155,6 +158,24 @@
     </ClInclude>
     <ClInclude Include="D3D11Shaders.h">
       <Filter>Headers\D3D11Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Headers\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngine.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineFactory.h">
+      <Filter>Headers\Renderer\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineState.h">
+      <Filter>Headers\Renderer\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Headers\Core\Rendereres</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRendererFactory.h">
+      <Filter>Headers\Core\Rendereres</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -219,6 +240,18 @@
       <Filter>Sources\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
+      <Filter>Sources\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRendererFactory.cpp">
+      <Filter>Sources\Core\Renderes</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>Sources\Core\Renderes</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineFactory.cpp">
+      <Filter>Sources\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineState.cpp">
       <Filter>Sources\Renderer</Filter>
     </ClCompile>
   </ItemGroup>

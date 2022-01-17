@@ -92,6 +92,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,12 +175,16 @@
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Manager2D.h" />
+    <ClInclude Include="PipelineFactory.h" />
+    <ClInclude Include="PipelineState.h" />
     <ClInclude Include="PixelShader2D.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturesManager.h" />
+    <ClInclude Include="UIRenderer.h" />
+    <ClInclude Include="UIRendererFactory.h" />
     <ClInclude Include="Utils.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
@@ -212,10 +217,14 @@
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Manager2D.cpp" />
+    <ClCompile Include="PipelineFactory.cpp" />
+    <ClCompile Include="PipelineState.cpp" />
     <ClCompile Include="PixelShader2D.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
+    <ClCompile Include="UIRenderer.cpp" />
+    <ClCompile Include="UIRendererFactory.cpp" />
     <ClCompile Include="VertexShader2D.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />

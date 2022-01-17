@@ -8,6 +8,11 @@
 
 
 class Manager2D : public Drawable {
+	struct VertexShaderCosntBuffer {
+		DirectX::SimpleMath::Matrix transform;
+		DirectX::SimpleMath::Vector2 uvShift;
+		DirectX::SimpleMath::Vector2 uvScale;
+	};
 
 	struct Rectangle {
 		Rectangle(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
@@ -25,6 +30,7 @@ public:
 	Manager2D(GraphicsBase&);
 
 	void CompileShaders(GraphicsBase& gfx,LPCWSTR dirr);
+	void CompileShaders(GraphicsBase& gfx,BYTE* shaderData, size_t size);
 	Renderer::VertexShader* vertexShader;
 	Renderer::PixelShader* pixelShader;
 
@@ -43,6 +49,9 @@ private:
 	Renderer::Viewport vp;
 	Renderer::D3D11VertexBufferBinding vertexBuffer;
 	Renderer::Buffer* indexBuffer;
+
+	VertexShaderCosntBuffer localBuffer;
+	Renderer::ConstBuffer* constBuffer;
 	Renderer::SamplerState sampler;
 	//wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	//wrl::ComPtr<ID3D11Buffer> pIndexBuffer;

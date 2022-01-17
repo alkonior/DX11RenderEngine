@@ -13,13 +13,11 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(*this) {}
+	:GraphicsBase(hWnd, width, height), manager2D(&renderer) {}
 
 void Graphics::EndFrame() {
-	HRESULT hr;
-	auto& gfx = *this;
 
-	manager2D.Present(gfx);
+	manager2D.Render();
 
 
 	renderer.SwapBuffers();
@@ -45,16 +43,16 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 
 
 
-void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height) {
-	manager2D.Draw(texturesManger.GetImg(*this, id), x, y, width, height);
+void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+	manager2D.Draw(texturesManger.GetImg(*this, id), x, y, width, height, flags);
 }
 
 
-void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
-	manager2D.Draw(texturesManger.GetImg(*this, id),top, left, texW, texH, x, y, width, height);
+void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+	manager2D.Draw(texturesManger.GetImg(*this, id),top, left, texW, texH, x, y, width, height, flags);
 }
 
-void Graphics::RegisterImg(size_t id, const MyTexture& text) {
+void Graphics::RegisterImg(size_t id, const TextureData& text) {
 	texturesManger.RegTexture(*this, text, id);
 }
 

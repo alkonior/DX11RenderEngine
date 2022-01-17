@@ -9,13 +9,13 @@
 GDIPlusManager gdip;
 
 
-MyTexture::MyTexture(unsigned int width, unsigned int height) noexcept
+TextureData::TextureData(unsigned int width, unsigned int height) noexcept
 	:
 	pBuffer(std::make_unique<Color[ ]>(width * height)),
 	width(width),
 	height(height) {}
 
-MyTexture& MyTexture::operator=(MyTexture&& rhs) noexcept {
+TextureData& TextureData::operator=(TextureData&& rhs) noexcept {
 	width = rhs.width;
 	height = rhs.height;
 	pBuffer = std::move(rhs.pBuffer);
@@ -23,19 +23,19 @@ MyTexture& MyTexture::operator=(MyTexture&& rhs) noexcept {
 	return *this;
 }
 
-MyTexture::MyTexture(MyTexture&& source) noexcept
+TextureData::TextureData(TextureData&& source) noexcept
 	:
 	pBuffer(std::move(source.pBuffer)),
 	width(source.width),
 	height(source.height) {}
 
-MyTexture::~MyTexture() {}
+TextureData::~TextureData() {}
 
-void MyTexture::Clear(Color fillValue) noexcept {
+void TextureData::Clear(Color fillValue) noexcept {
 	memset(pBuffer.get(), fillValue.rgba, width * height * sizeof(Color));
 }
 
-void MyTexture::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEBUG) {
+void TextureData::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEBUG) {
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(x < width);
@@ -43,7 +43,7 @@ void MyTexture::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEB
 	pBuffer[y * width + x] = c;
 }
 
-MyTexture::Color MyTexture::GetPixel(unsigned int x, unsigned int y) const noexcept(!_DEBUG) {
+TextureData::Color TextureData::GetPixel(unsigned int x, unsigned int y) const noexcept(!_DEBUG) {
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(x < width);
@@ -51,27 +51,27 @@ MyTexture::Color MyTexture::GetPixel(unsigned int x, unsigned int y) const noexc
 	return pBuffer[y * width + x];
 }
 
-unsigned int MyTexture::GetWidth() const noexcept {
+unsigned int TextureData::GetWidth() const noexcept {
 	return width;
 }
 
-unsigned int MyTexture::GetHeight() const noexcept {
+unsigned int TextureData::GetHeight() const noexcept {
 	return height;
 }
 
-MyTexture::Color* MyTexture::GetBufferPtr() noexcept {
+TextureData::Color* TextureData::GetBufferPtr() noexcept {
 	return pBuffer.get();
 }
 
-const MyTexture::Color* MyTexture::GetBufferPtr() const noexcept {
+const TextureData::Color* TextureData::GetBufferPtr() const noexcept {
 	return pBuffer.get();
 }
 
-const MyTexture::Color* MyTexture::GetBufferPtrConst() const noexcept {
+const TextureData::Color* TextureData::GetBufferPtrConst() const noexcept {
 	return pBuffer.get();
 }
 
-MyTexture MyTexture::FromFile(const std::string& name) {
+TextureData TextureData::FromFile(const std::string& name) {
 	unsigned int width = 0;
 	unsigned int height = 0;
 	std::unique_ptr<Color[ ]> pBuffer;
@@ -102,17 +102,17 @@ MyTexture MyTexture::FromFile(const std::string& name) {
 		}
 	}
 
-	return MyTexture(width, height, std::move(pBuffer));
+	return TextureData(width, height, std::move(pBuffer));
 }
 
-MyTexture MyTexture::FromFile(LPCWCH name) {
+TextureData TextureData::FromFile(LPCWCH name) {
 	char output[256];
 	const WCHAR* wc = L"Hello World";
 	sprintf(output, "%ls", name);
-	return MyTexture::FromFile(output);
+	return TextureData::FromFile(output);
 }
 
-void MyTexture::Save(const std::string& filename) const {
+void TextureData::Save(const std::string& filename) const {
 	auto GetEncoderClsid = [&filename](const WCHAR* format, CLSID* pClsid) -> void
 	{
 		UINT  num = 0;          // number of image encoders
@@ -123,14 +123,14 @@ void MyTexture::Save(const std::string& filename) const {
 		Gdiplus::GetImageEncodersSize(&num, &size);
 		if (size == 0) {
 			std::stringstream ss;
-			ss << "Saving MyTexture to [" << filename << "]: failed to get encoder; size == 0.";
+			ss << "Saving TextureData to [" << filename << "]: failed to get encoder; size == 0.";
 			throw Exception(__LINE__, __FILE__, ss.str());
 		}
 
 		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
 		if (pImageCodecInfo == nullptr) {
 			std::stringstream ss;
-			ss << "Saving MyTexture to [" << filename << "]: failed to get encoder; failed to allocate memory.";
+			ss << "Saving TextureData to [" << filename << "]: failed to get encoder; failed to allocate memory.";
 			throw Exception(__LINE__, __FILE__, ss.str());
 		}
 
@@ -146,7 +146,7 @@ void MyTexture::Save(const std::string& filename) const {
 
 		free(pImageCodecInfo);
 		std::stringstream ss;
-		ss << "Saving MyTexture to [" << filename <<
+		ss << "Saving TextureData to [" << filename <<
 			"]: failed to get encoder; failed to find matching encoder.";
 		throw Exception(__LINE__, __FILE__, ss.str());
 	};
@@ -162,31 +162,31 @@ void MyTexture::Save(const std::string& filename) const {
 	Gdiplus::Bitmap bitmap(width, height, width * sizeof(Color), PixelFormat32bppARGB, (BYTE*)pBuffer.get());
 	if (bitmap.Save(wideName, &bmpID, nullptr) != Gdiplus::Status::Ok) {
 		std::stringstream ss;
-		ss << "Saving MyTexture to [" << filename << "]: failed to save.";
+		ss << "Saving TextureData to [" << filename << "]: failed to save.";
 		throw Exception(__LINE__, __FILE__, ss.str());
 	}
 }
 
-void MyTexture::Copy(const MyTexture& src) noexcept(!_DEBUG) {
+void TextureData::Copy(const TextureData& src) noexcept(!_DEBUG) {
 	assert(width == src.width);
 	assert(height == src.height);
 	memcpy(pBuffer.get(), src.pBuffer.get(), width * height * sizeof(Color));
 }
 
-MyTexture::MyTexture(unsigned int width, unsigned int height, std::unique_ptr<Color[ ]> pBufferParam) noexcept
+TextureData::TextureData(unsigned int width, unsigned int height, std::unique_ptr<Color[ ]> pBufferParam) noexcept
 	:
 	width(width),
 	height(height),
 	pBuffer(std::move(pBufferParam)) {}
 
 
-// MyTexture exception stuff
-MyTexture::Exception::Exception(int line, const char* file, std::string note) noexcept
+// TextureData exception stuff
+TextureData::Exception::Exception(int line, const char* file, std::string note) noexcept
 	:
 	GraphicsException(line, file),
 	note(std::move(note)) {}
 
-const char* MyTexture::Exception::what() const noexcept {
+const char* TextureData::Exception::what() const noexcept {
 	std::ostringstream oss;
 	oss << GraphicsException::what() << std::endl
 		<< "[Note] " << GetNote();
@@ -194,10 +194,10 @@ const char* MyTexture::Exception::what() const noexcept {
 	return whatBuffer.c_str();
 }
 
-const char* MyTexture::Exception::GetType() const noexcept {
+const char* TextureData::Exception::GetType() const noexcept {
 	return "Chili Graphics Exception";
 }
 
-const std::string& MyTexture::Exception::GetNote() const noexcept {
+const std::string& TextureData::Exception::GetNote() const noexcept {
 	return note;
 }

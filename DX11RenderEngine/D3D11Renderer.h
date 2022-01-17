@@ -146,6 +146,9 @@ public:
 	virtual void GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength) override;
 
 
+
+	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) override;
+
 	/* Private Stuff*/
 private:
 	void SetPresentationInterval(PresentInterval presentInterval);
@@ -160,16 +163,41 @@ private:
 	void RestoreTargetTextures();
 public:
 	/* Shader Stuff */
+	//
+	//
+	//
+	//void ApplyPixelShader(const PixelShader* shader);
+	//void ApplyVertexShader(const VertexShader* shader);	
+	//
+	//PixelShader* CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData);
+	//VertexShader* CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize);
 
-	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) override;
+	//void UpdataVertexShader(const VertexShader* shader);
 
-	void ApplyPixelShader(const PixelShader* shader);
-	void ApplyVertexShader(const VertexShader* shader);	
+
+
+
+
+
+	// Унаследовано через IRenderer
+	virtual PixelShader* CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
+	virtual VertexShader* CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inpitLayout, size_t inputLayoutSize) override;
 	
-	PixelShader* CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData);
-	VertexShader* CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize);
+	virtual void AddDisposePixelShader(PixelShader* pixelShader) override;
+	virtual void AddDisposeVertexShader(VertexShader* vertexShader) override;
 
-	void UpdataVertexShader(const VertexShader* shader);
+
+	virtual void ApplyPixelShader(PixelShader* pixelShader) override;
+	virtual void ApplyVertexShader(VertexShader* vertexShader) override;
+
+	virtual ConstBuffer* CreateConstBuffer(size_t size) override;
+	virtual void VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) override;
+	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) override;
+	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) override;
+
+
+	// Унаследовано через IRenderer
+	virtual void ApplyPipelineState(PipelineState* piplineState) override;
 
 };
 

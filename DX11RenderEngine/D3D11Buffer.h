@@ -3,6 +3,8 @@
 #include "Utils.h"
 
 namespace Renderer {
+
+
 struct D3D11Buffer : Buffer
 {
 	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
@@ -10,4 +12,9 @@ struct D3D11Buffer : Buffer
 	int32_t size = 0;
 };
 
+struct D3D11ConstBuffer : ConstBuffer
+{
+	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
+	int32_t size = 0;
+};
 }

@@ -40,14 +40,14 @@ struct RenderDevice {
 	void RegisterTexture(size_t id, LPCWCH file);
 #endif
 	void RegisterTexture(size_t id, const char* file);
-	void RegisterTexture(size_t id, const MyTexture&);
+	void RegisterTexture(size_t id, const TextureData&);
 	void ReleaseTexture(size_t id);
 
 
 	/* Drawing */
 
-	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height);
-	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height);
+	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 
 };
 

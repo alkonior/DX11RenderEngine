@@ -6,8 +6,17 @@ struct Texture {};
 struct Buffer {};
 struct ConstBuffer {};
 struct Renderbuffer {};
-//struct Shader {};
 struct VertexBufferBinding {};
+
+struct ShaderDefines {
+	const char* name;
+	const char* defenition;
+
+};
+struct PixelShader {};
+struct VertexShader {};
+//struct ComputeShader {};
+
 
 struct Color {
 	uint8_t r;
@@ -117,7 +126,7 @@ typedef struct RenderTargetBinding {
 
 	/* If this is non-NULL, you MUST call ResolveTarget after rendering! */
 	Renderbuffer* colorBuffer;
-} FNA3D_RenderTargetBinding;
+};
 
 
 

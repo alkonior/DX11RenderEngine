@@ -9,7 +9,7 @@ void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
-	gfx->manager2D.CompileShaders(*gfx, dirr);
+	gfx->manager2D.Init(dirr);
 	//PixelShader2D::Init(*gfx, dirr);
 	//VertexShader2D::Init(*gfx, dirr);
 }
@@ -27,12 +27,14 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	case ShaderType::PixelShader2D:
 	{
 		//PixelShader2D::Release();
+		gfx->manager2D.Init(shD.data, shD.dataSize);
 		//PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
 		//break;
 	}
 	case ShaderType::VertexShader2D:
 	{
 		//VertexShader2D::Release();
+		gfx->manager2D.Init(shD.data, shD.dataSize);
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		//break;
 	}
@@ -56,15 +58,15 @@ void RenderDevice::Clear(float r, float g, float b) {
 
 void RenderDevice::RegisterTexture(size_t id, LPCWCH file) {
 
-	gfx->RegisterImg(id, MyTexture::FromFile(file));
+	gfx->RegisterImg(id, TextureData::FromFile(file));
 }
 
 void RenderDevice::RegisterTexture(size_t id, const char* file) {
 
-	gfx->RegisterImg(id, MyTexture::FromFile(file));
+	gfx->RegisterImg(id, TextureData::FromFile(file));
 }
 
-void RenderDevice::RegisterTexture(size_t id, const MyTexture& tex) {
+void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
@@ -72,12 +74,12 @@ void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
 
-void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height) {
-	gfx->DrawImg(id, x, y, width, height);
+void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+	gfx->DrawImg(id, x, y, width, height, flags);
 }
 
-void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height) {
-	gfx->DrawImg(id, top, left, texW, texH, x, y, width, height);
+void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+	gfx->DrawImg(id, top, left, texW, texH, x, y, width, height, flags);
 }
 
 void RenderDevice::DestroyDevice() {
