@@ -31,6 +31,7 @@ void UIRendererProvider::PatchPipelineState(PipelineState* refToPS) {
 	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 
+	refToPS->bs.multiSampleMask = -1;
 
 	refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
 

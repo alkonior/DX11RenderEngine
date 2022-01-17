@@ -1502,6 +1502,7 @@ static D3D11_COMPARISON_FUNC CompareFunc[ ] =
 
 wrl::ComPtr<ID3D11BlendState> D3D11Renderer::FetchBlendState(const BlendState& state) {
 	D3D11_BLEND_DESC desc;
+	memset(&desc, 0, sizeof(desc));
 
 	wrl::ComPtr<ID3D11BlendState> result;
 
@@ -2017,7 +2018,7 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 	ApplyPixelShader(piplineState->ps);
 	ApplyVertexShader(piplineState->vs);
 	
-	//SetBlendState(piplineState->bs);
+	SetBlendState(piplineState->bs);
 	//SetDepthStencilState(piplineState->dss);
 	SetBlendFactor(piplineState->bf);
 	ApplyRasterizerState(piplineState->rs);
