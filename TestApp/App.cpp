@@ -23,6 +23,6 @@ void App::DoFrame() {
 	wnd.RD.Clear(0.0f, 0.0f, 0.0f);
 	wnd.RD.DrawImg(1, 0, 0, 100, 100, 0);
 	wnd.RD.DrawImg(1, 0, 0, 800, 800, 100, 100, 100, 100, 0);
-	wnd.RD.DrawImg(1, 20, 20, 20, 20, 200, 200, 100, 100, 0);
+	wnd.RD.DrawImg(1, 20, 20, 20, 20, 200, 200, 100, 100, 1);
 	wnd.RD.Present();
 }

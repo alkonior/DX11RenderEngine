@@ -20,8 +20,8 @@ std::vector<ShaderDefines> Renderer::PipelineFactory::GetDefines(size_t definesF
 	std::vector<ShaderDefines> result;
 
 	for (size_t i = 0; i < defineCount; i++) {
-		if (definesFlags && 1) {
-			result.push_back(ShaderDefines{ defines[i].defenition, defines[i].name });
+		if (definesFlags & 1<<i) {
+			result.push_back(ShaderDefines{ defines[i].name ,defines[i].defenition });
 		}
 	}
 
