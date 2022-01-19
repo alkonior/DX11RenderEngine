@@ -4,7 +4,7 @@
 using namespace Renderer;
 
 Renderer::ShaderDefines UIRendererDefines[ ] = {
-	{"COLORED", "1"},
+	{"RED", "1"},
 	{"FADE", "1"},
 	{"TeXTURED", "1"}
 };
@@ -16,7 +16,7 @@ D3D11_INPUT_ELEMENT_DESC UIRendererInputLayout[ ] =
 };
 
 UIRendererFactory::UIRendererFactory(IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize)
-	:PipelineFactory(renderer, provider, UIRendererDefines, sizeof(UIRendererDefines), shaderData, dataSize, (void*)UIRendererInputLayout, std::size(UIRendererInputLayout))
+	:PipelineFactory(renderer, provider, UIRendererDefines, std::size(UIRendererDefines), shaderData, dataSize, (void*)UIRendererInputLayout, std::size(UIRendererInputLayout))
 {
 
 }
