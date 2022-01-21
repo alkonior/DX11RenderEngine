@@ -6,10 +6,12 @@
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
+	gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
 	gfx->manager2D.Init(dirr);
+	gfx->manager3D.Init(dirr);
 	//PixelShader2D::Init(*gfx, dirr);
 	//VertexShader2D::Init(*gfx, dirr);
 }
@@ -70,6 +72,10 @@ void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
+void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
+	gfx->RegisterModel(id, model);
+}
+
 void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
@@ -80,6 +86,11 @@ void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t h
 
 void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
 	gfx->DrawImg(id, top, left, texW, texH, x, y, width, height, flags);
+}
+
+void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
+{
+	gfx->DrawModel(modelId, textureId, position, flags);
 }
 
 void RenderDevice::DestroyDevice() {

@@ -1,11 +1,13 @@
 #pragma once
 #include "pch.h"
-#include "GraphicsException.h"
+#include "SimpleMath.h"
 #include "TexturesManager.h"
+#include "ModelsManager.h"
 #include "GraphicsBase.h"
 #include "Geometry.h"
+
 #include "UIRenderer.h"
-#include "SimpleMath.h"
+#include "ModelRenderer.h"
 
 
 #ifdef _DEBUG
@@ -26,11 +28,22 @@ public:
 
 
 
-	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
-	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 	void RegisterImg(size_t id, const TextureData& text);
 	void ReleaseImg(size_t id);
 
+	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+
+
+
+	void RegisterModel(size_t id, const ModelData& model);
+	void ReleaseModel(size_t id);
+
+	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
+
 	TexturesManager texturesManger;
+	ModelsManager modelsManadger;
+
 	UIRenderer manager2D;
+	ModelRenderer manager3D;
 };

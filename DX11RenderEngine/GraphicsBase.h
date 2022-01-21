@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "D3D11Renderer.h"
+#include "Transform.h"
 #include "SimpleMath.h"
-
 
 
 class GraphicsBase {
@@ -17,6 +17,8 @@ public:
 	Renderer::D3D11Renderer renderer;
 
 
+
+
 #ifdef _DEBUG
 	//DxgiInfoManager infoManager;
 #endif
@@ -29,5 +31,13 @@ public:
 
 	size_t width;
 	size_t height;
+
+
+	Transform camera;
+	matrix cameraProjection;
+
+
+	void SetCameraPosition(Transform position);
+	void SetCameraProjection(matrix projection);
 
 };

@@ -14,7 +14,7 @@
 //	DirectX::SimpleMath::Vector2 uv;
 //};
 //
-//struct VertexShaderCosntBuffer {
+//struct Shader2DCosntBuffer {
 //	DirectX::SimpleMath::Matrix transform;
 //	DirectX::SimpleMath::Vector2 uvShift;
 //	DirectX::SimpleMath::Vector2 uvScale;
@@ -36,7 +36,7 @@
 //	static wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 //
 //
-//	static VertexShaderCosntBuffer localBuffer;
+//	static Shader2DCosntBuffer localBuffer;
 //	static wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
 //	static void SetTransform(mat proj, vec2 uvShift, vec2 uvScale);
 //	static void UpdateConstBuff(GraphicsBase&);

@@ -10,7 +10,7 @@ namespace Renderer {
 //	DirectX::SimpleMath::Vector2 uv;
 //};
 //
-//struct VertexShaderCosntBuffer {
+//struct Shader2DCosntBuffer {
 //	DirectX::SimpleMath::Matrix transform;
 //	DirectX::SimpleMath::Vector2 uvShift;
 //	DirectX::SimpleMath::Vector2 uvScale;
@@ -23,7 +23,7 @@ struct D3D11VertexShader: public VertexShader {
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	//wrl::ComPtr<ID3D10Blob> pVSData = nullptr;
 
-	//VertexShaderCosntBuffer localBuffer;
+	//Shader2DCosntBuffer localBuffer;
 	//wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
 	//void SetTransform(mat transform, vec2 uvShift, vec2 uvScale) {
 	//	localBuffer.transform = transform.Transpose();

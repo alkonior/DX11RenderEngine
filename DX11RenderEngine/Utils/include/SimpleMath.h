@@ -42,22 +42,22 @@ namespace DirectX
 
         //------------------------------------------------------------------------------
         // 2D rectangle
-        struct Rectangle {
+        struct DrawCall {
             long x;
             long y;
             long width;
             long height;
 
             // Creators
-            Rectangle() noexcept : x(0), y(0), width(0), height(0) {}
-            constexpr Rectangle(long ix, long iy, long iw, long ih) noexcept : x(ix), y(iy), width(iw), height(ih) {}
-            explicit Rectangle(const RECT& rct) noexcept : x(rct.left), y(rct.top), width(rct.right - rct.left), height(rct.bottom - rct.top) {}
+            DrawCall() noexcept : x(0), y(0), width(0), height(0) {}
+            constexpr DrawCall(long ix, long iy, long iw, long ih) noexcept : x(ix), y(iy), width(iw), height(ih) {}
+            explicit DrawCall(const RECT& rct) noexcept : x(rct.left), y(rct.top), width(rct.right - rct.left), height(rct.bottom - rct.top) {}
 
-            Rectangle(const Rectangle&) = default;
-            Rectangle& operator=(const Rectangle&) = default;
+            DrawCall(const DrawCall&) = default;
+            DrawCall& operator=(const DrawCall&) = default;
 
-            Rectangle(Rectangle&&) = default;
-            Rectangle& operator=(Rectangle&&) = default;
+            DrawCall(DrawCall&&) = default;
+            DrawCall& operator=(DrawCall&&) = default;
 
             operator RECT() noexcept { RECT rct; rct.left = x; rct.top = y; rct.right = (x + width); rct.bottom = (y + height); return rct; }
 #ifdef __cplusplus_winrt
@@ -65,16 +65,16 @@ namespace DirectX
 #endif
 
             // Comparison operators
-            bool operator == (const Rectangle& r) const noexcept { return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height); }
+            bool operator == (const DrawCall& r) const noexcept { return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height); }
             bool operator == (const RECT& rct) const noexcept { return (x == rct.left) && (y == rct.top) && (width == (rct.right - rct.left)) && (height == (rct.bottom - rct.top)); }
 
-            bool operator != (const Rectangle& r) const noexcept { return (x != r.x) || (y != r.y) || (width != r.width) || (height != r.height); }
+            bool operator != (const DrawCall& r) const noexcept { return (x != r.x) || (y != r.y) || (width != r.width) || (height != r.height); }
             bool operator != (const RECT& rct) const noexcept { return (x != rct.left) || (y != rct.top) || (width != (rct.right - rct.left)) || (height != (rct.bottom - rct.top)); }
 
             // Assignment operators
-            Rectangle& operator=(_In_ const RECT& rct) noexcept { x = rct.left; y = rct.top; width = (rct.right - rct.left); height = (rct.bottom - rct.top); return *this; }
+            DrawCall& operator=(_In_ const RECT& rct) noexcept { x = rct.left; y = rct.top; width = (rct.right - rct.left); height = (rct.bottom - rct.top); return *this; }
 
-            // Rectangle operations
+            // DrawCall operations
             Vector2 Location() const noexcept;
             Vector2 Center() const noexcept;
 
@@ -82,21 +82,21 @@ namespace DirectX
 
             bool Contains(long ix, long iy) const noexcept { return (x <= ix) && (ix < (x + width)) && (y <= iy) && (iy < (y + height)); }
             bool Contains(const Vector2& point) const noexcept;
-            bool Contains(const Rectangle& r) const noexcept { return (x <= r.x) && ((r.x + r.width) <= (x + width)) && (y <= r.y) && ((r.y + r.height) <= (y + height)); }
+            bool Contains(const DrawCall& r) const noexcept { return (x <= r.x) && ((r.x + r.width) <= (x + width)) && (y <= r.y) && ((r.y + r.height) <= (y + height)); }
             bool Contains(const RECT& rct) const noexcept { return (x <= rct.left) && (rct.right <= (x + width)) && (y <= rct.top) && (rct.bottom <= (y + height)); }
 
             void Inflate(long horizAmount, long vertAmount) noexcept;
 
-            bool Intersects(const Rectangle& r) const noexcept { return (r.x < (x + width)) && (x < (r.x + r.width)) && (r.y < (y + height)) && (y < (r.y + r.height)); }
+            bool Intersects(const DrawCall& r) const noexcept { return (r.x < (x + width)) && (x < (r.x + r.width)) && (r.y < (y + height)) && (y < (r.y + r.height)); }
             bool Intersects(const RECT& rct) const noexcept { return (rct.left < (x + width)) && (x < rct.right) && (rct.top < (y + height)) && (y < rct.bottom); }
 
             void Offset(long ox, long oy) noexcept { x += ox; y += oy; }
 
             // Static functions
-            static Rectangle Intersect(const Rectangle& ra, const Rectangle& rb) noexcept;
+            static DrawCall Intersect(const DrawCall& ra, const DrawCall& rb) noexcept;
             static RECT Intersect(const RECT& rcta, const RECT& rctb) noexcept;
 
-            static Rectangle Union(const Rectangle& ra, const Rectangle& rb) noexcept;
+            static DrawCall Union(const DrawCall& ra, const DrawCall& rb) noexcept;
             static RECT Union(const RECT& rcta, const RECT& rctb) noexcept;
         };
 
@@ -935,8 +935,8 @@ namespace DirectX
 namespace std
 {
 
-    template<> struct less<DirectX::SimpleMath::Rectangle> {
-        bool operator()(const DirectX::SimpleMath::Rectangle& r1, const DirectX::SimpleMath::Rectangle& r2) const noexcept {
+    template<> struct less<DirectX::SimpleMath::DrawCall> {
+        bool operator()(const DirectX::SimpleMath::DrawCall& r1, const DirectX::SimpleMath::DrawCall& r2) const noexcept {
             return ((r1.x < r2.x)
                 || ((r1.x == r2.x) && (r1.y < r2.y))
                 || ((r1.x == r2.x) && (r1.y == r2.y) && (r1.width < r2.width))

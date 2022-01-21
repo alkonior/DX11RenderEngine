@@ -1,6 +1,6 @@
 #include "pch.h"
 #define FULL_WINTARD
-#include "Texture.h"
+#include "TextureData.h"
 #include "GDIPlusManager.h"
 #include <algorithm>
 #include <sstream>

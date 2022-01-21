@@ -12,26 +12,26 @@
 
 /****************************************************************************
 *
-* Rectangle
+* DrawCall
 *
 ****************************************************************************/
 
 //------------------------------------------------------------------------------
-// Rectangle operations
+// DrawCall operations
 //------------------------------------------------------------------------------
-inline Vector2 Rectangle::Location() const noexcept {
+inline Vector2 DrawCall::Location() const noexcept {
     return Vector2(float(x), float(y));
 }
 
-inline Vector2 Rectangle::Center() const noexcept {
+inline Vector2 DrawCall::Center() const noexcept {
     return Vector2(float(x) + (float(width) / 2.f), float(y) + (float(height) / 2.f));
 }
 
-inline bool Rectangle::Contains(const Vector2& point) const noexcept {
+inline bool DrawCall::Contains(const Vector2& point) const noexcept {
     return (float(x) <= point.x) && (point.x < float(x + width)) && (float(y) <= point.y) && (point.y < float(y + height));
 }
 
-inline void Rectangle::Inflate(long horizAmount, long vertAmount) noexcept {
+inline void DrawCall::Inflate(long horizAmount, long vertAmount) noexcept {
     x -= horizAmount;
     y -= vertAmount;
     width += horizAmount;
@@ -42,7 +42,7 @@ inline void Rectangle::Inflate(long horizAmount, long vertAmount) noexcept {
 // Static functions
 //------------------------------------------------------------------------------
 
-inline Rectangle Rectangle::Intersect(const Rectangle& ra, const Rectangle& rb) noexcept {
+inline DrawCall DrawCall::Intersect(const DrawCall& ra, const DrawCall& rb) noexcept {
     long righta = ra.x + ra.width;
     long rightb = rb.x + rb.width;
 
@@ -55,7 +55,7 @@ inline Rectangle Rectangle::Intersect(const Rectangle& ra, const Rectangle& rb) 
     long minRight = righta < rightb ? righta : rightb;
     long minBottom = bottoma < bottomb ? bottoma : bottomb;
 
-    Rectangle result;
+    DrawCall result;
 
     if ((minRight > maxX) && (minBottom > maxY)) {
         result.x = maxX;
@@ -72,7 +72,7 @@ inline Rectangle Rectangle::Intersect(const Rectangle& ra, const Rectangle& rb) 
     return result;
 }
 
-inline RECT Rectangle::Intersect(const RECT& rcta, const RECT& rctb) noexcept {
+inline RECT DrawCall::Intersect(const RECT& rcta, const RECT& rctb) noexcept {
     long maxX = rcta.left > rctb.left ? rcta.left : rctb.left;
     long maxY = rcta.top > rctb.top ? rcta.top : rctb.top;
 
@@ -96,7 +96,7 @@ inline RECT Rectangle::Intersect(const RECT& rcta, const RECT& rctb) noexcept {
     return result;
 }
 
-inline Rectangle Rectangle::Union(const Rectangle& ra, const Rectangle& rb) noexcept {
+inline DrawCall DrawCall::Union(const DrawCall& ra, const DrawCall& rb) noexcept {
     long righta = ra.x + ra.width;
     long rightb = rb.x + rb.width;
 
@@ -109,7 +109,7 @@ inline Rectangle Rectangle::Union(const Rectangle& ra, const Rectangle& rb) noex
     int maxRight = righta > rightb ? righta : rightb;
     int maxBottom = bottoma > bottomb ? bottoma : bottomb;
 
-    Rectangle result;
+    DrawCall result;
     result.x = minX;
     result.y = minY;
     result.width = maxRight - minX;
@@ -117,7 +117,7 @@ inline Rectangle Rectangle::Union(const Rectangle& ra, const Rectangle& rb) noex
     return result;
 }
 
-inline RECT Rectangle::Union(const RECT& rcta, const RECT& rctb) noexcept {
+inline RECT DrawCall::Union(const RECT& rcta, const RECT& rctb) noexcept {
     RECT result;
     result.left = rcta.left < rctb.left ? rcta.left : rctb.left;
     result.top = rcta.top < rctb.top ? rcta.top : rctb.top;

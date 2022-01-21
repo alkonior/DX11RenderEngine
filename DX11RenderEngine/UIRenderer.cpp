@@ -3,9 +3,9 @@
 using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
-UIRendererProvider::UIRendererProvider(int32_t width, int32_t height):width(width), height(height){}
+UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height) :width(width), height(height) {}
 
-void UIRendererProvider::PatchPipelineState(PipelineState* refToPS) {
+void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS) {
 
 	//refToPS->bs.alphaBlendFunction = ;
 
@@ -58,12 +58,21 @@ void UIRendererProvider::PatchPipelineState(PipelineState* refToPS) {
 UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
+	if (provider != nullptr) {
+		delete provider;
+		delete factory;
+		int32_t width, height;
+		renderer->GetBackbufferSize(&width, &height);
+		provider = new UIRendererProvider(width, height);
+		factory = new UIRendererFactory(renderer, provider, shaderData, dataSize);
+		return;
+	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
-	factory = new UIRendererFactory(renderer, new UIRendererProvider(width, height), shaderData, dataSize);
+	provider = new UIRendererProvider(width, height);
+	factory = new UIRendererFactory(renderer, provider, shaderData, dataSize);
 
-	HRESULT hr;
 	Vertex2D vertices[ ] =
 	{
 		{  Vector2(-1.0f, 1.0f),  Vector2(0.0f, 1.0f), },
@@ -147,13 +156,13 @@ void UIRenderer::Draw(TexturesManager::TextureCache texture, size_t x, size_t y,
 
 
 
-UIRenderer::Rectangle::Rectangle(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
-	:x(x), y(y), width(width), height(height), texture(texture), top(top), left(left), texH(texH), texW(texW), flag(flag){}
+UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
+	:x(x), y(y), width(width), height(height), texture(texture), top(top), left(left), texH(texH), texW(texW), flag(flag) {}
 
-UIRenderer::Rectangle::Rectangle(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
+UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
 	: x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), texH(texture.height), texW(texture.width), flag(flag) {}
 
-dx::SimpleMath::Matrix UIRenderer::Rectangle::getTransform(size_t screenW, size_t screenH) {
+dx::SimpleMath::Matrix UIRenderer::DrawCall::getTransform(size_t screenW, size_t screenH) {
 	return
 
 		Matrix::CreateScale(width * 1.0f, height * 1.0f, 0) *
@@ -164,10 +173,10 @@ dx::SimpleMath::Matrix UIRenderer::Rectangle::getTransform(size_t screenW, size_
 		Matrix::CreateTranslation(width * 2.0f / screenW, 0, 0);
 }
 
-dx::SimpleMath::Vector2 UIRenderer::Rectangle::getUVShift() {
+dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVShift() {
 	return dx::SimpleMath::Vector2(top * 1.0f / texture.width, left * 1.0f / texture.height);
 }
 
-dx::SimpleMath::Vector2 UIRenderer::Rectangle::getUVScale() {
+dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVScale() {
 	return dx::SimpleMath::Vector2(texW * 1.0f / texture.width, texH * 1.0f / texture.height);
 }

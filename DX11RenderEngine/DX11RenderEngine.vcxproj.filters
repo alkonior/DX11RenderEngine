@@ -67,6 +67,12 @@
     <Filter Include="Sources\Core\Renderes">
       <UniqueIdentifier>{392cd0dc-a88c-4ed8-8137-108265de62b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\Core\Rendereres\ModelRenderer">
+      <UniqueIdentifier>{ec39e981-5513-4ad4-9ac5-ea319d7faf4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Core\Rendereres\UIRenderer">
+      <UniqueIdentifier>{10c36cb6-4db8-46a0-ab61-51809b141928}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
@@ -99,9 +105,6 @@
     <ClInclude Include="GraphicsBase.h">
       <Filter>Headers\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Drawable.h">
-      <Filter>Headers\Core</Filter>
-    </ClInclude>
     <ClInclude Include="PixelShader2D.h">
       <Filter>Headers\Shaders</Filter>
     </ClInclude>
@@ -114,7 +117,7 @@
     <ClInclude Include="TexturesManager.h">
       <Filter>Headers\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="TextureData.h">
       <Filter>Headers\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="GDIPlusManager.h">
@@ -172,10 +175,28 @@
       <Filter>Headers\Renderer\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="UIRenderer.h">
-      <Filter>Headers\Core\Rendereres</Filter>
+      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
     </ClInclude>
     <ClInclude Include="UIRendererFactory.h">
-      <Filter>Headers\Core\Rendereres</Filter>
+      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRendererFactory.h">
+      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Headers\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelsManager.h">
+      <Filter>Headers\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelData.h">
+      <Filter>Headers\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRendererUtils.h">
+      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,7 +242,7 @@
     <ClCompile Include="TexturesManager.cpp">
       <Filter>Sources\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="TextureData.cpp">
       <Filter>Sources\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="GDIPlusManager.cpp">
@@ -254,6 +275,24 @@
     <ClCompile Include="PipelineState.cpp">
       <Filter>Sources\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>Sources\Core\Renderes</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRendererFactory.cpp">
+      <Filter>Sources\Core\Renderes</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelsManager.cpp">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Sources\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelData.cpp">
+      <Filter>Sources\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelesManager.cpp">
+      <Filter>Sources\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -264,5 +303,13 @@
     <ResourceCompile Include="DX11RenderEngine.rc">
       <Filter>Файлы ресурсов</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\TestApp\Shaders\Shader2D.hlsl">
+      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
+    </FxCompile>
+    <FxCompile Include="..\TestApp\Shaders\Shader3D.hlsl">
+      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

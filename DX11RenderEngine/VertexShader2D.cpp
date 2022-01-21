@@ -5,7 +5,7 @@
 //
 //wrl::ComPtr<ID3D11VertexShader> VertexShader2D::pVertexShader = nullptr;
 //wrl::ComPtr<ID3D11InputLayout> VertexShader2D::pInputLayout = nullptr;
-//VertexShaderCosntBuffer VertexShader2D::localBuffer;
+//Shader2DCosntBuffer VertexShader2D::localBuffer;
 //wrl::ComPtr<ID3D11Buffer> VertexShader2D::pConstantBuffer = nullptr;
 //
 //const D3D11_INPUT_ELEMENT_DESC VertexShader2D::inputLayout[ ] =

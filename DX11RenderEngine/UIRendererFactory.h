@@ -2,21 +2,20 @@
 #include "PipelineFactory.h"
 #include "SimpleMath.h"
 
-
-extern Renderer::ShaderDefines UIRendererDefines[ ];
-
-
 struct Vertex2D {
 	DirectX::SimpleMath::Vector2 pos;
 	DirectX::SimpleMath::Vector2 uv;
+
+	static const D3D11_INPUT_ELEMENT_DESC InputElements[];
 };
 
-extern D3D11_INPUT_ELEMENT_DESC UIRendererInputLayout[ ];
-struct VertexShaderCosntBuffer {
+struct Shader2DCosntBuffer {
 	DirectX::SimpleMath::Matrix transform;
 	DirectX::SimpleMath::Vector2 uvShift;
 	DirectX::SimpleMath::Vector2 uvScale;
 };
+
+extern Renderer::ShaderDefines UIRendererDefines[ ];
 
 class UIRendererFactory:public Renderer::PipelineFactory {
 public:

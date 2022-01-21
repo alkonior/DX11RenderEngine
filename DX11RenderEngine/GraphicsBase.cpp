@@ -116,6 +116,8 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	pContext->RSSetViewports(1u, &vp);
 
 	*/
+
+		cameraProjection = matrix::CreateOrthographic(width, height, 100, 1000);
 }
 
 void GraphicsBase::OnResize(size_t width, size_t height) {
@@ -175,4 +177,12 @@ void GraphicsBase::OnResize(size_t width, size_t height) {
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
 	*/
+}
+
+void GraphicsBase::SetCameraPosition(Transform position) {
+	camera = position;
+}
+
+void GraphicsBase::SetCameraProjection(matrix projection) {
+	cameraProjection = projection;
 }

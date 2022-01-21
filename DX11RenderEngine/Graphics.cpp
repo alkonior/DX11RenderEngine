@@ -13,11 +13,12 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(&renderer) {}
+	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer) {}
 
 void Graphics::EndFrame() {
 
 	manager2D.Render();
+	manager3D.Render(*this);
 
 
 	renderer.SwapBuffers();
@@ -44,20 +45,32 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 
 
 void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	manager2D.Draw(texturesManger.GetImg(*this, id), x, y, width, height, flags);
+	manager2D.Draw(texturesManger.GetImg(id), x, y, width, height, flags);
 }
 
 
 void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	manager2D.Draw(texturesManger.GetImg(*this, id),top, left, texW, texH, x, y, width, height, flags);
+	manager2D.Draw(texturesManger.GetImg(id),top, left, texW, texH, x, y, width, height, flags);
 }
 
 void Graphics::RegisterImg(size_t id, const TextureData& text) {
-	texturesManger.RegTexture(*this, text, id);
+	texturesManger.RegTexture(text, id);
 }
 
 void Graphics::ReleaseImg(size_t id) {
-	texturesManger.ReeaseTexture(id);
+	texturesManger.ReleaseTexture(id);
+}
+
+void Graphics::RegisterModel(size_t id, const ModelData& model) {
+	modelsManadger.RegisterModel(model, id);
+}
+
+void Graphics::ReleaseModel(size_t id) {
+	modelsManadger.ReleaseModel(id);
+}
+
+void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
+	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
 

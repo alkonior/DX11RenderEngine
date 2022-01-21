@@ -1,11 +1,12 @@
 #pragma once
 #include "pch.h"
 #include "GraphicsBase.h"
-#include "Texture.h"
+#include "TextureData.h"
 
 
 class TexturesManager {
 public:
+	Renderer::IRenderer* renderer;
 
 	struct TextureCache {
 		Renderer::Texture* texture;
@@ -15,13 +16,14 @@ public:
 	};
 
 public:
-	TexturesManager();
+	TexturesManager(Renderer::IRenderer* renderer);
 
-	void RegTexture(GraphicsBase& gfx, const TextureData& tx, size_t id);
-	void ReeaseTexture(size_t id);
-	TextureCache GetImg(GraphicsBase& gfx, size_t id);
+	void RegTexture(const TextureData& tx, size_t id);
+	void ReleaseTexture(size_t id);
+	TextureCache GetImg(size_t id);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
+	~TexturesManager();
 private:
 	std::map<size_t, TextureCache> textures;
 

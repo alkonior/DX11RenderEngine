@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "SimpleMath.h"
-#include "Texture.h"
+#include "TextureData.h"
 
 struct RenderDevice {
 
@@ -41,6 +41,7 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const TextureData&);
+	void RegisterModel(size_t id, const ModelData&);
 	void ReleaseTexture(size_t id);
 
 
@@ -48,6 +49,7 @@ struct RenderDevice {
 
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
 
 };
 
