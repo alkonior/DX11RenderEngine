@@ -18,5 +18,5 @@ const D3D11_INPUT_ELEMENT_DESC  ModelVertex::InputElements[ ] =
 };
 
 ModelRendererFactory::ModelRendererFactory(IRenderer* renderer, IStateProvider* provider, void* shaderData, size_t dataSize)
-    :PipelineFactory(renderer, provider, ModelRendererDefines, std::size(ModelRendererDefines), shaderData, dataSize, (void*)ModelVertex::InputElements, std::size(ModelVertex::InputElements)) {
+    :PipelineFactory(renderer, provider, ModelRendererDefines, std::size(ModelRendererDefines), shaderData, dataSize, (void*)ModelVertex::InputElements, std::size(ModelVertex::InputElements), D3DCOMPILE_DEBUG) {
 }

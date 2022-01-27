@@ -36,7 +36,11 @@ float4 psIn(VSOut input) : SV_Target
 	return float4(1.0, input.uv.x, input.uv.y, 1.0f);
 #endif
 	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
-	return tex.Sample(basicSampler, input.uv);
+	float4 color = tex.Sample(basicSampler, input.uv);
+	float r = color.x;
+	color.x = color.y;
+	color.y = r;
+	return color;
 	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 }
 

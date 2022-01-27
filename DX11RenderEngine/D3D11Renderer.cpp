@@ -1685,8 +1685,8 @@ wrl::ComPtr<ID3D11SamplerState> D3D11Renderer::FetchSamplerState(const SamplerSt
 	desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	desc.Filter = Filter[state.filter];
 	desc.MaxAnisotropy = (uint32_t)state.maxAnisotropy;
-	desc.MaxLOD = D3D11_FLOAT32_MAX;
-	desc.MinLOD = (float)state.maxMipLevel;
+	desc.MaxLOD = (float)state.maxMipLevel;
+	desc.MinLOD = (float)state.minMipLevel;
 	desc.MipLODBias = state.mipMapLevelOfDetailBias;
 
 	/* Bake the state! */

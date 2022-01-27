@@ -28,11 +28,11 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 
 
-	sampler.filter = TextureFilter::TEXTUREFILTER_LINEAR;
+	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-
+	sampler.mipMapLevelOfDetailBias = 0;
 }
 
 void ModelRenderer::Init(LPCWSTR dirr) {

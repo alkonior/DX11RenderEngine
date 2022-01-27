@@ -45,6 +45,6 @@ void App::DoFrame() {
 	//wnd.RD.DrawImg(1, 20, 20, 20, 20, 200, 200, 100, 100, 1);
 
 	wnd.RD.DrawModel(0, 1, Transform({0, 100, -200}, { 0.5, 0, 0.5 }, { 100,100,100 }), 1);
-	wnd.RD.DrawModel(0, 1, Transform({0, -100, -200}, {- 0.5, 0, 0.5 }, { 100,100,100 }), 0);
+	wnd.RD.DrawModel(0, 1, Transform({0, -100, -200}, { 0.5, 0, 0.5 }, { 100,100,100 }), 0);
 	wnd.RD.Present();
 }

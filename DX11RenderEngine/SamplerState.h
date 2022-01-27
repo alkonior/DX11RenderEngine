@@ -28,7 +28,8 @@ struct SamplerState {
 	TextureAddressMode addressW;
 	float mipMapLevelOfDetailBias;
 	int32_t maxAnisotropy;
-	int32_t maxMipLevel;
+	int32_t minMipLevel = 0;
+	int32_t maxMipLevel = 0;
 };
 
 };
