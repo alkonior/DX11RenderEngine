@@ -8,6 +8,7 @@
 
 #include "UIRenderer.h"
 #include "ModelRenderer.h"
+#include "ImGUIRenderer.h"
 
 
 #ifdef _DEBUG
@@ -46,4 +47,5 @@ public:
 
 	UIRenderer manager2D;
 	ModelRenderer manager3D;
+	ImGUIRenderer managerImGUI;
 };

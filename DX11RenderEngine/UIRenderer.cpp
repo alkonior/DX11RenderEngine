@@ -55,7 +55,8 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS) 
 	refToPS->vp.maxDepth = 1.0f;
 }
 
-UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
+UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {
+}
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

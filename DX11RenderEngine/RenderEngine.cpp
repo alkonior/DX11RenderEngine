@@ -7,6 +7,10 @@ void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
 	gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
+
+
+	ImGui_ImplWin32_Init(hWnd);
+
 }
 
 void RenderDevice::InitShaders(LPCWSTR dirr) {
@@ -26,19 +30,19 @@ void RenderDevice::ReloadShaders(LPCWSTR dirr) {
 
 void RenderDevice::ReloadShader(ShaderData shD) {
 	switch (shD.type) {
-	case ShaderType::PixelShader2D:
+	case ShaderType::Shader2D:
 	{
 		//PixelShader2D::Release();
 		gfx->manager2D.Init(shD.data, shD.dataSize);
 		//PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
-		//break;
+		break;
 	}
-	case ShaderType::VertexShader2D:
+	case ShaderType::Shader3D:
 	{
 		//VertexShader2D::Release();
-		gfx->manager2D.Init(shD.data, shD.dataSize);
+		gfx->manager3D.Init(shD.data, shD.dataSize);
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
-		//break;
+		break;
 	}
 
 	default:
@@ -93,10 +97,18 @@ void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform positio
 	gfx->DrawModel(modelId, textureId, position, flags);
 }
 
+bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+		return true;
+	}
+	return false;
+}
+
 void RenderDevice::DestroyDevice() {
 
 	//PixelShader2D::Release();
 	//VertexShader2D::Release();
+	ImGui_ImplWin32_Shutdown();
 	if (!gfx) delete gfx;
 	gfx = nullptr;
 }

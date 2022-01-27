@@ -780,8 +780,8 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture) {
 	}
 
 	/* Release the shader resource view and texture */
-	tex->shaderView->Release();
-	tex->handle->Release();
+	//tex->shaderView->Release();
+	//tex->handle->Release();
 	delete tex;
 }
 

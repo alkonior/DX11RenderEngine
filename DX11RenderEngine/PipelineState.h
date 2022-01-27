@@ -24,6 +24,7 @@ struct PipelineState {
 
 struct IStateProvider {
 	virtual void PatchPipelineState(PipelineState* refToPS) = 0;
+	~IStateProvider();
 };
 
 }

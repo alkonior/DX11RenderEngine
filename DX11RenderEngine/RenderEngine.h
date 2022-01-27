@@ -3,22 +3,27 @@
 #include "SimpleMath.h"
 #include "TextureData.h"
 
+
+#include "imgui/imgui_impl_win32.h"
+
 struct RenderDevice {
 
 	Graphics* gfx = nullptr;
 
 	/* Init */
 
-	void DestroyDevice();
+	void InitDevice(HWND hWnd, size_t width, size_t height);
 
 	/* Quit */
 
-	void InitDevice(HWND hWnd, size_t width, size_t height);
+	void DestroyDevice();
+
 
 	enum ShaderType {
-		VertexShader2D,
-		PixelShader2D,
+		Shader2D,
+		Shader3D,
 	};
+
 	struct ShaderData {
 		ShaderType type;
 		BYTE* data;
@@ -50,6 +55,11 @@ struct RenderDevice {
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
+	
+
+	/* Debug staff */
+
+	bool ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 };
 

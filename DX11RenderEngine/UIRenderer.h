@@ -8,8 +8,8 @@
 class UIRenderer {
 	struct UIRendererProvider;
 	Renderer::IRenderer* renderer;
-	UIRendererFactory* factory;
-	UIRendererProvider* provider;
+	UIRendererFactory* factory = nullptr;
+	UIRendererProvider* provider = nullptr;
 
 
 	struct UIRendererProvider : public Renderer::IStateProvider {

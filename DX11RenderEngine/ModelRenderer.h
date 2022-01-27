@@ -9,8 +9,8 @@ class ModelRenderer {
 	struct ModelRendererProvider;
 
 	Renderer::IRenderer* renderer;
-	ModelRendererFactory* factory;
-	ModelRendererProvider* provider;
+	ModelRendererFactory* factory = nullptr;
+	ModelRendererProvider* provider = nullptr;
 
 	struct ModelRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;

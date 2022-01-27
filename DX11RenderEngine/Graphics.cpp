@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <resource.h>
 
+#include "imgui/imgui_impl_dx11.h"
+
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
@@ -13,13 +15,17 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer) {}
+	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer) {
+	managerImGUI.Init();
+	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
+
+}
 
 void Graphics::EndFrame() {
 
 	manager2D.Render();
 	manager3D.Render(*this);
-
+	managerImGUI.Render();
 
 	renderer.SwapBuffers();
 //
