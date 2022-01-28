@@ -25,7 +25,7 @@ void Graphics::EndFrame() {
 
 	manager2D.Render();
 	manager3D.Render(*this);
-	managerImGUI.Render();
+	managerImGUI.Render(*this);
 
 	renderer.SwapBuffers();
 //

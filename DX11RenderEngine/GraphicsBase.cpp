@@ -20,7 +20,7 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1) {
 
 
-		cameraProjection = matrix::CreateOrthographic(width, height, 100, 1000);
+		cameraProjection = matrix::CreatePerspective(width, height, 100, 1000);
 }
 
 void GraphicsBase::OnResize(size_t width, size_t height) {
