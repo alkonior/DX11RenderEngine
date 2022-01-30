@@ -24,6 +24,7 @@ public:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;
+	void BeginFrame();
 	void EndFrame();
 	void ClearBuffer(sm::Vector4 color) noexcept;
 
@@ -38,9 +39,11 @@ public:
 
 
 	void RegisterModel(size_t id, const ModelData& model);
+	void RegisterFramedModel(size_t id, const FramedModelData& model);
 	void ReleaseModel(size_t id);
 
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
+	void DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
 
 	TexturesManager texturesManger;
 	ModelsManager modelsManadger;

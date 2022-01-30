@@ -54,6 +54,10 @@ void RenderDevice::OnResize(size_t width, size_t height) {
 	gfx->OnResize(width, height);
 }
 
+void RenderDevice::BeginFrame() {
+	gfx->BeginFrame();
+}
+
 void RenderDevice::Present() {
 	gfx->EndFrame();
 }
@@ -80,6 +84,10 @@ void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
 	gfx->RegisterModel(id, model);
 }
 
+void RenderDevice::RegisterFramedModel(size_t id, const FramedModelData& model) {
+	gfx->RegisterFramedModel(id, model);
+}
+
 void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
@@ -95,6 +103,10 @@ void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size
 void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
 {
 	gfx->DrawModel(modelId, textureId, position, flags);
+}
+
+void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
+	gfx->DrawFramedModel(modelId, textureId, position, curIndex, nextIndex, alpha, flags);
 }
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {

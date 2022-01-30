@@ -21,11 +21,15 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 
 }
 
+void Graphics::BeginFrame() {
+	managerImGUI.BeginFrame(*this);
+}
+
 void Graphics::EndFrame() {
 
 	manager2D.Render();
 	manager3D.Render(*this);
-	managerImGUI.Render(*this);
+	managerImGUI.Render();
 
 	renderer.SwapBuffers();
 //
@@ -71,12 +75,20 @@ void Graphics::RegisterModel(size_t id, const ModelData& model) {
 	modelsManadger.RegisterModel(model, id);
 }
 
+void Graphics::RegisterFramedModel(size_t id, const FramedModelData& model) {
+	modelsManadger.RegisterFramedModel(model, id);
+}
+
 void Graphics::ReleaseModel(size_t id) {
 	modelsManadger.ReleaseModel(id);
 }
 
 void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
+}
+
+void Graphics::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
+	manager3D.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, curIndex, nextIndex,  alpha, flags);
 }
 
 

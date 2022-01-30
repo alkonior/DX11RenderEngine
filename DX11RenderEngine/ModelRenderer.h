@@ -23,6 +23,14 @@ class ModelRenderer {
 		DrawCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags);
 
 		ModelsManager::ModelCache model; TexturesManager::TextureCache texture; Transform position; size_t flags;
+	};	
+	
+	struct DrawLerpCall {
+		DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
+
+		ModelsManager::ModelCache model; TexturesManager::TextureCache texture; Transform position; 
+		int curIndex; int nextIndex; float alpha;
+		size_t flags;
 	};
 
 
@@ -34,6 +42,7 @@ public:
 	void Init(LPCWSTR dirr);
 
 	void Draw(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags);
+	void DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
 
 	void Render(const GraphicsBase& gfx);
 
@@ -41,10 +50,13 @@ public:
 private:
 
 	Shader3DCosntBuffer localBuffer;
-	Renderer::ConstBuffer* constBuffer;
+	Renderer::ConstBuffer* transformConstBuffer;
+	float alpha;
+	Renderer::ConstBuffer* alphaConstBuffer;
 
 	Renderer::SamplerState sampler;
 	std::vector<DrawCall> drawCalls;
+	std::vector<DrawLerpCall> drawLerpCalls;
 
 };
 

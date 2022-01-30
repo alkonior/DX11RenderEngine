@@ -1994,7 +1994,7 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 
 void D3D11Renderer::VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) {
 
-	std::vector<ID3D11Buffer*> constBuffersArray(size);
+	static std::vector<ID3D11Buffer*> constBuffersArray(16);
 	for (size_t i = 0; i < size; i++) {
 		constBuffersArray[i] = ((D3D11ConstBuffer*)(constBuffers[i]))->handle.Get();
 	}

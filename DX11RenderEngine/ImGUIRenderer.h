@@ -9,7 +9,8 @@ class ImGUIRenderer {
 public:
 	void Init();
 
-	void Render(GraphicsBase&);
+	void BeginFrame(GraphicsBase&);
+	void Render();
 
 	void Destroy();
 

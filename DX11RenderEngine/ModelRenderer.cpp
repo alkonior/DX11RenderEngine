@@ -3,8 +3,10 @@
 using namespace Renderer;
 
 ModelRenderer::DrawCall::DrawCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags):
-model(model), texture(texture), position(position), flags(flags)
-{}
+model(model), texture(texture), position(position), flags(flags){}
+
+ModelRenderer::DrawLerpCall::DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags):
+model(model), texture(texture), position(position), curIndex(curIndex), nextIndex(nextIndex), alpha(alpha), flags(flags) {}
 
 ModelRenderer::ModelRenderer(Renderer::IRenderer* renderer) : renderer(renderer) {}
 
@@ -25,7 +27,8 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new ModelRendererFactory(renderer, provider, shaderData, dataSize);
 
 
-	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
+	transformConstBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
+	alphaConstBuffer = renderer->CreateConstBuffer(sizeof(alpha)*4);
 
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
@@ -47,12 +50,16 @@ void ModelRenderer::Draw(ModelsManager::ModelCache model, TexturesManager::Textu
 	drawCalls.emplace_back(model, texture, position, flags);
 }
 
+void ModelRenderer::DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
+	drawLerpCalls.emplace_back(model, texture, position, curIndex, nextIndex, alpha, flags);
+}
+
 void ModelRenderer::Render(const GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffers(&constBuffer, 1);
+	renderer->VerifyConstBuffers(&transformConstBuffer, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 
@@ -77,12 +84,64 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		//localBuffer.uvShift = drawCalls[i].getUVShift();
 		//localBuffer.uvScale = drawCalls[i].getUVScale();
-		renderer->SetConstBuffer(constBuffer, &localBuffer);
+		renderer->SetConstBuffer(transformConstBuffer, &localBuffer);
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0, 
 			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
 	}
 	drawCalls.clear();
+
+	if (!drawLerpCalls.empty()) {
+		ConstBuffer* constBuffers[] = { transformConstBuffer , alphaConstBuffer };
+		renderer->VerifyConstBuffers(constBuffers, 2);
+
+		for (size_t i = 0; i < drawLerpCalls.size(); i++) {
+			if (drawLerpCalls[i].flags != lastFlags) {
+				renderer->ApplyPipelineState(factory->GetState(drawLerpCalls[i].flags));
+			}
+
+
+			lastFlags = drawLerpCalls[i].flags;
+			static Buffer* vertexBuffers[3];
+			static UINT ofsets[3] = { 0, 0, 0 };
+			static UINT strides[3] = { 0, 0, 0 };
+			static VertexBufferBinding vBB;
+			vBB.buffersCount = 3;
+			vBB.vertexBuffers = vertexBuffers;
+			vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[0];
+			vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].curIndex + 1];
+			vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].nextIndex + 1];
+
+			strides[0] = drawLerpCalls[i].model.vertexBuffer->vertexStride[0];
+			strides[1] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].curIndex + 1];
+			strides[2] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].nextIndex + 1];
+
+			vBB.vertexOffset = ofsets;
+			vBB.vertexStride = strides;
+
+			renderer->ApplyVertexBufferBinding(&vBB);
+
+			auto  pTexture = drawLerpCalls[i].texture.texture;
+			renderer->VerifyPixelSampler(0, pTexture, sampler);
+
+			localBuffer.world = drawLerpCalls[i].position.GetTransform();
+			localBuffer.view = gfx.camera.GetInverseTransform();
+			localBuffer.projection = gfx.cameraProjection.Transpose();
+
+			//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
+			//localBuffer.uvShift = drawCalls[i].getUVShift();
+			//localBuffer.uvScale = drawCalls[i].getUVScale();
+			renderer->SetConstBuffer(transformConstBuffer, &localBuffer);
+			renderer->SetConstBuffer(alphaConstBuffer, &drawLerpCalls[i].alpha);
+
+
+			renderer->DrawIndexedPrimitives(
+				drawLerpCalls[i].model.pt, 0, 0, 0, 0,
+				drawLerpCalls[i].model.primitiveCount, drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
+		}
+	}
+
+	drawLerpCalls.clear();
 }
 
 ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32_t height):width(width), height(height) {}
@@ -150,3 +209,4 @@ InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescr
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 
 }
+
