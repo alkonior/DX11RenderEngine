@@ -87,7 +87,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32_t height):width(width), height(height) {}
 
-void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS) {
+void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
 
 
 	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
@@ -124,5 +124,29 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 	refToPS->vp.h = height;
 	refToPS->vp.minDepth = 0.0f;
 	refToPS->vp.maxDepth = 1.0f;
+
+}
+
+const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
+{
+	{ "Position",    0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
+const D3D11_INPUT_ELEMENT_DESC  LerpInputElements[] =
+{
+	{ "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD",           0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "CurrentPosition",    0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NextPosition",       0, DXGI_FORMAT_R32G32B32_FLOAT,    2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
+InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
+	if (definesFlags & ModelDefines::LERP) {
+		return InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
+	}
+
+	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 
 }

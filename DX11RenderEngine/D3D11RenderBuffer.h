@@ -5,11 +5,13 @@
 
 namespace Renderer {
 struct D3D11Renderbuffer : Renderbuffer {
-	wrl::ComPtr<ID3D11Texture2D> handle;
-	int32_t multiSampleCount;
-	
+	wrl::ComPtr<ID3D11Texture2D> handle = nullptr;
+	int32_t multiSampleCount = 0;
+
+#pragma warning(push)
+#pragma warning(disable : 26495)
 	D3D11Renderbuffer(uint8_t type) : type(type) {};
-	
+#pragma warning(push)
 
 #define RENDERBUFFER_COLOR 0
 #define RENDERBUFFER_DEPTH 1

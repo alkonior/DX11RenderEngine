@@ -1,8 +1,18 @@
+#ifdef LERP
+struct VSIn {
+	float3 normal : NORMAL;
+	float2 uv  : TEXCOORD;
+	float3 pos : CurrentPosition;
+	float3 pos : NextPosition;
+};
+#else
 struct VSIn {
 	float3 pos : Position;
 	float3 normal : NORMAL;
 	float2 uv  : TEXCOORD;
 };
+#endif
+
 
 struct VSOut {
 	float4 pos : SV_Position;

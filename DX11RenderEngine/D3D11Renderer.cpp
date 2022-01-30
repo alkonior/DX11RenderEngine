@@ -1,6 +1,8 @@
 #include "D3D11Renderer.h"
-namespace Renderer {
 
+#pragma warning( disable : 26812 )
+
+namespace Renderer {
 
 static inline int32_t PrimitiveVerts(
 	PrimitiveType primitiveType,
@@ -41,7 +43,7 @@ void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h) {}
 
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) : IRenderer(presentationParameters, debugMode) {
 
-	DXGI_ADAPTER_DESC adapterDesc;
+	//DXGI_ADAPTER_DESC adapterDesc;
 	D3D_FEATURE_LEVEL levels[ ] =
 	{
 		D3D_FEATURE_LEVEL_11_1,
@@ -691,7 +693,7 @@ void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, v
 
 }
 
-void D3D11Renderer::GetBackbufferSize(int32_t* w, int32_t* h) { *w = backBufferWidth; *h = backBufferHeight; }
+void D3D11Renderer::GetBackbufferSize(int32_t* w, int32_t* h) { *w = static_cast<int32_t>(backBufferWidth); *h = static_cast<int32_t>(backBufferHeight); }
 
 DepthFormat D3D11Renderer::GetBackbufferDepthFormat() {
 	return currentDepthFormat;
@@ -699,10 +701,8 @@ DepthFormat D3D11Renderer::GetBackbufferDepthFormat() {
 
 Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) {
 	D3D11Texture* result = new D3D11Texture();
-	ID3D11Texture2D* texture;
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
-	HRESULT res;
 
 	/* Initialize descriptor */
 	desc.Width = width;
@@ -760,10 +760,9 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 
 void D3D11Renderer::AddDisposeTexture(Texture* texture) {
 	D3D11Texture* tex = (D3D11Texture*)texture;
-	int32_t i, j;
 
 	/* Unbind the texture */
-	for (i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1) {
+	for (int i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1) {
 		if (pixelTextures[i]->handle == tex->handle) {
 			pixelTextures[i] = &D3D11Texture::NullTexture;
 		}
@@ -771,7 +770,7 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture) {
 
 	/* Unbind and release the render target views, if applicable */
 	if (tex->isRenderTarget) {
-		for (i = 0; i < numRenderTargets; i += 1) {
+		for (int i = 0; i < numRenderTargets; i += 1) {
 			if (tex->rtView == renderTargetViews[i]) {
 				renderTargetViews[i] = nullptr;
 			}
@@ -815,20 +814,20 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
 	));
 	ctxLock.unlock();
 }
-
+#pragma warning(push)
+#pragma warning(disable : 26451)
 void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
 	D3D11Texture* tex = (D3D11Texture*)texture;
 	D3D11_TEXTURE2D_DESC stagingDesc;
 	wrl::ComPtr<ID3D11Texture2D> stagingTexture;
 	uint32_t subresourceIndex = level;
-	int32_t texW = tex->width >> level;
-	int32_t texH = tex->height >> level;
+	unsigned int texW = static_cast<unsigned int>(tex->width >> level);
+	unsigned int texH = static_cast<unsigned int>(tex->height >> level);
 	D3D11_BOX srcBox = { 0, 0, 0, texW, texH, 1 };
 	D3D11_MAPPED_SUBRESOURCE subresource;
 	uint8_t* dataPtr = (uint8_t*)data;
-	int32_t row;
+	
 	int32_t formatSize = 4;
-	HRESULT res;
 
 	/* Create staging texture if needed */
 	if (tex->isRenderTarget) {
@@ -837,8 +836,8 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 		stagingTexture = nullptr;
 	}
 	if (stagingTexture == nullptr) {
-		stagingDesc.Width = tex->width;
-		stagingDesc.Height = tex->height;
+		stagingDesc.Width = static_cast<UINT>(tex->width);
+		stagingDesc.Height = static_cast<UINT>(tex->height);
 		stagingDesc.MipLevels = tex->levelCount;
 		stagingDesc.ArraySize = 1;
 		stagingDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -884,11 +883,13 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 		0,
 		&subresource
 	));
-	for (row = y; row < y + h; row += 1) {
+
+
+	for (int32_t row = y; row < y + h; row += 1) {
 		memcpy(
 			dataPtr,
-			(uint8_t*)subresource.pData + (row * subresource.RowPitch) + (x * formatSize),
-			formatSize * w
+			(uint8_t*)subresource.pData + subresource.RowPitch * row + formatSize * x,
+			 w * formatSize
 		);
 		dataPtr += formatSize * w;
 	}
@@ -901,10 +902,12 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 	ctxLock.unlock();
 }
 
+#pragma warning(pop)
+
+
 Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) {
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_COLOR);
-	HRESULT res;
 
 	/* Initialize the renderbuffer */
 	result->multiSampleCount = multiSampleCount;
@@ -953,7 +956,6 @@ static DXGI_FORMAT D3D11DepthFormat[ ] =
 Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) {
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_DEPTH);
-	HRESULT res;
 
 	/* Initialize the renderbuffer */
 	result->multiSampleCount = multiSampleCount;
@@ -1016,7 +1018,6 @@ void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer) {
 Buffer* D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
 	D3D11Buffer* result = new D3D11Buffer();
 	D3D11_BUFFER_DESC desc;
-	HRESULT res;
 
 	/* Initialize the descriptor */
 	desc.ByteWidth = sizeInBytes;
@@ -1043,7 +1044,7 @@ void D3D11Renderer::AddDisposeVertexBuffer(Buffer* buffer) {
 	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	ID3D11Buffer* nullVertexBuffers[ ] = { NULL };
 	uint32_t whatever[1] = { 0 };
-	int32_t i;
+	//int32_t i;
 
 	//for (i = 0; i < MAX_BOUND_VERTEX_BUFFERS; i += 1) {
 	//	if (renderer->vertexBuffers[i] == d3dBuffer->handle) {

@@ -15,7 +15,8 @@ class ModelRenderer {
 	struct ModelRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
 		ModelRendererProvider(int32_t width, int32_t  height);
-		virtual void PatchPipelineState(Renderer::PipelineState* refToPS) override;
+		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
+		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
 	};
 	
 	struct DrawCall {

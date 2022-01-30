@@ -15,8 +15,8 @@ class UIRenderer {
 	struct UIRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
 		UIRendererProvider(int32_t width, int32_t  height);
-		// Унаследовано через IStateProvider
-		virtual void PatchPipelineState(Renderer::PipelineState* refToPS) override;
+		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
+		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
 	};
 
 

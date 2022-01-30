@@ -5,6 +5,8 @@ void ImGUIRenderer::Init() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+
+
 }
 
 void ImGUIRenderer::Render(GraphicsBase& gfx) {

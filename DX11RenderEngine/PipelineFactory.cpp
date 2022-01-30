@@ -1,14 +1,14 @@
 #include "PipelineFactory.h"
 using namespace Renderer;
 
-Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider, ShaderDefines* defines, size_t defineCount, uint16_t compileFlags):
+Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const ShaderDefines* defines, size_t defineCount, uint16_t compileFlags):
 	renderer(renderer),  provider(provider), defines(defines), defineCount(defineCount), compileFlags(compileFlags)
 {}
 
-Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider, ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, void* inputLayout, size_t inputLayoutSize, uint16_t compileFlags):
+Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags):
 	PipelineFactory(renderer, provider, defines, defineCount, compileFlags)
 {
-	this->dataSize = (dataSize); this->inputLayout = (inputLayout); this->inputLayoutSize = (inputLayoutSize);
+	this->dataSize = (dataSize); 
 
 	this->shaderData = malloc(dataSize);
 	_memccpy(this->shaderData, shaderData, 1, dataSize);
@@ -43,8 +43,10 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 		//D3DCompile(data, size, NULL, NULL, NULL, "psIn", "ps_4_0", NULL, NULL, &pPSData, &psErrorBlob);
 		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "psIn", "ps_4_0", compileFlags);
 
+		auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
 		//D3DCompile(data, size, NULL, NULL, NULL, "vsIn", "vs_4_0", NULL, NULL, &pPSData, &psErrorBlob);
-		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "vsIn", "vs_4_0", compileFlags, inputLayout, inputLayoutSize);
+		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "vsIn", "vs_4_0", 
+			compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
 
 		//ps.vs = CompileShader(shaderPath, vs_5_0, "VSMain", get_defines, ...);
 		//ps.ps = CompileShader(shaderPath, ps_5_0, "PSMain", get_defines, ...);
@@ -52,7 +54,7 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 		//ps.cs = CompileShader(shaderPath, cs_5_0, "CSMain", get_defines, ...);
 
 
-		provider->PatchPipelineState(ps);
+		provider->PatchPipelineState(ps, definesFlags);
 
 		dictinary.insert({ definesFlags, ps });
 		return ps;

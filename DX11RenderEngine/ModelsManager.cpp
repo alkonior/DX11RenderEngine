@@ -13,7 +13,7 @@ void ModelsManager::RegisterModel(const ModelData& model, size_t id) {
 	
 
 	pModel.vertexBuffer = vertexBuffer;
-	vertexBuffer->vertexBuffer = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(ModelVertex)*model.verticies.size());
+	vertexBuffer->vertexBuffer = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(ModelVertex)*model.verticies.size()));
 	vertexBuffer->vertexOffset = 0;
 	vertexBuffer->vertexStride = sizeof(ModelVertex);
 	renderer->SetVertexBufferData(vertexBuffer->vertexBuffer, 0, (void*)model.verticies.data(), model.verticies.size(), sizeof(ModelVertex), sizeof(ModelVertex), SetDataOptions::SETDATAOPTIONS_NONE);

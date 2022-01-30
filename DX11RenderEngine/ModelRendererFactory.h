@@ -5,7 +5,12 @@
 #include "ModelRendererUtils.h"
 #include "Transform.h"
 
-extern Renderer::ShaderDefines ModelRendererDefines[ ];
+
+enum ModelDefines{
+    ZERO = 0,
+    RED = 1,
+    LERP = 2
+};
 
 struct Shader3DCosntBuffer {
     matrix world;
@@ -17,6 +22,6 @@ struct Shader3DCosntBuffer {
 class ModelRendererFactory: public Renderer::PipelineFactory {
 public:
     ModelRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
-
+    static const Renderer::ShaderDefines ModelRendererDefines[];
 };
 

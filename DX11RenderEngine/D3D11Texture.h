@@ -3,9 +3,9 @@
 #include "Utils.h"
 namespace Renderer {
 
-struct D3D11Texture : public Texture{
-	D3D11Texture(wrl::ComPtr<ID3D11Texture2D> handle,wrl::ComPtr<ID3D11ShaderResourceView> shaderView,int32_t levelCount,uint8_t isRenderTarget,size_t width,size_t height,wrl::ComPtr <ID3D11RenderTargetView> rtView) :
-		handle(handle), shaderView(shaderView),levelCount(levelCount), isRenderTarget(isRenderTarget), width(width), height(height), rtView(rtView), staging(nullptr){};
+struct D3D11Texture : public Texture {
+	D3D11Texture(wrl::ComPtr<ID3D11Texture2D> handle, wrl::ComPtr<ID3D11ShaderResourceView> shaderView, int32_t levelCount, uint8_t isRenderTarget, size_t width, size_t height, wrl::ComPtr <ID3D11RenderTargetView> rtView) :
+		handle(handle), shaderView(shaderView), levelCount(levelCount), isRenderTarget(isRenderTarget), width(width), height(height), rtView(rtView), staging(nullptr) {};
 	D3D11Texture() = default;
 
 	/* D3D Handles */
@@ -13,12 +13,12 @@ struct D3D11Texture : public Texture{
 	wrl::ComPtr<ID3D11ShaderResourceView> shaderView;
 
 	/* Basic Info */
-	int32_t levelCount;
-	uint8_t isRenderTarget;
+	int32_t levelCount = 0;
+	uint8_t isRenderTarget = false;
 
 
-	size_t width;
-	size_t height;
+	size_t width = 0;
+	size_t height = 0;
 	wrl::ComPtr <ID3D11RenderTargetView> rtView;
 
 

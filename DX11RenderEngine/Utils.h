@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+
+
+
 namespace Renderer {
 
 struct Texture {};
@@ -48,7 +51,6 @@ struct Rect {
 	int32_t w;
 	int32_t h;
 };
-
 
 enum PrimitiveType {
 	PRIMITIVETYPE_TRIANGLELIST,
@@ -113,7 +115,7 @@ enum ClearOptions {
 };
 
 
-typedef struct RenderTargetBinding {
+struct RenderTargetBinding {
 
 	/* If this is >1, you MUST call ResolveTarget after rendering! */
 	int32_t levelCount;

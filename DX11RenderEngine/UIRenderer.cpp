@@ -3,57 +3,6 @@
 using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
-UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height) :width(width), height(height) {}
-
-void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS) {
-
-	//refToPS->bs.alphaBlendFunction = ;
-
-	//state_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	//state_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
-	refToPS->bs.alphaBlendFunction = BLENDFUNCTION_ADD;
-
-	//state_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	//state_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	refToPS->bs.colorSourceBlend = Blend::BLEND_SOURCEALPHA;
-	refToPS->bs.colorDestinationBlend = Blend::BLEND_INVERSESOURCEALPHA;
-
-
-	//state_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	//state_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	refToPS->bs.alphaSourceBlend = Blend::BLEND_ONE;
-	refToPS->bs.alphaDestinationBlend = Blend::BLEND_ZERO;
-
-	//state_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-
-	refToPS->bs.multiSampleMask = -1;
-
-	refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
-
-	refToPS->bf = Renderer::Color{ 255,255,255,255 };
-
-
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
-
-
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
-}
 
 UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {
 }
@@ -181,3 +130,71 @@ dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVShift() {
 dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVScale() {
 	return dx::SimpleMath::Vector2(texW * 1.0f / texture.width, texH * 1.0f / texture.height);
 }
+
+
+
+
+
+UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height) :width(width), height(height) {}
+
+void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, size_t definesFlags) {
+
+	//refToPS->bs.alphaBlendFunction = ;
+
+	//state_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	//state_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
+	refToPS->bs.alphaBlendFunction = BLENDFUNCTION_ADD;
+
+	//state_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	//state_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	refToPS->bs.colorSourceBlend = Blend::BLEND_SOURCEALPHA;
+	refToPS->bs.colorDestinationBlend = Blend::BLEND_INVERSESOURCEALPHA;
+
+
+	//state_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	//state_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	refToPS->bs.alphaSourceBlend = Blend::BLEND_ONE;
+	refToPS->bs.alphaDestinationBlend = Blend::BLEND_ZERO;
+
+	//state_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL;
+	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
+	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
+	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
+
+	refToPS->bs.multiSampleMask = -1;
+
+	refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
+
+	refToPS->bf = Renderer::Color{ 255,255,255,255 };
+
+
+
+	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
+	refToPS->rs.depthBias = 0.0f;
+	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
+	refToPS->rs.multiSampleAntiAlias = 0;
+	refToPS->rs.scissorTestEnable = 0;
+	refToPS->rs.slopeScaleDepthBias = 0.0f;
+
+
+	refToPS->vp.x = 0;
+	refToPS->vp.y = 0;
+	refToPS->vp.w = width;
+	refToPS->vp.h = height;
+	refToPS->vp.minDepth = 0.0f;
+	refToPS->vp.maxDepth = 1.0f;
+}
+
+
+const D3D11_INPUT_ELEMENT_DESC UIInputElements[] =
+{
+		{"Position",  0, DXGI_FORMAT_R32G32_FLOAT,  0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,  0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
+
+InputLayoutDescription UIRenderer::UIRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
+	return InputLayoutDescription{ (void*)UIInputElements, std::size(UIInputElements) };
+}
+
