@@ -9,7 +9,12 @@ struct Texture {};
 struct Buffer {};
 struct ConstBuffer {};
 struct Renderbuffer {};
-struct VertexBufferBinding {};
+struct VertexBufferBinding {
+	size_t buffersCount = 1;
+	Buffer** vertexBuffers;
+	unsigned int* vertexStride;
+	unsigned int* vertexOffset;
+};
 
 struct ShaderDefines {
 	const char* name;

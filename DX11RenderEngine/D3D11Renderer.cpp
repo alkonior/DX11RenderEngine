@@ -1858,12 +1858,21 @@ void D3D11Renderer::RestoreTargetTextures() {
 
 
 
-void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* bindings) {
-	D3D11VertexBufferBinding* vertexBuffer = (D3D11VertexBufferBinding*)bindings;
-
-	ctxLock.lock();
-	GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, 1u, ((D3D11Buffer*)vertexBuffer->vertexBuffer)->handle.GetAddressOf(), &vertexBuffer->vertexStride, &vertexBuffer->vertexOffset));
-	ctxLock.unlock();
+void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBuffer) {
+	if (vertexBuffer->buffersCount == 1) {
+		ctxLock.lock();
+		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, 1u, ((D3D11Buffer*)(*vertexBuffer->vertexBuffers))->handle.GetAddressOf(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
+		ctxLock.unlock();
+	}
+	else {
+		static std::vector<ID3D11Buffer*> buffers(16);
+		for (size_t i = 0; i < vertexBuffer->buffersCount; i++) {
+			buffers[i] = ((D3D11Buffer*)(vertexBuffer->vertexBuffers)[i])->handle.Get();
+		}
+		ctxLock.lock();
+		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, vertexBuffer->buffersCount, buffers.data(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
+		ctxLock.unlock();
+	}
 }
 
 

@@ -46,7 +46,7 @@ public:
 
 private:
 	Renderer::Viewport vp;
-	Renderer::D3D11VertexBufferBinding vertexBuffer;
+	Renderer::VertexBufferBinding vertexBuffer;
 	Renderer::Buffer* indexBuffer;
 
 	VertexShaderCosntBuffer localBuffer;

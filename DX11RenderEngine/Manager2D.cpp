@@ -40,11 +40,12 @@ Manager2D::Manager2D(GraphicsBase& gfx) {
 	//D3D11_SUBRESOURCE_DATA sd = {};
 	//sd.pSysMem = vertices;
 	//
-	vertexBuffer.vertexBuffer = gfx.renderer.GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
-	gfx.renderer.SetVertexBufferData(vertexBuffer.vertexBuffer, 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
+	vertexBuffer.vertexBuffers = new Buffer * [1];
+	vertexBuffer.vertexBuffers[0] = gfx.renderer.GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
+	gfx.renderer.SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
 	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-	vertexBuffer.vertexOffset = 0;
-	vertexBuffer.vertexStride = sizeof(Vertex2D);
+	vertexBuffer.vertexOffset = new UINT(0);
+	vertexBuffer.vertexStride = new UINT(sizeof(Vertex2D));
 	// Bind vertex buffer to pipeline
 
 

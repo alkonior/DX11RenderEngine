@@ -41,12 +41,16 @@ public:
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
 
+	void Destroy();
+
 	void Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
 	void Draw(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
 
 	void Render();
+	
+	~UIRenderer();
 private:
-	Renderer::D3D11VertexBufferBinding vertexBuffer;
+	Renderer::VertexBufferBinding vertexBuffer;
 	Renderer::Buffer* indexBuffer;
 	Shader2DCosntBuffer localBuffer;
 	Renderer::ConstBuffer* constBuffer;

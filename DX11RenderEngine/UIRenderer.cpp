@@ -30,11 +30,12 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 		{  Vector2(0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
 		{  Vector2(0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
 	};
-	vertexBuffer.vertexBuffer = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
-	renderer->SetVertexBufferData(vertexBuffer.vertexBuffer, 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
+	vertexBuffer.vertexBuffers = new Buffer*[1]();
+	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
+	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
 	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-	vertexBuffer.vertexOffset = 0;
-	vertexBuffer.vertexStride = sizeof(Vertex2D);
+	vertexBuffer.vertexOffset = new (UINT)(0);
+	vertexBuffer.vertexStride = new (UINT)(sizeof(Vertex2D));
 	// Bind vertex buffer to pipeline
 
 
@@ -67,6 +68,18 @@ void UIRenderer::Init(LPCWSTR dirr) {
 	Init(data, size);
 }
 
+void UIRenderer::Destroy() {
+	
+	delete vertexBuffer.vertexOffset;
+	delete vertexBuffer.vertexStride;
+	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
+	delete[] vertexBuffer.vertexBuffers;
+	renderer->AddDisposeIndexBuffer(indexBuffer);
+	renderer->AddDisposeConstBuffer(constBuffer);
+	delete provider;
+	delete factory;
+}
+
 void UIRenderer::Render() {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -95,6 +108,8 @@ void UIRenderer::Render() {
 	}
 	drawCalls.clear();
 }
+
+UIRenderer::~UIRenderer() { Destroy(); }
 
 void UIRenderer::Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag) {
 	drawCalls.emplace_back(texture, top, left, texH, texW, x, y, width, height, flag);

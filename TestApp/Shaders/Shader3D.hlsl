@@ -2,9 +2,11 @@
 struct VSIn {
 	float3 normal : NORMAL;
 	float2 uv  : TEXCOORD;
-	float3 pos : CurrentPosition;
-	float3 pos : NextPosition;
+	float3 pos1 : CurrentPosition;
+	float3 pos2 : NextPosition;
 };
+
+
 #else
 struct VSIn {
 	float3 pos : Position;
@@ -26,10 +28,23 @@ cbuffer externalData {
 	matrix projection;
 }
 
+#ifdef LERP
+cbuffer LerpExternalData {
+	float alpha;
+}
+#endif
+
 
 VSOut vsIn(VSIn input) {
 	VSOut vso;
-	vso.pos = mul(mul(mul(float4(input.pos.x, input.pos.y, input.pos.z, 1.0f), world), view), projection);
+
+#ifdef LERP
+	float3 worldPosition = input.pos1 * alpha + (1 - alpha) * input.pos2;
+#else 
+	float3 worldPosition = input.pos;
+#endif
+
+	vso.pos = mul(mul(mul(float4(worldPosition, 1.0f), world), view), projection);
 	vso.uv = input.uv;
 	return vso;
 }

@@ -2,9 +2,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "D3D11Texture.h"
-//#include "D3D11Shader.h"
 #include "D3D11Buffer.h"
-#include "D3D11VertexBuffer.h"
 #include "D3D11RenderBuffer.h"
 #include "D3D11Shaders.h"
 

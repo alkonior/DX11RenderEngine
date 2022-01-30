@@ -381,7 +381,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
     // Create the vertex shader
     {
         static const char* vertexShader =
-            "cbuffer vertexBuffer : register(b0) \
+            "cbuffer vertexBuffers : register(b0) \
             {\
               float4x4 ProjectionMatrix; \
             };\

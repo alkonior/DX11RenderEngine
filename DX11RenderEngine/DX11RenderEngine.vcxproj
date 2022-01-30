@@ -171,7 +171,6 @@
     </ClInclude>
     <ClInclude Include="D3D11Shader.h" />
     <ClInclude Include="D3D11Texture.h" />
-    <ClInclude Include="D3D11VertexBuffer.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="ImGUIRenderer.h" />
@@ -240,7 +239,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Manager2D.cpp" />
     <ClCompile Include="ModelData.cpp" />
-    <ClCompile Include="ModelesManager.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="ModelRendererFactory.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
