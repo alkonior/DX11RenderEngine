@@ -1070,8 +1070,7 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
 	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	D3D11_MAPPED_SUBRESOURCE subres = { 0, 0, 0 };
 	int32_t dataLen = vertexStride * elementCount;
-	D3D11_BOX dstBox = { offsetInBytes, 0, 0, offsetInBytes + dataLen, 1, 1 };
-	HRESULT res;
+	D3D11_BOX dstBox = { (UINT)offsetInBytes, 0, 0, (UINT)(offsetInBytes + dataLen), 1, 1 };
 
 	ctxLock.lock();
 	if (d3dBuffer->dynamic) {
@@ -1117,8 +1116,7 @@ void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBy
 	uint8_t* src, * dst;
 	int32_t i;
 	D3D11_MAPPED_SUBRESOURCE subres;
-	D3D11_BOX srcBox = { offsetInBytes, 0, 0, offsetInBytes + dataLength, 1, 1 };
-	HRESULT res;
+	D3D11_BOX srcBox = { (UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1 };
 
 	/* Create staging buffer */
 	desc.ByteWidth = d3dBuffer->size;
@@ -1182,7 +1180,6 @@ void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBy
 Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) {
 	D3D11Buffer* result = new D3D11Buffer();
 	D3D11_BUFFER_DESC desc;
-	HRESULT res;
 
 	/* Initialize the descriptor */
 	desc.ByteWidth = sizeInBytes;
@@ -1227,8 +1224,7 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 
 	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 	D3D11_MAPPED_SUBRESOURCE subres = { 0, 0, 0 };
-	D3D11_BOX dstBox = { offsetInBytes, 0, 0, offsetInBytes + dataLength, 1, 1 };
-	HRESULT res;
+	D3D11_BOX dstBox = { (UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1 };
 
 
 	ctxLock.lock();
@@ -1275,8 +1271,7 @@ void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInByt
 	D3D11_BUFFER_DESC desc;
 	wrl::ComPtr<ID3D11Buffer> stagingBuffer;
 	D3D11_MAPPED_SUBRESOURCE subres;
-	D3D11_BOX srcBox = { offsetInBytes, 0, 0, offsetInBytes + dataLength, 1, 1 };
-	HRESULT res;
+	D3D11_BOX srcBox = { (UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1 };
 
 	/* Create staging buffer */
 	desc.ByteWidth = d3dBuffer->size;
@@ -1623,7 +1618,6 @@ wrl::ComPtr<ID3D11RasterizerState> D3D11Renderer::FetchRasterizerState(const Ras
 	float depthBias;
 	D3D11_RASTERIZER_DESC desc;
 	ID3D11RasterizerState* result;
-	HRESULT res;
 
 	depthBias = state.depthBias * DepthBiasScale[currentDepthFormat];
 
@@ -1707,11 +1701,10 @@ void D3D11Renderer::DiscardTargetTextures(ID3D11RenderTargetView** views, int32_
 		 * warnings from the debug layer.
 		 * -flibit
 		 */
-	int32_t i, j, k;
 	uint8_t bound;
-	for (i = 0; i < numViews; i += 1) {
+	for (int32_t i = 0; i < numViews; i += 1) {
 		auto view = views[i];
-		for (j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
+		for (int32_t j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
 			const D3D11Texture* texture = pixelTextures[j];
 			if (!texture->isRenderTarget) {
 				continue;
@@ -1742,7 +1735,7 @@ void D3D11Renderer::DiscardTargetTextures(ID3D11RenderTargetView** views, int32_
 			}
 		}
 
-		for (j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
+		for (int32_t j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
 			const D3D11Texture* texture = vertexTextures[j];
 			if (!texture->isRenderTarget) {
 				continue;
@@ -1781,11 +1774,10 @@ void D3D11Renderer::RestoreTargetTextures() {
 	 * D3D11 implicitly unsets these to prevent simultaneous read/write.
 	 * -flibit
 	 */
-	int32_t i, j, k;
 	uint8_t bound;
-	for (i = 0; i < numRenderTargets; i += 1) {
+	for (int32_t  i = 0; i < numRenderTargets; i += 1) {
 		auto view = renderTargetViews[i];
-		for (j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
+		for (int32_t j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
 			auto texture = pixelTextures[j];
 			if (!texture->isRenderTarget) {
 				continue;
@@ -1819,7 +1811,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 				}
 			}
 		}
-		for (j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
+		for (int32_t  j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
 			auto texture = vertexTextures[j];
 			if (!texture->isRenderTarget) {
 				continue;
@@ -1870,7 +1862,7 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBu
 			buffers[i] = ((D3D11Buffer*)(vertexBuffer->vertexBuffers)[i])->handle.Get();
 		}
 		ctxLock.lock();
-		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, vertexBuffer->buffersCount, buffers.data(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
+		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, (UINT)vertexBuffer->buffersCount, buffers.data(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
 		ctxLock.unlock();
 	}
 }
@@ -1954,7 +1946,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 	GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
 	GFX_THROW_INFO(device->CreateInputLayout(
 		d3dInputLayout,
-		inputLayoutSize,
+		(UINT)inputLayoutSize,
 		pVSData->GetBufferPointer(),
 		pVSData->GetBufferSize(),
 		&result->pInputLayout));
@@ -1993,7 +1985,7 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 	cbd.Usage = D3D11_USAGE_DEFAULT;
 	cbd.CPUAccessFlags = 0u;
 	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = size;
+	cbd.ByteWidth = (UINT)size;
 	cbd.StructureByteStride = 0u;
 	GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->handle));
 
@@ -2006,7 +1998,7 @@ void D3D11Renderer::VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) 
 	for (size_t i = 0; i < size; i++) {
 		constBuffersArray[i] = ((D3D11ConstBuffer*)(constBuffers[i]))->handle.Get();
 	}
-	context->VSSetConstantBuffers(0u, size, constBuffersArray.data());
+	context->VSSetConstantBuffers(0u, (UINT)size, constBuffersArray.data());
 }
 
 void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data) {

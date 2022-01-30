@@ -13,9 +13,8 @@ struct Vertex2D {
 
 
 Manager2D::Manager2D(GraphicsBase& gfx) {
-	HRESULT hr;
-	vp.h = gfx.height;
-	vp.w = gfx.width;
+	vp.h = static_cast<uint32_t>(gfx.height);
+	vp.w = static_cast<uint32_t>(gfx.width);
 	vp.minDepth = 0;
 	vp.maxDepth = 1;
 	vp.x = 0;

@@ -2,14 +2,13 @@
 using namespace Renderer;
 
 Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const ShaderDefines* defines, size_t defineCount, uint16_t compileFlags):
-	renderer(renderer),  provider(provider), defines(defines), defineCount(defineCount), compileFlags(compileFlags)
+	renderer(renderer),  provider(provider), defines(defines), defineCount(defineCount), compileFlags(compileFlags), dataSize(0), shaderData(nullptr)
 {}
 
 Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags):
 	PipelineFactory(renderer, provider, defines, defineCount, compileFlags)
 {
 	this->dataSize = (dataSize); 
-
 	this->shaderData = malloc(dataSize);
 	_memccpy(this->shaderData, shaderData, 1, dataSize);
 	this->dataSize = dataSize;
@@ -20,7 +19,7 @@ std::vector<ShaderDefines> Renderer::PipelineFactory::GetDefines(size_t definesF
 	std::vector<ShaderDefines> result;
 
 	for (size_t i = 0; i < defineCount; i++) {
-		if (definesFlags & 1<<i) {
+		if (definesFlags & size_t(1)<<i) {
 			result.push_back(ShaderDefines{ defines[i].name ,defines[i].defenition });
 		}
 	}

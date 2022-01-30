@@ -50,7 +50,7 @@ void ModelRenderer::Draw(ModelsManager::ModelCache model, TexturesManager::Textu
 void ModelRenderer::Render(const GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
-	uint32_t lastFlags = -1;
+	size_t lastFlags = -1;
 
 	renderer->VerifyConstBuffers(&constBuffer, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
