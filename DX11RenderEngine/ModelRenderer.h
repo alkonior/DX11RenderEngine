@@ -49,10 +49,11 @@ public:
 
 private:
 
-	Shader3DCosntBuffer localBuffer;
-	Renderer::ConstBuffer* transformConstBuffer;
-	float alpha;
-	Renderer::ConstBuffer* alphaConstBuffer;
+	Shader3DTranformCosntBuffer transformBuffer;
+	Shader3DDataCosntBuffer dataBuffer;
+
+	Renderer::ConstBuffer* pTransformCB;
+	Renderer::ConstBuffer* pDataCB;
 
 	Renderer::SamplerState sampler;
 	std::vector<DrawCall> drawCalls;

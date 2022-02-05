@@ -184,7 +184,7 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, 
 
 	refToPS->bf = Renderer::Color{ 255,255,255,255 };
 
-
+	refToPS->dss.stencilEnable = false;
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
 	refToPS->rs.depthBias = 0.0f;

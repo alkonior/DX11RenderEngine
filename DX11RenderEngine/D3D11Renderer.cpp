@@ -231,13 +231,19 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 			D3D_Primitive[primitiveType]
 		);
 	}
+	try {	/* Draw! */
+		GFX_THROW_INFO_ONLY(context->DrawIndexed(
+			PrimitiveVerts(primitiveType, primitiveCount),
+			(uint32_t)startIndex,
+			baseVertex
+		));
+	}
+	catch (InfoException exe) 		{
 
-	/* Draw! */
-	GFX_THROW_INFO_ONLY(context->DrawIndexed(
-		PrimitiveVerts(primitiveType, primitiveCount),
-		(uint32_t)startIndex,
-		baseVertex
-	));
+		while (true) {
+
+		}
+	}
 
 	ctxLock.unlock();
 }
@@ -1376,10 +1382,10 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 		/* Update the depth-stencil view */
 		depthStencilViewDesc.Format = depthStencilDesc.Format;
 		depthStencilViewDesc.Flags = 0;
-
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		GFX_THROW_INFO(device->CreateDepthStencilView(
 			depthStencilBuffer.Get(),
-			&depthStencilViewDesc,
+			NULL,
 			&depthStencilView
 		));
 	}
@@ -1913,11 +1919,18 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 
 	wrl::ComPtr<ID3D10Blob>pPSData;
 	wrl::ComPtr<ID3D10Blob>psErrorBlob;
+	try {
+		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags<<8u, &pPSData, &psErrorBlob));
+		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
 
-	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags<<8u, &pPSData, &psErrorBlob));
+	}
+	catch (HrException exe) 		{
+		static char* govno = (char*)psErrorBlob->GetBufferPointer();
+		printf(govno);
+		while (true) {
 
-	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
-
+		}
+	}
 	return result;
 }
 
@@ -1985,7 +1998,7 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 	cbd.Usage = D3D11_USAGE_DEFAULT;
 	cbd.CPUAccessFlags = 0u;
 	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = (UINT)size;
+	cbd.ByteWidth = (UINT)((size/16 + (size%16!=0))*16);
 	cbd.StructureByteStride = 0u;
 	GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->handle));
 
@@ -2021,7 +2034,7 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 	ApplyVertexShader(piplineState->vs);
 	
 	SetBlendState(piplineState->bs);
-	//SetDepthStencilState(piplineState->dss);
+	SetDepthStencilState(piplineState->dss);
 	SetBlendFactor(piplineState->bf);
 	ApplyRasterizerState(piplineState->rs);
 	SetViewport(piplineState->vp);

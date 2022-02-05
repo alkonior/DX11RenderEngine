@@ -6,7 +6,9 @@ using namespace Renderer;
 
 const ShaderDefines ModelRendererFactory::ModelRendererDefines[ ] = {
     {"RED", "1"},
-    {"LERP", "1"}
+    {"LERP", "1"},
+    {"SINGLE_FRAME", "1"},
+    {"BAD_UV", "1"},
 };
 
 

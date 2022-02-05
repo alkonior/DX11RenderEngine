@@ -2,7 +2,7 @@
 
 Transform::Transform(matrix transform): transform(transform) {}
 
-Transform::Transform() {}
+Transform::Transform() : transform(matrix::CreateScale(float3{1.0,1.0,1.0})) {}
 
 Transform::Transform(float3 position, float3 roitation, float3 scale):
 	transform(

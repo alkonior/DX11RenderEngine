@@ -27,8 +27,8 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new ModelRendererFactory(renderer, provider, shaderData, dataSize);
 
 
-	transformConstBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
-	alphaConstBuffer = renderer->CreateConstBuffer(sizeof(alpha)*4);
+	pTransformCB = renderer->CreateConstBuffer(sizeof(transformBuffer));
+	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
@@ -59,7 +59,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffers(&transformConstBuffer, 1);
+	renderer->VerifyConstBuffers(&pTransformCB, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 
@@ -77,14 +77,14 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		auto  pTexture = drawCalls[i].texture.texture;
 		renderer->VerifyPixelSampler(0, pTexture, sampler);
 
-		localBuffer.world = drawCalls[i].position.GetTransform();
-		localBuffer.view = gfx.camera.GetInverseTransform();
-		localBuffer.projection = gfx.cameraProjection.Transpose();
+		transformBuffer.world = drawCalls[i].position.GetTransform();
+		transformBuffer.view = gfx.camera.GetInverseTransform();
+		transformBuffer.projection = gfx.cameraProjection.Transpose();
 
 		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		//localBuffer.uvShift = drawCalls[i].getUVShift();
 		//localBuffer.uvScale = drawCalls[i].getUVScale();
-		renderer->SetConstBuffer(transformConstBuffer, &localBuffer);
+		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0, 
 			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
@@ -92,7 +92,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	drawCalls.clear();
 
 	if (!drawLerpCalls.empty()) {
-		ConstBuffer* constBuffers[] = { transformConstBuffer , alphaConstBuffer };
+		static ConstBuffer* constBuffers[] = { pTransformCB , pDataCB };
 		renderer->VerifyConstBuffers(constBuffers, 2);
 
 		for (size_t i = 0; i < drawLerpCalls.size(); i++) {
@@ -106,11 +106,15 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			static UINT ofsets[3] = { 0, 0, 0 };
 			static UINT strides[3] = { 0, 0, 0 };
 			static VertexBufferBinding vBB;
+			
 			vBB.buffersCount = 3;
+			if (drawLerpCalls[i].flags & SINGLE_FRAME)
+				vBB.buffersCount = 2;
 			vBB.vertexBuffers = vertexBuffers;
+			int max_buff = drawLerpCalls[i].model.vertexBuffer->buffersCount - 1;
 			vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[0];
-			vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].curIndex + 1];
-			vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].nextIndex + 1];
+			vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].curIndex % max_buff + 1];
+			vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].nextIndex % max_buff + 1];
 
 			strides[0] = drawLerpCalls[i].model.vertexBuffer->vertexStride[0];
 			strides[1] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].curIndex + 1];
@@ -124,15 +128,19 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			auto  pTexture = drawLerpCalls[i].texture.texture;
 			renderer->VerifyPixelSampler(0, pTexture, sampler);
 
-			localBuffer.world = drawLerpCalls[i].position.GetTransform();
-			localBuffer.view = gfx.camera.GetInverseTransform();
-			localBuffer.projection = gfx.cameraProjection.Transpose();
+			transformBuffer.world = drawLerpCalls[i].position.GetTransform();
+			transformBuffer.view = gfx.camera.GetInverseTransform();
+			transformBuffer.projection = gfx.cameraProjection.Transpose();
 
+			dataBuffer.alpha = drawLerpCalls[i].alpha+0.1;
+			dataBuffer.w = drawLerpCalls[i].texture.width;
+			dataBuffer.h = drawLerpCalls[i].texture.height;
 			//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 			//localBuffer.uvShift = drawCalls[i].getUVShift();
 			//localBuffer.uvScale = drawCalls[i].getUVScale();
-			renderer->SetConstBuffer(transformConstBuffer, &localBuffer);
-			renderer->SetConstBuffer(alphaConstBuffer, &drawLerpCalls[i].alpha);
+			renderer->SetConstBuffer(pTransformCB, &transformBuffer);
+			renderer->SetConstBuffer(pDataCB, &dataBuffer);
+			
 
 
 			renderer->DrawIndexedPrimitives(
@@ -167,6 +175,8 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 
 	refToPS->bf = Renderer::Color{ 255,255,255,255 };
 
+
+	refToPS->dss.stencilEnable = false;
 
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_CULLCLOCKWISEFACE;
