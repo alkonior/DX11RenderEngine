@@ -11,6 +11,7 @@
 #include "DxgiInfoManager.h"
 #include "GraphicsException.h"
 #include <thread>
+#include <unordered_map>
 namespace Renderer{
 
 
@@ -153,10 +154,18 @@ private:
 	void CreateBackbuffer(const PresentationParameters& parameters);
 	void CreateSwapChain(const PresentationParameters& pp);
 	void ResizeSwapChain(const PresentationParameters& pp);
+
+	std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>> hashBS;
+	std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>> hashDSS;
+	std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>> hashRS;
+	std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>> hashSS;
+
 	wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
 	wrl::ComPtr<ID3D11DepthStencilState> FetchDepthStencilState(const DepthStencilState& state);
 	wrl::ComPtr<ID3D11RasterizerState> FetchRasterizerState(const RasterizerState& state);
 	wrl::ComPtr<ID3D11SamplerState> FetchSamplerState(const SamplerState& state);
+
+
 	void DiscardTargetTextures(ID3D11RenderTargetView** views, int32_t numViews);
 	void RestoreTargetTextures();
 public:

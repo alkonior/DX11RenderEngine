@@ -44,7 +44,7 @@ void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h) {}
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) : IRenderer(presentationParameters, debugMode) {
 
 	//DXGI_ADAPTER_DESC adapterDesc;
-	D3D_FEATURE_LEVEL levels[ ] =
+	D3D_FEATURE_LEVEL levels[] =
 	{
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -192,13 +192,13 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
 	ctxLock.unlock();
 }
 
-static DXGI_FORMAT IndexType[ ] =
+static DXGI_FORMAT IndexType[] =
 {
 	DXGI_FORMAT_R16_UINT,		/* IndexElementSize.SixteenBits */
 	DXGI_FORMAT_R32_UINT		/* IndexElementSize.ThirtyTwoBits */
 };
 
-static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[ ] =
+static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[] =
 {
 	D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,	/* PrimitiveType.TriangleList */
 	D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,	/* PrimitiveType.TriangleStrip */
@@ -238,7 +238,7 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 			baseVertex
 		));
 	}
-	catch (InfoException exe) 		{
+	catch (InfoException exe) {
 
 		while (true) {
 
@@ -493,7 +493,7 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 		/* Update the sampler state, if needed */
 		d3dSamplerState = FetchSamplerState(sampler);
 
-		//if (d3dSamplerState != renderer->samplers[index]) 
+		if (d3dSamplerState != pixelSamplers[index]) 
 		{
 			pixelSamplers[index] = d3dSamplerState;
 			ctxLock.lock();
@@ -601,7 +601,8 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 			rb = (D3D11Renderbuffer*)renderTargets[i].colorBuffer;
 			views[i] = rb->color.rtView.Get();
 			comViews[i] = rb->color.rtView;
-		} else {
+		}
+		else {
 			tex = (D3D11Texture*)renderTargets[i].texture;
 
 			//if (tex->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
@@ -832,13 +833,14 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 	D3D11_BOX srcBox = { 0, 0, 0, texW, texH, 1 };
 	D3D11_MAPPED_SUBRESOURCE subresource;
 	uint8_t* dataPtr = (uint8_t*)data;
-	
+
 	int32_t formatSize = 4;
 
 	/* Create staging texture if needed */
 	if (tex->isRenderTarget) {
 		stagingTexture = tex->staging;
-	} else {
+	}
+	else {
 		stagingTexture = nullptr;
 	}
 	if (stagingTexture == nullptr) {
@@ -895,7 +897,7 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 		memcpy(
 			dataPtr,
 			(uint8_t*)subresource.pData + subresource.RowPitch * row + formatSize * x,
-			 w * formatSize
+			w * formatSize
 		);
 		dataPtr += formatSize * w;
 	}
@@ -951,7 +953,7 @@ Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height,
 	return result;
 }
 
-static DXGI_FORMAT D3D11DepthFormat[ ] =
+static DXGI_FORMAT D3D11DepthFormat[] =
 {
 	DXGI_FORMAT_UNKNOWN,		    /* DepthFormat.None */
 	DXGI_FORMAT_D16_UNORM,		    /* DepthFormat.Depth16 */
@@ -1008,7 +1010,8 @@ void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer) {
 			depthStencilView = nullptr;
 		}
 		d3dRenderbuffer->depth.dsView = nullptr;
-	} else {
+	}
+	else {
 		for (i = 0; i < MAX_RENDERTARGET_BINDINGS; i += 1) {
 			if (d3dRenderbuffer->color.rtView == renderTargetViews[i]) {
 				renderTargetViews[i] = nullptr;
@@ -1048,7 +1051,7 @@ Buffer* D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32
 
 void D3D11Renderer::AddDisposeVertexBuffer(Buffer* buffer) {
 	D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
-	ID3D11Buffer* nullVertexBuffers[ ] = { NULL };
+	ID3D11Buffer* nullVertexBuffers[] = { NULL };
 	uint32_t whatever[1] = { 0 };
 	//int32_t i;
 
@@ -1101,7 +1104,8 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
 			dataLen
 		);
 		GFX_THROW_INFO_ONLY(context->Unmap(d3dBuffer->handle.Get(), 0));
-	} else {
+	}
+	else {
 		GFX_THROW_INFO_ONLY(context->UpdateSubresource(
 			d3dBuffer->handle.Get(),
 			0,
@@ -1167,7 +1171,8 @@ void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBy
 			dst += elementSizeInBytes;
 			src += vertexStride;
 		}
-	} else {
+	}
+	else {
 		memcpy(
 			data,
 			subres.pData,
@@ -1259,7 +1264,8 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 			d3dBuffer->handle.Get(),
 			0
 		);
-	} else {
+	}
+	else {
 		context->UpdateSubresource(
 			d3dBuffer->handle.Get(),
 			0,
@@ -1358,12 +1364,21 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 	D3D11_RENDER_TARGET_VIEW_DESC swapchainViewDesc;
 	wrl::ComPtr<ID3D11Texture2D> swapchainTexture;
 
+
+
 	backBufferWidth = parameters.backBufferWidth;
 	backBufferHeight = parameters.backBufferHeight;
+
+	backBufferWidth = 1024;
+	backBufferHeight = 583;
 
 	if (parameters.depthStencilFormat != DEPTHFORMAT_NONE) {
 		depthStencilDesc.Width = parameters.backBufferWidth;
 		depthStencilDesc.Height = parameters.backBufferHeight;
+
+		depthStencilDesc.Width = 1024;
+		depthStencilDesc.Height = 583;
+
 		depthStencilDesc.MipLevels = 1;
 		depthStencilDesc.ArraySize = 1;
 		depthStencilDesc.Format = D3D11DepthFormat[parameters.depthStencilFormat];
@@ -1445,7 +1460,7 @@ void D3D11Renderer::ResizeSwapChain(const PresentationParameters& pp) {
 		0));
 }
 
-static D3D11_BLEND BlendMode[ ] =
+static D3D11_BLEND BlendMode[] =
 {
 	D3D11_BLEND_ONE,		        /* Blend.One */
 	D3D11_BLEND_ZERO,		        /* Blend.Zero */
@@ -1462,7 +1477,7 @@ static D3D11_BLEND BlendMode[ ] =
 	D3D11_BLEND_SRC_ALPHA_SAT	    /* Blend.SourceAlphaSaturation */
 };
 
-static D3D11_BLEND BlendModeAlpha[ ] =
+static D3D11_BLEND BlendModeAlpha[] =
 {
 	D3D11_BLEND_ONE,		         /* Blend.One */
 	D3D11_BLEND_ZERO,		         /* Blend.Zero */
@@ -1479,7 +1494,7 @@ static D3D11_BLEND BlendModeAlpha[ ] =
 	D3D11_BLEND_SRC_ALPHA_SAT	     /* Blend.SourceAlphaSaturation */
 };
 
-static D3D11_BLEND_OP BlendOperation[ ] =
+static D3D11_BLEND_OP BlendOperation[] =
 {
 	D3D11_BLEND_OP_ADD,		        /* BlendFunction.Add */
 	D3D11_BLEND_OP_SUBTRACT,	    /* BlendFunction.Subtract */
@@ -1488,7 +1503,7 @@ static D3D11_BLEND_OP BlendOperation[ ] =
 	D3D11_BLEND_OP_MIN		        /* BlendFunction.Min */
 };
 
-static D3D11_COMPARISON_FUNC CompareFunc[ ] =
+static D3D11_COMPARISON_FUNC CompareFunc[] =
 {
 	D3D11_COMPARISON_ALWAYS,	    /* CompareFunction.Always */
 	D3D11_COMPARISON_NEVER,		    /* CompareFunction.Never */
@@ -1506,7 +1521,13 @@ wrl::ComPtr<ID3D11BlendState> D3D11Renderer::FetchBlendState(const BlendState& s
 	D3D11_BLEND_DESC desc;
 	memset(&desc, 0, sizeof(desc));
 
+	if (hashBS.count(&state)) {
+		return hashBS.at(&state);
+	}
+
 	wrl::ComPtr<ID3D11BlendState> result;
+
+
 
 	/* We need to make a new blend state... */
 	desc.AlphaToCoverageEnable = 0;
@@ -1540,11 +1561,12 @@ wrl::ComPtr<ID3D11BlendState> D3D11Renderer::FetchBlendState(const BlendState& s
 	/* Bake the state! */
 	GFX_THROW_INFO(device->CreateBlendState(&desc, &result));
 
+	hashBS[&state] = result;
 	/* Return the state! */
 	return result;
 }
 
-static D3D11_STENCIL_OP StencilOp[ ] =
+static D3D11_STENCIL_OP StencilOp[] =
 {
 	D3D11_STENCIL_OP_KEEP,		/* StencilOperation.Keep */
 	D3D11_STENCIL_OP_ZERO,		/* StencilOperation.Zero */
@@ -1559,6 +1581,11 @@ static D3D11_STENCIL_OP StencilOp[ ] =
 wrl::ComPtr<ID3D11DepthStencilState> D3D11Renderer::FetchDepthStencilState(const DepthStencilState& state) {
 	D3D11_DEPTH_STENCIL_DESC desc;
 	D3D11_DEPTH_STENCILOP_DESC front, back;
+
+	if (hashDSS.count(&state)) {
+		return hashDSS.at(&state);
+	}
+
 	wrl::ComPtr<ID3D11DepthStencilState> result;
 
 	/* We have to make a new depth stencil state... */
@@ -1583,7 +1610,8 @@ wrl::ComPtr<ID3D11DepthStencilState> D3D11Renderer::FetchDepthStencilState(const
 		back.StencilFailOp = StencilOp[state.ccwStencilFail];
 		back.StencilFunc = CompareFunc[state.ccwStencilFunction];
 		back.StencilPassOp = StencilOp[state.ccwStencilPass];
-	} else {
+	}
+	else {
 		back = front;
 	}
 	desc.FrontFace = front;
@@ -1595,11 +1623,13 @@ wrl::ComPtr<ID3D11DepthStencilState> D3D11Renderer::FetchDepthStencilState(const
 		&result
 	));
 
+	hashDSS[&state] = result;
+
 	/* Return the state! */
 	return result;
 }
 
-float DepthBiasScale[ ] =
+float DepthBiasScale[] =
 {
 	0.0f,				    /* DepthFormat.None */
 	(float)((1 << 16) - 1),	/* DepthFormat.Depth16 */
@@ -1607,14 +1637,14 @@ float DepthBiasScale[ ] =
 	(float)((1 << 24) - 1) 	/* DepthFormat.Depth24Stencil8 */
 };
 
-static D3D11_CULL_MODE D3D11CullMode[ ] =
+static D3D11_CULL_MODE D3D11CullMode[] =
 {
 	D3D11_CULL_NONE,		/* CullMode.None */
 	D3D11_CULL_BACK,		/* CullMode.CullClockwiseFace */
 	D3D11_CULL_FRONT 		/* CullMode.CullCounterClockwiseFace */
 };
 
-static D3D11_FILL_MODE D3D11FillMode[ ] =
+static D3D11_FILL_MODE D3D11FillMode[] =
 {
 	D3D11_FILL_SOLID,		/* FillMode.Solid */
 	D3D11_FILL_WIREFRAME		/* FillMode.WireFrame */
@@ -1623,7 +1653,15 @@ static D3D11_FILL_MODE D3D11FillMode[ ] =
 wrl::ComPtr<ID3D11RasterizerState> D3D11Renderer::FetchRasterizerState(const RasterizerState& state) {
 	float depthBias;
 	D3D11_RASTERIZER_DESC desc;
-	ID3D11RasterizerState* result;
+
+
+	if (hashRS.count(&state)) {
+		return hashRS.at(&state);
+	}
+
+	wrl::ComPtr<ID3D11RasterizerState> result;
+
+
 
 	depthBias = state.depthBias * DepthBiasScale[currentDepthFormat];
 
@@ -1646,19 +1684,21 @@ wrl::ComPtr<ID3D11RasterizerState> D3D11Renderer::FetchRasterizerState(const Ras
 		&desc,
 		&result
 	));
+
+	hashRS[(&state)] = result;
 	/* Return the state! */
 	return result;
 }
 
 
-static D3D11_TEXTURE_ADDRESS_MODE Wrap[ ] =
+static D3D11_TEXTURE_ADDRESS_MODE Wrap[] =
 {
 	D3D11_TEXTURE_ADDRESS_WRAP,	    /* TextureAddressMode.Wrap */
 	D3D11_TEXTURE_ADDRESS_CLAMP,	/* TextureAddressMode.Clamp */
 	D3D11_TEXTURE_ADDRESS_MIRROR	/* TextureAddressMode.Mirror */
 };
 
-static D3D11_FILTER Filter[ ] =
+static D3D11_FILTER Filter[] =
 {
 	D3D11_FILTER_MIN_MAG_MIP_LINEAR,	     	     /* TextureFilter.Linear */
 	D3D11_FILTER_MIN_MAG_MIP_POINT,		     	     /* TextureFilter.Point */
@@ -1674,6 +1714,11 @@ static D3D11_FILTER Filter[ ] =
 wrl::ComPtr<ID3D11SamplerState> D3D11Renderer::FetchSamplerState(const SamplerState& state) {
 	wrl::ComPtr<ID3D11SamplerState> result;
 	D3D11_SAMPLER_DESC desc;
+
+	if (hashSS.count(&state)) {
+		return hashSS.at(&state);
+	}
+
 
 	/* We have to make a new sampler state... */
 	desc.AddressU = Wrap[state.addressU];
@@ -1695,6 +1740,9 @@ wrl::ComPtr<ID3D11SamplerState> D3D11Renderer::FetchSamplerState(const SamplerSt
 		&desc,
 		&result
 	));
+
+
+	hashSS[(&state)] = result;
 
 	/* Return the state! */
 	return result;
@@ -1781,7 +1829,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 	 * -flibit
 	 */
 	uint8_t bound;
-	for (int32_t  i = 0; i < numRenderTargets; i += 1) {
+	for (int32_t i = 0; i < numRenderTargets; i += 1) {
 		auto view = renderTargetViews[i];
 		for (int32_t j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1) {
 			auto texture = pixelTextures[j];
@@ -1817,7 +1865,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 				}
 			}
 		}
-		for (int32_t  j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
+		for (int32_t j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1) {
 			auto texture = vertexTextures[j];
 			if (!texture->isRenderTarget) {
 				continue;
@@ -1907,7 +1955,7 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBu
 //}
 //
 
-PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
+PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
 	D3D11PixelShader* result = new D3D11PixelShader();
 	std::vector<D3D_SHADER_MACRO> d3ddefines(definesSize + 1);
 	for (size_t i = 0; i < definesSize; i++) {
@@ -1920,11 +1968,11 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 	wrl::ComPtr<ID3D10Blob>pPSData;
 	wrl::ComPtr<ID3D10Blob>psErrorBlob;
 	try {
-		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags<<8u, &pPSData, &psErrorBlob));
+		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
 		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
 
 	}
-	catch (HrException exe) 		{
+	catch (HrException exe) {
 		static char* govno = (char*)psErrorBlob->GetBufferPointer();
 		printf(govno);
 		while (true) {
@@ -1934,7 +1982,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 	return result;
 }
 
-VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inputLayout, size_t inputLayoutSize) {
+VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inputLayout, size_t inputLayoutSize) {
 	D3D11VertexShader* result = new D3D11VertexShader();
 
 	std::vector<D3D_SHADER_MACRO> d3ddefines(definesSize + 1);
@@ -1969,7 +2017,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 
 
 void D3D11Renderer::AddDisposePixelShader(PixelShader* pixelShader) {
-	D3D11PixelShader* shader = (D3D11PixelShader*) pixelShader;
+	D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
 	delete pixelShader;
 }
 void D3D11Renderer::AddDisposeVertexShader(VertexShader* vertexShader) {
@@ -1998,7 +2046,7 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 	cbd.Usage = D3D11_USAGE_DEFAULT;
 	cbd.CPUAccessFlags = 0u;
 	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = (UINT)((size/16 + (size%16!=0))*16);
+	cbd.ByteWidth = (UINT)((size / 16 + (size % 16 != 0)) * 16);
 	cbd.StructureByteStride = 0u;
 	GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->handle));
 
@@ -2032,7 +2080,7 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 
 	ApplyPixelShader(piplineState->ps);
 	ApplyVertexShader(piplineState->vs);
-	
+
 	SetBlendState(piplineState->bs);
 	SetDepthStencilState(piplineState->dss);
 	SetBlendFactor(piplineState->bf);
