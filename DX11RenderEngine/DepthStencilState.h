@@ -18,21 +18,21 @@ enum StencilOperation {
 };
 
 enum CompareFunction {
-	FNA3D_COMPAREFUNCTION_ALWAYS,
-	FNA3D_COMPAREFUNCTION_NEVER,
-	FNA3D_COMPAREFUNCTION_LESS,
-	FNA3D_COMPAREFUNCTION_LESSEQUAL,
-	FNA3D_COMPAREFUNCTION_EQUAL,
-	FNA3D_COMPAREFUNCTION_GREATEREQUAL,
-	FNA3D_COMPAREFUNCTION_GREATER,
-	FNA3D_COMPAREFUNCTION_NOTEQUAL
+	COMPAREFUNCTION_ALWAYS,
+	COMPAREFUNCTION_NEVER,
+	COMPAREFUNCTION_LESS,
+	COMPAREFUNCTION_LESSEQUAL,
+	COMPAREFUNCTION_EQUAL,
+	COMPAREFUNCTION_GREATEREQUAL,
+	COMPAREFUNCTION_GREATER,
+	COMPAREFUNCTION_NOTEQUAL
 };
 
 struct DepthStencilState {
-	uint8_t depthBufferEnable;
-	uint8_t depthBufferWriteEnable;
-	CompareFunction depthBufferFunction;
-	uint8_t stencilEnable;
+	uint8_t depthBufferEnable = false;
+	uint8_t depthBufferWriteEnable = true;
+	CompareFunction depthBufferFunction = CompareFunction::COMPAREFUNCTION_GREATER;
+	uint8_t stencilEnable = false;
 	int32_t stencilMask;
 	int32_t stencilWriteMask;
 	uint8_t twoSidedStencilMode;

@@ -10,7 +10,7 @@ PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t h
 	pp.backBufferHeight = height;
 	pp.deviceWindowHandle = hWnd;
 	pp.multiSampleCount = 0;
-	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_D16;
+	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_D24S8;
 	pp.presentationInterval = PresentInterval::PRESENTINTERVAL_DEFAULT;
 
 	return pp;
@@ -83,6 +83,10 @@ void GraphicsBase::OnResize(size_t width, size_t height) {
 }
 
 void GraphicsBase::SetCameraPosition(Transform position) {
+	camera = position.GetInverseTransform();
+}
+
+void GraphicsBase::SetCameraMatrix(matrix position) {
 	camera = position;
 }
 

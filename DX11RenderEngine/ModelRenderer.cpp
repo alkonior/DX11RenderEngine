@@ -62,6 +62,8 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->VerifyConstBuffers(&pTransformCB, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
+	transformBuffer.view = gfx.camera;
+	transformBuffer.projection = gfx.cameraProjection;
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flags != lastFlags) {
@@ -78,8 +80,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		renderer->VerifyPixelSampler(0, pTexture, sampler);
 
 		transformBuffer.world = drawCalls[i].position.GetTransform();
-		transformBuffer.view = gfx.camera.GetInverseTransform();
-		transformBuffer.projection = gfx.cameraProjection.Transpose();
 
 		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		//localBuffer.uvShift = drawCalls[i].getUVShift();
@@ -129,8 +129,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			renderer->VerifyPixelSampler(0, pTexture, sampler);
 
 			transformBuffer.world = drawLerpCalls[i].position.GetTransform();
-			transformBuffer.view = gfx.camera.GetInverseTransform();
-			transformBuffer.projection = gfx.cameraProjection.Transpose();
 
 			dataBuffer.alpha = drawLerpCalls[i].alpha+0.1;
 			dataBuffer.w = drawLerpCalls[i].texture.width;
@@ -176,10 +174,15 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 	refToPS->bf = Renderer::Color{ 255,255,255,255 };
 
 
+	refToPS->dss.depthBufferEnable = true;
+	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
 	refToPS->dss.stencilEnable = false;
 
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_CULLCLOCKWISEFACE;
+
+	if (definesFlags & ModelDefines::BAD_UV) 
+		refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
 	refToPS->rs.depthBias = 0.0f;
 	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
 	refToPS->rs.multiSampleAntiAlias = 0;
@@ -211,8 +214,18 @@ const D3D11_INPUT_ELEMENT_DESC  LerpInputElements[] =
 	{ "NextPosition",       0, DXGI_FORMAT_R32G32B32_FLOAT,    2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
+
+const D3D11_INPUT_ELEMENT_DESC  SingleFrameInputElements[] =
+{
+	{ "Position",           0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD",           0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
 InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
 	if (definesFlags & ModelDefines::LERP) {
+		if (definesFlags & ModelDefines::SINGLE_FRAME)
+			return InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
 		return InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
 	}
 

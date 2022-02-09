@@ -31,6 +31,7 @@ public:
 
 
 	void RegisterImg(size_t id, const TextureData& text);
+	void UpdateImg(size_t id, const TextureData& text);
 	void ReleaseImg(size_t id);
 
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);

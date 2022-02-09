@@ -19,6 +19,7 @@ public:
 	TexturesManager(Renderer::IRenderer* renderer);
 
 	void RegTexture(const TextureData& tx, size_t id);
+	void UpdateTexture(const TextureData& tx, size_t id);
 	void ReleaseTexture(size_t id);
 	TextureCache GetImg(size_t id);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);

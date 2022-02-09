@@ -1,8 +1,10 @@
 #include "Transform.h"
+#include "Transform.h"
 
-Transform::Transform(matrix transform): transform(transform) {}
 
 Transform::Transform() : transform(matrix::CreateScale(float3{1.0,1.0,1.0})) {}
+
+Transform::Transform(const matrix& transform):transform(transform) {}
 
 Transform::Transform(float3 position, float3 roitation, float3 scale):
 	transform(

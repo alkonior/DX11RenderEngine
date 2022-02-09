@@ -1369,15 +1369,15 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 	backBufferWidth = parameters.backBufferWidth;
 	backBufferHeight = parameters.backBufferHeight;
 
-	backBufferWidth = 1024;
-	backBufferHeight = 583;
+	//backBufferWidth = 1024;w:1024,h:576
+	//backBufferHeight = 583;
 
 	if (parameters.depthStencilFormat != DEPTHFORMAT_NONE) {
 		depthStencilDesc.Width = parameters.backBufferWidth;
 		depthStencilDesc.Height = parameters.backBufferHeight;
 
-		depthStencilDesc.Width = 1024;
-		depthStencilDesc.Height = 583;
+		depthStencilDesc.Width = 1024; 
+		depthStencilDesc.Height = 576;
 
 		depthStencilDesc.MipLevels = 1;
 		depthStencilDesc.ArraySize = 1;
@@ -1394,13 +1394,16 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 			&depthStencilBuffer
 		));
 
+
+
 		/* Update the depth-stencil view */
 		depthStencilViewDesc.Format = depthStencilDesc.Format;
 		depthStencilViewDesc.Flags = 0;
 		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
 		GFX_THROW_INFO(device->CreateDepthStencilView(
 			depthStencilBuffer.Get(),
-			NULL,
+			&depthStencilViewDesc,
 			&depthStencilView
 		));
 	}
@@ -1532,7 +1535,8 @@ wrl::ComPtr<ID3D11BlendState> D3D11Renderer::FetchBlendState(const BlendState& s
 	/* We need to make a new blend state... */
 	desc.AlphaToCoverageEnable = 0;
 	desc.IndependentBlendEnable = 0;
-	desc.RenderTarget[0].BlendEnable = !(
+	desc.RenderTarget[0].BlendEnable = state.enabled && 
+		!(
 		state.colorSourceBlend == BLEND_ONE &&
 		state.colorDestinationBlend == BLEND_ZERO &&
 		state.alphaSourceBlend == BLEND_ONE &&
@@ -1967,18 +1971,19 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 
 	wrl::ComPtr<ID3D10Blob>pPSData;
 	wrl::ComPtr<ID3D10Blob>psErrorBlob;
-	try {
-		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
-
-	}
-	catch (HrException exe) {
-		static char* govno = (char*)psErrorBlob->GetBufferPointer();
-		printf(govno);
-		while (true) {
-
+	bool compiled = false;
+	do {
+		try {
+			GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+			GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+			compiled = true;
 		}
-	}
+		catch (HrException exe) {
+			static char* govno = (char*)psErrorBlob->GetBufferPointer();
+			printf(govno);
+			printf("\n");
+		}
+	} while (!compiled);
 	return result;
 }
 

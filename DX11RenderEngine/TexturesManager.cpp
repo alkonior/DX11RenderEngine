@@ -32,6 +32,16 @@ void TexturesManager::RegTexture(const TextureData& tx, size_t id) {
 	pTexture.height = tx.GetHeight();
 }
 
+void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
+	auto& pTexture = textures[id];
+	if (pTexture.texture == nullptr) {
+		RegTexture(tx, id);
+	}
+	else {
+		renderer->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0, (void*)tx.GetBufferPtr(), tx.GetWidth() * tx.GetHeight() * 4);
+	}
+}
+
 void TexturesManager::ReleaseTexture(size_t id) {
 	auto& pTexture = textures[id];
 	if (pTexture.texture != nullptr) renderer->AddDisposeTexture(pTexture.texture);

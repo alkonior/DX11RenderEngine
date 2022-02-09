@@ -39,6 +39,8 @@ struct RenderDevice {
 	void OnResize(size_t width, size_t height);
 
 	void BeginFrame();
+	void SetPerspectiveMatrix(matrix m);
+	void SetViewMatrix(matrix m);
 	void Present();
 	void Clear(float r, float g, float b);
 
@@ -48,6 +50,7 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const TextureData&);
+	void UpdateTexture(size_t id, const TextureData&);
 	void RegisterModel(size_t id, const ModelData&);
 	void RegisterFramedModel(size_t id, const FramedModelData&);
 	void ReleaseTexture(size_t id);

@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿#include "RenderEngine.h"
+#include "pch.h"
 #include "RenderEngine.h"
 #include "PixelShader2D.h"
 #include "VertexShader2D.h"
@@ -58,6 +59,14 @@ void RenderDevice::BeginFrame() {
 	gfx->BeginFrame();
 }
 
+void RenderDevice::SetPerspectiveMatrix(matrix m) {
+	gfx->SetCameraProjection(m);
+}
+
+void RenderDevice::SetViewMatrix(matrix m) {
+	gfx->SetCameraMatrix(m);
+}
+
 void RenderDevice::Present() {
 	gfx->EndFrame();
 }
@@ -78,6 +87,10 @@ void RenderDevice::RegisterTexture(size_t id, const char* file) {
 
 void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
+}
+
+void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
+	gfx->UpdateImg(id, tex);
 }
 
 void RenderDevice::RegisterModel(size_t id, const ModelData& model) {

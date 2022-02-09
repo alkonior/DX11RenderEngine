@@ -33,11 +33,12 @@ public:
 	size_t height;
 
 
-	Transform camera;
+	matrix camera;
 	matrix cameraProjection;
 
 
 	void SetCameraPosition(Transform position);
 	void SetCameraProjection(matrix projection);
+	void SetCameraMatrix(matrix position);
 
 };

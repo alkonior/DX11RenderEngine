@@ -155,7 +155,7 @@ UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height
 void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, size_t definesFlags) {
 
 	//refToPS->bs.alphaBlendFunction = ;
-
+	refToPS->bs.enabled = true;
 	//state_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	//state_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;

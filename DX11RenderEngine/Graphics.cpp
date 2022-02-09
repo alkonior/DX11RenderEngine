@@ -27,8 +27,8 @@ void Graphics::BeginFrame() {
 
 void Graphics::EndFrame() {
 
-	manager2D.Render();
 	manager3D.Render(*this);
+	manager2D.Render();
 	managerImGUI.Render();
 
 	renderer.SwapBuffers();
@@ -47,7 +47,7 @@ void Graphics::EndFrame() {
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
-	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 0, 0u);
+	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
 	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
@@ -65,6 +65,10 @@ void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t t
 
 void Graphics::RegisterImg(size_t id, const TextureData& text) {
 	texturesManger.RegTexture(text, id);
+}
+
+void Graphics::UpdateImg(size_t id, const TextureData& text) {
+	texturesManger.UpdateTexture(text,id);
 }
 
 void Graphics::ReleaseImg(size_t id) {

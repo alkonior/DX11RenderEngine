@@ -36,6 +36,8 @@ enum ColorWriteChannels {
 };
 
 struct BlendState {
+
+	bool enabled = false;
 	Blend colorSourceBlend;
 	Blend colorDestinationBlend;
 	BlendFunction colorBlendFunction;
