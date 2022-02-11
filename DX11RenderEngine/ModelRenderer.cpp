@@ -12,7 +12,7 @@ ModelRenderer::ModelRenderer(Renderer::IRenderer* renderer) : renderer(renderer)
 
 void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
-		delete provider;
+		//delete provider;
 		delete factory;
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
@@ -232,4 +232,6 @@ InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescr
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 
 }
+
+ModelRenderer::ModelRendererProvider::~ModelRendererProvider() {}
 

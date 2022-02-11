@@ -4,7 +4,8 @@
 using namespace Renderer;
 
 const Renderer::ShaderDefines UIRendererDefines[ ] = {
-	{"RED", "1"}
+	{"RED", "1"},
+	{"COLORED", "1"}
 };
 
 

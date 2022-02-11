@@ -1,11 +1,12 @@
 #pragma once
 #include "PipelineFactory.h"
-#include "SimpleMath.h"
+#include "Transform.h"
 
 
 enum class UIDefines {
 	ZERO = 0,
-	RED = 1
+	RED = 1,
+	COLORED = 2
 };
 
 struct Vertex2D {
@@ -17,6 +18,7 @@ struct Shader2DCosntBuffer {
 	DirectX::SimpleMath::Matrix transform;
 	DirectX::SimpleMath::Vector2 uvShift;
 	DirectX::SimpleMath::Vector2 uvScale;
+	float4 color;
 };
 
 

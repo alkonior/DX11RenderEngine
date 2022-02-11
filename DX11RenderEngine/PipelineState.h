@@ -30,7 +30,7 @@ struct InputLayoutDescription {
 struct IStateProvider {
 	virtual void PatchPipelineState(PipelineState* refToPS, size_t definesFlags) = 0;
 	virtual InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) = 0;
-	~IStateProvider();
+	virtual ~IStateProvider();
 };
 
 }

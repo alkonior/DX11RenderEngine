@@ -9,7 +9,7 @@ UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
-		delete provider;
+		//delete provider;
 		delete factory;
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
@@ -101,6 +101,7 @@ void UIRenderer::Render() {
 		localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		localBuffer.uvShift = drawCalls[i].getUVShift();
 		localBuffer.uvScale = drawCalls[i].getUVScale();
+		localBuffer.color = drawCalls[i].color;
 		renderer->SetConstBuffer(constBuffer, &localBuffer);
 
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
@@ -119,6 +120,9 @@ void UIRenderer::Draw(TexturesManager::TextureCache texture, size_t x, size_t y,
 	drawCalls.emplace_back(texture, x, y, width, height, flag);
 }
 
+void UIRenderer::Draw(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flag) {
+	drawCalls.emplace_back(color, x, y, width, height, flag);
+}
 
 
 UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
@@ -127,6 +131,8 @@ UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t top
 UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
 	: x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), texH(texture.height), texW(texture.width), flag(flag) {}
 
+UIRenderer::DrawCall::DrawCall(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
+	: x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), color(color), flag(flag) {}
 dx::SimpleMath::Matrix UIRenderer::DrawCall::getTransform(size_t screenW, size_t screenH) {
 	return
 
@@ -212,4 +218,6 @@ const D3D11_INPUT_ELEMENT_DESC UIInputElements[] =
 InputLayoutDescription UIRenderer::UIRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
 	return InputLayoutDescription{ (void*)UIInputElements, std::size(UIInputElements) };
 }
+
+UIRenderer::UIRendererProvider::~UIRendererProvider() {}
 

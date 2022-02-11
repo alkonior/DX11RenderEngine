@@ -132,3 +132,32 @@ const char* InfoException::GetType() const noexcept {
 std::string InfoException::GetErrorInfo() const noexcept {
 	return info;
 }
+
+CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept:
+	HrException(line, file, hr, infoMsgs)
+{
+	this->compileError = new char[strlen(compileError)];
+	strcpy(this->compileError, compileError);
+}
+
+const char* CompileException::what() const noexcept {
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+		<< "[Error String] " << GetErrorString() << std::endl
+		<< "[Description] " << GetErrorDescription() << std::endl;
+	if (!info.empty()) {
+		oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+	}
+	oss << GetOriginString();
+	oss << std::endl <<
+		"[Compile Error]:" <<
+		compileError;
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+CompileException::~CompileException() {
+	delete[] compileError;
+}

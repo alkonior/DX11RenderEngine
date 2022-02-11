@@ -16,16 +16,21 @@
 #define GFX_THROW_INFO(hrcall) infoManager.Set(); if(FAILED(hr = (hrcall))) throw GFX_EXCEPT(hr)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.GetMessages())
 #define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException(__LINE__, __FILE__, v);}}
+
+#define GFX_CATCH_RENDER(render) try {render} catch (std::exception exe) {printf(exe.what());}
 #else
 #define GFX_EXCEPT(hr) Graphics::HrException(__LINE__, __FILE__, (hr))
 #define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
 #define GFX_THROW_INFO_ONLY(call) (call)
+#define GFX_CATCH_RENDER(render) render
 #endif
 
 #define CHWND_EXCEPT(hr) HrException(__LINE__,  __FILE__,  (hr))
 #define CHWND_LAST_EXCEPT() HrException(__LINE__,  __FILE__,  GetLastError())
 #define CHWND_NOGFX_EXCEPT() DeviceRemovedException(__LINE__,  __FILE__)
+
+
 
 class GraphicsException : public std::exception {
 public:
@@ -65,6 +70,18 @@ public:
 	const char* what() const noexcept override;
 	const char* GetType() const noexcept override;
 	std::string GetErrorInfo() const noexcept;
+private:
+	std::string info;
+};
+
+class CompileException : public HrException {
+	char* compileError;
+public:
+	CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept;
+	const char* what() const noexcept override;
+	//const char* GetType() const noexcept override;
+	//std::string GetErrorInfo() const noexcept;
+	~CompileException();
 private:
 	std::string info;
 };
