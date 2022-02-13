@@ -86,28 +86,38 @@ void UIRenderer::Render() {
 	uint32_t lastFlag = -1;
 
 	renderer->ApplyVertexBufferBinding(&vertexBuffer);
-	//renderer->VerifyConstBuffers(&constBuffer, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
-
+	renderer->VerifyConstBuffers(&constBuffer, 1);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flag != lastFlag) {
 			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flag));
-			renderer->VerifyConstBuffers(&constBuffer, 1);
 		}
 		lastFlag = drawCalls[i].flag;
 
-		auto  pTexture = drawCalls[i].texture.texture;
-		renderer->VerifyPixelSampler(0, pTexture, sampler);
 		localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		localBuffer.uvShift = drawCalls[i].getUVShift();
 		localBuffer.uvScale = drawCalls[i].getUVScale();
 		localBuffer.color = drawCalls[i].color;
+
 		renderer->SetConstBuffer(constBuffer, &localBuffer);
 
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
-			0, 0, 0, 0, 2, indexBuffer, 16);
+		if (!(drawCalls[i].flag & UICOLORED)) {
+			auto  pTexture = drawCalls[i].texture.texture;
+			renderer->VerifyPixelSampler(0, pTexture, sampler);
+		}
+
+		try {
+			renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
+				0, 0, 0, 0, 2, indexBuffer, 16);
+		}
+		catch (const InfoException& exe){
+			printf(exe.what());
+		}
 	}
+}
+
+void UIRenderer::Clear() {
 	drawCalls.clear();
 }
 
@@ -182,7 +192,7 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, 
 	refToPS->bs.alphaDestinationBlend = Blend::BLEND_ZERO;
 
 	//state_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL;
+	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL^ColorWriteChannels::COLORWRITECHANNELS_ALPHA;
 	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;

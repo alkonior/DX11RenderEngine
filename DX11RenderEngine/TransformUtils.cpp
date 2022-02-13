@@ -1,5 +1,4 @@
-#include "Transform.h"
-#include "Transform.h"
+#include "TransformUtils.h"
 
 
 Transform::Transform() : transform(matrix::CreateScale(float3{1.0,1.0,1.0})) {}
@@ -26,3 +25,10 @@ matrix Transform::GetInverseTransform()  const {
 Transform Transform::operator*(const Transform& rhs) {
 	return Transform(transform*rhs.transform);
 }
+
+
+UITransform::UITransform(float left, float top, float width, float height):
+shift(left, top), wh(width, height){}
+
+
+UITransform::UITransform() : UITransform(0, 0, 0, 0) {}

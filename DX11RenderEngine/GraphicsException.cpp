@@ -3,14 +3,12 @@
 #include <sstream>
 
 
-GraphicsException::GraphicsException( int line,const char* file ) noexcept
+GraphicsException::GraphicsException(int line, const char* file) noexcept
 	:
-	line( line ),
-	file( file )
-{}
+	line(line),
+	file(file) {}
 
-const char* GraphicsException::what() const noexcept
-{
+const char* GraphicsException::what() const noexcept {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
 		<< GetOriginString();
@@ -18,23 +16,19 @@ const char* GraphicsException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* GraphicsException::GetType() const noexcept
-{
+const char* GraphicsException::GetType() const noexcept {
 	return "Graphics Exception";
 }
 
-int GraphicsException::GetLine() const noexcept
-{
+int GraphicsException::GetLine() const noexcept {
 	return line;
 }
 
-const std::string& GraphicsException::GetFile() const noexcept
-{
+const std::string& GraphicsException::GetFile() const noexcept {
 	return file;
 }
 
-std::string GraphicsException::GetOriginString() const noexcept
-{
+std::string GraphicsException::GetOriginString() const noexcept {
 	std::ostringstream oss;
 	oss << "[File] " << file << std::endl
 		<< "[Line] " << line;
@@ -117,8 +111,11 @@ InfoException::InfoException(int line, const char* file, std::vector<std::string
 
 
 const char* InfoException::what() const noexcept {
+	static int counter = 0;
+	counter++;
 	std::ostringstream oss;
 	oss << GetType() << std::endl
+		<< "[" << counter << "]" << std::endl
 		<< "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
 	oss << GetOriginString();
 	whatBuffer = oss.str();
@@ -133,9 +130,8 @@ std::string InfoException::GetErrorInfo() const noexcept {
 	return info;
 }
 
-CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept:
-	HrException(line, file, hr, infoMsgs)
-{
+CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept :
+	HrException(line, file, hr, infoMsgs) {
 	this->compileError = new char[strlen(compileError)];
 	strcpy(this->compileError, compileError);
 }

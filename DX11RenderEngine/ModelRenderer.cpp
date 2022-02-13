@@ -54,6 +54,12 @@ void ModelRenderer::DrawLerp(ModelsManager::ModelCache model, TexturesManager::T
 	drawLerpCalls.emplace_back(model, texture, position, curIndex, nextIndex, alpha, flags);
 }
 
+void ModelRenderer::Clear() {
+
+	drawCalls.clear();
+	drawLerpCalls.clear();
+}
+
 void ModelRenderer::Render(const GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -89,7 +95,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			drawCalls[i].model.pt, 0, 0, 0, 0, 
 			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
 	}
-	drawCalls.clear();
 
 	if (!drawLerpCalls.empty()) {
 		static ConstBuffer* constBuffers[] = { pTransformCB , pDataCB };
@@ -147,7 +152,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		}
 	}
 
-	drawLerpCalls.clear();
 }
 
 ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32_t height):width(width), height(height) {}

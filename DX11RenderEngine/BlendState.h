@@ -26,7 +26,7 @@ enum BlendFunction {
 	BLENDFUNCTION_MIN
 };
 
-enum ColorWriteChannels {
+enum ColorWriteChannels : std::uint32_t {
 	COLORWRITECHANNELS_NONE = 0,
 	COLORWRITECHANNELS_RED = 1,
 	COLORWRITECHANNELS_GREEN = 2,
@@ -44,10 +44,10 @@ struct BlendState {
 	Blend alphaSourceBlend;
 	Blend alphaDestinationBlend;
 	BlendFunction alphaBlendFunction;
-	ColorWriteChannels colorWriteEnable;
-	ColorWriteChannels colorWriteEnable1;
-	ColorWriteChannels colorWriteEnable2;
-	ColorWriteChannels colorWriteEnable3;
+	std::uint32_t colorWriteEnable;
+	std::uint32_t colorWriteEnable1;
+	std::uint32_t colorWriteEnable2;
+	std::uint32_t colorWriteEnable3;
 	Color blendFactor;
 	int32_t multiSampleMask;
 };

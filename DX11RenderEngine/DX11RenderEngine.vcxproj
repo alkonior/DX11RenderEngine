@@ -193,7 +193,7 @@
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="TextureData.h" />
     <ClInclude Include="TexturesManager.h" />
-    <ClInclude Include="Transform.h" />
+    <ClInclude Include="TransformUtils.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UIRendererFactory.h" />
     <ClInclude Include="Utils.h">
@@ -233,7 +233,7 @@
     <ClCompile Include="PipelineFactory.cpp" />
     <ClCompile Include="TextureData.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
-    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransformUtils.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
     <ClCompile Include="UIRendererFactory.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />

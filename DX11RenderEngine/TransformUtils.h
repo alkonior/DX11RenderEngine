@@ -20,4 +20,13 @@ public:
 	Transform operator*(const Transform& rhs);
 };
 
+
+class UITransform {
+	float2 shift;
+	float2 wh;
+public:
+	UITransform();
+	UITransform(float left, float top, float width, float height);
+};
+
  

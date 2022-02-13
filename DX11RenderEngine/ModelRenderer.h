@@ -46,7 +46,7 @@ public:
 	void DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
 
 	void Render(const GraphicsBase& gfx);
-
+	void Clear();
 
 private:
 

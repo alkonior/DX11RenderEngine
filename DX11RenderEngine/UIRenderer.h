@@ -51,6 +51,7 @@ public:
 	void Draw(float4 color,  size_t x, size_t y, size_t width, size_t height, uint32_t flag);
 
 	void Render();
+	void Clear();
 	
 	~UIRenderer();
 private:
