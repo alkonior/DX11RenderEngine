@@ -106,7 +106,7 @@ void RenderDevice::ReleaseTexture(size_t id) {
 }
 
 void RenderDevice::DrawColor(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	gfx->DrawColor(color, x, y, width, height, flags );
+	gfx->DrawColor(color, x, y, width, height, flags|UICOLORED);
 }
 
 void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {

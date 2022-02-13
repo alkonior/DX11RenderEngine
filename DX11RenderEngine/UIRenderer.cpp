@@ -86,13 +86,14 @@ void UIRenderer::Render() {
 	uint32_t lastFlag = -1;
 
 	renderer->ApplyVertexBufferBinding(&vertexBuffer);
-	renderer->VerifyConstBuffers(&constBuffer, 1);
+	//renderer->VerifyConstBuffers(&constBuffer, 1);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flag != lastFlag) {
 			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flag));
+			renderer->VerifyConstBuffers(&constBuffer, 1);
 		}
 		lastFlag = drawCalls[i].flag;
 
@@ -161,6 +162,8 @@ UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height
 void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, size_t definesFlags) {
 
 	//refToPS->bs.alphaBlendFunction = ;
+
+
 	refToPS->bs.enabled = true;
 	//state_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	//state_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;

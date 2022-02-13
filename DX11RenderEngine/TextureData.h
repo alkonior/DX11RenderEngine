@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "GraphicsException.h"
+#include "Transform.h"
 
 
 
@@ -14,7 +15,7 @@ public:
 		constexpr Color(const Color& col) noexcept : rgba(col.rgba) {}
 		constexpr Color(uint32_t dw) noexcept : rgba(dw) {}
 		constexpr Color(unsigned char x, unsigned char r, unsigned char g, unsigned char b) noexcept
-		:rgba((x << 24u) | (r << 16u) | (g << 8u) | b) {}
+			:rgba((x << 24u) | (r << 16u) | (g << 8u) | b) {}
 		constexpr Color(unsigned char r, unsigned char g, unsigned char b) noexcept : rgba((r << 16u) | (g << 8u) | b) {}
 		constexpr Color(Color col, unsigned char x) noexcept : Color((x << 24u) | col.rgba) {}
 		Color& operator =(Color color) noexcept {
@@ -35,6 +36,10 @@ public:
 		}
 		constexpr unsigned char GetB() const noexcept {
 			return rgba & 0xFFu;
+		}
+
+		float4 ToFloat4() const {
+			return float4(GetR(), GetG(), GetB(), GetA()) / 255;
 		}
 		void SetX(unsigned char x) noexcept {
 			rgba = (rgba & 0xFFFFFFu) | (x << 24u);
@@ -84,9 +89,9 @@ public:
 	void Save(const std::string& filename) const;
 	void Copy(const TextureData& src) noexcept(!_DEBUG);
 private:
-	TextureData(unsigned int width, unsigned int height, std::unique_ptr<Color[ ]> pBufferParam) noexcept;
+	TextureData(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;
 private:
-	std::unique_ptr<Color[ ]> pBuffer;
+	std::unique_ptr<Color[]> pBuffer;
 	unsigned int width;
 	unsigned int height;
 };

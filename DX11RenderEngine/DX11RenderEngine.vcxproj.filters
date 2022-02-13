@@ -5,346 +5,282 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="BaseRenderer">
+      <UniqueIdentifier>{3832cc19-e2b2-4518-b61c-5f159712ee92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Utils">
-      <UniqueIdentifier>{91a4b329-05b3-4d10-a4f7-a88dab47e2a6}</UniqueIdentifier>
+    <Filter Include="BaseRenderer\PipelineState">
+      <UniqueIdentifier>{2796c052-3746-4281-98f5-f3a0bcf9f2f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Shaders">
-      <UniqueIdentifier>{7b666da1-e239-4cae-841b-801c4398daf6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Core">
-      <UniqueIdentifier>{ae960b2a-ef36-4002-8296-0fbb9429b774}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Core\Exceptions">
-      <UniqueIdentifier>{89677da1-fbc8-4791-8bef-735ac1ff287c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers">
+    <Filter Include="RenderEngine">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Headers\Utils">
+    <Filter Include="RenderEngine\MathUtils">
       <UniqueIdentifier>{62569c17-569b-4932-88f2-b52603153d22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Core">
+    <Filter Include="RenderEngine\Core">
       <UniqueIdentifier>{d4fdf230-daa8-4d13-a287-b105dc470733}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Drawables">
-      <UniqueIdentifier>{24ea7f58-1074-4779-8a6c-f2d429b05094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Shaders">
-      <UniqueIdentifier>{b65f962d-3ce4-4c1a-adc4-8d2b0e9022f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Primitives">
-      <UniqueIdentifier>{92ed66fc-60d5-4eb9-b5f6-51ada43130b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Primitives">
-      <UniqueIdentifier>{add33d80-b5d2-44c2-accb-8ec93f7a4e52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\D3D11Renderer">
-      <UniqueIdentifier>{c745519e-88f4-4632-a15c-d1265b4d3507}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\D3D11Renderer">
-      <UniqueIdentifier>{db08a748-d620-4db3-bc3e-94db34d8249e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Renderer">
-      <UniqueIdentifier>{3832cc19-e2b2-4518-b61c-5f159712ee92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Renderer">
-      <UniqueIdentifier>{2c543237-7fb5-4ecb-8b40-dc0b64c29bb3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Exceptions">
-      <UniqueIdentifier>{537a1489-1a3b-40dc-bfff-0047ead53dab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Renderer\PipelineState">
-      <UniqueIdentifier>{2796c052-3746-4281-98f5-f3a0bcf9f2f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Core\Rendereres">
+    <Filter Include="RenderEngine\Core\Rendereres">
       <UniqueIdentifier>{62c91bf9-3958-4266-a933-c65cc110b229}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Core\Renderes">
-      <UniqueIdentifier>{392cd0dc-a88c-4ed8-8137-108265de62b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Core\Rendereres\ModelRenderer">
+    <Filter Include="RenderEngine\Core\Rendereres\ModelRenderer">
       <UniqueIdentifier>{ec39e981-5513-4ad4-9ac5-ea319d7faf4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Core\Rendereres\UIRenderer">
+    <Filter Include="RenderEngine\Core\Rendereres\UIRenderer">
       <UniqueIdentifier>{10c36cb6-4db8-46a0-ab61-51809b141928}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui">
+    <Filter Include="RenderEngine\Core\ResourcesManadgers">
+      <UniqueIdentifier>{6ad3f412-0964-42b1-9678-c203748fc81d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Drawables">
+      <UniqueIdentifier>{24ea7f58-1074-4779-8a6c-f2d429b05094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Primitives">
+      <UniqueIdentifier>{92ed66fc-60d5-4eb9-b5f6-51ada43130b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\D3D11Renderer">
+      <UniqueIdentifier>{c745519e-88f4-4632-a15c-d1265b4d3507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Exceptions">
+      <UniqueIdentifier>{537a1489-1a3b-40dc-bfff-0047ead53dab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\IMGUIRenederer">
+      <UniqueIdentifier>{85607c26-a95b-4493-90ba-0e9726e18d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\IMGUIRenederer\imgui">
       <UniqueIdentifier>{7c202802-d8fc-4217-a42d-20f197660f55}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
     <ClInclude Include="Utils\include\SimpleMath.h">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
     <ClInclude Include="Utils\include\VertexTypes.h">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
     <ClInclude Include="Bezier.h">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
-      <Filter>Headers\Core</Filter>
+      <Filter>RenderEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="DxgiInfoManager.h">
-      <Filter>Headers\Exceptions</Filter>
+      <Filter>RenderEngine\Exceptions</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsException.h">
-      <Filter>Headers\Exceptions</Filter>
+      <Filter>RenderEngine\Exceptions</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Headers</Filter>
+      <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Headers</Filter>
+      <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsBase.h">
-      <Filter>Headers\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader2D.h">
-      <Filter>Headers\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexShader2D.h">
-      <Filter>Headers\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Manager2D.h">
-      <Filter>Headers\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="TexturesManager.h">
-      <Filter>Headers\Core</Filter>
+      <Filter>RenderEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="TextureData.h">
-      <Filter>Headers\Primitives</Filter>
+      <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="GDIPlusManager.h">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Renderer.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Texture.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Headers\Renderer</Filter>
+      <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="BlendState.h">
-      <Filter>Headers\Renderer</Filter>
+      <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Headers\Renderer</Filter>
+      <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="DepthStencilState.h">
-      <Filter>Headers\Renderer</Filter>
+      <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="SamplerState.h">
-      <Filter>Headers\Renderer</Filter>
+      <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11RenderBuffer.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Shader.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Buffer.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11BackBuffer.h">
-      <Filter>Headers\D3D11Renderer</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Shaders.h">
-      <Filter>Headers\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="RasterizerState.h">
-      <Filter>Headers\Shaders</Filter>
+      <Filter>RenderEngine\D3D11Renderer</Filter>
     </ClInclude>
     <ClInclude Include="RenderEngine.h">
-      <Filter>Headers</Filter>
+      <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="PipelineFactory.h">
-      <Filter>Headers\Renderer\PipelineState</Filter>
+      <Filter>BaseRenderer\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="PipelineState.h">
-      <Filter>Headers\Renderer\PipelineState</Filter>
+      <Filter>BaseRenderer\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="UIRenderer.h">
-      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
     </ClInclude>
     <ClInclude Include="UIRendererFactory.h">
-      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
     </ClInclude>
     <ClInclude Include="ModelRenderer.h">
-      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
     </ClInclude>
     <ClInclude Include="ModelRendererFactory.h">
-      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Headers\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelsManager.h">
-      <Filter>Headers\Core</Filter>
+      <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="ModelData.h">
-      <Filter>Headers\Primitives</Filter>
+      <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="ModelRendererUtils.h">
-      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_dx11.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelsManager.h">
+      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesManager.h">
+      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
     </ClInclude>
     <ClInclude Include="ImGUIRenderer.h">
-      <Filter>Headers\Core\Rendereres</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RenderEngine.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\src\Geometry.cpp">
-      <Filter>Sources\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\src\SimpleMath.cpp">
-      <Filter>Sources\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\src\VertexTypes.cpp">
-      <Filter>Sources\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Sources\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="DxgiInfoManager.cpp">
-      <Filter>Sources\Core\Exceptions</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsException.cpp">
-      <Filter>Sources\Core\Exceptions</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsBase.cpp">
-      <Filter>Sources\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelShader2D.cpp">
-      <Filter>Sources\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexShader2D.cpp">
-      <Filter>Sources\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager2D.cpp">
-      <Filter>Sources\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawable.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="TexturesManager.cpp">
-      <Filter>Sources\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureData.cpp">
-      <Filter>Sources\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="GDIPlusManager.cpp">
-      <Filter>Sources\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11Renderer.cpp">
-      <Filter>Sources\D3D11Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11Backbuffer.cpp">
-      <Filter>Sources\D3D11Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11Texture.cpp">
-      <Filter>Sources\D3D11Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="BlendState.cpp">
-      <Filter>Sources\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Sources\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="UIRendererFactory.cpp">
-      <Filter>Sources\Core\Renderes</Filter>
-    </ClCompile>
-    <ClCompile Include="UIRenderer.cpp">
-      <Filter>Sources\Core\Renderes</Filter>
-    </ClCompile>
-    <ClCompile Include="PipelineFactory.cpp">
-      <Filter>Sources\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="PipelineState.cpp">
-      <Filter>Sources\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRenderer.cpp">
-      <Filter>Sources\Core\Renderes</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRendererFactory.cpp">
-      <Filter>Sources\Core\Renderes</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelsManager.cpp">
-      <Filter>Sources\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Sources\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelData.cpp">
-      <Filter>Sources\Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_tables.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>imgui</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRendererFactory.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="DxgiInfoManager.cpp">
+      <Filter>RenderEngine\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsException.cpp">
+      <Filter>RenderEngine\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRendererFactory.cpp">
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>RenderEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsBase.cpp">
+      <Filter>RenderEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesManager.cpp">
+      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelsManager.cpp">
+      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Renderer.cpp">
+      <Filter>RenderEngine\D3D11Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelData.cpp">
+      <Filter>RenderEngine\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>RenderEngine\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData.cpp">
+      <Filter>RenderEngine\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusManager.cpp">
+      <Filter>RenderEngine\MathUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\src\VertexTypes.cpp">
+      <Filter>RenderEngine\MathUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\src\Geometry.cpp">
+      <Filter>RenderEngine\MathUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\src\SimpleMath.cpp">
+      <Filter>RenderEngine\MathUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineFactory.cpp">
+      <Filter>BaseRenderer\PipelineState</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngine.cpp">
+      <Filter>RenderEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>RenderEngine</Filter>
     </ClCompile>
     <ClCompile Include="ImGUIRenderer.cpp">
-      <Filter>Sources\Core\Renderes</Filter>
+      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
-      <Filter>Headers\Utils</Filter>
+      <Filter>RenderEngine\MathUtils</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -354,10 +290,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\TestApp\Shaders\Shader2D.hlsl">
-      <Filter>Headers\Core\Rendereres\UIRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
     </FxCompile>
     <FxCompile Include="..\TestApp\Shaders\Shader3D.hlsl">
-      <Filter>Headers\Core\Rendereres\ModelRenderer</Filter>
+      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

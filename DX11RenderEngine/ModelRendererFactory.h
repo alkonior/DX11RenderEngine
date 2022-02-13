@@ -7,11 +7,11 @@
 
 
 enum ModelDefines{
-    ZERO = 0,
-    RED = 1,
-    LERP = 2,
-    SINGLE_FRAME = 4,
-    BAD_UV = 8,
+    MZERO = 0,
+    MRED = 1,
+    MLERP = 2,
+    MSINGLE_FRAME = 4,
+    MBAD_UV = 8,
 };
 
 

@@ -3,11 +3,12 @@
 #include "Transform.h"
 
 
-enum class UIDefines {
-	ZERO = 0,
-	RED = 1,
-	COLORED = 2
+enum  UIDefines : std::uint32_t {
+	UIZERO = 0,
+	UIRED = 1,
+	UICOLORED = 2
 };
+
 
 struct Vertex2D {
 	DirectX::SimpleMath::Vector2 pos;
@@ -15,9 +16,9 @@ struct Vertex2D {
 };
 
 struct Shader2DCosntBuffer {
-	DirectX::SimpleMath::Matrix transform;
-	DirectX::SimpleMath::Vector2 uvShift;
-	DirectX::SimpleMath::Vector2 uvScale;
+	matrix transform;
+	float2 uvShift;
+	float2 uvScale;
 	float4 color;
 };
 

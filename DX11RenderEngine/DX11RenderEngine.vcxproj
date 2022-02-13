@@ -182,7 +182,6 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="Manager2D.h" />
     <ClInclude Include="ModelData.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="ModelRendererFactory.h" />
@@ -190,8 +189,6 @@
     <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="PipelineFactory.h" />
     <ClInclude Include="PipelineState.h" />
-    <ClInclude Include="PixelShader2D.h" />
-    <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="TextureData.h" />
@@ -204,7 +201,6 @@
       </ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="D3D11Shaders.h" />
-    <ClInclude Include="VertexShader2D.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsException.h" />
@@ -217,17 +213,10 @@
     <ClInclude Include="Utils\include\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BlendState.cpp" />
-    <ClCompile Include="D3D11Backbuffer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="D3D11Renderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="D3D11Texture.cpp" />
-    <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="ImGUIRenderer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -237,21 +226,16 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Manager2D.cpp" />
     <ClCompile Include="ModelData.cpp" />
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="ModelRendererFactory.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
     <ClCompile Include="PipelineFactory.cpp" />
-    <ClCompile Include="PipelineState.cpp" />
-    <ClCompile Include="PixelShader2D.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="TextureData.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
     <ClCompile Include="UIRendererFactory.cpp" />
-    <ClCompile Include="VertexShader2D.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />

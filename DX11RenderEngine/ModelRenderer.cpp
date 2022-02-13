@@ -108,7 +108,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			static VertexBufferBinding vBB;
 			
 			vBB.buffersCount = 3;
-			if (drawLerpCalls[i].flags & SINGLE_FRAME)
+			if (drawLerpCalls[i].flags & MSINGLE_FRAME)
 				vBB.buffersCount = 2;
 			vBB.vertexBuffers = vertexBuffers;
 			int max_buff = drawLerpCalls[i].model.vertexBuffer->buffersCount - 1;
@@ -181,7 +181,7 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_CULLCLOCKWISEFACE;
 
-	if (definesFlags & ModelDefines::BAD_UV) 
+	if (definesFlags & ModelDefines::MBAD_UV) 
 		refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
 	refToPS->rs.depthBias = 0.0f;
 	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
@@ -223,8 +223,8 @@ const D3D11_INPUT_ELEMENT_DESC  SingleFrameInputElements[] =
 };
 
 InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
-	if (definesFlags & ModelDefines::LERP) {
-		if (definesFlags & ModelDefines::SINGLE_FRAME)
+	if (definesFlags & ModelDefines::MLERP) {
+		if (definesFlags & ModelDefines::MSINGLE_FRAME)
 			return InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
 		return InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
 	}
