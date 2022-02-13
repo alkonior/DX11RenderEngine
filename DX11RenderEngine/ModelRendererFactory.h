@@ -15,19 +15,6 @@ enum ModelDefines{
 };
 
 
-#pragma pack(push, 4)
-struct Shader3DTranformCosntBuffer {
-    matrix world;
-    matrix view;
-    matrix projection;
-};
-
-struct Shader3DDataCosntBuffer {
-    float alpha;
-    float w;
-    float h;
-};
-#pragma pack(pop)
 
 class ModelRendererFactory: public Renderer::PipelineFactory {
 public:

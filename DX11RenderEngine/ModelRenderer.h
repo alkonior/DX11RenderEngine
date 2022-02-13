@@ -47,8 +47,10 @@ public:
 
 	void Render(const GraphicsBase& gfx);
 	void Clear();
-
+	~ModelRenderer();
 private:
+
+	void Destroy();
 
 	Shader3DTranformCosntBuffer transformBuffer;
 	Shader3DDataCosntBuffer dataBuffer;

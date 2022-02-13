@@ -60,6 +60,7 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 
 
 void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+	//queue.push_back(DrawCall::draw2D).
 	manager2D.Draw(texturesManger.GetImg(id), x, y, width, height, flags);
 }
 
@@ -98,6 +99,10 @@ void Graphics::ReleaseModel(size_t id) {
 
 void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
+}
+
+void Graphics::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags) {
+	managerUP.Draw(model, texturesManger.GetImg(textureId), position, flags);
 }
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {

@@ -13,3 +13,17 @@ struct FramedModelVertex {
 };
 
 typedef std::vector<float3> Frame;
+
+#pragma pack(push, 4)
+struct Shader3DTranformCosntBuffer {
+    matrix world;
+    matrix view;
+    matrix projection;
+};
+
+struct Shader3DDataCosntBuffer {
+    float alpha;
+    float w;
+    float h;
+};
+#pragma pack(pop)

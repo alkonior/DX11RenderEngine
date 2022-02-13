@@ -9,6 +9,7 @@
 #include "UIRenderer.h"
 #include "ModelRenderer.h"
 #include "ImGUIRenderer.h"
+#include "UPRenderer.h"
 
 
 #ifdef _DEBUG
@@ -44,7 +45,11 @@ public:
 	void RegisterFramedModel(size_t id, const FramedModelData& model);
 	void ReleaseModel(size_t id);
 
+
+
+
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
+	void DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags);
 	void DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
 
 	TexturesManager texturesManger;
@@ -52,5 +57,17 @@ public:
 
 	UIRenderer manager2D;
 	ModelRenderer manager3D;
+	UPRenderer managerUP;
 	ImGUIRenderer managerImGUI;
+
+private:
+
+	enum class DrawCall {
+		draw2D,
+		draw3D,
+		drawUP,
+	};
+
+	std::vector<DrawCall> queue;
+
 };

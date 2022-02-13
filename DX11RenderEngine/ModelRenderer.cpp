@@ -40,7 +40,7 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 
 void ModelRenderer::Init(LPCWSTR dirr) {
 	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\Shader3D.hlsl").c_str(), &buff);
+	D3DReadFileToBlob((std::wstring(dirr) + L"\\ModelsShader.hlsl").c_str(), &buff);
 	auto data = buff->GetBufferPointer();
 	auto size = buff->GetBufferSize();
 	Init(data, size);
@@ -58,6 +58,16 @@ void ModelRenderer::Clear() {
 
 	drawCalls.clear();
 	drawLerpCalls.clear();
+}
+
+ModelRenderer::~ModelRenderer() { Destroy(); }
+
+void ModelRenderer::Destroy() {
+
+	renderer->AddDisposeConstBuffer(pTransformCB);
+	renderer->AddDisposeConstBuffer(pDataCB);
+	delete provider;
+	delete factory;
 }
 
 void ModelRenderer::Render(const GraphicsBase& gfx) {
@@ -158,7 +168,7 @@ ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32
 
 void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
 
-
+	refToPS->bs.enabled = false;
 	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
 	refToPS->bs.alphaBlendFunction = BLENDFUNCTION_ADD;
 	refToPS->bs.colorSourceBlend = Blend::BLEND_ONE;

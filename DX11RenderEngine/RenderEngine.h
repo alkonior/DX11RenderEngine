@@ -19,9 +19,10 @@ struct RenderDevice {
 	void DestroyDevice();
 
 
-	enum ShaderType {
-		Shader2D,
-		Shader3D,
+	enum class ShaderType {
+		UIShader,
+		ModelsShader,
+		UPShader,
 	};
 
 	struct ShaderData {
@@ -63,6 +64,8 @@ struct RenderDevice {
 	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
 	void DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
+
+	void DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags);
 	
 
 	/* Debug staff */

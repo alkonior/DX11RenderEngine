@@ -31,17 +31,24 @@ void RenderDevice::ReloadShaders(LPCWSTR dirr) {
 
 void RenderDevice::ReloadShader(ShaderData shD) {
 	switch (shD.type) {
-	case ShaderType::Shader2D:
+	case ShaderType::UIShader:
 	{
 		//PixelShader2D::Release();
 		gfx->manager2D.Init(shD.data, shD.dataSize);
 		//PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
-	case ShaderType::Shader3D:
+	case ShaderType::ModelsShader:
 	{
 		//VertexShader2D::Release();
 		gfx->manager3D.Init(shD.data, shD.dataSize);
+		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
+	case ShaderType::UPShader:
+	{
+		//VertexShader2D::Release();
+		gfx->managerUP.Init(shD.data, shD.dataSize);
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
@@ -124,6 +131,9 @@ void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform positio
 
 void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
 	gfx->DrawFramedModel(modelId, textureId, position, curIndex, nextIndex, alpha, flags);
+}
+
+void RenderDevice::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags) {
 }
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {

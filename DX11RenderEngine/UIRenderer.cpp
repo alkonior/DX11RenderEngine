@@ -30,6 +30,7 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 		{  Vector2(0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
 		{  Vector2(0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
 	};
+	vertexBuffer.buffersCount = 1;
 	vertexBuffer.vertexBuffers = new Buffer*[1]();
 	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
 	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);

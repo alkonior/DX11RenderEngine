@@ -10,7 +10,7 @@ struct Buffer {};
 struct ConstBuffer {};
 struct Renderbuffer {};
 struct VertexBufferBinding {
-	size_t buffersCount = 1;
+	size_t buffersCount = 0;
 	Buffer** vertexBuffers = nullptr;
 	unsigned int* vertexStride = nullptr;
 	unsigned int* vertexOffset = nullptr;

@@ -51,6 +51,12 @@
     <Filter Include="RenderEngine\Core\Rendereres\IMGUIRenederer\imgui">
       <UniqueIdentifier>{7c202802-d8fc-4217-a42d-20f197660f55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\UPRenderer">
+      <UniqueIdentifier>{27804002-6a7f-4b40-b5b4-0666ac50afc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\Q2Shaders">
+      <UniqueIdentifier>{2cb9ee52-b219-4cb1-8217-d487081d82a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
@@ -188,6 +194,15 @@
     <ClInclude Include="ImGUIRenderer.h">
       <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
     </ClInclude>
+    <ClInclude Include="UPRendererUtils.h">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="UPRendererFactory.h">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="UPRenderer.h">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -277,6 +292,15 @@
     <ClCompile Include="ImGUIRenderer.cpp">
       <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
     </ClCompile>
+    <ClCompile Include="UPRendererFactory.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="UPRenderer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="UPRendererProvider.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -289,11 +313,14 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\TestApp\Shaders\Shader2D.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
+    <FxCompile Include="..\..\..\baseq2\ModelsShader.hlsl">
+      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\TestApp\Shaders\Shader3D.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
+    <FxCompile Include="..\..\..\baseq2\UIShader.hlsl">
+      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\BSPShader.hlsl">
+      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

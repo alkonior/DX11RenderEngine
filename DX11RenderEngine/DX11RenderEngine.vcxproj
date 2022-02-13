@@ -196,6 +196,9 @@
     <ClInclude Include="TransformUtils.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UIRendererFactory.h" />
+    <ClInclude Include="UPRenderer.h" />
+    <ClInclude Include="UPRendererUtils.h" />
+    <ClInclude Include="UPRendererFactory.h" />
     <ClInclude Include="Utils.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
@@ -242,6 +245,9 @@
     <ClCompile Include="GraphicsException.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="UPRenderer.cpp" />
+    <ClCompile Include="UPRendererFactory.cpp" />
+    <ClCompile Include="UPRendererProvider.cpp" />
     <ClCompile Include="Utils\src\Geometry.cpp" />
     <ClCompile Include="Utils\src\SimpleMath.cpp" />
     <ClCompile Include="Utils\src\VertexTypes.cpp" />
@@ -258,13 +264,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\TestApp\Shaders\Shader2D.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    <FxCompile Include="..\..\..\baseq2\BSPShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="..\TestApp\Shaders\Shader3D.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    <FxCompile Include="..\..\..\baseq2\UIShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\ModelsShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
