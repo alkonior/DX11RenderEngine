@@ -42,6 +42,14 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
 	}
 }
 
+void TexturesManager::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+	auto& pTexture = textures[id];
+	if (pTexture.texture == nullptr) {
+		return;
+	}
+	renderer->SetTextureData2D(pTexture.texture, x, y, w, h, level, data, dataLength);
+}
+
 void TexturesManager::ReleaseTexture(size_t id) {
 	auto& pTexture = textures[id];
 	if (pTexture.texture != nullptr) renderer->AddDisposeTexture(pTexture.texture);

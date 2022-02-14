@@ -15,16 +15,17 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer) {
+	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer), managerUP(&renderer) {
 	managerImGUI.Init();
 	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
 }
 
 void Graphics::BeginFrame() {
-	managerImGUI.BeginFrame(*this);
+	//managerImGUI.BeginFrame(*this);
 
 	manager3D.Clear();
+	managerUP.Clear();
 	manager2D.Clear();
 }
 
@@ -32,9 +33,10 @@ void Graphics::BeginFrame() {
 
 void Graphics::EndFrame() {
 
+	GFX_CATCH_RENDER(managerUP.Render(*this););
 	GFX_CATCH_RENDER(manager3D.Render(*this););
 	GFX_CATCH_RENDER(manager2D.Render(););
-	GFX_CATCH_RENDER(managerImGUI.Render(););
+	//GFX_CATCH_RENDER(managerImGUI.Render(););
 
 	renderer.SwapBuffers();
 	//
@@ -81,6 +83,10 @@ void Graphics::UpdateImg(size_t id, const TextureData& text) {
 	texturesManger.UpdateTexture(text, id);
 }
 
+void Graphics::UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+	texturesManger.UpdateTexture(id, x, y, w, h, level, data, dataLength);
+}
+
 void Graphics::ReleaseImg(size_t id) {
 	texturesManger.ReleaseTexture(id);
 }
@@ -101,8 +107,8 @@ void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, s
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
-void Graphics::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags) {
-	managerUP.Draw(model, texturesManger.GetImg(textureId), position, flags);
+void Graphics::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, float4 light, size_t flags) {
+	managerUP.Draw(model, texturesManger.GetImg(textureId), position, light, flags);
 }
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {

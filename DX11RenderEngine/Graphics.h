@@ -33,6 +33,7 @@ public:
 
 	void RegisterImg(size_t id, const TextureData& text);
 	void UpdateImg(size_t id, const TextureData& text);
+	void UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength);
 	void ReleaseImg(size_t id);
 
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
@@ -49,7 +50,7 @@ public:
 
 
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
-	void DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags);
+	void DrawUserPolygon(UPModelData model, size_t textureId, Transform position, float4 light, size_t flags);
 	void DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
 
 	TexturesManager texturesManger;

@@ -22,12 +22,9 @@ struct UPTranformCosntBuffer {
     matrix world;
     matrix view;
     matrix projection;
+    float4 color;
 };
 
 struct UPDataCosntBuffer {
-    float4 color;
-    float alpha;
-    float w;
-    float h;
 };
 #pragma pack(pop)

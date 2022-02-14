@@ -306,6 +306,7 @@
     <None Include="Utils\include\SimpleMath.inl">
       <Filter>RenderEngine\MathUtils</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

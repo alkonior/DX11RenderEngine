@@ -93,6 +93,7 @@ void UIRenderer::Render() {
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flag != lastFlag) {
 			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flag));
+			renderer->VerifyConstBuffers(&constBuffer, 1);
 		}
 		lastFlag = drawCalls[i].flag;
 

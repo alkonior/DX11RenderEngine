@@ -4,7 +4,7 @@ using namespace Renderer;
 
 const ShaderDefines UPRendererFactory::UPRendererDefines[] = {
     {"RED", "1"},
-    {"POSITIONED", "1"},
+    {"ALPHA", "1"},
 };
 
 UPRendererFactory::UPRendererFactory(IRenderer* renderer, IStateProvider* provider, void* shaderData, size_t dataSize):

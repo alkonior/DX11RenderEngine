@@ -1,10 +1,11 @@
 #pragma once
 #include "PipelineFactory.h"
 #include "UPRendererUtils.h"
-enum ModelDefines  : uint64_t {
+enum UPDefines  : uint64_t {
     UPZERO = 0,
     UPRED = 1,
-    POSITIONED = 2,
+    UPALPHA = 2,
+    UPWATER = 4,
 };
 
 

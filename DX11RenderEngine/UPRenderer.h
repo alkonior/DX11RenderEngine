@@ -20,9 +20,9 @@ class UPRenderer {
 	};
 
 	struct DrawCall {
-		DrawCall(UPModelData model, TexturesManager::TextureCache texture, Transform position, uint64_t flags);
+		DrawCall(UPModelData model, TexturesManager::TextureCache texture, Transform position, float4 light, uint64_t flags);
 
-		UPModelData model; TexturesManager::TextureCache texture; Transform position; uint64_t flags;
+		UPModelData model; TexturesManager::TextureCache texture; Transform position; float4 color; uint64_t flags;
 	};
 
 
@@ -33,7 +33,7 @@ public:
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
 
-	void Draw(UPModelData model, TexturesManager::TextureCache texture, Transform position, size_t flags);
+	void Draw(UPModelData model, TexturesManager::TextureCache texture, Transform position, float4 light, size_t flags);
 	
 	void Render(const GraphicsBase& gfx);
 	void Clear();

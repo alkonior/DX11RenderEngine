@@ -100,6 +100,10 @@ void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
 	gfx->UpdateImg(id, tex);
 }
 
+void RenderDevice::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+	gfx->UpdateImg(id, x, y, w, h, level, data, dataLength);
+}
+
 void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
 	gfx->RegisterModel(id, model);
 }
@@ -133,7 +137,8 @@ void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform p
 	gfx->DrawFramedModel(modelId, textureId, position, curIndex, nextIndex, alpha, flags);
 }
 
-void RenderDevice::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, size_t flags) {
+void RenderDevice::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, float4 light, size_t flags) {
+	gfx->DrawUserPolygon(model, textureId, position, light, flags);
 }
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
