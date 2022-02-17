@@ -35,7 +35,7 @@ void TextureData::Clear(Color fillValue) noexcept {
 	memset(pBuffer.get(), fillValue.rgba, width * height * sizeof(Color));
 }
 
-void TextureData::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEBUG) {
+void TextureData::PutPixel(unsigned int x, unsigned int y, Color c) noexcept {
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(x < width);
@@ -43,7 +43,7 @@ void TextureData::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_D
 	pBuffer[y * width + x] = c;
 }
 
-TextureData::Color TextureData::GetPixel(unsigned int x, unsigned int y) const noexcept(!_DEBUG) {
+TextureData::Color TextureData::GetPixel(unsigned int x, unsigned int y) const noexcept {
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(x < width);
@@ -167,7 +167,7 @@ void TextureData::Save(const std::string& filename) const {
 	}
 }
 
-void TextureData::Copy(const TextureData& src) noexcept(!_DEBUG) {
+void TextureData::Copy(const TextureData& src) noexcept {
 	assert(width == src.width);
 	assert(height == src.height);
 	memcpy(pBuffer.get(), src.pBuffer.get(), width * height * sizeof(Color));

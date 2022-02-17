@@ -75,8 +75,8 @@ public:
 	TextureData& operator=(const TextureData&) = delete;
 	~TextureData();
 	void Clear(Color fillValue) noexcept;
-	void PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!_DEBUG);
-	Color GetPixel(unsigned int x, unsigned int y) const noexcept(!_DEBUG);
+	void PutPixel(unsigned int x, unsigned int y, Color c) noexcept;
+	Color GetPixel(unsigned int x, unsigned int y) const noexcept;
 	unsigned int GetWidth() const noexcept;
 	unsigned int GetHeight() const noexcept;
 	Color* GetBufferPtr() noexcept;
@@ -87,7 +87,7 @@ public:
 	static TextureData FromFile(LPCWCH name);
 #endif
 	void Save(const std::string& filename) const;
-	void Copy(const TextureData& src) noexcept(!_DEBUG);
+	void Copy(const TextureData& src) noexcept;
 private:
 	TextureData(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;
 private:

@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <resource.h>
 
+
 #include "imgui/imgui_impl_dx11.h"
 
 #pragma comment(lib,"d3d11.lib")
@@ -32,10 +33,18 @@ void Graphics::BeginFrame() {
 
 
 void Graphics::EndFrame() {
-
+	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UserPolygonRenderer");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
+	//PIXEndEvent();
+
+	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "ModelRenderer");
 	GFX_CATCH_RENDER(manager3D.Render(*this););
+	//PIXEndEvent();
+
+	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UIRenderer");
 	GFX_CATCH_RENDER(manager2D.Render(););
+	//PIXEndEvent();
+
 	//GFX_CATCH_RENDER(managerImGUI.Render(););
 
 	renderer.SwapBuffers();
@@ -57,6 +66,10 @@ void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
 	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
 	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+}
+
+void Graphics::Flush() {
+	managerUP.Flush();
 }
 
 
@@ -107,8 +120,16 @@ void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, s
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
-void Graphics::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, float4 light, size_t flags) {
-	managerUP.Draw(model, texturesManger.GetImg(textureId), position, light, flags);
+void Graphics::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
+	managerUP.Draw(model, texturesManger.GetImg(textureId), data);
+}
+
+void Graphics::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
+	managerUP.DrawSet(model, newModel, texturesManger.GetImg(textureId), data);
+}
+
+UPHashData Graphics::RegisterhUserPolygon(UPModelData model) {
+	return managerUP.Register(model);
 }
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {

@@ -4,7 +4,10 @@
 #include "TransformUtils.h"
 #include "SimpleMath.h"
 
-
+#ifdef _DEBUG
+#define USE_PIX_ON_ALL_ARCHITECTURES
+#include "pix3.h"
+#endif
 class GraphicsBase {
 
 static Renderer::PresentationParameters GenParams(HWND hWnd, size_t width, size_t height);

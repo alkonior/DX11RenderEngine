@@ -13,7 +13,7 @@ struct UPModelData {
     Renderer::PrimitiveType pt;
     size_t primitiveCount;
     std::vector<UPVertex> verticies;
-    std::vector<uint16_t> indexes;
+    std::vector<uint32_t> indexes;
 };
 
 
@@ -23,6 +23,7 @@ struct UPTranformCosntBuffer {
     matrix view;
     matrix projection;
     float4 color;
+    float2 texOffset;
 };
 
 struct UPDataCosntBuffer {

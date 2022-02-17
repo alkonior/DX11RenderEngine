@@ -59,6 +59,10 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
 	refToPS->dss.stencilEnable = false;
 
+	if (definesFlags & (UPALPHA | UPWATER)) {
+		refToPS->dss.depthBufferWriteEnable = false;
+	}
+
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
 	//refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;

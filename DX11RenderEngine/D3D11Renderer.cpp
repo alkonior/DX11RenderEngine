@@ -1239,7 +1239,7 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 			throw InfoException(__LINE__, __FILE__, { "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!" });
 		}
 
-		context->Map(
+		GFX_THROW_INFO_ONLY(context->Map(
 			d3dBuffer->handle.Get(),
 			0,
 			options == SETDATAOPTIONS_NOOVERWRITE ?
@@ -1247,26 +1247,26 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 			D3D11_MAP_WRITE_DISCARD,
 			0,
 			&subres
-		);
+		));
 		memcpy(
 			(uint8_t*)subres.pData + offsetInBytes,
 			data,
 			dataLength
 		);
-		context->Unmap(
+		GFX_THROW_INFO_ONLY(context->Unmap(
 			d3dBuffer->handle.Get(),
 			0
-		);
+		));
 	}
 	else {
-		context->UpdateSubresource(
+		GFX_THROW_INFO_ONLY(context->UpdateSubresource(
 			d3dBuffer->handle.Get(),
 			0,
 			&dstBox,
 			data,
 			dataLength,
 			dataLength
-		);
+		));
 	}
 
 }
@@ -1285,15 +1285,15 @@ void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInByt
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
-	device->CreateBuffer(
+	GFX_THROW_INFO(device->CreateBuffer(
 		&desc,
 		NULL,
 		&stagingBuffer
-	);
+	));
 	//std::lock_guard<std::mutex> guard(ctxLock);;
 
 	/* Copy data into staging buffer */
-	context->CopySubresourceRegion(
+	GFX_THROW_INFO_ONLY(context->CopySubresourceRegion(
 		stagingBuffer.Get(),
 		0,
 		0,
@@ -1302,25 +1302,25 @@ void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInByt
 		d3dBuffer->handle.Get(),
 		0,
 		&srcBox
-	);
+	));
 
 	/* Read from the staging buffer */
-	context->Map(
+	GFX_THROW_INFO_ONLY(context->Map(
 		stagingBuffer.Get(),
 		0,
 		D3D11_MAP_READ,
 		0,
 		&subres
-	);
+	));
 	memcpy(
 		data,
 		subres.pData,
 		dataLength
 	);
-	context->Unmap(
+	GFX_THROW_INFO_ONLY(context->Unmap(
 		stagingBuffer.Get(),
 		0
-	);
+	));
 
 
 }
@@ -1964,8 +1964,8 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 
 	wrl::ComPtr<ID3D10Blob>pPSData;
 	wrl::ComPtr<ID3D10Blob>psErrorBlob;
+#if _DEBUG
 	bool compiled = false;
-
 	try {
 		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
 		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
@@ -1979,6 +1979,10 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
 		throw ce;
 	}
+#else
+	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+#endif
 	return result;
 }
 
@@ -2001,8 +2005,8 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 	//		{"Position",  0, DXGI_FORMAT_R32G32_FLOAT,  0,                           0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	//		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,  0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	//};
+#if _DEBUG
 	bool compiled = false;
-
 	try {
 		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
 
@@ -2023,6 +2027,17 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
 		throw ce;
 	}
+#else
+	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
+
+	GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
+	GFX_THROW_INFO(device->CreateInputLayout(
+		d3dInputLayout,
+		(UINT)inputLayoutSize,
+		pVSData->GetBufferPointer(),
+		pVSData->GetBufferSize(),
+		&result->pInputLayout));
+#endif
 	return result;
 }
 

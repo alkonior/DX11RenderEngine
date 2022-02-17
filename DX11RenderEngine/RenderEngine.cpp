@@ -137,9 +137,18 @@ void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform p
 	gfx->DrawFramedModel(modelId, textureId, position, curIndex, nextIndex, alpha, flags);
 }
 
-void RenderDevice::DrawUserPolygon(UPModelData model, size_t textureId, Transform position, float4 light, size_t flags) {
-	gfx->DrawUserPolygon(model, textureId, position, light, flags);
+void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
+	gfx->DrawUserPolygon(model, textureId, data);
 }
+
+void RenderDevice::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
+	gfx->DrawSetUserPolygon(model,newModel, textureId, data);
+}
+
+UPHashData RenderDevice::RegisterUserPolygon(UPModelData model) {
+	return gfx->RegisterhUserPolygon(model);
+}
+
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
