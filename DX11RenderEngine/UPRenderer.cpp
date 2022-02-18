@@ -46,7 +46,14 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.mipMapLevelOfDetailBias = 0;
+	sampler.mipMapLevelOfDetailBias = 0;	
+	
+	lightSampler.filter = TextureFilter::TEXTUREFILTER_ANISOTROPIC;
+	lightSampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	lightSampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	lightSampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+	lightSampler.mipMapLevelOfDetailBias = 0;
+	lightSampler.maxAnisotropy = 16;
 }
 
 void UPRenderer::Init(LPCWSTR dirr) {
@@ -86,6 +93,10 @@ UPHashData UPRenderer::Register(UPModelData model) {
 void UPRenderer::Draw(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data) {
 	drawCalls.emplace_back(model, texture, data);
 }
+void UPRenderer::Draw(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) {
+	drawCalls.emplace_back(model, texture, lightMap, data);
+}
+
 void UPRenderer::DrawSet(UPHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data) {
 
 	for (size_t i = 0; i < newModel.indexes.size(); i++) {
@@ -168,6 +179,10 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 		auto  pTexture = drawCalls[i].texture.texture;
 		renderer->VerifyPixelSampler(0, pTexture, sampler);
 
+		auto  pLightMap = drawCalls[i].lightMap.texture;
+		if (drawCalls[i].data.flags & UPLIGHTMAPPED)
+			renderer->VerifyPixelSampler(1, pLightMap, lightSampler);
+
 		transformBuffer.world = drawCalls[i].data.position.GetTransform();
 		transformBuffer.color = drawCalls[i].data.light;
 		transformBuffer.texOffset = drawCalls[i].data.texOffset;
@@ -240,3 +255,6 @@ UPRenderer::~UPRenderer() { Destroy(); }
 
 UPRenderer::DrawCall::DrawCall(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data) :
 	model(model), texture(texture), data(data) {}
+
+UPRenderer::DrawCall::DrawCall(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data):
+	DrawCall(model, texture, data) {this->lightMap = lightMap;}

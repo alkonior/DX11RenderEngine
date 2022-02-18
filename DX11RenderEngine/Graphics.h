@@ -33,8 +33,10 @@ public:
 
 
 	void RegisterImg(size_t id, const TextureData& text);
+	void RegisterImg(size_t id, int width, int heights, void* data, bool mipmap);
+
 	void UpdateImg(size_t id, const TextureData& text);
-	void UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength);
+	void UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
 	void ReleaseImg(size_t id);
 
 	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
@@ -53,6 +55,7 @@ public:
 
 
 	void DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data);
+	void DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
 	void DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
 	UPHashData RegisterhUserPolygon(UPModelData model);
 

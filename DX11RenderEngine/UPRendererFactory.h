@@ -5,7 +5,7 @@ enum UPDefines  : uint64_t {
     UPZERO = 0,
     UPRED = 1,
     UPALPHA = 2,
-    UPWATER = 4,
+    UPLIGHTMAPPED = 4
 };
 
 

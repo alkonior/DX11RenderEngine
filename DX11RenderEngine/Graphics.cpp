@@ -96,8 +96,8 @@ void Graphics::UpdateImg(size_t id, const TextureData& text) {
 	texturesManger.UpdateTexture(text, id);
 }
 
-void Graphics::UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
-	texturesManger.UpdateTexture(id, x, y, w, h, level, data, dataLength);
+void Graphics::UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
+	texturesManger.UpdateTexture(id, x, y, w, h, level, data);
 }
 
 void Graphics::ReleaseImg(size_t id) {
@@ -116,12 +116,20 @@ void Graphics::ReleaseModel(size_t id) {
 	modelsManadger.ReleaseModel(id);
 }
 
+void Graphics::RegisterImg(size_t id, int width, int height, void* data, bool mipmap) {
+	texturesManger.RegTexture(data, width, height, mipmap, id);
+
+}
+
 void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
 void Graphics::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
 	managerUP.Draw(model, texturesManger.GetImg(textureId), data);
+}
+void Graphics::DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
+	managerUP.Draw(model, texturesManger.GetImg(textureId), texturesManger.GetImg(lightmapId), data);
 }
 
 void Graphics::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {

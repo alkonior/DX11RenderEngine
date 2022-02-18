@@ -18,9 +18,13 @@ public:
 public:
 	TexturesManager(Renderer::IRenderer* renderer);
 
+	void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
 	void RegTexture(const TextureData& tx, size_t id);
 	void UpdateTexture(const TextureData& tx, size_t id);
-	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength);
+	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
+
+	
+	
 	void ReleaseTexture(size_t id);
 	TextureCache GetImg(size_t id);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);

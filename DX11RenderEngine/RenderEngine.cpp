@@ -96,12 +96,16 @@ void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
+void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data, bool mipmap) {
+	gfx->RegisterImg(id, width, height, data, mipmap);
+}
+
 void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
 	gfx->UpdateImg(id, tex);
 }
 
-void RenderDevice::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
-	gfx->UpdateImg(id, x, y, w, h, level, data, dataLength);
+void RenderDevice::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
+	gfx->UpdateImg(id, x, y, w, h, level, data);
 }
 
 void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
@@ -139,6 +143,10 @@ void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform p
 
 void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
 	gfx->DrawUserPolygon(model, textureId, data);
+}
+
+void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
+	gfx->DrawUserPolygon(model, textureId, lightmapId, data);
 }
 
 void RenderDevice::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {

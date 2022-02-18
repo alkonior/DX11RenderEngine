@@ -28,7 +28,7 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 
 		refToPS->bf = Renderer::Color{ 255,255,255,255 };
 	}
-	if (definesFlags & (UPALPHA | UPWATER)) {
+	if (definesFlags & (UPALPHA)) {
 		refToPS->bs.enabled = true;
 		refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
 		refToPS->bs.alphaBlendFunction = BLENDFUNCTION_ADD;
@@ -53,13 +53,10 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 
 
 	refToPS->dss.depthBufferEnable = true;
-
-	if (definesFlags & (UPALPHA | UPWATER))
-		refToPS->dss.depthBufferEnable = true;
 	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
 	refToPS->dss.stencilEnable = false;
 
-	if (definesFlags & (UPALPHA | UPWATER)) {
+	if (definesFlags & (UPALPHA)) {
 		refToPS->dss.depthBufferWriteEnable = false;
 	}
 

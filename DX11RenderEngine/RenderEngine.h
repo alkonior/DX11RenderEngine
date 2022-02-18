@@ -51,8 +51,9 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const TextureData&);
+	void RegisterTexture(size_t id, int width, int height, void* data, bool mipmap);
 	void UpdateTexture(size_t id, const TextureData&);
-	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength);
+	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
 	void RegisterModel(size_t id, const ModelData&);
 	void RegisterFramedModel(size_t id, const FramedModelData&);
 	void ReleaseTexture(size_t id);
@@ -68,6 +69,7 @@ struct RenderDevice {
 	
 	
 	void DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data);
+	void DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
 	void DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
 	UPHashData RegisterUserPolygon(UPModelData model);
 	

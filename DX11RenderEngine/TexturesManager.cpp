@@ -3,24 +3,19 @@
 
 TexturesManager::TexturesManager(Renderer::IRenderer* renderer):renderer(renderer) {}
 
-void TexturesManager::RegTexture(const TextureData& tx, size_t id) {
-	//HRESULT hr;
-	//D3D11_TEXTURE2D_DESC textureDesc = {};
-	//textureDesc.Width = tx.GetWidth();
-	//textureDesc.Height = tx.GetHeight();
-	//textureDesc.MipLevels = 1;
-	//textureDesc.ArraySize = 1;
-	//textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	//textureDesc.SampleDesc.Count = 1;
-	//textureDesc.SampleDesc.Quality = 0;
-	//textureDesc.Usage = D3D11_USAGE_DYNAMIC;
-	//textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//textureDesc.MiscFlags = 0;
-	//D3D11_SUBRESOURCE_DATA sd = {};
-	//sd.pSysMem = tx.GetBufferPtr();
-	//sd.SysMemPitch = tx.GetWidth() *sizeof(TextureData::Color);
+void TexturesManager::RegTexture(void* data, int width, int height, bool mipmap, size_t id) {
+	auto& pTexture = textures[id];
+	if (pTexture.texture != nullptr) {
+		ReleaseTexture(id);
+	}
+	//GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+	pTexture.texture = renderer->CreateTexture2D(width, height, 0, 0);
+	renderer->SetTextureData2D(pTexture.texture, 0, 0, width, height, 0, data, width * height * 4);
+	pTexture.width = width;
+	pTexture.height = height;
+}
 
+void TexturesManager::RegTexture(const TextureData& tx, size_t id) {
 	auto&  pTexture = textures[id];
 	if (pTexture.texture != nullptr) {
 		ReleaseTexture(id);
@@ -42,13 +37,14 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
 	}
 }
 
-void TexturesManager::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {
+void TexturesManager::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
 	auto& pTexture = textures[id];
 	if (pTexture.texture == nullptr) {
 		return;
 	}
-	renderer->SetTextureData2D(pTexture.texture, x, y, w, h, level, data, dataLength);
+	renderer->SetTextureData2D(pTexture.texture, x, y, w, h, level, data, 0);
 }
+
 
 void TexturesManager::ReleaseTexture(size_t id) {
 	auto& pTexture = textures[id];

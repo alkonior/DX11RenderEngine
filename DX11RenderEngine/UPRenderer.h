@@ -35,8 +35,10 @@ class UPRenderer {
 
 	struct DrawCall {
 		DrawCall(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data);
+		DrawCall(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
 
 		UPHashData model; TexturesManager::TextureCache texture; UPDrawData data;
+		TexturesManager::TextureCache lightMap;
 	};
 
 
@@ -49,6 +51,7 @@ public:
 
 	UPHashData Register(UPModelData model);
 	void Draw(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data);
+	void Draw(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
 	void DrawSet(UPHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data);
 
 	void Render(const GraphicsBase& gfx);
@@ -80,6 +83,7 @@ private:
 	Renderer::ConstBuffer* pDataCB;
 
 	Renderer::SamplerState sampler;
+	Renderer::SamplerState lightSampler;
 	std::vector<DrawCall> drawCalls;
 
 };
