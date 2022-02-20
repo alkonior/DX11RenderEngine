@@ -2115,5 +2115,11 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 	SetViewport(piplineState->vp);
 }
 
+void D3D11Renderer::Flush() {
+	hashBS.clear();
+	hashDSS.clear();
+	hashRS.clear();
+	hashSS.clear();
+}
 
 };

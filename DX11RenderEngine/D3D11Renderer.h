@@ -155,10 +155,10 @@ private:
 	void CreateSwapChain(const PresentationParameters& pp);
 	void ResizeSwapChain(const PresentationParameters& pp);
 
-	std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>> hashBS;
-	std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>> hashDSS;
-	std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>> hashRS;
-	std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>> hashSS;
+	std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>>				hashBS;
+	std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>>  hashDSS;
+	std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>>		hashRS;
+	std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>>			hashSS;
 
 	wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
 	wrl::ComPtr<ID3D11DepthStencilState> FetchDepthStencilState(const DepthStencilState& state);
@@ -205,6 +205,7 @@ public:
 
 	// Унаследовано через IRenderer
 	virtual void ApplyPipelineState(PipelineState* piplineState) override;
+	virtual void Flush() override;
 
 };
 

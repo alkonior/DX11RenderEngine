@@ -40,7 +40,8 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
 void TexturesManager::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
 	auto& pTexture = textures[id];
 	if (pTexture.texture == nullptr) {
-		return;
+		pTexture.texture = renderer->CreateTexture2D(128, 128, 0, 0);
+		//return;
 	}
 	renderer->SetTextureData2D(pTexture.texture, x, y, w, h, level, data, 0);
 }

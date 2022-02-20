@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Utils.h"
 #include "BlendState.h"
 #include "DepthStencilState.h"
@@ -791,6 +791,7 @@ struct IRenderer {
 	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) = 0;
 
 	virtual void ApplyPipelineState(PipelineState* piplineState) = 0;
+	virtual void Flush() = 0;
 
 };
 

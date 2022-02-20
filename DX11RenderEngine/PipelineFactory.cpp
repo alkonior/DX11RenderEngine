@@ -39,11 +39,9 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 
 		auto definesArray = GetDefines(definesFlags);
 
-		//D3DCompile(data, size, NULL, NULL, NULL, "psIn", "ps_4_0", NULL, NULL, &pPSData, &psErrorBlob);
 		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "psIn", "ps_4_0", compileFlags);
 
 		auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-		//D3DCompile(data, size, NULL, NULL, NULL, "vsIn", "vs_4_0", NULL, NULL, &pPSData, &psErrorBlob);
 		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "vsIn", "vs_4_0", 
 			compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
 
@@ -68,4 +66,5 @@ Renderer::PipelineFactory::~PipelineFactory() {
 		delete ps;
 	}
 	free(shaderData);
+	renderer->Flush();
 }
