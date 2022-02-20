@@ -146,10 +146,10 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 		transformBuffer.world = drawLerpCalls[i].data.position.GetTransform();
 
-		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
-		dataBuffer.w = drawLerpCalls[i].texture.width;
-		dataBuffer.h = drawLerpCalls[i].texture.height;
-		dataBuffer.color = drawLerpCalls[i].data.color;
+		transformBuffer.alpha = drawLerpCalls[i].data.alpha;
+		transformBuffer.w = drawLerpCalls[i].texture.width;
+		transformBuffer.h = drawLerpCalls[i].texture.height;
+		transformBuffer.color = drawLerpCalls[i].data.color;
 		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		//localBuffer.uvShift = drawCalls[i].getUVShift();
 		//localBuffer.uvScale = drawCalls[i].getUVScale();

@@ -23,12 +23,12 @@ struct Shader3DTranformCosntBuffer {
     matrix world;
     matrix view;
     matrix projection;
-};
-
-struct Shader3DDataCosntBuffer {
     float4 color;
     float alpha;
     float w;
     float h;
+};
+
+struct Shader3DDataCosntBuffer {
 };
 #pragma pack(pop)
