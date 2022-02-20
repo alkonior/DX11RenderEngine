@@ -7,12 +7,16 @@ struct ModelVertex {
     float2 texcoord;
 };
 
-struct FramedModelVertex {
-    float3 normal;
+struct FramedModelCommon {
     float2 texcoord;
 };
 
-typedef std::vector<float3> Frame;
+struct FramedModelVertex {
+    float3 position;
+    float3 normal;
+};
+
+typedef std::vector<FramedModelVertex> Frame;
 
 #pragma pack(push, 4)
 struct Shader3DTranformCosntBuffer {
@@ -22,6 +26,7 @@ struct Shader3DTranformCosntBuffer {
 };
 
 struct Shader3DDataCosntBuffer {
+    float4 color;
     float alpha;
     float w;
     float h;

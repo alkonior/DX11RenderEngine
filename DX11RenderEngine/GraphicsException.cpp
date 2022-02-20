@@ -132,8 +132,7 @@ std::string InfoException::GetErrorInfo() const noexcept {
 
 CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept :
 	HrException(line, file, hr, infoMsgs) {
-	this->compileError = new char[strlen(compileError)];
-	strcpy(this->compileError, compileError);
+	this->compileError = std::string(compileError);
 }
 
 const char* CompileException::what() const noexcept {
@@ -155,5 +154,4 @@ const char* CompileException::what() const noexcept {
 }
 
 CompileException::~CompileException() {
-	delete[] compileError;
 }

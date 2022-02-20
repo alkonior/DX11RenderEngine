@@ -2,11 +2,11 @@
 
 using namespace Renderer;
 
-ModelRenderer::DrawCall::DrawCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags):
-model(model), texture(texture), position(position), flags(flags){}
+ModelRenderer::DrawCall::DrawCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags) :
+	model(model), texture(texture), position(position), flags(flags) {}
 
-ModelRenderer::DrawLerpCall::DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags):
-model(model), texture(texture), position(position), curIndex(curIndex), nextIndex(nextIndex), alpha(alpha), flags(flags) {}
+ModelRenderer::DrawLerpCall::DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData& data) :
+	model(model), texture(texture), data(data) {}
 
 ModelRenderer::ModelRenderer(Renderer::IRenderer* renderer) : renderer(renderer) {}
 
@@ -50,8 +50,8 @@ void ModelRenderer::Draw(ModelsManager::ModelCache model, TexturesManager::Textu
 	drawCalls.emplace_back(model, texture, position, flags);
 }
 
-void ModelRenderer::DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
-	drawLerpCalls.emplace_back(model, texture, position, curIndex, nextIndex, alpha, flags);
+void ModelRenderer::DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData& data) {
+	drawLerpCalls.emplace_back(model, texture, data);
 }
 
 void ModelRenderer::Clear() {
@@ -84,10 +84,10 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flags != lastFlags) {
 			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flags));
+			lastFlags = drawCalls[i].flags;
 		}
 
 
-		lastFlags = drawCalls[i].flags;
 
 
 		renderer->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
@@ -102,69 +102,71 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		//localBuffer.uvScale = drawCalls[i].getUVScale();
 		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		renderer->DrawIndexedPrimitives(
-			drawCalls[i].model.pt, 0, 0, 0, 0, 
+			drawCalls[i].model.pt, 0, 0, 0, 0,
 			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
 	}
 
 	if (!drawLerpCalls.empty()) {
 		static ConstBuffer* constBuffers[] = { pTransformCB , pDataCB };
 		renderer->VerifyConstBuffers(constBuffers, 2);
-
-		for (size_t i = 0; i < drawLerpCalls.size(); i++) {
-			if (drawLerpCalls[i].flags != lastFlags) {
-				renderer->ApplyPipelineState(factory->GetState(drawLerpCalls[i].flags));
-			}
-
-
-			lastFlags = drawLerpCalls[i].flags;
-			static Buffer* vertexBuffers[3];
-			static UINT ofsets[3] = { 0, 0, 0 };
-			static UINT strides[3] = { 0, 0, 0 };
-			static VertexBufferBinding vBB;
-			
-			vBB.buffersCount = 3;
-			if (drawLerpCalls[i].flags & MSINGLE_FRAME)
-				vBB.buffersCount = 2;
-			vBB.vertexBuffers = vertexBuffers;
-			int max_buff = drawLerpCalls[i].model.vertexBuffer->buffersCount - 1;
-			vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[0];
-			vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].curIndex % max_buff + 1];
-			vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].nextIndex % max_buff + 1];
-
-			strides[0] = drawLerpCalls[i].model.vertexBuffer->vertexStride[0];
-			strides[1] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].curIndex + 1];
-			strides[2] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].nextIndex + 1];
-
-			vBB.vertexOffset = ofsets;
-			vBB.vertexStride = strides;
-
-			renderer->ApplyVertexBufferBinding(&vBB);
-
-			auto  pTexture = drawLerpCalls[i].texture.texture;
-			renderer->VerifyPixelSampler(0, pTexture, sampler);
-
-			transformBuffer.world = drawLerpCalls[i].position.GetTransform();
-
-			dataBuffer.alpha = drawLerpCalls[i].alpha+0.1;
-			dataBuffer.w = drawLerpCalls[i].texture.width;
-			dataBuffer.h = drawLerpCalls[i].texture.height;
-			//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
-			//localBuffer.uvShift = drawCalls[i].getUVShift();
-			//localBuffer.uvScale = drawCalls[i].getUVScale();
-			renderer->SetConstBuffer(pTransformCB, &transformBuffer);
-			renderer->SetConstBuffer(pDataCB, &dataBuffer);
-			
-
-
-			renderer->DrawIndexedPrimitives(
-				drawLerpCalls[i].model.pt, 0, 0, 0, 0,
-				drawLerpCalls[i].model.primitiveCount, drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
-		}
 	}
+
+	for (size_t i = 0; i < drawLerpCalls.size(); i++) {
+		if (drawLerpCalls[i].data.flags != lastFlags) {
+			renderer->ApplyPipelineState(factory->GetState(drawLerpCalls[i].data.flags));
+			lastFlags = drawLerpCalls[i].data.flags;
+		}
+
+
+		static Buffer* vertexBuffers[3];
+		static UINT ofsets[3] = { 0, 0, 0 };
+		static UINT strides[3] = { 0, 0, 0 };
+		static VertexBufferBinding vBB;
+
+		vBB.buffersCount = 3;
+		if (drawLerpCalls[i].data.isSingle)
+			vBB.buffersCount = 2;
+		vBB.vertexBuffers = vertexBuffers;
+		int max_buff = drawLerpCalls[i].model.vertexBuffer->buffersCount - 1;
+		vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[0];
+		vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].data.currentFrame % max_buff + 1];
+		vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].data.nextFrame % max_buff + 1];
+
+		strides[0] = drawLerpCalls[i].model.vertexBuffer->vertexStride[0];
+		strides[1] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].data.currentFrame + 1];
+		strides[2] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].data.nextFrame + 1];
+
+		vBB.vertexOffset = ofsets;
+		vBB.vertexStride = strides;
+
+		renderer->ApplyVertexBufferBinding(&vBB);
+
+		auto  pTexture = drawLerpCalls[i].texture.texture;
+		renderer->VerifyPixelSampler(0, pTexture, sampler);
+
+		transformBuffer.world = drawLerpCalls[i].data.position.GetTransform();
+
+		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
+		dataBuffer.w = drawLerpCalls[i].texture.width;
+		dataBuffer.h = drawLerpCalls[i].texture.height;
+		dataBuffer.color = drawLerpCalls[i].data.color;
+		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
+		//localBuffer.uvShift = drawCalls[i].getUVShift();
+		//localBuffer.uvScale = drawCalls[i].getUVScale();
+		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
+		renderer->SetConstBuffer(pDataCB, &dataBuffer);
+
+
+
+		renderer->DrawIndexedPrimitives(
+			drawLerpCalls[i].model.pt, 0, 0, 0, 0,
+			drawLerpCalls[i].model.primitiveCount, drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
+	}
+
 
 }
 
-ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32_t height):width(width), height(height) {}
+ModelRenderer::ModelRendererProvider::ModelRendererProvider(int32_t width, int32_t height) :width(width), height(height) {}
 
 void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
 
@@ -195,7 +197,7 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_CULLCLOCKWISEFACE;
 
-	if (definesFlags & ModelDefines::MBAD_UV) 
+	if (definesFlags & ModelDefines::MBAD_UV)
 		refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
 	refToPS->rs.depthBias = 0.0f;
 	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
@@ -222,28 +224,30 @@ const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
 
 const D3D11_INPUT_ELEMENT_DESC  LerpInputElements[] =
 {
-	{ "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TEXCOORD",           0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "CurrentPosition",    0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NextPosition",       0, DXGI_FORMAT_R32G32B32_FLOAT,    2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD",      0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "Position",      1, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",        1, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "Position",      2, DXGI_FORMAT_R32G32B32_FLOAT,    2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",        2, DXGI_FORMAT_R32G32B32_FLOAT,    2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 
 const D3D11_INPUT_ELEMENT_DESC  SingleFrameInputElements[] =
 {
 	{ "Position",           0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TEXCOORD",           0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
 	if (definesFlags & ModelDefines::MLERP) {
-		if (definesFlags & ModelDefines::MSINGLE_FRAME)
-			return InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
 		return InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
 	}
+	else {
+		return InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
+	}
 
-	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
+	//return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 
 }
 

@@ -34,15 +34,21 @@ void Graphics::BeginFrame() {
 
 void Graphics::EndFrame() {
 	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UserPolygonRenderer");
+	renderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
+	renderer.EndEvent();
 	//PIXEndEvent();
 
 	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "ModelRenderer");
+	renderer.BeginEvent("Models draw.");
 	GFX_CATCH_RENDER(manager3D.Render(*this););
+	renderer.EndEvent();
 	//PIXEndEvent();
 
 	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UIRenderer");
+	renderer.BeginEvent("UI draw.");
 	GFX_CATCH_RENDER(manager2D.Render(););
+	renderer.EndEvent();
 	//PIXEndEvent();
 
 	//GFX_CATCH_RENDER(managerImGUI.Render(););
@@ -140,8 +146,8 @@ UPHashData Graphics::RegisterhUserPolygon(UPModelData model) {
 	return managerUP.Register(model);
 }
 
-void Graphics::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
-	manager3D.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, curIndex, nextIndex, alpha, flags);
+void Graphics::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
+	manager3D.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), data);
 }
 
 

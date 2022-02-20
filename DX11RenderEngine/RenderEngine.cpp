@@ -137,8 +137,8 @@ void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform positio
 	gfx->DrawModel(modelId, textureId, position, flags);
 }
 
-void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags) {
-	gfx->DrawFramedModel(modelId, textureId, position, curIndex, nextIndex, alpha, flags);
+void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
+	gfx->DrawFramedModel(modelId, textureId, data);
 }
 
 void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {

@@ -23,6 +23,7 @@ public:
 	wrl::ComPtr<IDXGISwapChain> swapchain;
 
 private:
+	wrl::ComPtr<ID3DUserDefinedAnnotation> perf;
 	wrl::ComPtr<IDXGIAdapter> adapter;
 	wrl::ComPtr<IDXGIFactory> factory;
 	D3D_FEATURE_LEVEL featureLevel;
@@ -206,6 +207,14 @@ public:
 	// Унаследовано через IRenderer
 	virtual void ApplyPipelineState(PipelineState* piplineState) override;
 	virtual void Flush() override;
+
+
+	// Inherited via IRenderer
+	virtual void BeginEvent(const char* name) override;
+
+	virtual void EndEvent() override;
+
+	virtual void SetMarker(const char* name) override;
 
 };
 

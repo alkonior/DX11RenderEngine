@@ -75,7 +75,7 @@ private:
 };
 
 class CompileException : public HrException {
-	char* compileError;
+	std::string compileError;
 public:
 	CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept;
 	const char* what() const noexcept override;

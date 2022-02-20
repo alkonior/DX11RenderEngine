@@ -61,7 +61,7 @@ public:
 
 
 
-	void DrawFramedModel(size_t modelId, size_t textureId, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
+	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
 
 	TexturesManager texturesManger;
 	ModelsManager modelsManadger;

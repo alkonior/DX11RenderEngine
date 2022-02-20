@@ -10,8 +10,17 @@ enum ModelDefines{
     MZERO = 0,
     MRED = 1,
     MLERP = 2,
-    MSINGLE_FRAME = 4,
-    MBAD_UV = 8,
+    MBAD_UV = 4,
+    MNONORMAL = 8,
+    MCOLORED = 16,
+};
+
+const Renderer::ShaderDefines ModelRendererDefines[] = {
+    {"RED", "1"},
+    {"LERP", "1"},
+    {"BAD_UV", "1"},
+    {"MNONORMAL", "1"},
+    {"MCOLORED", "1"},
 };
 
 
@@ -19,6 +28,5 @@ enum ModelDefines{
 class ModelRendererFactory: public Renderer::PipelineFactory {
 public:
     ModelRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
-    static const Renderer::ShaderDefines ModelRendererDefines[];
 };
 

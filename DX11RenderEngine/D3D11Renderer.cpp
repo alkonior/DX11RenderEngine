@@ -138,6 +138,8 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 	topology = (PrimitiveType)-1; /* Force an update */
 
 
+	context->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), &perf);
+
 	/* Set presentation interval */
 	SetPresentationInterval(presentationParameters.presentationInterval);
 
@@ -2011,7 +2013,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
 
 		GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
-		GFX_THROW_INFO(device->CreateInputLayout(
+   		GFX_THROW_INFO(device->CreateInputLayout(
 			d3dInputLayout,
 			(UINT)inputLayoutSize,
 			pVSData->GetBufferPointer(),
@@ -2020,12 +2022,22 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 		compiled = true;
 	}
 	catch (HrException exe) {
-		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
-		throw ce;
+		if (psErrorBlob != nullptr) {
+			CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+			throw ce;
+		}
+		else {
+			throw exe;
+		}
 	}
 	catch (InfoException exe) {
-		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
-		throw ce;
+		if (psErrorBlob != nullptr) {
+			CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+			throw ce;
+		}
+		else {
+			throw exe;
+		}
 	}
 #else
 	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
@@ -2120,6 +2132,22 @@ void D3D11Renderer::Flush() {
 	hashDSS.clear();
 	hashRS.clear();
 	hashSS.clear();
+}
+
+void D3D11Renderer::BeginEvent(const char* name) {
+	std::wstring wc(strlen(name), L'#');
+	mbstowcs(&wc[0], name, strlen(name));
+	perf->BeginEvent(wc.c_str());
+}
+
+void D3D11Renderer::EndEvent() {
+	perf->EndEvent();
+}
+
+void D3D11Renderer::SetMarker(const char* name) {
+	std::wstring wc(strlen(name), L'#');
+	mbstowcs(&wc[0], name, strlen(name));
+	perf->SetMarker(wc.c_str());
 }
 
 };

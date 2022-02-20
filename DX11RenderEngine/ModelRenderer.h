@@ -3,7 +3,18 @@
 #include "TexturesManager.h"
 #include "ModelsManager.h"
 
+struct LerpModelDrawData {
+	Transform position;
+	bool isSingle;
 
+	float alpha;
+	size_t currentFrame;
+	size_t nextFrame;
+	float4 color;
+
+	uint64_t flags;
+
+};
 
 class ModelRenderer {
 	struct ModelRendererProvider;
@@ -27,11 +38,10 @@ class ModelRenderer {
 	};	
 	
 	struct DrawLerpCall {
-		DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
+		DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData&);
 
-		ModelsManager::ModelCache model; TexturesManager::TextureCache texture; Transform position; 
-		int curIndex; int nextIndex; float alpha;
-		size_t flags;
+		ModelsManager::ModelCache model; TexturesManager::TextureCache texture; 
+		LerpModelDrawData data;
 	};
 
 
@@ -43,7 +53,7 @@ public:
 	void Init(LPCWSTR dirr);
 
 	void Draw(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags);
-	void DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, int curIndex, int nextIndex, float alpha, size_t flags);
+	void DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData&);
 
 	void Render(const GraphicsBase& gfx);
 	void Clear();

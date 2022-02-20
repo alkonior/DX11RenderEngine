@@ -15,17 +15,17 @@ public:
 
 class FramedModelData {
 public:
-	std::vector<FramedModelVertex> verticies;
+	std::vector<FramedModelCommon> verticies;
 	std::vector<Frame> frames;
 	std::vector<uint16_t> indexes;
 	Renderer::PrimitiveType pt;
 	size_t primitiveCount;
 
 	FramedModelData();
-	FramedModelData(std::vector<FramedModelVertex> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, Renderer::PrimitiveType pt, size_t primitiveCount);
+	FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, Renderer::PrimitiveType pt, size_t primitiveCount);
 
 
-	void AddTriangle(const std::vector<Frame>& verticies3, const FramedModelVertex uvNormals[3]);
+	void AddTriangle(const std::vector<Frame>& verticies3, const FramedModelCommon uvs[3]);
 
 };
 

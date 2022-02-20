@@ -793,6 +793,10 @@ struct IRenderer {
 	virtual void ApplyPipelineState(PipelineState* piplineState) = 0;
 	virtual void Flush() = 0;
 
+	virtual void BeginEvent(const char* name) = 0;
+	virtual void EndEvent() = 0;
+	virtual void SetMarker(const char* name) = 0;
+
 };
 
 };

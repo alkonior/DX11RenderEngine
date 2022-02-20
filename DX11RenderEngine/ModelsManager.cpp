@@ -42,16 +42,16 @@ void ModelsManager::RegisterFramedModel(const FramedModelData& model, size_t id)
 	vertexBuffer->vertexOffset = new UINT[framesCount + 1];
 	vertexBuffer->vertexStride = new UINT[framesCount + 1];
 
-	vertexBuffer->vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(FramedModelVertex) * model.verticies.size()));
+	vertexBuffer->vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(FramedModelCommon) * model.verticies.size()));
 	vertexBuffer->vertexOffset[0] = UINT(0);
-	vertexBuffer->vertexStride[0] = UINT(sizeof(FramedModelVertex));
-	renderer->SetVertexBufferData(vertexBuffer->vertexBuffers[0], 0, (void*)model.verticies.data(), (UINT)model.verticies.size(), (UINT)sizeof(FramedModelVertex), (UINT)sizeof(FramedModelVertex), SetDataOptions::SETDATAOPTIONS_NONE);
+	vertexBuffer->vertexStride[0] = UINT(sizeof(FramedModelCommon));
+	renderer->SetVertexBufferData(vertexBuffer->vertexBuffers[0], 0, (void*)model.verticies.data(), (UINT)model.verticies.size(), (UINT)sizeof(FramedModelCommon), (UINT)sizeof(FramedModelCommon), SetDataOptions::SETDATAOPTIONS_NONE);
 
 	for (size_t i = 0; i < framesCount; i++) {
-		vertexBuffer->vertexBuffers[i + 1] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(float3) * model.frames[i].size()));
+		vertexBuffer->vertexBuffers[i + 1] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(FramedModelVertex) * model.frames[i].size()));
 		vertexBuffer->vertexOffset[i + 1] = UINT(0);
-		vertexBuffer->vertexStride[i + 1] = UINT(sizeof(float3));
-		renderer->SetVertexBufferData(vertexBuffer->vertexBuffers[i + 1], 0, (void*)model.frames[i].data(), (UINT)model.frames[i].size(), sizeof(float3), sizeof(float3), SetDataOptions::SETDATAOPTIONS_NONE);
+		vertexBuffer->vertexStride[i + 1] = UINT(sizeof(FramedModelVertex));
+		renderer->SetVertexBufferData(vertexBuffer->vertexBuffers[i + 1], 0, (void*)model.frames[i].data(), (UINT)model.frames[i].size(), sizeof(FramedModelVertex), sizeof(FramedModelVertex), SetDataOptions::SETDATAOPTIONS_NONE);
 	}
 
 
