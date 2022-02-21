@@ -1904,6 +1904,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 
 
 void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBuffer) {
+
 	if (vertexBuffer->buffersCount == 1) {
 		//std::lock_guard<std::mutex> guard(ctxLock);;
 		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, 1u, ((D3D11Buffer*)(*vertexBuffer->vertexBuffers))->handle.GetAddressOf(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));

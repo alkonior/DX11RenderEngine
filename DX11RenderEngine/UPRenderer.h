@@ -1,19 +1,18 @@
 #pragma once
 #include "UPRendererFactory.h"
 #include "TexturesManager.h"
+#include "DynamicMeshBuffer.h"
 
-struct UPHashData {
-	int vertexOffset = 0;
-	int indexOffset = 0;
-	int numElem = 0;
-	Renderer::PrimitiveType pt;
-};
+
 
 struct UPDrawData {
 	//UPModelData model;
 	Transform position;
 	float2 texOffset;
 	float4 light;
+
+	bool dynamic;
+
 	uint64_t flags;
 };
 
@@ -34,10 +33,10 @@ class UPRenderer {
 	
 
 	struct DrawCall {
-		DrawCall(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data);
-		DrawCall(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
+		DrawCall(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data);
+		DrawCall(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
 
-		UPHashData model; TexturesManager::TextureCache texture; UPDrawData data;
+		MeshHashData model; TexturesManager::TextureCache texture; UPDrawData data;
 		TexturesManager::TextureCache lightMap;
 	};
 
@@ -49,10 +48,10 @@ public:
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
 
-	UPHashData Register(UPModelData model);
-	void Draw(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data);
-	void Draw(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
-	void DrawSet(UPHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data);
+	MeshHashData Register(UPModelData model, bool dynamic);
+	void Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data);
+	void Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
+	void DrawSet(MeshHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data);
 
 	void Render(const GraphicsBase& gfx);
 	void Flush();
@@ -65,16 +64,12 @@ private:
 	void Destroy();
 
 
-	size_t bigVertexBuffSize = 0;
-	size_t bigIndexBuffSize = 0;
-	size_t bigVertexBuffCapacity = 2000;
-	size_t bigIndexBuffCapacity = 2000;
-	Renderer::VertexBufferBinding bigVertexBuffer;
-	Renderer::Buffer* bigIndexBuffer = nullptr;
-	void ResizeBigVertexBuffer(size_t newVertexBuffSize);
-	void ResizeBigIndexBuffer(size_t newIndexBuffSize);
-	std::vector<UPVertex> cpuVerticies;
-	std::vector<std::uint32_t> cpuIndexes;
+	DynamicMeshBuffer staticMeshes;
+	DynamicMeshBuffer dynamicMeshes;
+
+	//void ResizeBigVertexBuffer(size_t newVertexBuffSize);
+	//void ResizeBigIndexBuffer(size_t newIndexBuffSize);
+
 
 	UPTranformCosntBuffer transformBuffer;
 	UPDataCosntBuffer dataBuffer;

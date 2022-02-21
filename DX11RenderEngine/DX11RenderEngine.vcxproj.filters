@@ -203,6 +203,9 @@
     <ClInclude Include="UPRenderer.h">
       <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicMeshBuffer.h">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -299,6 +302,9 @@
       <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
     </ClCompile>
     <ClCompile Include="UPRendererProvider.cpp">
+      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicMeshBuffer.cpp">
       <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
     </ClCompile>
   </ItemGroup>

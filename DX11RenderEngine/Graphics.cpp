@@ -131,19 +131,19 @@ void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, s
 	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
-void Graphics::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
+void Graphics::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
 	managerUP.Draw(model, texturesManger.GetImg(textureId), data);
 }
-void Graphics::DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
+void Graphics::DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
 	managerUP.Draw(model, texturesManger.GetImg(textureId), texturesManger.GetImg(lightmapId), data);
 }
 
-void Graphics::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
+void Graphics::DrawSetUserPolygon(MeshHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
 	managerUP.DrawSet(model, newModel, texturesManger.GetImg(textureId), data);
 }
 
-UPHashData Graphics::RegisterhUserPolygon(UPModelData model) {
-	return managerUP.Register(model);
+MeshHashData Graphics::RegisterhUserPolygon(UPModelData model, bool dynamic) {
+	return managerUP.Register(model, dynamic);
 }
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {

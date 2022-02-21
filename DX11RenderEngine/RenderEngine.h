@@ -71,10 +71,10 @@ struct RenderDevice {
 	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
 	
 	
-	void DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data);
-	void DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
-	void DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
-	UPHashData RegisterUserPolygon(UPModelData model);
+	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
+	void DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
+	void DrawSetUserPolygon(MeshHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
+	MeshHashData RegisterUserPolygon(UPModelData model, bool dynamic);
 	
 
 	/* Debug staff */

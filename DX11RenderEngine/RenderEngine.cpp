@@ -141,20 +141,20 @@ void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, const LerpM
 	gfx->DrawFramedModel(modelId, textureId, data);
 }
 
-void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data) {
+void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
 	gfx->DrawUserPolygon(model, textureId, data);
 }
 
-void RenderDevice::DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
+void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data) {
 	gfx->DrawUserPolygon(model, textureId, lightmapId, data);
 }
 
-void RenderDevice::DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
+void RenderDevice::DrawSetUserPolygon(MeshHashData model, UPModelData newModel, size_t textureId, UPDrawData data) {
 	gfx->DrawSetUserPolygon(model,newModel, textureId, data);
 }
 
-UPHashData RenderDevice::RegisterUserPolygon(UPModelData model) {
-	return gfx->RegisterhUserPolygon(model);
+MeshHashData RenderDevice::RegisterUserPolygon(UPModelData model, bool dynamic) {
+	return gfx->RegisterhUserPolygon(model, dynamic);
 }
 
 

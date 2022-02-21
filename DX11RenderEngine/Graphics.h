@@ -54,10 +54,10 @@ public:
 	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
 
 
-	void DrawUserPolygon(UPHashData model, size_t textureId, UPDrawData data);
-	void DrawUserPolygon(UPHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
-	void DrawSetUserPolygon(UPHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
-	UPHashData RegisterhUserPolygon(UPModelData model);
+	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
+	void DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
+	void DrawSetUserPolygon(MeshHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
+	MeshHashData RegisterhUserPolygon(UPModelData model, bool dynamic);
 
 
 

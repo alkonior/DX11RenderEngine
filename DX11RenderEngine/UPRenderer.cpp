@@ -5,7 +5,8 @@
 using namespace Renderer;
 
 
-UPRenderer::UPRenderer(Renderer::IRenderer* renderer) : renderer(renderer) {}
+UPRenderer::UPRenderer(Renderer::IRenderer* renderer) :
+	renderer(renderer), staticMeshes(renderer, 20000, 20000), dynamicMeshes(renderer, 2000, 2000) {}
 
 void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -27,10 +28,10 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	//vertexBuffer.buffersCount = 1;
 	//vertexBuffer.vertexBuffers = new Buffer * [1]();
 
-	bigVertexBuffer.buffersCount = 1;
-	bigVertexBuffer.vertexBuffers = new Buffer * [1]();
-	bigVertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(UPVertex) * bigVertexBuffCapacity);
-	bigIndexBuffer = renderer->GenIndexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * bigIndexBuffCapacity);
+	//bigVertexBuffer.buffersCount = 1;
+	//bigVertexBuffer.vertexBuffers = new Buffer * [1]();
+	//bigVertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(UPVertex) * bigVertexBuffCapacity);
+	//bigIndexBuffer = renderer->GenIndexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * bigIndexBuffCapacity);
 
 	pTransformCB = renderer->CreateConstBuffer(sizeof(transformBuffer));
 	//pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
@@ -38,16 +39,16 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	//vertexBuffer.vertexOffset = new (UINT)(0);
 	//vertexBuffer.vertexStride = new (UINT)(sizeof(UPVertex));
 
-	bigVertexBuffer.vertexOffset = new (UINT)(0);
-	bigVertexBuffer.vertexStride = new (UINT)(sizeof(UPVertex));
+	//bigVertexBuffer.vertexOffset = new (UINT)(0);
+	//bigVertexBuffer.vertexStride = new (UINT)(sizeof(UPVertex));
 
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.mipMapLevelOfDetailBias = 0;	
-	
+	sampler.mipMapLevelOfDetailBias = 0;
+
 	lightSampler.filter = TextureFilter::TEXTUREFILTER_ANISOTROPIC;
 	lightSampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	lightSampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
@@ -64,18 +65,24 @@ void UPRenderer::Init(LPCWSTR dirr) {
 	Init(data, size);
 }
 
-UPHashData UPRenderer::Register(UPModelData model) {
+MeshHashData UPRenderer::Register(UPModelData model, bool dynamic) {
 
-	UPHashData res{ cpuVerticies.size(), cpuIndexes.size(),  model.primitiveCount, model.pt };
+	//MeshHashData res{ cpuVertices.size(), cpuIndexes.size(),  model.primitiveCount, model.pt, dynamic };
+	//
+	//for (size_t i = 0; i < model.indexes.size(); i++) {
+	//	cpuIndexes.push_back(model.indexes[i] + cpuVertices.size());
+	//}
+	//
+	//for (size_t i = 0; i < model.verticies.size(); i++) {
+	//	cpuVertices.push_back(model.verticies[i]);
+	//}
 
-	for (size_t i = 0; i < model.indexes.size(); i++) {
-		cpuIndexes.push_back(model.indexes[i] + cpuVerticies.size());
+	if (dynamic) {
+		return dynamicMeshes.AddMesh(model);
 	}
-
-	for (size_t i = 0; i < model.verticies.size(); i++) {
-		cpuVerticies.push_back(model.verticies[i]);
+	else {
+		return staticMeshes.AddMesh(model);
 	}
-
 
 
 	//if (cpuVerticies.size() < bigVertexBuffCapacity)
@@ -83,56 +90,55 @@ UPHashData UPRenderer::Register(UPModelData model) {
 	//if (cpuIndexes.size() < bigIndexBuffCapacity)
 	//	renderer->SetIndexBufferData(bigIndexBuffer, res.indexOffset * sizeof(std::uint32_t), model.indexes.data(), model.indexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_NOOVERWRITE);
 
-	bigVertexBuffSize = cpuVerticies.size();
-	bigIndexBuffSize = cpuIndexes.size();
+	//bigVertexBuffSize = cpuVertices.size();
+	//bigIndexBuffSize = cpuIndexes.size();
 
-	return res;
+	//return res;
 
 }
 
-void UPRenderer::Draw(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data) {
+void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data) {
 	drawCalls.emplace_back(model, texture, data);
 }
-void UPRenderer::Draw(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) {
+void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) {
 	drawCalls.emplace_back(model, texture, lightMap, data);
 }
 
-void UPRenderer::DrawSet(UPHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data) {
+void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data) {
 
-	for (size_t i = 0; i < newModel.indexes.size(); i++) {
-		newModel.indexes[i] += model.vertexOffset;
-		cpuIndexes[model.indexOffset + i] = (newModel.indexes[i]);
+	if (data.dynamic) {
+		dynamicMeshes.UpdateMesh(model, newModel);
+	}
+	else {
+		printf("Static Mesh Updated. Fix this !!!!!!!!!!!!\n");
+		staticMeshes.UpdateMesh(model, newModel);
 	}
 
-	for (size_t i = 0; i < newModel.verticies.size(); i++) {
-		cpuVerticies[model.vertexOffset + i] = (newModel.verticies[i]);
-	}
-
-	drawCalls.emplace_back(model, texture, data);
 	//if (bigVertexBuffSize < bigVertexBuffCapacity)
 	//	renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], model.vertexOffset * sizeof(UPVertex), newModel.verticies.data(), newModel.verticies.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_NOOVERWRITE);
 	//if (bigIndexBuffSize < bigIndexBuffCapacity)
 	//	renderer->SetIndexBufferData(bigIndexBuffer, model.indexOffset*sizeof(std::uint32_t), newModel.indexes.data(), newModel.indexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_NOOVERWRITE);
 
+	drawCalls.emplace_back(model, texture, data);
 }
 
 void UPRenderer::Render(const GraphicsBase& gfx) {
 
 
-	if (bigVertexBuffCapacity <= bigVertexBuffSize) {
-		bigVertexBuffCapacity = bigVertexBuffSize;
-		ResizeBigVertexBuffer(std::floor(bigVertexBuffCapacity * 1.3));
-	//	renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, cpuVerticies.data(), cpuVerticies.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
-	}
-	if (bigIndexBuffCapacity <= bigIndexBuffSize) {
-		bigIndexBuffCapacity = bigIndexBuffSize;
-		ResizeBigIndexBuffer(std::floor(bigIndexBuffCapacity * 1.3));
-	//	renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
-	}
-
-
-	renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
-	renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, cpuVerticies.data(), cpuVerticies.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+	//if (bigVertexBuffCapacity <= bigVertexBuffSize) {
+	//	bigVertexBuffCapacity = bigVertexBuffSize;
+	//	ResizeBigVertexBuffer(std::floor(bigVertexBuffCapacity * 1.3));
+	//	//	renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, cpuVerticies.data(), cpuVerticies.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+	//}
+	//if (bigIndexBuffCapacity <= bigIndexBuffSize) {
+	//	bigIndexBuffCapacity = bigIndexBuffSize;
+	//	ResizeBigIndexBuffer(std::floor(bigIndexBuffCapacity * 1.3));
+	//	//	renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+	//}
+	//
+	//
+	//renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+	//renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, cpuVertices.data(), cpuVertices.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 
 
 	//ResizeBuffers(drawCalls[i].data.model.verticies.size(), drawCalls[i].data.model.indexes.size());
@@ -141,13 +147,14 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 	//renderer->SetIndexBufferData(indexBuffer, 0, drawCalls[i].data.model.indexes.data(), drawCalls[i].data.model.indexes.size() * 2, Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 
 
-	bigVertexBuffSize = cpuVerticies.size();
-	bigIndexBuffSize = cpuIndexes.size();
+	//bigVertexBuffSize = cpuVertices.size();
+	//bigIndexBuffSize = cpuIndexes.size();
+	
+
+	staticMeshes.UpdateBuffers();
+	dynamicMeshes.UpdateBuffers(true);
 
 
-
-
-	renderer->ApplyVertexBufferBinding(&bigVertexBuffer);
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -192,17 +199,33 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 		//localBuffer.uvScale = drawCalls[i].getUVScale();
 		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		//renderer->SetConstBuffer(pDataCB, &dataBuffer);
-		renderer->DrawIndexedPrimitives(
-			drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
-			drawCalls[i].model.numElem, bigIndexBuffer, 32);
+
+		if (drawCalls[i].data.dynamic) {
+			renderer->ApplyVertexBufferBinding(&dynamicMeshes.vertexBuffer);
+			renderer->DrawIndexedPrimitives(
+				drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
+				drawCalls[i].model.numElem, dynamicMeshes.indexBuffer, 32);
+		}
+		else {
+			renderer->ApplyVertexBufferBinding(&staticMeshes.vertexBuffer);
+			renderer->DrawIndexedPrimitives(
+				drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
+				drawCalls[i].model.numElem, staticMeshes.indexBuffer, 32);
+		}
+
+		//renderer->DrawIndexedPrimitives(
+		//	drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
+		//	drawCalls[i].model.numElem, bigIndexBuffer, 32);
 	}
 
 
 }
 
 void UPRenderer::Flush() {
-	 cpuVerticies.clear();
-	 cpuIndexes.clear();
+	staticMeshes.Flush();
+	dynamicMeshes.Flush();
+	//cpuVertices.clear();
+	//cpuIndexes.clear();
 }
 
 void UPRenderer::Clear() {
@@ -210,10 +233,11 @@ void UPRenderer::Clear() {
 }
 
 void UPRenderer::Destroy() {
-	delete bigVertexBuffer.vertexOffset;
-	delete bigVertexBuffer.vertexStride;
-	renderer->AddDisposeVertexBuffer(bigVertexBuffer.vertexBuffers[0]);
-	delete[] bigVertexBuffer.vertexBuffers;
+	//delete bigVertexBuffer.vertexOffset;
+	//delete bigVertexBuffer.vertexStride;
+	//renderer->AddDisposeVertexBuffer(bigVertexBuffer.vertexBuffers[0]);
+	//renderer->AddDisposeIndexBuffer(bigIndexBuffer);
+	//delete[] bigVertexBuffer.vertexBuffers;
 
 	renderer->AddDisposeConstBuffer(pTransformCB);
 	renderer->AddDisposeConstBuffer(pDataCB);
@@ -222,39 +246,41 @@ void UPRenderer::Destroy() {
 }
 
 
-void UPRenderer::ResizeBigVertexBuffer(size_t newVertexBuffSize) {
-	auto buffVB = bigVertexBuffer.vertexBuffers[0];
-	//std::vector<UPVertex> oldData (bigVertexBuffSize);
-	{
-		//if (vertexBuffer.vertexBuffers[0] != nullptr)
-		bigVertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, newVertexBuffSize * sizeof(UPVertex));
-		//renderer->GetVertexBufferData(buffVB, 0, oldData.data(), bigVertexBuffSize, sizeof(UPVertex), sizeof(UPVertex));
-		//renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, oldData.data(), bigVertexBuffSize, sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
-		renderer->AddDisposeVertexBuffer(buffVB);
-		bigVertexBuffCapacity = newVertexBuffSize;
-	}
-	//delete[] (UPVertex*)oldData;
-}
-
-void UPRenderer::ResizeBigIndexBuffer(size_t newIndexBuffSize) {
-	auto buffIB = bigIndexBuffer;
-	//std::vector<uint32_t> oldData(bigIndexBuffSize);
-	{
-		bigIndexBuffer = renderer->GenIndexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, newIndexBuffSize * sizeof(std::uint32_t));
-		//renderer->GetIndexBufferData(buffIB, 0, oldData.data(),  bigIndexBuffSize*sizeof(std::uint32_t));
-		//renderer->SetIndexBufferData(bigVertexBuffer.vertexBuffers[0], 0, oldData.data(), bigIndexBuffSize * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
-		renderer->AddDisposeIndexBuffer(buffIB);
-		bigIndexBuffCapacity = newIndexBuffSize;
-	}
-	//renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
-	//delete[] (uint32_t*)oldData;
-}
+//void UPRenderer::ResizeBigVertexBuffer(size_t newVertexBuffSize) {
+//	auto buffVB = bigVertexBuffer.vertexBuffers[0];
+//	//std::vector<UPVertex> oldData (bigVertexBuffSize);
+//	{
+//		//if (vertexBuffer.vertexBuffers[0] != nullptr)
+//		bigVertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, newVertexBuffSize * sizeof(UPVertex));
+//		//renderer->GetVertexBufferData(buffVB, 0, oldData.data(), bigVertexBuffSize, sizeof(UPVertex), sizeof(UPVertex));
+//		//renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, oldData.data(), bigVertexBuffSize, sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+//		renderer->AddDisposeVertexBuffer(buffVB);
+//		bigVertexBuffCapacity = newVertexBuffSize;
+//	}
+//	//delete[] (UPVertex*)oldData;
+//}
+//
+//void UPRenderer::ResizeBigIndexBuffer(size_t newIndexBuffSize) {
+//	auto buffIB = bigIndexBuffer;
+//	//std::vector<uint32_t> oldData(bigIndexBuffSize);
+//	{
+//		bigIndexBuffer = renderer->GenIndexBuffer(1, BufferUsage::BUFFERUSAGE_WRITEONLY, newIndexBuffSize * sizeof(std::uint32_t));
+//		//renderer->GetIndexBufferData(buffIB, 0, oldData.data(),  bigIndexBuffSize*sizeof(std::uint32_t));
+//		//renderer->SetIndexBufferData(bigVertexBuffer.vertexBuffers[0], 0, oldData.data(), bigIndexBuffSize * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+//		renderer->AddDisposeIndexBuffer(buffIB);
+//		bigIndexBuffCapacity = newIndexBuffSize;
+//	}
+//	//renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
+//	//delete[] (uint32_t*)oldData;
+//}
 
 
 UPRenderer::~UPRenderer() { Destroy(); }
 
-UPRenderer::DrawCall::DrawCall(UPHashData model, TexturesManager::TextureCache texture, UPDrawData data) :
+UPRenderer::DrawCall::DrawCall(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data) :
 	model(model), texture(texture), data(data) {}
 
-UPRenderer::DrawCall::DrawCall(UPHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data):
-	DrawCall(model, texture, data) {this->lightMap = lightMap;}
+UPRenderer::DrawCall::DrawCall(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) :
+	DrawCall(model, texture, data) {
+	this->lightMap = lightMap;
+}
