@@ -11,16 +11,10 @@ enum  UIDefines : std::uint32_t {
 
 
 struct Vertex2D {
-	DirectX::SimpleMath::Vector2 pos;
-	DirectX::SimpleMath::Vector2 uv;
+	float2 pos;
+	float2 uv;
 };
 
-struct Shader2DCosntBuffer {
-	matrix transform;
-	float2 uvShift;
-	float2 uvScale;
-	float4 color;
-};
 
 
 class UIRendererFactory :public Renderer::PipelineFactory {

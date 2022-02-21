@@ -42,7 +42,7 @@ struct RenderDevice {
 	void BeginFrame();
 	void SetPerspectiveMatrix(matrix m);
 	void SetViewMatrix(matrix m);
-	void Present();
+	bool Present();
 	void Clear(float r, float g, float b);
 
 	/* Resourse loading*/

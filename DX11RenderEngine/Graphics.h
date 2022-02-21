@@ -25,8 +25,10 @@ public:
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;
+
+
 	void BeginFrame();
-	void EndFrame();
+	bool EndFrame();
 	void ClearBuffer(sm::Vector4 color) noexcept;
 	void Flush();
 

@@ -32,7 +32,8 @@ void Graphics::BeginFrame() {
 
 
 
-void Graphics::EndFrame() {
+bool Graphics::EndFrame() {
+	bool success = true;
 	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UserPolygonRenderer");
 	renderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
@@ -66,6 +67,7 @@ void Graphics::EndFrame() {
 	//			throw GFX_EXCEPT(hr);
 	//		}
 	//	}
+	return success;
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {

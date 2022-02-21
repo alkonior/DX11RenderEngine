@@ -75,7 +75,9 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffers(&pTransformCB, 1);
+	renderer->VerifyConstBuffer(pTransformCB, ModelsTransform.slot);
+	renderer->VerifyConstBuffer(pDataCB, ModelsExtraData.slot);
+
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.camera;
@@ -104,11 +106,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0,
 			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
-	}
-
-	if (!drawLerpCalls.empty()) {
-		static ConstBuffer* constBuffers[] = { pTransformCB , pDataCB };
-		renderer->VerifyConstBuffers(constBuffers, 2);
 	}
 
 	for (size_t i = 0; i < drawLerpCalls.size(); i++) {
@@ -146,10 +143,9 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 		transformBuffer.world = drawLerpCalls[i].data.position.GetTransform();
 
-		transformBuffer.alpha = drawLerpCalls[i].data.alpha;
-		transformBuffer.w = drawLerpCalls[i].texture.width;
-		transformBuffer.h = drawLerpCalls[i].texture.height;
-		transformBuffer.color = drawLerpCalls[i].data.color;
+		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
+		dataBuffer.wh = float2(drawLerpCalls[i].texture.width, drawLerpCalls[i].texture.height);
+		dataBuffer.color = drawLerpCalls[i].data.color;
 		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		//localBuffer.uvShift = drawCalls[i].getUVShift();
 		//localBuffer.uvScale = drawCalls[i].getUVScale();

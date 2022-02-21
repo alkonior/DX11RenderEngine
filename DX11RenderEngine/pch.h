@@ -58,8 +58,8 @@ Thanks to PlanetChili <http://www.planetchili.net>
 #endif
 
 #include <Mmreg.h>
-#include <d3d11.h>`
-#include <d3d11_1.h>`
+#include <d3d11.h>
+#include <d3d11_1.h>
 #include <d3dcompiler.h>
 #define FULL_WINTARD
 #include <commdlg.h>

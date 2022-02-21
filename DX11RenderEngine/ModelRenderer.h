@@ -2,6 +2,7 @@
 #include "ModelRendererFactory.h"
 #include "TexturesManager.h"
 #include "ModelsManager.h"
+#include "ModelConstBuffers.h"
 
 struct LerpModelDrawData {
 	Transform position;

@@ -786,7 +786,7 @@ struct IRenderer {
 	virtual void AddDisposeVertexShader(VertexShader* vertexShader) = 0;
 
 	virtual ConstBuffer* CreateConstBuffer(size_t size) = 0;
-	virtual void VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) = 0;
+	virtual void VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) = 0;
 	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) = 0;
 	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) = 0;
 

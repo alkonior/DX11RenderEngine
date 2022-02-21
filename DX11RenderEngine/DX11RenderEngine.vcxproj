@@ -93,6 +93,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="BlendState.h" />
+    <ClInclude Include="CoreShaderInclude.h" />
     <ClInclude Include="D3D11BackBuffer.h" />
     <ClInclude Include="D3D11Buffer.h" />
     <ClInclude Include="D3D11RenderBuffer.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="ModelConstBuffers.h" />
     <ClInclude Include="ModelData.h" />
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="ModelRendererFactory.h" />
@@ -198,8 +201,10 @@
     <ClInclude Include="TextureData.h" />
     <ClInclude Include="TexturesManager.h" />
     <ClInclude Include="TransformUtils.h" />
+    <ClInclude Include="UIConstBuffers.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="UIRendererFactory.h" />
+    <ClInclude Include="UPConstBuffers.h" />
     <ClInclude Include="UPRenderer.h" />
     <ClInclude Include="UPRendererUtils.h" />
     <ClInclude Include="UPRendererFactory.h" />

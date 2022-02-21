@@ -39,10 +39,10 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 
 		auto definesArray = GetDefines(definesFlags);
 
-		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "psIn", "ps_4_0", compileFlags);
+		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "psIn", "ps_4_0", compileFlags);
 
 		auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), NULL, "vsIn", "vs_4_0", 
+		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "vsIn", "vs_4_0",
 			compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
 
 		//ps.vs = CompileShader(shaderPath, vs_5_0, "VSMain", get_defines, ...);

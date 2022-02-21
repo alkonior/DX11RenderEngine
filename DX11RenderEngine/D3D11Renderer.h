@@ -200,7 +200,7 @@ public:
 	virtual void ApplyVertexShader(VertexShader* vertexShader) override;
 
 	virtual ConstBuffer* CreateConstBuffer(size_t size) override;
-	virtual void VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) override;
+	virtual void VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) override;
 	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) override;
 	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) override;
 

@@ -2095,15 +2095,10 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 	return result;
 }
 
-void D3D11Renderer::VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) {
-
-	static std::vector<ID3D11Buffer*> constBuffersArray(16);
-	for (size_t i = 0; i < size; i++) {
-		constBuffersArray[i] = ((D3D11ConstBuffer*)(constBuffers[i]))->handle.Get();
-	}
-
-	GFX_THROW_INFO_ONLY(context->VSSetConstantBuffers(0u, (UINT)size, constBuffersArray.data()));
-	GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(0u, (UINT)size, constBuffersArray.data()));
+void D3D11Renderer::VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) {
+	D3D11ConstBuffer* buff = (D3D11ConstBuffer*)constBuffer;
+	GFX_THROW_INFO_ONLY(context->VSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
+	GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
 }
 
 void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data) {

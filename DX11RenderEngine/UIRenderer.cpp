@@ -25,10 +25,10 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 
 	Vertex2D vertices[ ] =
 	{
-		{  Vector2(-1.0f, 1.0f),  Vector2(0.0f, 1.0f), },
-		{  Vector2(-1.0f, 0.0f),  Vector2(0.0f, 0.0f), },
-		{  Vector2(0.0f, 1.0f),  Vector2(1.0f, 1.0f), },
-		{  Vector2(0.0f, 0.0f),  Vector2(1.0f, 0.0f), }
+		{  float2(-1.0f, 1.0f),  float2(0.0f, 1.0f), },
+		{  float2(-1.0f, 0.0f),  float2(0.0f, 0.0f), },
+		{  float2(0.0f,  1.0f),  float2(1.0f, 1.0f), },
+		{  float2(0.0f,  0.0f),  float2(1.0f, 0.0f), }
 	};
 	vertexBuffer.buffersCount = 1;
 	vertexBuffer.vertexBuffers = new Buffer*[1]();
@@ -88,12 +88,11 @@ void UIRenderer::Render() {
 
 	renderer->ApplyVertexBufferBinding(&vertexBuffer);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
-	renderer->VerifyConstBuffers(&constBuffer, 1);
+	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flag != lastFlag) {
 			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flag));
-			renderer->VerifyConstBuffers(&constBuffer, 1);
 		}
 		lastFlag = drawCalls[i].flag;
 

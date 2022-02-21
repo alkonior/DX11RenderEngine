@@ -74,8 +74,8 @@ void RenderDevice::SetViewMatrix(matrix m) {
 	gfx->SetCameraMatrix(m);
 }
 
-void RenderDevice::Present() {
-	gfx->EndFrame();
+bool RenderDevice::Present() {
+	return gfx->EndFrame();
 }
 
 void RenderDevice::Clear(float r, float g, float b) {
