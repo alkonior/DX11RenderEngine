@@ -1907,8 +1907,11 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBu
 
 	if (vertexBuffer->buffersCount == 1) {
 		//std::lock_guard<std::mutex> guard(ctxLock);;
-		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, 1u, ((D3D11Buffer*)(*vertexBuffer->vertexBuffers))->handle.GetAddressOf(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
-
+		auto buff = (D3D11Buffer*)(*vertexBuffer->vertexBuffers);
+		if (this->vertexBuffer != buff->handle) {
+			this->vertexBuffer = buff->handle;
+			GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, 1u, buff->handle.GetAddressOf(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
+		}
 	}
 	else {
 		static std::vector<ID3D11Buffer*> buffers(16);
@@ -2098,6 +2101,7 @@ void D3D11Renderer::VerifyConstBuffers(ConstBuffer** constBuffers, size_t size) 
 	for (size_t i = 0; i < size; i++) {
 		constBuffersArray[i] = ((D3D11ConstBuffer*)(constBuffers[i]))->handle.Get();
 	}
+
 	GFX_THROW_INFO_ONLY(context->VSSetConstantBuffers(0u, (UINT)size, constBuffersArray.data()));
 	GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(0u, (UINT)size, constBuffersArray.data()));
 }
