@@ -4,7 +4,14 @@
 #include "UIConstBuffers.h"
 #include "TexturesManager.h"
 
+struct UIDrawData {
 
+	int x; int y;
+	int width; int height; 
+	int top; int left; int texW; int texH;
+	float4 color = { 0,0,0,0 };
+	uint64_t flag;
+};
 
 class UIRenderer {
 	struct UIRendererProvider;
@@ -23,18 +30,15 @@ class UIRenderer {
 
 
 	struct DrawCall {
-		DrawCall(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
-		DrawCall(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
-		DrawCall(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
+		DrawCall(TexturesManager::TextureCache texture, const UIDrawData& data);
+		DrawCall(const UIDrawData& data);
 
-		dx::SimpleMath::Matrix getTransform(size_t screenW, size_t screenH);
-		dx::SimpleMath::Vector2 getUVShift();
-		dx::SimpleMath::Vector2 getUVScale();
+		matrix getTransform(size_t screenW, size_t screenH);
+		float2 getUVShift();
+		float2 getUVScale();
 
-		size_t x; size_t y; size_t width; size_t height; size_t top; size_t left; size_t texW; size_t texH;
-		float4 color = {0,0,0,0};
 		TexturesManager::TextureCache texture;
-		uint32_t flag;
+		UIDrawData data;
 	};
 
 public:
@@ -47,9 +51,8 @@ public:
 
 	void Destroy();
 
-	void Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
-	void Draw(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag);
-	void Draw(float4 color,  size_t x, size_t y, size_t width, size_t height, uint32_t flag);
+	void Draw(TexturesManager::TextureCache texture, const UIDrawData& data);
+	void Draw(const UIDrawData& data);
 
 	void Render();
 	void Clear();

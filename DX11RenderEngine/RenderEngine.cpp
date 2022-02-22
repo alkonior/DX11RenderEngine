@@ -124,16 +124,14 @@ void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
 
-void RenderDevice::DrawColor(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	gfx->DrawColor(color, x, y, width, height, flags|UICOLORED);
+void RenderDevice::DrawColor(const UIDrawData& data) {
+	UIDrawData buff(data);
+	buff.flag |= UICOLORED;
+	gfx->DrawColor(buff);
 }
 
-void RenderDevice::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	gfx->DrawImg(id, x, y, width, height, flags);
-}
-
-void RenderDevice::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	gfx->DrawImg(id, top, left, texW, texH, x, y, width, height, flags);
+void RenderDevice::DrawImg(size_t texId, const UIDrawData& data) {
+	gfx->DrawImg(texId, data);
 }
 
 void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)

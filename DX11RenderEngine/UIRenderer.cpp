@@ -4,8 +4,7 @@ using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
 
-UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {
-}
+UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -23,7 +22,7 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	provider = new UIRendererProvider(width, height);
 	factory = new UIRendererFactory(renderer, provider, shaderData, dataSize);
 
-	Vertex2D vertices[ ] =
+	Vertex2D vertices[] =
 	{
 		{  float2(-1.0f, 1.0f),  float2(0.0f, 1.0f), },
 		{  float2(-1.0f, 0.0f),  float2(0.0f, 0.0f), },
@@ -31,7 +30,7 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 		{  float2(0.0f,  0.0f),  float2(1.0f, 0.0f), }
 	};
 	vertexBuffer.buffersCount = 1;
-	vertexBuffer.vertexBuffers = new Buffer*[1]();
+	vertexBuffer.vertexBuffers = new Buffer * [1]();
 	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
 	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(Vertex2D), sizeof(Vertex2D), SetDataOptions::SETDATAOPTIONS_NONE);
 	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
@@ -41,7 +40,7 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 
 
 	// create index buffer
-	const uint16_t indices[ ] =
+	const uint16_t indices[] =
 	{
 		0,1,2,
 		1,3,2
@@ -70,7 +69,7 @@ void UIRenderer::Init(LPCWSTR dirr) {
 }
 
 void UIRenderer::Destroy() {
-	
+
 	delete vertexBuffer.vertexOffset;
 	delete vertexBuffer.vertexStride;
 	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
@@ -84,38 +83,39 @@ void UIRenderer::Destroy() {
 void UIRenderer::Render() {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
-	uint32_t lastFlag = -1;
+	uint64_t lastFlag = 0;
+	renderer->ApplyPipelineState(factory->GetState(0));
 
 	renderer->ApplyVertexBufferBinding(&vertexBuffer);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
-		if (drawCalls[i].flag != lastFlag) {
-			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].flag));
+		if (drawCalls[i].data.flag != lastFlag) {
+			if (drawCalls[i].data.flag & UICHAR) { renderer->BeginEvent("Chars"); }
+			if (lastFlag & UICHAR) { renderer->EndEvent(); }
+			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].data.flag));
+			lastFlag = drawCalls[i].data.flag;
 		}
-		lastFlag = drawCalls[i].flag;
 
 		localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
 		localBuffer.uvShift = drawCalls[i].getUVShift();
 		localBuffer.uvScale = drawCalls[i].getUVScale();
-		localBuffer.color = drawCalls[i].color;
+		localBuffer.color = drawCalls[i].data.color;
 
 		renderer->SetConstBuffer(constBuffer, &localBuffer);
 
-		if (!(drawCalls[i].flag & UICOLORED)) {
+		if (!(drawCalls[i].data.flag & UICOLORED)) {
 			auto  pTexture = drawCalls[i].texture.texture;
 			renderer->VerifyPixelSampler(0, pTexture, sampler);
 		}
 
-		try {
-			renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
-				0, 0, 0, 0, 2, indexBuffer, 16);
-		}
-		catch (const InfoException& exe){
-			printf(exe.what());
-		}
+
+		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
+			0, 0, 0, 0, 2, indexBuffer, 16);
+
 	}
+	if (lastFlag & UICHAR) { renderer->EndEvent(); }
 }
 
 void UIRenderer::Clear() {
@@ -124,44 +124,36 @@ void UIRenderer::Clear() {
 
 UIRenderer::~UIRenderer() { Destroy(); }
 
-void UIRenderer::Draw(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag) {
-	drawCalls.emplace_back(texture, top, left, texH, texW, x, y, width, height, flag);
-}
-
-void UIRenderer::Draw(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag) {
-	drawCalls.emplace_back(texture, x, y, width, height, flag);
-}
-
-void UIRenderer::Draw(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flag) {
-	drawCalls.emplace_back(color, x, y, width, height, flag);
+void UIRenderer::Draw(TexturesManager::TextureCache texture, const UIDrawData& data) {
+	drawCalls.push_back(DrawCall(texture, data));
 }
 
 
-UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
-	:x(x), y(y), width(width), height(height), texture(texture), top(top), left(left), texH(texH), texW(texW), flag(flag) {}
+void UIRenderer::Draw(const UIDrawData& data) {
+	drawCalls.push_back(DrawCall(data));
+}
 
-UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
-	: x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), texH(texture.height), texW(texture.width), flag(flag) {}
+UIRenderer::DrawCall::DrawCall(TexturesManager::TextureCache texture, const UIDrawData& data) :data(data), texture(texture) {}
 
-UIRenderer::DrawCall::DrawCall(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flag)
-	: x(x), y(y), width(width), height(height), texture(texture), top(0), left(0), color(color), flag(flag) {}
-dx::SimpleMath::Matrix UIRenderer::DrawCall::getTransform(size_t screenW, size_t screenH) {
+UIRenderer::DrawCall::DrawCall(const UIDrawData& data) : data(data) {}
+
+matrix UIRenderer::DrawCall::getTransform(size_t screenW, size_t screenH) {
 	return
 
-		Matrix::CreateScale(width * 1.0f, height * 1.0f, 0) *
-		Matrix::CreateTranslation(x * 1.0f, y * 1.0f, 0) *
+		Matrix::CreateScale(data.width * 1.0f, data.height * 1.0f, 0) *
+		Matrix::CreateTranslation(data.x * 1.0f, data.y * 1.0f, 0) *
 		Matrix::CreateScale(2.0f / screenW, 2.0f / screenH, 0) *
 		Matrix::CreateTranslation(-1, -1, 0) *
 		Matrix::CreateScale(1, -1, 0) *
-		Matrix::CreateTranslation(width * 2.0f / screenW, 0, 0);
+		Matrix::CreateTranslation(data.width * 2.0f / screenW, 0, 0);
 }
 
-dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVShift() {
-	return dx::SimpleMath::Vector2(top * 1.0f / texture.width, left * 1.0f / texture.height);
+float2 UIRenderer::DrawCall::getUVShift() {
+	return float2(data.top * 1.0f / texture.width, data.left * 1.0f / texture.height);
 }
 
-dx::SimpleMath::Vector2 UIRenderer::DrawCall::getUVScale() {
-	return dx::SimpleMath::Vector2(texW * 1.0f / texture.width, texH * 1.0f / texture.height);
+float2 UIRenderer::DrawCall::getUVScale() {
+	return float2(data.texW * 1.0f / texture.width, data.texH * 1.0f / texture.height);
 }
 
 
@@ -193,7 +185,7 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, 
 	refToPS->bs.alphaDestinationBlend = Blend::BLEND_ZERO;
 
 	//state_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL^ColorWriteChannels::COLORWRITECHANNELS_ALPHA;
+	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL ^ ColorWriteChannels::COLORWRITECHANNELS_ALPHA;
 	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;

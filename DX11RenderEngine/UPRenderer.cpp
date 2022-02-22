@@ -111,7 +111,7 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 	size_t lastFlags = -1;
 
 	renderer->VerifyConstBuffer(pTransformCB, UPTransform.slot);
-	renderer->VerifyConstBuffer(pTransformCB, UPExtraData.slot);
+	renderer->VerifyConstBuffer(pDataCB, UPExtraData.slot);
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.camera;

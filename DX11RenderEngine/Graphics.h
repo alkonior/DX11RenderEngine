@@ -41,9 +41,8 @@ public:
 	void UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
 	void ReleaseImg(size_t id);
 
-	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
-	void DrawColor(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
-	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+	void DrawColor(const UIDrawData& data);
+	void DrawImg(size_t texId, const UIDrawData& data);
 
 
 	void RegisterModel(size_t id, const ModelData& model);

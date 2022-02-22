@@ -82,18 +82,14 @@ void Graphics::Flush() {
 
 
 
-void Graphics::DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
+void Graphics::DrawImg(size_t texId, const UIDrawData& data) {
 	//queue.push_back(DrawCall::draw2D).
-	manager2D.Draw(texturesManger.GetImg(id), x, y, width, height, flags);
+	manager2D.Draw(texturesManger.GetImg(texId), data);
 }
 
 
-void Graphics::DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	manager2D.Draw(texturesManger.GetImg(id), top, left, texW, texH, x, y, width, height, flags);
-}
-
-void Graphics::DrawColor(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flags) {
-	manager2D.Draw(color, x, y, width, height, flags);
+void Graphics::DrawColor(const UIDrawData& data) {
+	manager2D.Draw(data);
 }
 
 void Graphics::RegisterImg(size_t id, const TextureData& text) {

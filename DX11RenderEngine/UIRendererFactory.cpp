@@ -3,10 +3,7 @@
 
 using namespace Renderer;
 
-const Renderer::ShaderDefines UIRendererDefines[ ] = {
-	{"RED", "1"},
-	{"COLORED", "1"}
-};
+
 
 
 UIRendererFactory::UIRendererFactory(IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize)

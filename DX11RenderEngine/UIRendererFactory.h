@@ -6,7 +6,16 @@
 enum  UIDefines : std::uint32_t {
 	UIZERO = 0,
 	UIRED = 1,
-	UICOLORED = 2
+	UICOLORED = 2,
+	UISCALED = 4,
+
+	UICHAR = 32
+};
+const Renderer::ShaderDefines UIRendererDefines[] = {
+	{"RED", "1"},
+	{"COLORED", "1"},
+	{"SCALED", "1"},
+
 };
 
 

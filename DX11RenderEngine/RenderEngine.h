@@ -61,9 +61,8 @@ struct RenderDevice {
 
 	/* Drawing */
 
-	void DrawImg(size_t id, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
-	void DrawColor(float4 color, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
-	void DrawImg(size_t id, size_t top, size_t left, size_t texW, size_t texH, size_t x, size_t y, size_t width, size_t height, uint32_t flags);
+	void DrawColor(const UIDrawData& data);
+	void DrawImg(size_t texId, const UIDrawData& data);
 	
 	
 	
