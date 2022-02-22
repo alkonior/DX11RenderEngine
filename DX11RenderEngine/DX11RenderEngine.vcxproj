@@ -229,7 +229,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="DynamicMeshBuffer.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="ImGUIRenderer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />

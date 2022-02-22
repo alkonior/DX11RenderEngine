@@ -77,6 +77,7 @@ struct RenderDevice {
 	MeshHashData RegisterUserPolygon(UPModelData model, bool dynamic);
 	
 
+	void Flush();
 	/* Debug staff */
 
 	bool ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

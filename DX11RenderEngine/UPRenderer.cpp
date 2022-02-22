@@ -60,9 +60,28 @@ MeshHashData UPRenderer::Register(UPModelData model, bool dynamic) {
 }
 
 void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data) {
+	if (drawCalls.size()) {
+		auto& lastDrawCall = drawCalls[drawCalls.size() - 1];
+		if ((lastDrawCall.data == data) &&
+			(lastDrawCall.model.indexOffset + lastDrawCall.model.numElem == model.indexOffset)
+			&& texture.texture == lastDrawCall.texture.texture) {
+			lastDrawCall.model.numElem += model.numElem;
+			return;
+		}
+	}
 	drawCalls.emplace_back(model, texture, data);
 }
 void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) {
+	if (drawCalls.size()) {
+		auto& lastDrawCall = drawCalls[drawCalls.size() - 1];
+		if ((lastDrawCall.data == data)
+			&& (lastDrawCall.model.indexOffset + lastDrawCall.model.numElem == model.indexOffset)
+			&& (texture.texture == lastDrawCall.texture.texture)
+			&& (lightMap.texture == lastDrawCall.lightMap.texture)) {
+			lastDrawCall.model.numElem += model.numElem;
+			return;
+		}
+	}
 	drawCalls.emplace_back(model, texture, lightMap, data);
 }
 
@@ -97,6 +116,7 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 
 	transformBuffer.view = gfx.camera;
 	transformBuffer.projection = gfx.cameraProjection;
+	renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].data.flags != lastFlags) {
@@ -112,11 +132,14 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 		auto  pLightMap = drawCalls[i].lightMap.texture;
 		if (drawCalls[i].data.flags & UPLIGHTMAPPED)
 			renderer->VerifyPixelSampler(1, pLightMap, lightSampler);
-
-		transformBuffer.world = drawCalls[i].data.position.GetTransform();
+	
+		auto newWorld = drawCalls[i].data.position.GetTransform();
+		if (transformBuffer.world != newWorld) {
+			transformBuffer.world = drawCalls[i].data.position.GetTransform();
+			renderer->SetConstBuffer(pTransformCB, &transformBuffer);
+		}
 		dataBuffer.color = drawCalls[i].data.light;
-
-		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
+		//
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
 		if (drawCalls[i].data.dynamic) {

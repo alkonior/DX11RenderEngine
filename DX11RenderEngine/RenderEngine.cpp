@@ -78,6 +78,10 @@ bool RenderDevice::Present() {
 	return gfx->EndFrame();
 }
 
+void RenderDevice::Flush() {
+	gfx->Flush();
+}
+
 void RenderDevice::Clear(float r, float g, float b) {
 	gfx->ClearBuffer(sm::Vector4(r, g, b, 1));
 }

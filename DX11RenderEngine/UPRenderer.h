@@ -2,7 +2,6 @@
 #include "UPRendererFactory.h"
 #include "UPConstBuffers.h"
 #include "TexturesManager.h"
-#include "DynamicMeshBuffer.h"
 
 
 
@@ -15,6 +14,14 @@ struct UPDrawData {
 	bool dynamic;
 
 	uint64_t flags;
+	bool operator==(const UPDrawData& rhs) {
+		return (position.GetTransform() == rhs.position.GetTransform())
+			&& (texOffset == rhs.texOffset)
+			&& (light == light)
+			&& (dynamic == rhs.dynamic)
+			&& (flags == flags);
+
+	}
 };
 
 class UPRenderer {
@@ -65,8 +72,8 @@ private:
 	void Destroy();
 
 
-	DynamicMeshBuffer staticMeshes;
-	DynamicMeshBuffer dynamicMeshes;
+	DynamicMeshBuffer<UPVertex> staticMeshes;
+	DynamicMeshBuffer<UPVertex> dynamicMeshes;
 
 	//void ResizeBigVertexBuffer(size_t newVertexBuffSize);
 	//void ResizeBigIndexBuffer(size_t newIndexBuffSize);
