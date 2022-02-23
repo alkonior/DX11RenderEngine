@@ -217,6 +217,22 @@ public:
 
 	virtual void SetMarker(const char* name) override;
 
+
+	// Inherited via IRenderer
+	virtual ComputeShader* CompileComputeShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
+
+	virtual GeometryShader* CompileGeometryShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
+
+	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
+
+	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
+
+
+	// Inherited via IRenderer
+	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
+
+	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
+
 };
 
 };

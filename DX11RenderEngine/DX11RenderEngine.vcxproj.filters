@@ -57,6 +57,9 @@
     <Filter Include="RenderEngine\Core\Rendereres\Q2Shaders">
       <UniqueIdentifier>{2cb9ee52-b219-4cb1-8217-d487081d82a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\ParticleRenderer">
+      <UniqueIdentifier>{a1d9afa2-7b83-42ca-9204-7d278e6f2aed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
@@ -218,6 +221,21 @@
     <ClInclude Include="DynamicMeshBuffer.h">
       <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="ParticlesRendererer.h">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticlesConstBuffer.h">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticlesRendererFactory.h">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticlesRendererProvider.h">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticlesUtils.h">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -315,6 +333,15 @@
     </ClCompile>
     <ClCompile Include="UPRendererProvider.cpp">
       <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticlesRendererer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticlesRendererFactory.cpp">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticlesRendererProvider.cpp">
+      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

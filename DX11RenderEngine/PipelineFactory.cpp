@@ -14,6 +14,12 @@ Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* 
 	this->dataSize = dataSize;
 }
 
+Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider, const ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, UsedShaders shaders, uint16_t compileFlags) :
+	PipelineFactory(renderer, provider, defines, defineCount,  shaderData, dataSize, compileFlags)
+{
+	useShaders = shaders;
+}
+
 
 std::vector<ShaderDefines> Renderer::PipelineFactory::GetDefines(size_t definesFlags) {
 	std::vector<ShaderDefines> result;
@@ -39,16 +45,24 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 
 		auto definesArray = GetDefines(definesFlags);
 
-		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "psIn", "ps_4_0", compileFlags);
+		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, 
+			"psIn", "ps_4_0", compileFlags);
 
 		auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "vsIn", "vs_4_0",
-			compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
+		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			"vsIn", "vs_4_0", compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
 
-		//ps.vs = CompileShader(shaderPath, vs_5_0, "VSMain", get_defines, ...);
-		//ps.ps = CompileShader(shaderPath, ps_5_0, "PSMain", get_defines, ...);
+		if (useShaders & UseGeometryShader) 
+			ps->gs = renderer->CompileGeometryShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "gsIn", "gs_4_0", compileFlags);
+		else
+			ps->gs = nullptr;
 
-		//ps.cs = CompileShader(shaderPath, cs_5_0, "CSMain", get_defines, ...);
+		if (useShaders & UseComputeShader) 
+			ps->cs = renderer->CompileComputeShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "csIn", "cs_4_0", compileFlags);
+		else
+			ps->cs = nullptr;
+
+
 
 
 		provider->PatchPipelineState(ps, definesFlags);

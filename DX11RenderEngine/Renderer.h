@@ -767,6 +767,24 @@ struct IRenderer {
 		const char* target,
 		uint16_t flags
 	) = 0;
+
+	virtual ComputeShader* CompileComputeShader(
+		void* shaderData, size_t dataSize, 
+		ShaderDefines defines[], size_t definesSize, 
+		void* includes,
+		const char* enteryPoint,
+		const char* target,
+		uint16_t flags
+	) = 0;
+
+	virtual GeometryShader* CompileGeometryShader(
+		void* shaderData, size_t dataSize, 
+		ShaderDefines defines[], size_t definesSize, 
+		void* includes,
+		const char* enteryPoint,
+		const char* target,
+		uint16_t flags
+	) = 0;
 	
 	virtual VertexShader* CompileVertexShader(
 		void* shaderData, size_t dataSize, 
@@ -781,9 +799,13 @@ struct IRenderer {
 
 	virtual void ApplyPixelShader(PixelShader* pixelShader) = 0;
 	virtual void ApplyVertexShader(VertexShader* vertexShader) = 0;
+	virtual void ApplyGeometryShader(GeometryShader* vertexShader) = 0;
+	virtual void ApplyComputeShader(ComputeShader* vertexShader) = 0;
 	
 	virtual void AddDisposePixelShader(PixelShader* pixelShader) = 0;
 	virtual void AddDisposeVertexShader(VertexShader* vertexShader) = 0;
+	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) = 0;
+	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) = 0;
 
 	virtual ConstBuffer* CreateConstBuffer(size_t size) = 0;
 	virtual void VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) = 0;

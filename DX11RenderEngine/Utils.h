@@ -17,13 +17,16 @@ struct VertexBufferBinding {
 };
 
 struct ShaderDefines {
+	ShaderDefines(const char* name, const char* defenition) : name(name), defenition(defenition) {};
+	ShaderDefines(const char* name) :ShaderDefines(name, "1") {};
 	const char* name;
 	const char* defenition;
 
 };
 struct PixelShader {};
 struct VertexShader {};
-//struct ComputeShader {};
+struct ComputeShader {};
+struct GeometryShader {};
 
 
 struct Color {
@@ -31,7 +34,7 @@ struct Color {
 	uint8_t g;
 	uint8_t b;
 	uint8_t a;
-	inline bool operator!= (const Color& rhs) { return ((r != rhs.r) || (g != rhs.g) || (b != rhs.b) || (a != rhs.a));}
+	inline bool operator!= (const Color& rhs) { return ((r != rhs.r) || (g != rhs.g) || (b != rhs.b) || (a != rhs.a)); }
 };
 
 struct FColor {

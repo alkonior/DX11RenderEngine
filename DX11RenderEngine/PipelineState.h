@@ -13,6 +13,9 @@ struct PipelineState {
 	PixelShader* ps;
 	VertexShader* vs;
 
+	GeometryShader* gs;
+	ComputeShader* cs;
+
 	DepthStencilState dss;
 	BlendState bs;
 	RasterizerState rs;

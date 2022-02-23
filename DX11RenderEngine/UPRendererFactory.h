@@ -8,10 +8,17 @@ enum UPDefines  : uint64_t {
     UPLIGHTMAPPED = 4
 };
 
+using Renderer::ShaderDefines;
+
+const ShaderDefines UPRendererDefines[] = {
+    ShaderDefines("RED"),
+    ShaderDefines("ALPHA"),
+    ShaderDefines("LIGHTMAPPED")
+};
+
 
 class UPRendererFactory : public Renderer::PipelineFactory  {
 public:
     UPRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
-    static const Renderer::ShaderDefines UPRendererDefines[];
 };
 

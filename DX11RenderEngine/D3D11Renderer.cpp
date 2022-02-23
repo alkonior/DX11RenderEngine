@@ -163,7 +163,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
 	uint32_t dsClearFlags;
 	float clearColor[4] = { color.x, color.y, color.z, color.w };
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Clear color? */
 	if (options & ClearOptions::CLEAROPTIONS_TARGET) {
@@ -212,7 +212,7 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 
 	D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Bind index buffer */
 	if (indexBuffer != d3dIndices->handle || indexElementSize != indexElementSize) {
@@ -247,7 +247,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
 	D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
 	//std::lock_guard<std::mutex> guard(ctxLock);
 
-	//	//std::lock_guard<std::mutex> guard(ctxLock);;
+	//	std::lock_guard<std::mutex> guard(ctxLock);
 
 		/* Bind index buffer */
 	if (indexBuffer != d3dIndices->handle || indexElementSize != indexElementSize) {
@@ -284,7 +284,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
 
 void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) {
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Bind draw state */
 	if (topology != primitiveType) {
@@ -320,7 +320,7 @@ void D3D11Renderer::SetViewport(const Viewport& viewport) {
 		this->viewport.h != viewport.h ||
 		this->viewport.minDepth != viewport.minDepth ||
 		this->viewport.maxDepth != viewport.maxDepth) {
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		this->viewport = viewport;
 		GFX_THROW_INFO_ONLY(context->RSSetViewports(1, &vp));
 
@@ -340,7 +340,7 @@ void D3D11Renderer::SetScissorRect(Rect scissor) {
 		scissorRect.y != scissor.y ||
 		scissorRect.w != scissor.w ||
 		scissorRect.h != scissor.h) {
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		scissorRect = scissor;
 		GFX_THROW_INFO_ONLY(context->RSSetScissorRects(1, &rect));
 
@@ -359,7 +359,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor) {
 		factor[2] = blendFactor.b / 255.0f;
 		factor[3] = blendFactor.a / 255.0f;
 		this->blendFactor = blendFactor;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->OMSetBlendState(
 			blendState.Get(),
 			factor,
@@ -381,7 +381,7 @@ void D3D11Renderer::SetMultiSampleMask(int32_t mask) {
 		factor[1] = blendFactor.g / 255.0f;
 		factor[2] = blendFactor.b / 255.0f;
 		factor[3] = blendFactor.a / 255.0f;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->OMSetBlendState(
 			blendState.Get(),
 			factor,
@@ -405,7 +405,7 @@ void D3D11Renderer::SetBlendState(const BlendState& blendState) {
 		factor[3] = blendState.blendFactor.a / 255.0f;
 		blendFactor = blendState.blendFactor;
 		multiSampleMask = blendState.multiSampleMask;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->OMSetBlendState(
 			bs.Get(),
 			factor,
@@ -423,7 +423,7 @@ void D3D11Renderer::SetDepthStencilState(const DepthStencilState& depthStencilSt
 	{
 		this->depthStencilState = ds;
 		stencilRef = depthStencilState.referenceStencil;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->OMSetDepthStencilState(
 			ds.Get(),
 			(UINT)stencilRef
@@ -440,7 +440,7 @@ void D3D11Renderer::ApplyRasterizerState(const RasterizerState& rasterizerState)
 	//if (this->rasterizerState != rs) 
 	{
 		this->rasterizerState = rs;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->RSSetState(
 			rs.Get()
 		));
@@ -458,7 +458,7 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 			if (pixelTextures[index]->levelCount != -1) {
 				pixelTextures[index] = &D3D11Texture::NullTexture;
 				pixelSamplers[index] = nullptr;
-				//std::lock_guard<std::mutex> guard(ctxLock);;
+				std::lock_guard<std::mutex> guard(ctxLock);
 				if (index < MAX_TEXTURE_SAMPLERS) {
 					GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
 						index,
@@ -478,7 +478,7 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 		/* Bind the correct texture */
 		if (d3dTexture->handle != pixelTextures[index]->handle) {
 			pixelTextures[index] = d3dTexture;
-			//std::lock_guard<std::mutex> guard(ctxLock);;
+			std::lock_guard<std::mutex> guard(ctxLock);
 			GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
 				index,
 				1,
@@ -491,7 +491,7 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 
 		if (d3dSamplerState != pixelSamplers[index]) {
 			pixelSamplers[index] = d3dSamplerState;
-			//std::lock_guard<std::mutex> guard(ctxLock);;
+			std::lock_guard<std::mutex> guard(ctxLock);
 			GFX_THROW_INFO_ONLY(context->PSSetSamplers(
 				index,
 				1,
@@ -511,7 +511,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture* texture, 
 			if (vertexTextures[index]->levelCount != -1) {
 				vertexTextures[index] = &D3D11Texture::NullTexture;
 				vertexSamplers[index] = nullptr;
-				//std::lock_guard<std::mutex> guard(ctxLock);;
+				std::lock_guard<std::mutex> guard(ctxLock);
 				if (index < MAX_TEXTURE_SAMPLERS) {
 					GFX_THROW_INFO_ONLY(context->VSSetShaderResources(
 						index,
@@ -531,7 +531,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture* texture, 
 		/* Bind the correct texture */
 		if (d3dTexture->handle != vertexTextures[index]->handle) {
 			vertexTextures[index] = d3dTexture;
-			//std::lock_guard<std::mutex> guard(ctxLock);;
+			std::lock_guard<std::mutex> guard(ctxLock);
 			GFX_THROW_INFO_ONLY(context->VSSetShaderResources(
 				index,
 				1,
@@ -545,7 +545,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  Texture* texture, 
 		//if (d3dSamplerState != renderer->samplers[index]) 
 		{
 			vertexSamplers[index] = d3dSamplerState;
-			//std::lock_guard<std::mutex> guard(ctxLock);;
+			std::lock_guard<std::mutex> guard(ctxLock);
 			GFX_THROW_INFO_ONLY(context->VSSetSamplers(
 				index,
 				1,
@@ -572,7 +572,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 		//currentDepthFormat = backbuffer->depthFormat;
 		//depthStencilView = backbuffer->depthStencilView;
 
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		/* No need to discard textures, this is a backbuffer bind */
 		context->OMSetRenderTargets(
 			1,
@@ -627,7 +627,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 		);
 
 	/* Actually set the render targets, finally. */
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	DiscardTargetTextures(views, numRenderTargets);
 	GFX_THROW_INFO_ONLY(context->OMSetRenderTargets(
 		numRenderTargets,
@@ -650,7 +650,7 @@ void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target) {
 	D3D11Renderbuffer& rb = (D3D11Renderbuffer&)target.colorBuffer;
 	uint32_t slice = 0;
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	if (target.multiSampleCount > 0) {
 		//if (target->type == FNA3D_RENDERTARGET_TYPE_CUBE) {
@@ -805,7 +805,7 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
 	dstBox.bottom = y + h;
 	dstBox.back = 1;
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	GFX_THROW_INFO_ONLY(context->UpdateSubresource(
 		d3dTexture->handle.Get(),
 		level,
@@ -864,7 +864,7 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 	}
 
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Copy data into staging texture */
 	GFX_THROW_INFO_ONLY(context->CopySubresourceRegion(
@@ -1076,7 +1076,7 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
 	int32_t dataLen = vertexStride * elementCount;
 	D3D11_BOX dstBox = { (UINT)offsetInBytes, 0, 0, (UINT)(offsetInBytes + dataLen), 1, 1 };
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	if (d3dBuffer->dynamic) {
 		if (debugMode &&
 			options == SETDATAOPTIONS_NONE &&
@@ -1136,7 +1136,7 @@ void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBy
 		&stagingBuffer
 	);
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Copy data into staging buffer */
 	GFX_THROW_INFO_ONLY(context->CopySubresourceRegion(
@@ -1213,7 +1213,7 @@ void D3D11Renderer::AddDisposeIndexBuffer(Buffer* buffer) {
 
 	if (d3dBuffer->handle == indexBuffer) {
 		indexBuffer = nullptr;
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		context->IASetIndexBuffer(
 			NULL,
 			DXGI_FORMAT_R16_UINT,
@@ -1233,7 +1233,7 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 	D3D11_BOX dstBox = { (UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1 };
 
 
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	if (d3dBuffer->dynamic) {
 		if (debugMode &&
 			options == SETDATAOPTIONS_NONE &&
@@ -1292,7 +1292,7 @@ void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInByt
 		NULL,
 		&stagingBuffer
 	));
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 
 	/* Copy data into staging buffer */
 	GFX_THROW_INFO_ONLY(context->CopySubresourceRegion(
@@ -1906,7 +1906,7 @@ void D3D11Renderer::RestoreTargetTextures() {
 void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBuffer) {
 
 	if (vertexBuffer->buffersCount == 1) {
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		auto buff = (D3D11Buffer*)(*vertexBuffer->vertexBuffers);
 		if (this->vertexBuffer != buff->handle) {
 			this->vertexBuffer = buff->handle;
@@ -1918,45 +1918,12 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding* vertexBu
 		for (size_t i = 0; i < vertexBuffer->buffersCount; i++) {
 			buffers[i] = ((D3D11Buffer*)(vertexBuffer->vertexBuffers)[i])->handle.Get();
 		}
-		//std::lock_guard<std::mutex> guard(ctxLock);;
+		std::lock_guard<std::mutex> guard(ctxLock);
 		GFX_THROW_INFO_ONLY(context->IASetVertexBuffers(0u, (UINT)vertexBuffer->buffersCount, buffers.data(), vertexBuffer->vertexStride, vertexBuffer->vertexOffset));
 
 	}
 }
 
-
-//PixelShader* D3D11Renderer::CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData) {
-//	PixelShader* result = new PixelShader();
-//	result->pPSData = shaderData;
-//	device->CreatePixelShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result->pPixelShader);
-//	return result;
-//}
-//
-//VertexShader* D3D11Renderer::CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize) {
-//	VertexShader* result = new VertexShader();
-//	result->pVSData = shaderData;
-//	GFX_THROW_INFO(device->CreateVertexShader(shaderData->GetBufferPointer(), shaderData->GetBufferSize(), nullptr, &result->pVertexShader));
-//	GFX_THROW_INFO(device->CreateInputLayout(
-//		inputLayout,
-//		inputLayoutSize,
-//		shaderData->GetBufferPointer(),
-//		shaderData->GetBufferSize(),
-//		&result->pInputLayout));
-//
-//
-//
-//	D3D11_BUFFER_DESC cbd;
-//	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-//	cbd.Usage = D3D11_USAGE_DEFAULT;
-//	cbd.CPUAccessFlags = 0u;
-//	cbd.MiscFlags = 0u;
-//	cbd.ByteWidth = sizeof(result->localBuffer);
-//	cbd.StructureByteStride = 0u;
-//	GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->pConstantBuffer));
-//
-//	return result;
-//}
-//
 
 PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
 	D3D11PixelShader* result = new D3D11PixelShader();
@@ -1974,7 +1941,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 	bool compiled = false;
 	try {
 		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+		GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
 		compiled = true;
 	}
 	catch (HrException exe) {
@@ -1990,6 +1957,45 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
 #endif
 	return result;
+}
+
+
+ComputeShader* D3D11Renderer::CompileComputeShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
+	D3D11ComputeShader* result = new D3D11ComputeShader();
+	std::vector<D3D_SHADER_MACRO> d3ddefines(definesSize + 1);
+	for (size_t i = 0; i < definesSize; i++) {
+		d3ddefines[i].Definition = defines[i].defenition;
+		d3ddefines[i].Name = defines[i].name;
+	}
+	d3ddefines[definesSize].Definition = NULL;
+	d3ddefines[definesSize].Name = NULL;
+
+	wrl::ComPtr<ID3D10Blob>pPSData;
+	wrl::ComPtr<ID3D10Blob>psErrorBlob;
+#if _DEBUG
+	bool compiled = false;
+	try {
+		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+		GFX_THROW_INFO(device->CreateComputeShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
+		compiled = true;
+	}
+	catch (HrException exe) {
+		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+		throw ce;
+	}
+	catch (InfoException exe) {
+		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+		throw ce;
+	}
+#else
+	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+#endif
+	return result;
+}
+
+GeometryShader* D3D11Renderer::CompileGeometryShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
+	return nullptr;
 }
 
 VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inputLayout, size_t inputLayoutSize) {
@@ -2017,7 +2023,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
 
 		GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
-   		GFX_THROW_INFO(device->CreateInputLayout(
+		GFX_THROW_INFO(device->CreateInputLayout(
 			d3dInputLayout,
 			(UINT)inputLayoutSize,
 			pVSData->GetBufferPointer(),
@@ -2060,24 +2066,22 @@ VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSi
 
 void D3D11Renderer::AddDisposePixelShader(PixelShader* pixelShader) {
 	D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
-	delete pixelShader;
+	delete shader;
 }
 void D3D11Renderer::AddDisposeVertexShader(VertexShader* vertexShader) {
 	D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
-	delete vertexShader;
+	delete shader;
 }
 
 void D3D11Renderer::ApplyPixelShader(PixelShader* pixelShader) {
 	D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
-	GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pPixelShader.Get(), nullptr, 0u));
+	GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
 }
 
 void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader) {
 	D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
 	GFX_THROW_INFO_ONLY(context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u));
 	GFX_THROW_INFO_ONLY(context->IASetInputLayout(shader->pInputLayout.Get()));
-
-	//context->VSSetConstantBuffers(0u, 1u, shader->pConstantBuffer.GetAddressOf());
 }
 
 ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
@@ -2097,17 +2101,17 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size) {
 
 void D3D11Renderer::VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) {
 	D3D11ConstBuffer* buff = (D3D11ConstBuffer*)constBuffer;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	GFX_THROW_INFO_ONLY(context->VSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
 	GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
 }
 
 void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data) {
 	D3D11ConstBuffer* buffer = (D3D11ConstBuffer*)constBuffers;
-	//std::lock_guard<std::mutex> guard(ctxLock);;
+	std::lock_guard<std::mutex> guard(ctxLock);
 	GFX_THROW_INFO_ONLY(context->UpdateSubresource(
 		buffer->handle.Get(), 0, 0,
 		data, 0, 0));
-
 }
 
 void D3D11Renderer::AddDisposeConstBuffer(ConstBuffer* constBuffers) {
@@ -2150,4 +2154,37 @@ void D3D11Renderer::SetMarker(const char* name) {
 	perf->SetMarker(wc.c_str());
 }
 
-};
+
+
+void D3D11Renderer::ApplyGeometryShader(GeometryShader* geometryShader) {
+
+	if (geometryShader != nullptr) {
+		D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
+		GFX_THROW_INFO_ONLY(context->GSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
+	}
+	else {
+		GFX_THROW_INFO_ONLY(context->GSSetShader(NULL, nullptr, 0u));
+	}
+}
+
+void D3D11Renderer::ApplyComputeShader(ComputeShader* computeShader) {
+	if (computeShader != nullptr) {
+		D3D11ComputeShader* shader = (D3D11ComputeShader*)computeShader;
+		GFX_THROW_INFO_ONLY(context->CSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
+	}
+	else {
+		GFX_THROW_INFO_ONLY(context->CSSetShader(NULL, nullptr, 0u));
+	}
+}
+
+void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader) {
+	D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
+	delete shader;
+}
+
+void D3D11Renderer::AddDisposeComputeShader(ComputeShader* computeShader) {
+	D3D11PixelShader* shader = (D3D11PixelShader*)computeShader;
+	delete shader;
+}
+
+}

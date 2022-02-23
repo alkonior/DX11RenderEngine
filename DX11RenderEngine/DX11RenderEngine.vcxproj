@@ -194,6 +194,11 @@
     <ClInclude Include="ModelRendererFactory.h" />
     <ClInclude Include="ModelRendererUtils.h" />
     <ClInclude Include="ModelsManager.h" />
+    <ClInclude Include="ParticlesConstBuffer.h" />
+    <ClInclude Include="ParticlesRendererer.h" />
+    <ClInclude Include="ParticlesRendererFactory.h" />
+    <ClInclude Include="ParticlesRendererProvider.h" />
+    <ClInclude Include="ParticlesUtils.h" />
     <ClInclude Include="PipelineFactory.h" />
     <ClInclude Include="PipelineState.h" />
     <ClInclude Include="Renderer.h" />
@@ -242,6 +247,9 @@
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="ModelRendererFactory.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
+    <ClCompile Include="ParticlesRendererFactory.cpp" />
+    <ClCompile Include="ParticlesRendererer.cpp" />
+    <ClCompile Include="ParticlesRendererProvider.cpp" />
     <ClCompile Include="PipelineFactory.cpp" />
     <ClCompile Include="TextureData.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
