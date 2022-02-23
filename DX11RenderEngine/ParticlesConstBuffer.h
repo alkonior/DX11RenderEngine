@@ -8,7 +8,6 @@ struct ParticlesCosntBuffer {
     //matrix world;
     matrix view;
     matrix projection;
-    float4 color;
 };
 
 STRUCTURE(0, ParticlesCosntBuffer, ParticlesCB)

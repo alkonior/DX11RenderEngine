@@ -1995,7 +1995,37 @@ ComputeShader* D3D11Renderer::CompileComputeShader(void* shaderData, size_t data
 }
 
 GeometryShader* D3D11Renderer::CompileGeometryShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) {
-	return nullptr;
+	D3D11GeometryShader* result = new D3D11GeometryShader();
+	std::vector<D3D_SHADER_MACRO> d3ddefines(definesSize + 1);
+	for (size_t i = 0; i < definesSize; i++) {
+		d3ddefines[i].Definition = defines[i].defenition;
+		d3ddefines[i].Name = defines[i].name;
+	}
+	d3ddefines[definesSize].Definition = NULL;
+	d3ddefines[definesSize].Name = NULL;
+
+	wrl::ComPtr<ID3D10Blob>pPSData;
+	wrl::ComPtr<ID3D10Blob>psErrorBlob;
+#if _DEBUG
+	bool compiled = false;
+	try {
+		GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+		GFX_THROW_INFO(device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pGeometryShader));
+		compiled = true;
+	}
+	catch (HrException exe) {
+		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+		throw ce;
+	}
+	catch (InfoException exe) {
+		CompileException ce{ __LINE__,  __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer() };
+		throw ce;
+	}
+#else
+	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+#endif
+	return result;
 }
 
 VertexShader* D3D11Renderer::CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inputLayout, size_t inputLayoutSize) {
@@ -2104,6 +2134,8 @@ void D3D11Renderer::VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) {
 	std::lock_guard<std::mutex> guard(ctxLock);
 	GFX_THROW_INFO_ONLY(context->VSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
 	GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
+	GFX_THROW_INFO_ONLY(context->GSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
+	GFX_THROW_INFO_ONLY(context->CSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
 }
 
 void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data) {
@@ -2123,6 +2155,8 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 
 	ApplyPixelShader(piplineState->ps);
 	ApplyVertexShader(piplineState->vs);
+	ApplyComputeShader(piplineState->cs);
+	ApplyGeometryShader(piplineState->gs);
 
 	SetBlendState(piplineState->bs);
 	SetDepthStencilState(piplineState->dss);
@@ -2160,7 +2194,7 @@ void D3D11Renderer::ApplyGeometryShader(GeometryShader* geometryShader) {
 
 	if (geometryShader != nullptr) {
 		D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
-		GFX_THROW_INFO_ONLY(context->GSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
+		GFX_THROW_INFO_ONLY(context->GSSetShader(shader->pGeometryShader.Get(), nullptr, 0u));
 	}
 	else {
 		GFX_THROW_INFO_ONLY(context->GSSetShader(NULL, nullptr, 0u));

@@ -195,9 +195,8 @@
     <ClInclude Include="ModelRendererUtils.h" />
     <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="ParticlesConstBuffer.h" />
-    <ClInclude Include="ParticlesRendererer.h" />
+    <ClInclude Include="ParticlesRenderer.h" />
     <ClInclude Include="ParticlesRendererFactory.h" />
-    <ClInclude Include="ParticlesRendererProvider.h" />
     <ClInclude Include="ParticlesUtils.h" />
     <ClInclude Include="PipelineFactory.h" />
     <ClInclude Include="PipelineState.h" />
@@ -287,6 +286,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">psIn</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\ParticlesShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\..\..\baseq2\UIShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

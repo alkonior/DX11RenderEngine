@@ -20,7 +20,7 @@ struct  D3D11ComputeShader: public ComputeShader {
 };
 
 struct  D3D11GeometryShader: public GeometryShader {
-	wrl::ComPtr<ID3D11GeometryShader> pComputeShader = nullptr;
+	wrl::ComPtr<ID3D11GeometryShader> pGeometryShader = nullptr;
 };
 
 

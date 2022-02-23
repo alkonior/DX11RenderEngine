@@ -21,10 +21,11 @@ public:
 	size_t width;
 	size_t height;
 
-	matrix camera;
+	float3 cameraPosition;
+	matrix viewMatrix;
 	matrix cameraProjection;
 
-	void SetCameraPosition(Transform position);
+	void SetCameraPosition(float3 position);
 	void SetCameraProjection(matrix projection);
 	void SetCameraMatrix(matrix position);
 

@@ -221,16 +221,13 @@
     <ClInclude Include="DynamicMeshBuffer.h">
       <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="ParticlesRendererer.h">
+    <ClInclude Include="ParticlesRenderer.h">
       <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClInclude>
     <ClInclude Include="ParticlesConstBuffer.h">
       <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClInclude>
     <ClInclude Include="ParticlesRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticlesRendererProvider.h">
       <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClInclude>
     <ClInclude Include="ParticlesUtils.h">
@@ -363,6 +360,9 @@
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\..\baseq2\BSPShader.hlsl">
+      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\ParticlesShader.hlsl">
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
   </ItemGroup>

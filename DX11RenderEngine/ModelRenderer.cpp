@@ -80,7 +80,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
-	transformBuffer.view = gfx.camera;
+	transformBuffer.view = gfx.viewMatrix;
 	transformBuffer.projection = gfx.cameraProjection;
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {

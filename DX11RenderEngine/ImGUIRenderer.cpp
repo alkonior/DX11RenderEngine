@@ -39,7 +39,7 @@ void ImGUIRenderer::BeginFrame(GraphicsBase& gfx) {
 	ImGui::SliderFloat("yaw", angles + 2, -M_PI, M_PI);
 
 
-	gfx.SetCameraPosition(Transform({ position[0],position[1],-position[2] }, { angles[0],angles[1],angles[2] }, { 1,1,1 }));
+	//gfx.SetCameraPosition(Transform({ position[0],position[1],-position[2] }, { angles[0],angles[1],angles[2] }, { 1,1,1 }));
 
 	ImGui::End();
 }

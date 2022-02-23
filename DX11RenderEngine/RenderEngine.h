@@ -23,6 +23,7 @@ struct RenderDevice {
 		UIShader,
 		ModelsShader,
 		UPShader,
+		ParticlesShader
 	};
 
 	struct ShaderData {
@@ -42,6 +43,7 @@ struct RenderDevice {
 	void BeginFrame();
 	void SetPerspectiveMatrix(matrix m);
 	void SetViewMatrix(matrix m);
+	void SetCameraPosition(float3 m);
 	bool Present();
 	void Clear(float r, float g, float b);
 
@@ -74,6 +76,8 @@ struct RenderDevice {
 	void DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
 	void DrawSetUserPolygon(MeshHashData model, UPModelData newModel, size_t textureId, UPDrawData data);
 	MeshHashData RegisterUserPolygon(UPModelData model, bool dynamic);
+
+	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 	
 
 	void Flush();

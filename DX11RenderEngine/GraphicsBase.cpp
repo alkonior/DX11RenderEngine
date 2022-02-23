@@ -82,12 +82,12 @@ void GraphicsBase::OnResize(size_t width, size_t height) {
 	*/
 }
 
-void GraphicsBase::SetCameraPosition(Transform position) {
-	camera = position.GetInverseTransform();
+void GraphicsBase::SetCameraPosition(float3 position) {
+	cameraPosition = position;
 }
 
 void GraphicsBase::SetCameraMatrix(matrix position) {
-	camera = position;
+	viewMatrix = position;
 }
 
 void GraphicsBase::SetCameraProjection(matrix projection) {

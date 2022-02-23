@@ -10,6 +10,7 @@
 #include "ModelRenderer.h"
 #include "ImGUIRenderer.h"
 #include "UPRenderer.h"
+#include "ParticlesRenderer.h"
 
 
 #ifdef _DEBUG
@@ -64,6 +65,9 @@ public:
 
 	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
 
+
+	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
+
 	TexturesManager texturesManger;
 	ModelsManager modelsManadger;
 
@@ -71,6 +75,7 @@ public:
 	ModelRenderer manager3D;
 	UPRenderer managerUP;
 	ImGUIRenderer managerImGUI;
+	ParticlesRenderer managerParticles;
 
 private:
 

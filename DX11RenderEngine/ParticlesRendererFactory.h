@@ -1,9 +1,9 @@
 #pragma once
 #include "PipelineFactory.h"
 #include "ParticlesUtils.h"
-enum UPDefines : uint64_t {
-    UPZERO = 0,
-    UPRED = 1,
+enum particlesDefines : uint64_t {
+    PARZERO = 0,
+    PARRED = 1,
 };
 
 using Renderer::ShaderDefines;

@@ -7,7 +7,7 @@
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
-	gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
+	//gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
 
 
 	ImGui_ImplWin32_Init(hWnd);
@@ -52,6 +52,13 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
+	case ShaderType::ParticlesShader:
+	{
+		//VertexShader2D::Release();
+		gfx->managerParticles.Init(shD.data, shD.dataSize);
+		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
 
 	default:
 		break;
@@ -72,6 +79,10 @@ void RenderDevice::SetPerspectiveMatrix(matrix m) {
 
 void RenderDevice::SetViewMatrix(matrix m) {
 	gfx->SetCameraMatrix(m);
+}
+
+void RenderDevice::SetCameraPosition(float3 m) {
+	gfx->SetCameraPosition(m);
 }
 
 bool RenderDevice::Present() {
@@ -157,6 +168,10 @@ void RenderDevice::DrawSetUserPolygon(MeshHashData model, UPModelData newModel, 
 
 MeshHashData RenderDevice::RegisterUserPolygon(UPModelData model, bool dynamic) {
 	return gfx->RegisterhUserPolygon(model, dynamic);
+}
+
+void RenderDevice::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data) {
+	gfx->DrawParticles(particles, data);
 }
 
 

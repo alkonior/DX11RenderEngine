@@ -75,13 +75,13 @@ public:
 
 	void UpdateBuffers(bool force = false) {
 		if (vertexBuffCapacity <= cpuVertices.size()) {
-			vertexBuffCapacity = vertexBuffSize;
-			ResizeVertexBuffer(std::floor(vertexBuffCapacity * 1.3));
+			vertexBuffCapacity = std::floor(cpuVertices.size() * 1.3);;
+			ResizeVertexBuffer(vertexBuffCapacity);
 			//	renderer->SetVertexBufferData(bigVertexBuffer.vertexBuffers[0], 0, cpuVerticies.data(), cpuVerticies.size(), sizeof(UPVertex), sizeof(UPVertex), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 		}
 		if (indexBuffCapacity <= cpuIndexes.size()) {
-			indexBuffCapacity = indexBuffSize;
-			ResizeIndexBuffer(std::floor(indexBuffCapacity * 1.3));
+			indexBuffCapacity = std::floor(cpuIndexes.size() * 1.3);
+			ResizeIndexBuffer(indexBuffCapacity);
 			//	renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 		}
 

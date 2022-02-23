@@ -16,7 +16,9 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height), manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer), texturesManger(&renderer), managerUP(&renderer) {
+	:GraphicsBase(hWnd, width, height),
+	manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer),
+	texturesManger(&renderer), managerUP(&renderer), managerParticles(&renderer) {
 	managerImGUI.Init();
 	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
@@ -28,31 +30,31 @@ void Graphics::BeginFrame() {
 	manager3D.Clear();
 	managerUP.Clear();
 	manager2D.Clear();
+	managerParticles.Clear();
 }
 
 
 
 bool Graphics::EndFrame() {
 	bool success = true;
-	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UserPolygonRenderer");
 	renderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	renderer.EndEvent();
-	//PIXEndEvent();
 
-	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "ModelRenderer");
 	renderer.BeginEvent("Models draw.");
 	GFX_CATCH_RENDER(manager3D.Render(*this););
 	renderer.EndEvent();
-	//PIXEndEvent();
 
-	//PIXBeginEvent(PIX_COLOR(255, 0, 0), "UIRenderer");
+	renderer.BeginEvent("Particles draw.");
+	GFX_CATCH_RENDER(managerParticles.Render(*this););
+	renderer.EndEvent();
+
 	renderer.BeginEvent("UI draw.");
 	GFX_CATCH_RENDER(manager2D.Render(););
 	renderer.EndEvent();
-	//PIXEndEvent();
+	
 
-	//GFX_CATCH_RENDER(managerImGUI.Render(););
+
 
 	renderer.SwapBuffers();
 	//
@@ -146,6 +148,10 @@ MeshHashData Graphics::RegisterhUserPolygon(UPModelData model, bool dynamic) {
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
 	manager3D.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), data);
+}
+
+void Graphics::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data) {
+	managerParticles.Draw(particles, data);
 }
 
 
