@@ -111,7 +111,7 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 
 	renderer->VerifyConstBuffer(constBuffer, SkyboxTransform.slot);
 	localBuffer.projection = gfx.cameraProjection;
-	localBuffer.view = (matrix::CreateFromAxisAngle({ 1.0f, .0f, .0f }, 90)*( gfx.viewMatrix.Transpose())).Transpose();
+	localBuffer.view = (matrix::CreateRotationX(1.570796)*( gfx.viewMatrix.Transpose())).Transpose();
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 
 	renderer->VerifyPixelSampler(0, skyTexture, sampler);
