@@ -453,7 +453,12 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 	if (index < MAX_TEXTURE_SAMPLERS) {
 		D3D11Texture* d3dTexture = (D3D11Texture*)texture;
 		wrl::ComPtr<ID3D11SamplerState> d3dSamplerState;
-
+		if (texture == nullptr) {
+			GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
+				index,
+				1,
+				NULL));
+		}
 		if (d3dTexture->levelCount == -1) {
 			if (pixelTextures[index]->levelCount != -1) {
 				pixelTextures[index] = &D3D11Texture::NullTexture;
@@ -572,7 +577,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 		//currentDepthFormat = backbuffer->depthFormat;
 		//depthStencilView = backbuffer->depthStencilView;
 
-		std::lock_guard<std::mutex> guard(ctxLock);
+		//std::lock_guard<std::mutex> guard(ctxLock);
 		/* No need to discard textures, this is a backbuffer bind */
 		context->OMSetRenderTargets(
 			1,
@@ -760,6 +765,179 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 	return result;
 }
 
+
+Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) {
+	D3D11Texture* result = new D3D11Texture();
+	D3D11_TEXTURE2D_DESC desc;
+	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
+
+	/* Initialize descriptor */
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = subCount;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+
+	if (isRenderTarget) {
+		desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+		desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	}
+
+	GFX_THROW_INFO(device->CreateTexture2D(
+		&desc,
+		NULL,
+		&result->handle
+	));
+
+
+	/* Initialize D3D11Texture */
+	result->levelCount = levelCount;
+	result->isRenderTarget = isRenderTarget;
+	result->width = width;
+	result->height = height;
+
+	/* Create the shader resource view */
+	GFX_THROW_INFO(device->CreateShaderResourceView(
+		result->handle.Get(),
+		NULL,
+		&result->shaderView
+	));
+
+	/* Create the render target view, if applicable */
+	if (isRenderTarget) {
+		result->isRenderTarget = 1;
+		rtViewDesc.Format = desc.Format;
+		rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		rtViewDesc.Texture2D.MipSlice = 0;
+		GFX_THROW_INFO(device->CreateRenderTargetView(
+			result->handle.Get(),
+			&rtViewDesc,
+			&result->rtView
+		));
+	}
+	return result;
+}
+
+Texture* D3D11Renderer::CreateTextureCube(int32_t size, int32_t levelCount, uint8_t isRenderTarget) {
+	D3D11Texture* result;
+	wrl::ComPtr<ID3D11Texture2D> texture;
+	D3D11_TEXTURE2D_DESC desc;
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
+	int32_t i;
+	HRESULT res;
+
+	/* Initialize descriptor */
+	desc.Width = size;
+	desc.Height = size;
+	desc.MipLevels = levelCount;
+	desc.ArraySize = 6;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	if (isRenderTarget) {
+		desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+		desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	}
+
+	/* Create the texture */
+	res = device->CreateTexture2D(
+		&desc,
+		NULL,
+		&texture
+	);
+
+	//ERROR_CHECK_RETURN("TextureCube creation failed", NULL)
+
+		/* Initialize D3D11Texture */
+	result = new D3D11Texture();
+	//SDL_memset(result, '\0', sizeof(D3D11Texture));
+	result->handle = texture;
+	result->levelCount = levelCount;
+	result->isRenderTarget = isRenderTarget;
+	result->cubeSize = size;
+
+	/* Create the shader resource view */
+	srvDesc.Format = desc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	srvDesc.TextureCube.MipLevels = levelCount;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+
+	res = device->CreateShaderResourceView(
+		result->handle.Get(),
+		NULL,
+		&result->shaderView
+	);
+	//ERROR_CHECK_RETURN("TextureCube shader view creation failed", NULL)
+
+		/* Create the render target view, if applicable */
+		//if (isRenderTarget) {
+		//	result->rtType = FNA3D_RENDERTARGET_TYPE_CUBE;
+		//	result->cube.rtViews = (ID3D11RenderTargetView**)SDL_malloc(
+		//		6 * sizeof(ID3D11RenderTargetView*)
+		//	);
+		//	rtViewDesc.Format = desc.Format;
+		//	rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+		//	rtViewDesc.Texture2DArray.ArraySize = 1; /* One slice per view */
+		//	rtViewDesc.Texture2DArray.MipSlice = 0;
+		//	for (i = 0; i < 6; i += 1) {
+		//		rtViewDesc.Texture2DArray.FirstArraySlice = i;
+		//		res = ID3D11Device_CreateRenderTargetView(
+		//			renderer->device,
+		//			result->handle,
+		//			&rtViewDesc,
+		//			&result->cube.rtViews[i]
+		//		);
+		//		ERROR_CHECK_RETURN("TextureCube render target view creation failed", NULL)
+		//	}
+		//}
+
+	return result;
+}
+
+void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) {
+	D3D11Texture* d3dTexture = (D3D11Texture*)texture;
+	D3D11_BOX dstBox;
+
+	//int32_t blockSize = Texture_GetBlockSize(d3dTexture->format);
+
+	///if (blockSize > 1) {
+	//	w = (w + blockSize - 1) & ~(blockSize - 1);
+	//	h = (h + blockSize - 1) & ~(blockSize - 1);
+	//}
+
+	dstBox.left = x;
+	dstBox.top = y;
+	dstBox.front = 0;
+	dstBox.right = x + w;
+	dstBox.bottom = y + h;
+	dstBox.back = 1;
+
+	//SDL_LockMutex(renderer->ctxLock);
+	context->UpdateSubresource(
+		d3dTexture->handle.Get(),
+			cubeMapFace
+		,
+		&dstBox,
+		data,
+		w*4,
+		w*h*4
+	);
+}
+
+
 void D3D11Renderer::AddDisposeTexture(Texture* texture) {
 	D3D11Texture* tex = (D3D11Texture*)texture;
 
@@ -816,6 +994,10 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
 	));
 
 }
+
+
+
+
 #pragma warning(push)
 #pragma warning(disable : 26451)
 void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) {

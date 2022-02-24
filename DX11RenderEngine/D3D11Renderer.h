@@ -228,10 +228,19 @@ public:
 	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
 
 
-	// Inherited via IRenderer
 	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
 
 	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
+
+
+	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) override;
+
+
+
+
+
+	virtual Texture* CreateTextureCube(int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
+	virtual void SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) override;
 
 };
 

@@ -18,9 +18,9 @@ using namespace Renderer;
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height),
 	manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer),
-	texturesManger(&renderer), managerUP(&renderer), managerParticles(&renderer) {
-	managerImGUI.Init();
-	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
+	texturesManger(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer) {
+	//managerImGUI.Init();
+	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
 }
 
@@ -47,6 +47,10 @@ bool Graphics::EndFrame() {
 
 	renderer.BeginEvent("Particles draw.");
 	GFX_CATCH_RENDER(managerParticles.Render(*this););
+	renderer.EndEvent();
+
+	renderer.BeginEvent("Sky draw.");
+	GFX_CATCH_RENDER(managerSkybox.Render(*this););
 	renderer.EndEvent();
 
 	renderer.BeginEvent("UI draw.");

@@ -7,10 +7,11 @@
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
 	gfx = new Graphics(hWnd, width, height);
+	gfx->skyFlags = SKYNOTHING;
 	//gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
 
 
-	ImGui_ImplWin32_Init(hWnd);
+	//ImGui_ImplWin32_Init(hWnd);
 
 }
 
@@ -59,6 +60,13 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
+	case ShaderType::SkyShader:
+	{
+		//VertexShader2D::Release();
+		gfx->managerSkybox.Init(shD.data, shD.dataSize);
+		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
 
 	default:
 		break;
@@ -87,6 +95,14 @@ void RenderDevice::SetCameraPosition(float3 m) {
 
 bool RenderDevice::Present() {
 	return gfx->EndFrame();
+}
+
+void RenderDevice::SetSky(size_t side, const TextureData& data) {
+	gfx->managerSkybox.UpdateSkybox(data, side);
+}
+
+void RenderDevice::SetSkyFlags(uint64_t flags) {
+	gfx->skyFlags = flags;
 }
 
 void RenderDevice::Flush() {
@@ -176,9 +192,9 @@ void RenderDevice::DrawParticles(const ParticlesMesh& particles, const Particles
 
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
-		return true;
-	}
+	//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+	//	return true;
+    //}
 	return false;
 }
 
@@ -186,7 +202,7 @@ void RenderDevice::DestroyDevice() {
 
 	//PixelShader2D::Release();
 	//VertexShader2D::Release();
-	ImGui_ImplWin32_Shutdown();
-	if (!gfx) delete gfx;
+	//ImGui_ImplWin32_Shutdown();
+	if (gfx) delete gfx;
 	gfx = nullptr;
 }

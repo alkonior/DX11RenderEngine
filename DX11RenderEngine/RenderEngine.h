@@ -23,7 +23,8 @@ struct RenderDevice {
 		UIShader,
 		ModelsShader,
 		UPShader,
-		ParticlesShader
+		ParticlesShader,
+		SkyShader
 	};
 
 	struct ShaderData {
@@ -79,6 +80,10 @@ struct RenderDevice {
 
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 	
+
+
+	void SetSky(size_t side, const TextureData& data);
+	void SetSkyFlags(uint64_t flags);
 
 	void Flush();
 	/* Debug staff */

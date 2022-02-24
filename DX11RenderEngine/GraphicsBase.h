@@ -24,6 +24,7 @@ public:
 	float3 cameraPosition;
 	matrix viewMatrix;
 	matrix cameraProjection;
+	uint64_t skyFlags;
 
 	void SetCameraPosition(float3 position);
 	void SetCameraProjection(matrix projection);

@@ -65,6 +65,7 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 	//refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
 	refToPS->rs.depthBias = 0.0f;
 	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
+	//refToPS->rs.fillMode = FillMode::FILLMODE_WIREFRAME;
 	refToPS->rs.multiSampleAntiAlias = 0;
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;

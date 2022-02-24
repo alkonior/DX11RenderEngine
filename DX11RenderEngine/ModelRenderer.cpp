@@ -66,7 +66,7 @@ void ModelRenderer::Destroy() {
 
 	renderer->AddDisposeConstBuffer(pTransformCB);
 	renderer->AddDisposeConstBuffer(pDataCB);
-	delete provider;
+	//delete provider;
 	delete factory;
 }
 

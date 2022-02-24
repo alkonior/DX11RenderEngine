@@ -76,7 +76,7 @@ void UIRenderer::Destroy() {
 	delete[] vertexBuffer.vertexBuffers;
 	renderer->AddDisposeIndexBuffer(indexBuffer);
 	renderer->AddDisposeConstBuffer(constBuffer);
-	delete provider;
+	//delete provider;
 	delete factory;
 }
 

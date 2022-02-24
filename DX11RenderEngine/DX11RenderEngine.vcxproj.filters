@@ -60,6 +60,9 @@
     <Filter Include="RenderEngine\Core\Rendereres\ParticleRenderer">
       <UniqueIdentifier>{a1d9afa2-7b83-42ca-9204-7d278e6f2aed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\SkyboxRenderer">
+      <UniqueIdentifier>{20e78bee-05da-4d87-8f1f-472c614c9aa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
@@ -233,6 +236,15 @@
     <ClInclude Include="ParticlesUtils.h">
       <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="SkyboxRenderer.h">
+      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxRendererFactory.h">
+      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxConstBuffers.h">
+      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -340,6 +352,12 @@
     <ClCompile Include="ParticlesRendererProvider.cpp">
       <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="SkyboxRenderer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyboxRendererFactory.cpp">
+      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -363,6 +381,9 @@
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\..\baseq2\ParticlesShader.hlsl">
+      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\SkyShader.hlsl">
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
   </ItemGroup>

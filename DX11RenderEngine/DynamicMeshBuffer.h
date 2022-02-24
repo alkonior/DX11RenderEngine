@@ -110,14 +110,19 @@ public:
 
 		return res;
 	}
-	void UpdateMesh(const MeshHashData& odlModel, const MeshData& newModel) {
 
+	//bool forceUpdate = true;
+
+	void UpdateMesh(const MeshHashData& oldModel, const MeshData& newModel) {
+		//if (cpuIndexes.size() < oldModel.indexOffset + newModel.indexes.size()) 			{
+		//	cpuIndexes.resize(oldModel.indexOffset + newModel.indexes.size());
+		//}
 		for (size_t i = 0; i < newModel.indexes.size(); i++) {
-			cpuIndexes[odlModel.indexOffset + i] = (newModel.indexes[i] + odlModel.vertexOffset);
+			cpuIndexes[oldModel.indexOffset + i] = (newModel.indexes[i] + oldModel.vertexOffset);
 		}
 
 		for (size_t i = 0; i < newModel.vertixes.size(); i++) {
-			cpuVertices[odlModel.vertexOffset + i] = (newModel.vertixes[i]);
+			cpuVertices[oldModel.vertexOffset + i] = (newModel.vertixes[i]);
 		}
 	}
 

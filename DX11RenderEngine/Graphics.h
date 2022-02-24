@@ -8,9 +8,10 @@
 
 #include "UIRenderer.h"
 #include "ModelRenderer.h"
-#include "ImGUIRenderer.h"
+//#include "ImGUIRenderer.h"
 #include "UPRenderer.h"
 #include "ParticlesRenderer.h"
+#include "SkyboxRenderer.h"
 
 
 #ifdef _DEBUG
@@ -74,8 +75,9 @@ public:
 	UIRenderer manager2D;
 	ModelRenderer manager3D;
 	UPRenderer managerUP;
-	ImGUIRenderer managerImGUI;
+	//ImGUIRenderer managerImGUI;
 	ParticlesRenderer managerParticles;
+	SkyboxRenderer managerSkybox;
 
 private:
 

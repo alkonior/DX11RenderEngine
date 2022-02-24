@@ -19,6 +19,7 @@ struct D3D11Texture : public Texture {
 
 	size_t width = 0;
 	size_t height = 0;
+	size_t cubeSize = 0;
 	wrl::ComPtr <ID3D11RenderTargetView> rtView;
 
 

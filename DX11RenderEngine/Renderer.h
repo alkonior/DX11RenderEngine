@@ -352,6 +352,15 @@ struct IRenderer {
 		uint8_t isRenderTarget
 	) = 0;
 
+	virtual Texture* CreateTexture2D(
+		//SurfaceFormat format,
+		int32_t width,
+		int32_t height,
+		int32_t levelCount,
+		int32_t subCount,
+		uint8_t isRenderTarget
+	) = 0;
+
 	///* Creates a 3D texture to be applied to VerifyPixelSampler.
 	// *
 	// * format:		The pixel format of the texture data.
@@ -372,23 +381,21 @@ struct IRenderer {
 	//	int32_t levelCount
 	//) = 0;   //TODO
 
-	///* Creates a texture cube to be applied to VerifyPixelSampler.
-	// *
-	// * format:		The pixel format of the texture data.
-	// * size:		The length of a single edge of the texture cube.
-	// * levelCount:		The number of mipmap levels to allocate.
-	// * isRenderTarget:	Set this to 1 when using this with SetRenderTargets.
-	// *
-	// * Returns an allocated Texture* object. Note that the contents of the
-	// * texture are undefined, so you must call SetData at least once before drawing!
-	// */
-	//virtual Texture* CreateTextureCube(
-	//	Device* device,
-	//	SurfaceFormat format,
-	//	int32_t size,
-	//	int32_t levelCount,
-	//	uint8_t isRenderTarget
-	//) = 0;  //TODO
+	/* Creates a texture cube to be applied to VerifyPixelSampler.
+	 *
+	 * format:		The pixel format of the texture data.
+	 * size:		The length of a single edge of the texture cube.
+	 * levelCount:		The number of mipmap levels to allocate.
+	 * isRenderTarget:	Set this to 1 when using this with SetRenderTargets.
+	 *
+	 * Returns an allocated Texture* object. Note that the contents of the
+	 * texture are undefined, so you must call SetData at least once before drawing!
+	 */
+	virtual Texture* CreateTextureCube(
+		int32_t size,
+		int32_t levelCount,
+		uint8_t isRenderTarget
+	) = 0;  //TODO
 
 	/* Sends a texture to be destroyed by the renderer. Note that we call it
 	 * "AddDispose" because it may not be immediately destroyed by the renderer if
@@ -447,30 +454,29 @@ struct IRenderer {
 	//	int32_t dataLength
 	//) = 0;
 	//
-	///* Uploads image data to a single face of a texture cube object.
-	// *
-	// * texture:	The texture to be updated.
-	// * x:		The x offset of the subregion being updated.
-	// * y:		The y offset of the subregion being updated.
-	// * w:		The width of the subregion being updated.
-	// * h:		The height of the subregion being updated.
-	// * cubeMapFace:	The face of the cube being updated.
-	// * level:	The mipmap level being updated.
-	// * data:	A pointer to the image data.
-	// * dataLength:	The size of the image data in bytes.
-	// */
-	//virtual void SetTextureDataCube(
-	//	Device* device,
-	//	Texture* texture,
-	//	int32_t x,
-	//	int32_t y,
-	//	int32_t w,
-	//	int32_t h,
-	//	CubeMapFace cubeMapFace,
-	//	int32_t level,
-	//	void* data,
-	//	int32_t dataLength
-	//) = 0;
+	/* Uploads image data to a single face of a texture cube object.
+	 *
+	 * texture:	The texture to be updated.
+	 * x:		The x offset of the subregion being updated.
+	 * y:		The y offset of the subregion being updated.
+	 * w:		The width of the subregion being updated.
+	 * h:		The height of the subregion being updated.
+	 * cubeMapFace:	The face of the cube being updated.
+	 * level:	The mipmap level being updated.
+	 * data:	A pointer to the image data.
+	 * dataLength:	The size of the image data in bytes.
+	 */
+	virtual void SetTextureDataCube(
+		Texture* texture,
+		int32_t x,
+		int32_t y,
+		int32_t w,
+		int32_t h,
+		int32_t cubeMapFace,
+		int32_t level,
+		void* data,
+		int32_t dataLength
+	) = 0;
 
 	///* Uploads YUV image data to three ALPHA8 texture objects.
 	// *
