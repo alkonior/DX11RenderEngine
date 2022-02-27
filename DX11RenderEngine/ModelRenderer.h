@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicsBase.h"
 #include "ModelRendererFactory.h"
 #include "TexturesManager.h"
 #include "ModelsManager.h"

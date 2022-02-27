@@ -135,8 +135,8 @@ void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
 	gfx->UpdateImg(id, tex);
 }
 
-void RenderDevice::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
-	gfx->UpdateImg(id, x, y, w, h, level, data);
+void RenderDevice::UpdateTexture(const ImageUpdate& data) {
+	gfx->UpdateImg(data);
 }
 
 void RenderDevice::RegisterModel(size_t id, const ModelData& model) {

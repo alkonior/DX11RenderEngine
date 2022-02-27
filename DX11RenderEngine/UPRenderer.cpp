@@ -60,28 +60,9 @@ MeshHashData UPRenderer::Register(UPModelData model, bool dynamic) {
 }
 
 void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data) {
-	if (drawCalls.size()) {
-		auto& lastDrawCall = drawCalls[drawCalls.size() - 1];
-		if ((lastDrawCall.data == data) &&
-			(lastDrawCall.model.indexOffset + lastDrawCall.model.numElem == model.indexOffset)
-			&& texture.texture == lastDrawCall.texture.texture) {
-			lastDrawCall.model.numElem += model.numElem;
-			return;
-		}
-	}
 	drawCalls.emplace_back(model, texture, data);
 }
 void UPRenderer::Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data) {
-	if (drawCalls.size()) {
-		auto& lastDrawCall = drawCalls[drawCalls.size() - 1];
-		if ((lastDrawCall.data == data)
-			&& (lastDrawCall.model.indexOffset + lastDrawCall.model.numElem == model.indexOffset)
-			&& (texture.texture == lastDrawCall.texture.texture)
-			&& (lightMap.texture == lastDrawCall.lightMap.texture)) {
-			lastDrawCall.model.numElem += model.numElem;
-			return;
-		}
-	}
 	drawCalls.emplace_back(model, texture, lightMap, data);
 }
 
@@ -98,7 +79,7 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 	drawCalls.emplace_back(model, texture, data);
 }
 
-void UPRenderer::Render(const GraphicsBase& gfx) {
+void UPRenderer::Render(GraphicsBase& gfx) {
 	
 
 	staticMeshes.UpdateBuffers();
@@ -133,14 +114,25 @@ void UPRenderer::Render(const GraphicsBase& gfx) {
 		if (drawCalls[i].data.flags & UPLIGHTMAPPED)
 			renderer->VerifyPixelSampler(1, pLightMap, lightSampler);
 	
+
 		auto newWorld = drawCalls[i].data.position.GetTransform();
 		if (transformBuffer.world != newWorld) {
 			transformBuffer.world = drawCalls[i].data.position.GetTransform();
 			renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		}
-		dataBuffer.color = drawCalls[i].data.light;
-		//
-		renderer->SetConstBuffer(pDataCB, &dataBuffer);
+
+		if (dataBuffer.color != drawCalls[i].data.light) {
+			dataBuffer.color = drawCalls[i].data.light;
+			renderer->SetConstBuffer(pDataCB, &dataBuffer);
+		}
+
+
+		if (drawCalls[i].data.dynamicLight)
+		{
+			gfx.texturesManger.UpdateTexture(*drawCalls[i].data.lightUpdate);
+			delete[] drawCalls[i].data.lightUpdate->data;
+			delete drawCalls[i].data.lightUpdate;
+		}
 
 		if (drawCalls[i].data.dynamic) {
 			renderer->ApplyVertexBufferBinding(&dynamicMeshes.vertexBuffer);
@@ -173,7 +165,6 @@ void UPRenderer::Destroy() {
 
 	renderer->AddDisposeConstBuffer(pTransformCB);
 	renderer->AddDisposeConstBuffer(pDataCB);
-	//delete provider;
 	delete factory;
 }
 

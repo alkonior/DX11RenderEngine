@@ -1,8 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "SimpleMath.h"
-#include "TexturesManager.h"
-#include "ModelsManager.h"
 #include "GraphicsBase.h"
 #include "Geometry.h"
 
@@ -40,7 +38,7 @@ public:
 	void RegisterImg(size_t id, int width, int heights, void* data, bool mipmap);
 
 	void UpdateImg(size_t id, const TextureData& text);
-	void UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
+	void UpdateImg(const ImageUpdate&);
 	void ReleaseImg(size_t id);
 
 	void DrawColor(const UIDrawData& data);
@@ -69,8 +67,6 @@ public:
 
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
-	TexturesManager texturesManger;
-	ModelsManager modelsManadger;
 
 	UIRenderer manager2D;
 	ModelRenderer manager3D;

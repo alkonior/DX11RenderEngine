@@ -9,7 +9,7 @@ void TexturesManager::RegTexture(void* data, int width, int height, bool mipmap,
 		ReleaseTexture(id);
 	}
 	//GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
-	pTexture.texture = renderer->CreateTexture2D(width, height, 0, 0);
+	pTexture.texture = renderer->CreateTexture2D(width, height, 1, 0);
 	renderer->SetTextureData2D(pTexture.texture, 0, 0, width, height, 0, data, width * height * 4);
 	pTexture.width = width;
 	pTexture.height = height;
@@ -21,7 +21,7 @@ void TexturesManager::RegTexture(const TextureData& tx, size_t id) {
 		ReleaseTexture(id);
 	}
 	//GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
-	pTexture.texture = renderer->CreateTexture2D(tx.GetWidth(), tx.GetHeight(), 0, 0);
+	pTexture.texture = renderer->CreateTexture2D(tx.GetWidth(), tx.GetHeight(), 1, 0);
 	renderer->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0, (void*)tx.GetBufferPtr(), tx.GetWidth()*tx.GetHeight() * 4);
 	pTexture.width = tx.GetWidth();
 	pTexture.height = tx.GetHeight();
@@ -37,13 +37,14 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
 	}
 }
 
-void TexturesManager::UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
-	auto& pTexture = textures[id];
+void TexturesManager::UpdateTexture(const ImageUpdate& updateData) {
+	auto& pTexture = textures[updateData.id];
 	if (pTexture.texture == nullptr) {
-		pTexture.texture = renderer->CreateTexture2D(128, 128, 0, 0);
+		pTexture.texture = renderer->CreateTexture2D(updateData.width, updateData.height, 1, 0);
 		//return;
 	}
-	renderer->SetTextureData2D(pTexture.texture, x, y, w, h, level, data, 0);
+	renderer->SetTextureData2D(pTexture.texture, updateData.box.x, updateData.box.y, updateData.box.w, updateData.box.h,
+		updateData.level, updateData.data, 0);
 }
 
 

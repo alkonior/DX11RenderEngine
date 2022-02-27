@@ -1,12 +1,24 @@
 #pragma once
 #include "pch.h"
-#include "GraphicsBase.h"
+#include "Renderer.h"
 #include "TextureData.h"
 
+struct ImageBox {
+	int32_t x; int32_t y;
+	int32_t w; int32_t h;
+};
+
+struct ImageUpdate {
+	size_t id;
+	ImageBox box;
+	int32_t width; int32_t height;
+	int32_t level;
+	uint8_t* data;
+};
 
 class TexturesManager {
-public:
 	Renderer::IRenderer* renderer;
+public:
 
 	struct TextureCache {
 		Renderer::Texture* texture;
@@ -21,7 +33,7 @@ public:
 	void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
 	void RegTexture(const TextureData& tx, size_t id);
 	void UpdateTexture(const TextureData& tx, size_t id);
-	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
+	void UpdateTexture(const ImageUpdate& updateData);
 
 	
 	

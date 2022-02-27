@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicsBase.h"
 #include "UPRendererFactory.h"
 #include "UPConstBuffers.h"
 #include "TexturesManager.h"
@@ -13,15 +14,10 @@ struct UPDrawData {
 
 	bool dynamic;
 
-	uint64_t flags;
-	bool operator==(const UPDrawData& rhs) {
-		return (position.GetTransform() == rhs.position.GetTransform())
-			&& (texOffset == rhs.texOffset)
-			&& (light == light)
-			&& (dynamic == rhs.dynamic)
-			&& (flags == flags);
+	bool dynamicLight = false;
+	ImageUpdate* lightUpdate = nullptr;
 
-	}
+	uint64_t flags;
 };
 
 class UPRenderer {
@@ -61,7 +57,7 @@ public:
 	void Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
 	void DrawSet(MeshHashData model, UPModelData newModel, TexturesManager::TextureCache texture, UPDrawData data);
 
-	void Render(const GraphicsBase& gfx);
+	void Render(GraphicsBase& gfx);
 	void Flush();
 	void Clear();
 

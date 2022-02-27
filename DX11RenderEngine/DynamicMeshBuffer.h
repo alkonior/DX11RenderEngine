@@ -99,7 +99,7 @@ public:
 	MeshHashData AddMesh(const MeshData& model) {
 
 		MeshHashData res{ cpuVertices.size(), cpuIndexes.size(),  model.primitiveCount, model.pt };
-
+		
 		for (size_t i = 0; i < model.indexes.size(); i++) {
 			cpuIndexes.push_back(model.indexes[i] + cpuVertices.size());
 		}
@@ -114,9 +114,7 @@ public:
 	//bool forceUpdate = true;
 
 	void UpdateMesh(const MeshHashData& oldModel, const MeshData& newModel) {
-		//if (cpuIndexes.size() < oldModel.indexOffset + newModel.indexes.size()) 			{
-		//	cpuIndexes.resize(oldModel.indexOffset + newModel.indexes.size());
-		//}
+
 		for (size_t i = 0; i < newModel.indexes.size(); i++) {
 			cpuIndexes[oldModel.indexOffset + i] = (newModel.indexes[i] + oldModel.vertexOffset);
 		}

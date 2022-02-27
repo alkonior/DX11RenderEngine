@@ -17,8 +17,7 @@ using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height),
-	manager2D(&renderer), manager3D(&renderer), modelsManadger(&renderer),
-	texturesManger(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer) {
+	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer) {
 	//managerImGUI.Init();
 	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
@@ -106,8 +105,8 @@ void Graphics::UpdateImg(size_t id, const TextureData& text) {
 	texturesManger.UpdateTexture(text, id);
 }
 
-void Graphics::UpdateImg(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data) {
-	texturesManger.UpdateTexture(id, x, y, w, h, level, data);
+void Graphics::UpdateImg(const ImageUpdate& data) {
+	texturesManger.UpdateTexture(data);
 }
 
 void Graphics::ReleaseImg(size_t id) {

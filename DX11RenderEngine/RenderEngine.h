@@ -56,7 +56,9 @@ struct RenderDevice {
 	void RegisterTexture(size_t id, const TextureData&);
 	void RegisterTexture(size_t id, int width, int height, void* data, bool mipmap);
 	void UpdateTexture(size_t id, const TextureData&);
-	void UpdateTexture(size_t id, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data);
+	void UpdateTexture(const ImageUpdate &);
+
+
 	void RegisterModel(size_t id, const ModelData&);
 	void RegisterFramedModel(size_t id, const FramedModelData&);
 	void ReleaseTexture(size_t id);

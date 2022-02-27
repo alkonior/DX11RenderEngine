@@ -457,7 +457,8 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const Texture* texture, co
 			GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
 				index,
 				1,
-				NULL));
+				D3D11Texture::NullTexture.shaderView.GetAddressOf()));
+			return;
 		}
 		if (d3dTexture->levelCount == -1) {
 			if (pixelTextures[index]->levelCount != -1) {
@@ -2136,7 +2137,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(void* shaderData, size_t dataSize
 	}
 #else
 	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
 #endif
 	return result;
 }
@@ -2171,7 +2172,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(void* shaderData, size_t data
 	}
 #else
 	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+	GFX_THROW_INFO(device->CreateComputeShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
 #endif
 	return result;
 }
@@ -2205,7 +2206,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(void* shaderData, size_t da
 	}
 #else
 	GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-	GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pPixelShader));
+	GFX_THROW_INFO(device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pGeometryShader));
 #endif
 	return result;
 }

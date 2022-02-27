@@ -4,6 +4,9 @@
 #include "TransformUtils.h"
 #include "SimpleMath.h"
 
+#include "TexturesManager.h"
+#include "ModelsManager.h"
+
 #ifdef _DEBUG
 #define USE_PIX_ON_ALL_ARCHITECTURES
 #include "pix3.h"
@@ -25,6 +28,12 @@ public:
 	matrix viewMatrix;
 	matrix cameraProjection;
 	uint64_t skyFlags;
+
+
+
+
+	TexturesManager texturesManger;
+	ModelsManager modelsManadger;
 
 	void SetCameraPosition(float3 position);
 	void SetCameraProjection(matrix projection);
