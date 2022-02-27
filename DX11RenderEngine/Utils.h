@@ -9,11 +9,18 @@ struct Texture {};
 struct Buffer {};
 struct ConstBuffer {};
 struct Renderbuffer {};
+
 struct VertexBufferBinding {
 	size_t buffersCount = 0;
 	Buffer** vertexBuffers = nullptr;
 	unsigned int* vertexStride = nullptr;
 	unsigned int* vertexOffset = nullptr;
+};
+
+struct MeshBindings {
+	VertexBufferBinding vertexBuffer;
+	Buffer* indexBuffer;
+	uint8_t indexSize;
 };
 
 struct ShaderDefines {

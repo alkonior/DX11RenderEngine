@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "ModelData.h"
 
 
@@ -10,7 +10,7 @@ class ModelsManager {
 public:
 
 	struct ModelCache {
-		Renderer::VertexBufferBinding* vertexBuffer = nullptr;
+		Renderer::VertexBufferBinding vertexBuffer;
 		Renderer::Buffer* indexBuffer = nullptr;
 		size_t primitiveCount;
 		size_t indexBufferElementSize;

@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "TextureData.h"
 
 struct ImageBox {
@@ -21,7 +21,7 @@ class TexturesManager {
 public:
 
 	struct TextureCache {
-		Renderer::Texture* texture;
+		Renderer::Texture* texture = nullptr;
 		size_t width;
 		size_t height;
 

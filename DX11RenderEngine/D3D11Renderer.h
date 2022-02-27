@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "D3D11Texture.h"
 #include "D3D11Buffer.h"
 #include "D3D11RenderBuffer.h"
@@ -110,8 +110,8 @@ public:
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
 	virtual void SwapBuffers() override;
 	virtual void Clear(ClearOptions options, FColor color, float depth, int32_t stencil) override;
-	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, const Buffer* indices, size_t indexElementSize) override;
-	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount, const Buffer* indices, size_t indexElementSize) override;
+	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount) override;
+	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount) override;
 	virtual void DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) override;
 	virtual void SetViewport(const Viewport& viewport) override;
 	virtual void SetScissorRect(Rect scissor) override;
@@ -122,8 +122,13 @@ public:
 	virtual void SetBlendState(const BlendState& blendState) override;
 	virtual void SetDepthStencilState(const DepthStencilState& depthStencilState) override;
 	virtual void ApplyRasterizerState(const RasterizerState& rasterizerState) override;
-	virtual void VerifyPixelSampler(int32_t index, const Texture* texture, const SamplerState& sampler) override;
-	virtual void VerifyVertexSampler(int32_t index,const Texture* texture, const SamplerState& sampler) override;
+
+
+	virtual void VerifyPixelTexture(int32_t index, const Texture* texture) override;
+	virtual void VerifyVertexTexture(int32_t index, const Texture* texture) override;
+	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
+	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
+
 	virtual void SetRenderTargets(RenderTargetBinding* renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, uint8_t preserveTargetContents) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
@@ -148,7 +153,7 @@ public:
 
 
 
-	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) override;
+	virtual void ApplyVertexBufferBinding(const VertexBufferBinding& bindings) override;
 
 	/* Private Stuff*/
 private:
@@ -171,32 +176,13 @@ private:
 	void DiscardTargetTextures(ID3D11RenderTargetView** views, int32_t numViews);
 	void RestoreTargetTextures();
 public:
-	/* Shader Stuff */
-	//
-	//
-	//
-	//void ApplyPixelShader(const PixelShader* shader);
-	//void ApplyVertexShader(const VertexShader* shader);	
-	//
-	//PixelShader* CreatePixelShader(wrl::ComPtr<ID3D10Blob> shaderData);
-	//VertexShader* CreateVertexShader(wrl::ComPtr<ID3D10Blob> shaderData, const D3D11_INPUT_ELEMENT_DESC* inputLayout, UINT inputLayoutSize);
 
-	//void UpdataVertexShader(const VertexShader* shader);
-
-
-
-
-
-
-	// Унаследовано через IRenderer
 	virtual PixelShader* CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
-	virtual VertexShader* CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inpitLayout, size_t inputLayoutSize) override;
-	
-	virtual void AddDisposePixelShader(PixelShader* pixelShader) override;
-	virtual void AddDisposeVertexShader(VertexShader* vertexShader) override;
-
-
 	virtual void ApplyPixelShader(PixelShader* pixelShader) override;
+	virtual void AddDisposePixelShader(PixelShader* pixelShader) override;
+
+	virtual VertexShader* CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inpitLayout, size_t inputLayoutSize) override;
+	virtual void AddDisposeVertexShader(VertexShader* vertexShader) override;
 	virtual void ApplyVertexShader(VertexShader* vertexShader) override;
 
 	virtual ConstBuffer* CreateConstBuffer(size_t size) override;
@@ -204,44 +190,37 @@ public:
 	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) override;
 	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) override;
 
-
-	// Унаследовано через IRenderer
-	virtual void ApplyPipelineState(PipelineState* piplineState) override;
-	virtual void Flush() override;
-
-
-	// Inherited via IRenderer
 	virtual void BeginEvent(const char* name) override;
-
 	virtual void EndEvent() override;
-
 	virtual void SetMarker(const char* name) override;
 
 
-	// Inherited via IRenderer
-	virtual ComputeShader* CompileComputeShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
-
 	virtual GeometryShader* CompileGeometryShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
-
+	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
 	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
 
+
+
+
+	virtual ComputeShader* CompileComputeShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
+	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
 	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
 
-
-	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
-
-	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
-
-
 	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) override;
-
-
-
-
-
 	virtual Texture* CreateTextureCube(int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
 	virtual void SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) override;
 
+
+
+	virtual void ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize) override;
+	virtual void ApplyMeshBuffersBinding(const MeshBindings& bindings) override;
+
+
+
+	virtual void ApplyPipelineState(PipelineState* piplineState) override;
+	virtual void Flush() override;
+
+	// Inherited via IRenderer
 };
 
 };

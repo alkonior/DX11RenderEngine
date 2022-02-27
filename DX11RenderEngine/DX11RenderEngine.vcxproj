@@ -245,7 +245,7 @@
     <ClInclude Include="ParticlesUtils.h" />
     <ClInclude Include="PipelineFactory.h" />
     <ClInclude Include="PipelineState.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="IRenderer.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="SkyboxConstBuffers.h" />
     <ClInclude Include="SkyboxRenderer.h" />

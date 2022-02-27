@@ -35,7 +35,7 @@ void ParticlesRenderer::Init(LPCWSTR dirr) {
 }
 
 void ParticlesRenderer::Draw(const ParticlesMesh& particles, const ParticlesDrawData& data) {
-	drawCalls.emplace_back(particlesBuffer.AddMesh(particles),data);
+	drawCalls.emplace_back(particlesBuffer.AddMesh(particles), data);
 }
 
 void ParticlesRenderer::Render(const GraphicsBase& gfx) {
@@ -53,6 +53,7 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 		renderer->SetConstBuffer(pDataCB, &constBuffer);
 
 		renderer->VerifyConstBuffer(pDataCB, ParticlesCB.slot);
+		renderer->ApplyMeshBuffersBinding(particlesBuffer.mesh);
 
 		for (size_t i = 0; i < drawCalls.size(); i++) {
 			if (drawCalls[i].data.flags != lastFlags) {
@@ -61,10 +62,9 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 			lastFlags = drawCalls[i].data.flags;
 
 
-			renderer->ApplyVertexBufferBinding(&particlesBuffer.vertexBuffer);
 			renderer->DrawIndexedPrimitives(
 				drawCalls[i].particles.pt, 0, 0, 0, drawCalls[i].particles.indexOffset,
-				drawCalls[i].particles.numElem, particlesBuffer.indexBuffer, 32);
+				drawCalls[i].particles.numElem);
 
 		}
 	}

@@ -86,7 +86,10 @@ void UIRenderer::Render() {
 	uint64_t lastFlag = 0;
 	renderer->ApplyPipelineState(factory->GetState(0));
 
-	renderer->ApplyVertexBufferBinding(&vertexBuffer);
+	renderer->ApplyVertexBufferBinding(vertexBuffer);
+	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
+	renderer->VerifyPixelSampler(0, sampler);
+
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);
 
@@ -105,14 +108,12 @@ void UIRenderer::Render() {
 
 		renderer->SetConstBuffer(constBuffer, &localBuffer);
 
-		if (!(drawCalls[i].data.flag & UICOLORED)) {
-			auto  pTexture = drawCalls[i].texture.texture;
-			renderer->VerifyPixelSampler(0, pTexture, sampler);
-		}
+		auto  pTexture = drawCalls[i].texture.texture;
+		renderer->VerifyPixelTexture(0, pTexture);
 
 
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
-			0, 0, 0, 0, 2, indexBuffer, 16);
+			0, 0, 0, 0, 2);
 
 	}
 	if (lastFlag & UICHAR) { renderer->EndEvent(); }

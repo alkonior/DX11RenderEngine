@@ -93,6 +93,10 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 
 	renderer->VerifyConstBuffer(pTransformCB, UPTransform.slot);
 	renderer->VerifyConstBuffer(pDataCB, UPExtraData.slot);
+
+	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelSampler(1, lightSampler);
+
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.viewMatrix;
@@ -108,11 +112,9 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 
 
 		auto  pTexture = drawCalls[i].texture.texture;
-		renderer->VerifyPixelSampler(0, pTexture, sampler);
-
+		renderer->VerifyPixelTexture(0, pTexture);
 		auto  pLightMap = drawCalls[i].lightMap.texture;
-		if (drawCalls[i].data.flags & UPLIGHTMAPPED)
-			renderer->VerifyPixelSampler(1, pLightMap, lightSampler);
+		renderer->VerifyPixelTexture(1, pLightMap);
 	
 
 		auto newWorld = drawCalls[i].data.position.GetTransform();
@@ -135,16 +137,16 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		}
 
 		if (drawCalls[i].data.dynamic) {
-			renderer->ApplyVertexBufferBinding(&dynamicMeshes.vertexBuffer);
+			renderer->ApplyMeshBuffersBinding(dynamicMeshes.mesh);
 			renderer->DrawIndexedPrimitives(
 				drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
-				drawCalls[i].model.numElem, dynamicMeshes.indexBuffer, 32);
+				drawCalls[i].model.numElem);
 		}
 		else {
-			renderer->ApplyVertexBufferBinding(&staticMeshes.vertexBuffer);
+			renderer->ApplyMeshBuffersBinding(staticMeshes.mesh);
 			renderer->DrawIndexedPrimitives(
 				drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
-				drawCalls[i].model.numElem, staticMeshes.indexBuffer, 32);
+				drawCalls[i].model.numElem);
 		}
 
 	}

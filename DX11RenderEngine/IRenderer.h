@@ -80,9 +80,7 @@ struct IRenderer {
 		int32_t minVertexIndex,
 		int32_t numVertices,
 		int32_t startIndex,
-		int32_t primitiveCount,
-		const Buffer* indices,
-		size_t indexElementSize
+		int32_t primitiveCount
 	) = 0;
 
 	/* Draws data from vertex/index buffers with instancing enabled.
@@ -104,9 +102,7 @@ struct IRenderer {
 		int32_t numVertices,
 		int32_t startIndex,
 		int32_t primitiveCount,
-		int32_t instanceCount,
-		const Buffer* indices,
-		size_t indexElementSize
+		int32_t instanceCount
 	) = 0;
 
 	/* Draws data from vertex buffers.
@@ -211,7 +207,8 @@ struct IRenderer {
 	 * texture:	The texture bound to this sampler.
 	 * sampler:	The new parameters to use for this slot's texture sampling.
 	 */
-	virtual void VerifyPixelSampler(int32_t index, const Texture* texture, const SamplerState& sampler) = 0;
+	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) = 0;
+	virtual void VerifyPixelTexture(int32_t index, const Texture* texture) = 0;
 
 	/* Updates a vertex sampler slot with new texture/sampler data for future draw
 	 * calls. This should only be called on slots that have modified texture/sampler
@@ -221,7 +218,8 @@ struct IRenderer {
 	 * texture:	The texture bound to this sampler.
 	 * sampler:	The new parameters to use for this slot's texture sampling.
 	 */
-	virtual void VerifyVertexSampler(int32_t index, const Texture* texture, const SamplerState& sampler) = 0;
+	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) = 0;
+	virtual void VerifyVertexTexture(int32_t index, const Texture* texture) = 0;
 
 	///* Updates the vertex attribute state to read from a set of vertex buffers. This
 	// * should be the very last thing you call before making a draw call, as this
@@ -762,7 +760,9 @@ struct IRenderer {
 
 
 
-	virtual void ApplyVertexBufferBinding(const VertexBufferBinding* bindings) = 0;
+	virtual void ApplyVertexBufferBinding(const VertexBufferBinding& bindings) = 0;
+	virtual void ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize) = 0;
+	virtual void ApplyMeshBuffersBinding(const MeshBindings& bindings) = 0;
 
 
 	virtual PixelShader* CompilePixelShader(

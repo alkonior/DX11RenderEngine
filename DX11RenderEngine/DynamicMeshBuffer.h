@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "TransformUtils.h"
 
 struct MeshHashData {
@@ -26,24 +26,24 @@ class DynamicMeshBuffer {
 
 
 	void ResizeVertexBuffer(size_t newVertexBuffSize) {
-		auto buffVB = vertexBuffer.vertexBuffers[0];
-		vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, newVertexBuffSize * sizeof(VertexType));
+		auto buffVB = mesh.vertexBuffer.vertexBuffers[0];
+		mesh.vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, newVertexBuffSize * sizeof(VertexType));
 		renderer->AddDisposeVertexBuffer(buffVB);
 		vertexBuffCapacity = newVertexBuffSize;
 		vertexBuffSize = 0;
 	}
 
 	void ResizeIndexBuffer(size_t newIndexBuffSize) {
-		auto buffIB = indexBuffer;
-		indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, newIndexBuffSize * sizeof(std::uint32_t));
+		auto buffIB = mesh.indexBuffer;
+		mesh.indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, newIndexBuffSize * sizeof(std::uint32_t));
 		renderer->AddDisposeIndexBuffer(buffIB);
 		indexBuffCapacity = newIndexBuffSize;
 		indexBuffSize = 0;
 	}
 public:
-
-	Renderer::VertexBufferBinding vertexBuffer;
-	Renderer::Buffer* indexBuffer = nullptr;
+	Renderer::MeshBindings mesh;
+	//Renderer::VertexBufferBinding vertexBuffer;
+	//Renderer::Buffer* indexBuffer = nullptr;
 
 
 	struct MeshData {
@@ -57,15 +57,15 @@ public:
 	DynamicMeshBuffer(Renderer::IRenderer* renderer, size_t vertexBuffCapacity, size_t indexBuffCapacity) :
 		renderer(renderer), vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity) {
 
-		vertexBuffer.buffersCount = 1;
-		vertexBuffer.vertexBuffers = new Renderer::Buffer * [1]();
-		vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(VertexType) * vertexBuffCapacity);
-		vertexBuffer.vertexOffset = new (UINT)(0);
-		vertexBuffer.vertexStride = new (UINT)(sizeof(VertexType));
+		 mesh.vertexBuffer.buffersCount = 1;
+		 mesh.vertexBuffer.vertexBuffers = new Renderer::Buffer * [1]();
+		 mesh.vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(VertexType) * vertexBuffCapacity);
+		 mesh.vertexBuffer.vertexOffset = new (UINT)(0);
+		 mesh.vertexBuffer.vertexStride = new (UINT)(sizeof(VertexType));
 
+		 mesh.indexSize = 32;
 
-
-		indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * indexBuffCapacity);
+		 mesh.indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * indexBuffCapacity);
 
 		cpuVertices.reserve(vertexBuffCapacity);
 		cpuIndexes.reserve(indexBuffCapacity);
@@ -86,12 +86,12 @@ public:
 		}
 
 		if (vertexBuffSize != cpuVertices.size() || force) {
-			renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, cpuVertices.data(), cpuVertices.size(), sizeof(VertexType), sizeof(VertexType), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+			renderer->SetVertexBufferData(mesh.vertexBuffer.vertexBuffers[0], 0, cpuVertices.data(), cpuVertices.size(), sizeof(VertexType), sizeof(VertexType), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 			vertexBuffSize = cpuVertices.size();
 		}
 
 		if (indexBuffSize != cpuIndexes.size() || force) {
-			renderer->SetIndexBufferData(indexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
+			renderer->SetIndexBufferData(mesh.indexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 			indexBuffSize = cpuIndexes.size();
 		}
 	}
@@ -135,11 +135,11 @@ public:
 
 
 	~DynamicMeshBuffer() {
-		delete vertexBuffer.vertexOffset;
-		delete vertexBuffer.vertexStride;
-		renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
-		renderer->AddDisposeIndexBuffer(indexBuffer);
-		delete[] vertexBuffer.vertexBuffers;
+		delete  mesh.vertexBuffer.vertexOffset;
+		delete  mesh.vertexBuffer.vertexStride;
+		renderer->AddDisposeVertexBuffer(mesh.vertexBuffer.vertexBuffers[0]);
+		renderer->AddDisposeIndexBuffer(mesh.indexBuffer);
+		delete[] mesh.vertexBuffer.vertexBuffers;
 	}
 };
 

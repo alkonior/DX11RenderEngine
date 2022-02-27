@@ -113,7 +113,7 @@
     <ClInclude Include="BlendState.h">
       <Filter>BaseRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="IRenderer.h">
       <Filter>BaseRenderer</Filter>
     </ClInclude>
     <ClInclude Include="DepthStencilState.h">

@@ -78,6 +78,9 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->VerifyConstBuffer(pTransformCB, ModelsTransform.slot);
 	renderer->VerifyConstBuffer(pDataCB, ModelsExtraData.slot);
 
+
+	renderer->VerifyPixelSampler(0, sampler);
+
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.viewMatrix;
@@ -89,23 +92,19 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 			lastFlags = drawCalls[i].flags;
 		}
 
-
-
-
 		renderer->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
+		renderer->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
 
 		auto  pTexture = drawCalls[i].texture.texture;
-		renderer->VerifyPixelSampler(0, pTexture, sampler);
+		renderer->VerifyPixelTexture(0, pTexture);
 
 		transformBuffer.world = drawCalls[i].position.GetTransform();
 
-		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
-		//localBuffer.uvShift = drawCalls[i].getUVShift();
-		//localBuffer.uvScale = drawCalls[i].getUVScale();
+
 		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0,
-			drawCalls[i].model.primitiveCount, drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
+			drawCalls[i].model.primitiveCount);
 	}
 
 	for (size_t i = 0; i < drawLerpCalls.size(); i++) {
@@ -124,31 +123,31 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		if (drawLerpCalls[i].data.isSingle)
 			vBB.buffersCount = 2;
 		vBB.vertexBuffers = vertexBuffers;
-		int max_buff = drawLerpCalls[i].model.vertexBuffer->buffersCount - 1;
-		vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[0];
-		vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].data.currentFrame % max_buff + 1];
-		vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer->vertexBuffers[drawLerpCalls[i].data.nextFrame % max_buff + 1];
+		int max_buff = drawLerpCalls[i].model.vertexBuffer.buffersCount - 1;
+		vertexBuffers[0] = drawLerpCalls[i].model.vertexBuffer.vertexBuffers[0];
+		vertexBuffers[1] = drawLerpCalls[i].model.vertexBuffer.vertexBuffers[drawLerpCalls[i].data.currentFrame % max_buff + 1];
+		vertexBuffers[2] = drawLerpCalls[i].model.vertexBuffer.vertexBuffers[drawLerpCalls[i].data.nextFrame % max_buff + 1];
 
-		strides[0] = drawLerpCalls[i].model.vertexBuffer->vertexStride[0];
-		strides[1] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].data.currentFrame + 1];
-		strides[2] = drawLerpCalls[i].model.vertexBuffer->vertexStride[drawLerpCalls[i].data.nextFrame + 1];
+		strides[0] = drawLerpCalls[i].model.vertexBuffer.vertexStride[0];
+		strides[1] = drawLerpCalls[i].model.vertexBuffer.vertexStride[drawLerpCalls[i].data.currentFrame + 1];
+		strides[2] = drawLerpCalls[i].model.vertexBuffer.vertexStride[drawLerpCalls[i].data.nextFrame + 1];
 
 		vBB.vertexOffset = ofsets;
 		vBB.vertexStride = strides;
 
-		renderer->ApplyVertexBufferBinding(&vBB);
+		renderer->ApplyVertexBufferBinding(vBB);
+		renderer->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
 
 		auto  pTexture = drawLerpCalls[i].texture.texture;
-		renderer->VerifyPixelSampler(0, pTexture, sampler);
+		renderer->VerifyPixelTexture(0, pTexture);
 
 		transformBuffer.world = drawLerpCalls[i].data.position.GetTransform();
 
 		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
 		dataBuffer.wh = float2(drawLerpCalls[i].texture.width, drawLerpCalls[i].texture.height);
 		dataBuffer.color = drawLerpCalls[i].data.color;
-		//localBuffer.transform = drawCalls[i].getTransform(width, height).Transpose();
-		//localBuffer.uvShift = drawCalls[i].getUVShift();
-		//localBuffer.uvScale = drawCalls[i].getUVScale();
+
+
 		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
@@ -156,7 +155,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 		renderer->DrawIndexedPrimitives(
 			drawLerpCalls[i].model.pt, 0, 0, 0, 0,
-			drawLerpCalls[i].model.primitiveCount, drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
+			drawLerpCalls[i].model.primitiveCount);
 	}
 
 

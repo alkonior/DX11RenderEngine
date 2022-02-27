@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Renderer.h"
+#include "IRenderer.h"
 
 namespace Renderer {
 struct D3D11Backbuffer {

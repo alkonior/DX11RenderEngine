@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "PipelineState.h"
 #include <map>
 

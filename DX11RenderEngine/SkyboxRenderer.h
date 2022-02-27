@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Renderer.h"
+#include "IRenderer.h"
 #include "GraphicsBase.h"
 #include "SkyboxRendererFactory.h"
 #include "SkyboxConstBuffers.h"

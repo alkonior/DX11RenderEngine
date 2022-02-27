@@ -105,7 +105,8 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	renderer->ApplyPipelineState(factory->GetState(gfx.skyFlags));
-	renderer->ApplyVertexBufferBinding(&vertexBuffer);
+	renderer->ApplyVertexBufferBinding(vertexBuffer);
+	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
 	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
@@ -114,10 +115,11 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	localBuffer.view = (matrix::CreateRotationX(1.570796)*( gfx.viewMatrix.Transpose())).Transpose();
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 
-	renderer->VerifyPixelSampler(0, skyTexture, sampler);
+	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelTexture(0, skyTexture);
 
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
-		0, 0, 0, 0, 12, indexBuffer, 16);
+		0, 0, 0, 0, 12);
 
 }
 
