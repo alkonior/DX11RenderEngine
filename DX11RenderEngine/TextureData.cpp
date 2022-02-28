@@ -6,7 +6,6 @@
 #include <sstream>
 
 
-GDIPlusManager gdip;
 
 
 TextureData::TextureData(unsigned int width, unsigned int height) noexcept
