@@ -358,6 +358,7 @@
     <ClCompile Include="SkyboxRendererFactory.cpp">
       <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="IRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">

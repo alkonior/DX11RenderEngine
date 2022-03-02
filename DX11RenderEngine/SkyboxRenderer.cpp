@@ -60,7 +60,7 @@ void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 	renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, std::size(indices)*2, SetDataOptions::SETDATAOPTIONS_DISCARD);
 
 
-	skyTexture = renderer->CreateTextureCube(256, 1, false);
+	skyTexture = renderer->CreateTextureCube(SurfaceFormat::SURFACEFORMAT_COLOR, 256, 1, false);
 
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 

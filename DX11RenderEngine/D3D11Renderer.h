@@ -88,8 +88,9 @@ private:
 	size_t backBufferHeight;
 	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
 	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
-	wrl::ComPtr<ID3D11Texture2D> depthStencilBuffer;
-	wrl::ComPtr<ID3D11DepthStencilView> depthStencilView;
+	//wrl::ComPtr<ID3D11Texture2D> depthStencilBuffer;
+	//wrl::ComPtr<ID3D11DepthStencilView> depthStencilView;
+	D3D11Renderbuffer depthStencilBuffer;
 	DepthFormat currentDepthFormat;
 
 
@@ -132,16 +133,19 @@ public:
 	virtual void SetRenderTargets(RenderTargetBinding* renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, uint8_t preserveTargetContents) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
+
 	virtual void ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, void* data, int32_t dataLength) override;
 	virtual void GetBackbufferSize(int32_t* w, int32_t* h) override;
 	virtual DepthFormat GetBackbufferDepthFormat() override;
-	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) override;
+	virtual Texture* CreateTexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount,  uint8_t isRenderTarget) override;
 	virtual void AddDisposeTexture(Texture* texture) override;
 	virtual void SetTextureData2D(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
 	virtual void GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
-	virtual Renderbuffer* GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) override;
+
+	virtual Renderbuffer* GenColorRenderbuffer(int32_t width, int32_t height, SurfaceFormat format, int32_t multiSampleCount, Texture* texture) override;
 	virtual Renderbuffer* GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) override;
 	virtual void AddDisposeRenderbuffer(Renderbuffer* renderbuffer) override;
+
 	virtual Buffer* GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes) override;
 	virtual void AddDisposeVertexBuffer(Buffer* buffer) override;
 	virtual void SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options) override;
@@ -206,8 +210,8 @@ public:
 	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
 	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
 
-	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) override;
-	virtual Texture* CreateTextureCube(int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
+
+	virtual Texture* CreateTextureCube(SurfaceFormat format, int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
 	virtual void SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) override;
 
 
@@ -219,6 +223,10 @@ public:
 
 	virtual void ApplyPipelineState(PipelineState* piplineState) override;
 	virtual void Flush() override;
+
+
+	// Inherited via IRenderer
+	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) override;
 
 	// Inherited via IRenderer
 };

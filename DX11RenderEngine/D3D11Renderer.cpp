@@ -41,7 +41,9 @@ D3D11Texture D3D11Texture::NullTexture = D3D11Texture
 
 void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h) {}
 
-D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) : IRenderer(presentationParameters, debugMode) {
+D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) : IRenderer(presentationParameters, debugMode),
+	depthStencilBuffer(RENDERBUFFER_DEPTH)
+{
 
 	//DXGI_ADAPTER_DESC adapterDesc;
 	D3D_FEATURE_LEVEL levels[] =
@@ -181,10 +183,10 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
 	if (options & CLEAROPTIONS_STENCIL) {
 		dsClearFlags |= D3D11_CLEAR_STENCIL;
 	}
-	if (dsClearFlags != 0 && depthStencilView != NULL) {
+	if (dsClearFlags != 0 && depthStencilBuffer.texture != nullptr) {
 		/* Clear! */
 		GFX_THROW_INFO_ONLY(context->ClearDepthStencilView(
-			depthStencilView.Get(),
+			depthStencilBuffer.depth.dsView.Get(),
 			dsClearFlags,
 			depth,
 			(uint8_t)stencil
@@ -206,6 +208,35 @@ static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[] =
 	D3D_PRIMITIVE_TOPOLOGY_LINELIST,	    /* PrimitiveType.LineList */
 	D3D_PRIMITIVE_TOPOLOGY_LINESTRIP,	    /* PrimitiveType.LineStrip */
 	D3D_PRIMITIVE_TOPOLOGY_POINTLIST	    /* PrimitiveType.PointListEXT */
+};
+
+DXGI_FORMAT ToD3D_TextureFormat[] =
+{
+	DXGI_FORMAT_R8G8B8A8_UNORM,	/* SurfaceFormat.Color */
+	DXGI_FORMAT_B5G6R5_UNORM,	/* SurfaceFormat.Bgr565 */
+	DXGI_FORMAT_B5G5R5A1_UNORM,	/* SurfaceFormat.Bgra5551 */
+	DXGI_FORMAT_B4G4R4A4_UNORM,	/* SurfaceFormat.Bgra4444 */
+	DXGI_FORMAT_BC1_UNORM,		/* SurfaceFormat.Dxt1 */
+	DXGI_FORMAT_BC2_UNORM,		/* SurfaceFormat.Dxt3 */
+	DXGI_FORMAT_BC3_UNORM,		/* SurfaceFormat.Dxt5 */
+	DXGI_FORMAT_R8G8_SNORM, 	/* SurfaceFormat.NormalizedByte2 */
+	DXGI_FORMAT_R8G8B8A8_SNORM,	/* SurfaceFormat.NormalizedByte4 */
+	DXGI_FORMAT_R10G10B10A2_UNORM,	/* SurfaceFormat.Rgba1010102 */
+	DXGI_FORMAT_R16G16_UNORM,	/* SurfaceFormat.Rg32 */
+	DXGI_FORMAT_R16G16B16A16_UNORM,	/* SurfaceFormat.Rgba64 */
+	DXGI_FORMAT_A8_UNORM,		/* SurfaceFormat.Alpha8 */
+	DXGI_FORMAT_R32_FLOAT,		/* SurfaceFormat.Single */
+	DXGI_FORMAT_R32G32_FLOAT,	/* SurfaceFormat.Vector2 */
+	DXGI_FORMAT_R32G32B32A32_FLOAT,	/* SurfaceFormat.Vector4 */
+	DXGI_FORMAT_R16_FLOAT,		/* SurfaceFormat.HalfSingle */
+	DXGI_FORMAT_R16G16_FLOAT,	/* SurfaceFormat.HalfVector2 */
+	DXGI_FORMAT_R16G16B16A16_FLOAT,	/* SurfaceFormat.HalfVector4 */
+	DXGI_FORMAT_R16G16B16A16_FLOAT,	/* SurfaceFormat.HdrBlendable */
+	DXGI_FORMAT_B8G8R8A8_UNORM,	/* SurfaceFormat.ColorBgraEXT */
+	DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,/* SurfaceFormat.ColorSrgbEXT */
+	DXGI_FORMAT_BC3_UNORM_SRGB,	/* SurfaceFormat.Dxt5SrgbEXT */
+	DXGI_FORMAT_BC7_UNORM, /* SurfaceFormat.BC7EXT */
+	DXGI_FORMAT_BC7_UNORM_SRGB,	/* SurfaceFormat.BC7SrgbEXT */
 };
 
 void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize) {
@@ -588,7 +619,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 		context->OMSetRenderTargets(
 			1,
 			views,
-			depthStencilView.Get()
+			this->depthStencilBuffer.depth.dsView.Get()
 		);
 		RestoreTargetTextures();
 
@@ -629,13 +660,10 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 	}
 
 	/* Update depth stencil buffer */
-	depthStencilView = (depthStencilBuffer == nullptr ?
-		nullptr :
-		((D3D11Renderbuffer*)depthStencilBuffer)->depth.dsView);
-	currentDepthFormat = (depthStencilBuffer == nullptr ?
-		DEPTHFORMAT_NONE :
-		depthFormat
-		);
+	D3D11Renderbuffer* dsb = &this->depthStencilBuffer;
+	if (depthStencilBuffer != nullptr)
+		dsb = (D3D11Renderbuffer*)depthStencilBuffer;
+	
 
 	/* Actually set the render targets, finally. */
 	//std::lock_guard<std::mutex> guard(ctxLock);
@@ -643,7 +671,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 	GFX_THROW_INFO_ONLY(context->OMSetRenderTargets(
 		numRenderTargets,
 		views,
-		depthStencilView.Get()
+		dsb->depth.dsView.Get()
 	));
 	RestoreTargetTextures();
 
@@ -672,7 +700,7 @@ void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target) {
 			0 + slice * tex->levelCount,
 			rb.handle.Get(),
 			0,
-			DXGI_FORMAT_R8G8B8A8_UNORM
+			ToD3D_TextureFormat[tex->format]
 		));
 	}
 
@@ -712,7 +740,9 @@ DepthFormat D3D11Renderer::GetBackbufferDepthFormat() {
 	return currentDepthFormat;
 }
 
-Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) {
+
+
+Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount, uint8_t isRenderTarget) {
 	D3D11Texture* result = new D3D11Texture();
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
@@ -722,7 +752,7 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 	desc.Height = height;
 	desc.MipLevels = levelCount;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = ToD3D_TextureFormat[format];
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -747,6 +777,7 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 	result->isRenderTarget = isRenderTarget;
 	result->width = width;
 	result->height = height;
+	result->format = format;
 
 	/* Create the shader resource view */
 	GFX_THROW_INFO(device->CreateShaderResourceView(
@@ -772,66 +803,8 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
 }
 
 
-Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) {
-	D3D11Texture* result = new D3D11Texture();
-	D3D11_TEXTURE2D_DESC desc;
-	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
 
-	/* Initialize descriptor */
-	desc.Width = width;
-	desc.Height = height;
-	desc.MipLevels = 1;
-	desc.ArraySize = subCount;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
-
-	if (isRenderTarget) {
-		desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-		desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
-	}
-
-	GFX_THROW_INFO(device->CreateTexture2D(
-		&desc,
-		NULL,
-		&result->handle
-	));
-
-
-	/* Initialize D3D11Texture */
-	result->levelCount = levelCount;
-	result->isRenderTarget = isRenderTarget;
-	result->width = width;
-	result->height = height;
-
-	/* Create the shader resource view */
-	GFX_THROW_INFO(device->CreateShaderResourceView(
-		result->handle.Get(),
-		NULL,
-		&result->shaderView
-	));
-
-	/* Create the render target view, if applicable */
-	if (isRenderTarget) {
-		result->isRenderTarget = 1;
-		rtViewDesc.Format = desc.Format;
-		rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		rtViewDesc.Texture2D.MipSlice = 0;
-		GFX_THROW_INFO(device->CreateRenderTargetView(
-			result->handle.Get(),
-			&rtViewDesc,
-			&result->rtView
-		));
-	}
-	return result;
-}
-
-Texture* D3D11Renderer::CreateTextureCube(int32_t size, int32_t levelCount, uint8_t isRenderTarget) {
+Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, int32_t levelCount, uint8_t isRenderTarget) {
 	D3D11Texture* result;
 	wrl::ComPtr<ID3D11Texture2D> texture;
 	D3D11_TEXTURE2D_DESC desc;
@@ -845,7 +818,7 @@ Texture* D3D11Renderer::CreateTextureCube(int32_t size, int32_t levelCount, uint
 	desc.Height = size;
 	desc.MipLevels = levelCount;
 	desc.ArraySize = 6;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = ToD3D_TextureFormat[format];
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -874,6 +847,7 @@ Texture* D3D11Renderer::CreateTextureCube(int32_t size, int32_t levelCount, uint
 	result->levelCount = levelCount;
 	result->isRenderTarget = isRenderTarget;
 	result->cubeSize = size;
+	result->format = format;
 
 	/* Create the shader resource view */
 	srvDesc.Format = desc.Format;
@@ -889,26 +863,26 @@ Texture* D3D11Renderer::CreateTextureCube(int32_t size, int32_t levelCount, uint
 	//ERROR_CHECK_RETURN("TextureCube shader view creation failed", NULL)
 
 		/* Create the render target view, if applicable */
-		//if (isRenderTarget) {
-		//	result->rtType = FNA3D_RENDERTARGET_TYPE_CUBE;
-		//	result->cube.rtViews = (ID3D11RenderTargetView**)SDL_malloc(
-		//		6 * sizeof(ID3D11RenderTargetView*)
-		//	);
-		//	rtViewDesc.Format = desc.Format;
-		//	rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-		//	rtViewDesc.Texture2DArray.ArraySize = 1; /* One slice per view */
-		//	rtViewDesc.Texture2DArray.MipSlice = 0;
-		//	for (i = 0; i < 6; i += 1) {
-		//		rtViewDesc.Texture2DArray.FirstArraySlice = i;
-		//		res = ID3D11Device_CreateRenderTargetView(
-		//			renderer->device,
-		//			result->handle,
-		//			&rtViewDesc,
-		//			&result->cube.rtViews[i]
-		//		);
-		//		ERROR_CHECK_RETURN("TextureCube render target view creation failed", NULL)
-		//	}
-		//}
+	//if (isRenderTarget) {
+	//	result->rtType = FNA3D_RENDERTARGET_TYPE_CUBE;
+	//	result->cube.rtViews = (ID3D11RenderTargetView**)SDL_malloc(
+	//		6 * sizeof(ID3D11RenderTargetView*)
+	//	);
+	//	rtViewDesc.Format = desc.Format;
+	//	rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	//	rtViewDesc.Texture2DArray.ArraySize = 1; /* One slice per view */
+	//	rtViewDesc.Texture2DArray.MipSlice = 0;
+	//	for (i = 0; i < 6; i += 1) {
+	//		rtViewDesc.Texture2DArray.FirstArraySlice = i;
+	//		res = ID3D11Device_CreateRenderTargetView(
+	//			renderer->device,
+	//			result->handle,
+	//			&rtViewDesc,
+	//			&result->cube.rtViews[i]
+	//		);
+	//		ERROR_CHECK_RETURN("TextureCube render target view creation failed", NULL)
+	//	}
+	//}
 
 	return result;
 }
@@ -1031,7 +1005,7 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 		stagingDesc.Height = static_cast<UINT>(tex->height);
 		stagingDesc.MipLevels = tex->levelCount;
 		stagingDesc.ArraySize = 1;
-		stagingDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		stagingDesc.Format = ToD3D_TextureFormat[tex->format];
 		stagingDesc.SampleDesc.Count = 1;
 		stagingDesc.SampleDesc.Quality = 0;
 		stagingDesc.Usage = D3D11_USAGE_STAGING;
@@ -1096,13 +1070,12 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 #pragma warning(pop)
 
 
-Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, int32_t multiSampleCount, Texture* texture) {
+Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, SurfaceFormat format, int32_t multiSampleCount, Texture* texture) {
 	D3D11_TEXTURE2D_DESC desc;
 	D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_COLOR);
 
 	/* Initialize the renderbuffer */
 	result->multiSampleCount = multiSampleCount;
-	result->type = RENDERBUFFER_COLOR;
 	//result->color.format = format;
 
 	/* Create the backing texture */
@@ -1110,7 +1083,7 @@ Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height,
 	desc.Height = height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	desc.Format = ToD3D_TextureFormat[format];
 	desc.SampleDesc.Count = (multiSampleCount > 1 ? multiSampleCount : 1);
 	desc.SampleDesc.Quality = (
 		multiSampleCount > 1 ? D3D11_STANDARD_MULTISAMPLE_PATTERN : 0
@@ -1125,6 +1098,8 @@ Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height,
 		NULL,
 		&result->handle
 	));
+
+	result->color.format = format;
 
 	/* Create the render target view */
 	GFX_THROW_INFO(device->CreateRenderTargetView(
@@ -1141,7 +1116,8 @@ static DXGI_FORMAT D3D11DepthFormat[] =
 	DXGI_FORMAT_UNKNOWN,		    /* DepthFormat.None */
 	DXGI_FORMAT_D16_UNORM,		    /* DepthFormat.Depth16 */
 	DXGI_FORMAT_D24_UNORM_S8_UINT,	/* DepthFormat.Depth24 */
-	DXGI_FORMAT_D24_UNORM_S8_UINT	/* DepthFormat.Depth24Stencil8 */
+	DXGI_FORMAT_D24_UNORM_S8_UINT,	/* DepthFormat.Depth24Stencil8 */
+	DXGI_FORMAT_D32_FLOAT	/* DepthFormat.Depth24Stencil8 */
 };
 
 Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format, int32_t multiSampleCount) {
@@ -1150,7 +1126,6 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
 
 	/* Initialize the renderbuffer */
 	result->multiSampleCount = multiSampleCount;
-	result->type = RENDERBUFFER_DEPTH;
 	result->depth.format = format;
 
 	/* Create the backing texture */
@@ -1189,9 +1164,6 @@ void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer) {
 	int32_t i;
 
 	if (d3dRenderbuffer->type == RENDERBUFFER_DEPTH) {
-		if (d3dRenderbuffer->depth.dsView == depthStencilView) {
-			depthStencilView = nullptr;
-		}
 		d3dRenderbuffer->depth.dsView = nullptr;
 	}
 	else {
@@ -1556,6 +1528,7 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 	//backBufferHeight = 583;
 
 	if (parameters.depthStencilFormat != DEPTHFORMAT_NONE) {
+
 		depthStencilDesc.Width = parameters.backBufferWidth;
 		depthStencilDesc.Height = parameters.backBufferHeight;
 
@@ -1574,20 +1547,19 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 		GFX_THROW_INFO(device->CreateTexture2D(
 			&depthStencilDesc,
 			NULL,
-			&depthStencilBuffer
+			&depthStencilBuffer.texture
 		));
 
-
-
+		depthStencilBuffer.depth.format = parameters.depthStencilFormat;
 		/* Update the depth-stencil view */
 		depthStencilViewDesc.Format = depthStencilDesc.Format;
 		depthStencilViewDesc.Flags = 0;
 		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthStencilViewDesc.Texture2D.MipSlice = 0;
 		GFX_THROW_INFO(device->CreateDepthStencilView(
-			depthStencilBuffer.Get(),
-			&depthStencilViewDesc,
-			&depthStencilView
+			depthStencilBuffer.texture.Get(),
+			NULL,
+			&depthStencilBuffer.depth.dsView
 		));
 	}
 
@@ -2358,6 +2330,10 @@ void D3D11Renderer::Flush() {
 	hashDSS.clear();
 	hashRS.clear();
 	hashSS.clear();
+}
+
+Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) {
+	return nullptr;
 }
 
 

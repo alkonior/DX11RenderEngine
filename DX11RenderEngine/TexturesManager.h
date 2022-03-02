@@ -41,6 +41,15 @@ public:
 	TextureCache GetImg(size_t id);
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
+	//RenderTeargets::
+
+	Renderer::Texture* diffuseColor;
+	Renderer::Texture* directLights;
+	Renderer::Texture* blumeMask;
+	//Renderer::Texture* blumeMask;
+
+
+
 	~TexturesManager();
 private:
 	std::map<size_t, TextureCache> textures;

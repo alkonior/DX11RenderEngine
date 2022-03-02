@@ -343,7 +343,7 @@ struct IRenderer {
 	 * texture are undefined, so you must call SetData at least once before drawing!
 	 */
 	virtual Texture* CreateTexture2D(
-		//SurfaceFormat format,
+		SurfaceFormat format,
 		int32_t width,
 		int32_t height,
 		int32_t levelCount,
@@ -390,6 +390,7 @@ struct IRenderer {
 	 * texture are undefined, so you must call SetData at least once before drawing!
 	 */
 	virtual Texture* CreateTextureCube(
+		SurfaceFormat format,
 		int32_t size,
 		int32_t levelCount,
 		uint8_t isRenderTarget
@@ -596,7 +597,7 @@ struct IRenderer {
 	virtual Renderbuffer* GenColorRenderbuffer(
 		int32_t width,
 		int32_t height,
-		//SurfaceFormat format,
+		SurfaceFormat format,
 		int32_t multiSampleCount,
 		Texture* texture
 	) = 0;
@@ -824,6 +825,7 @@ struct IRenderer {
 	virtual void BeginEvent(const char* name) = 0;
 	virtual void EndEvent() = 0;
 	virtual void SetMarker(const char* name) = 0;
+
 
 };
 

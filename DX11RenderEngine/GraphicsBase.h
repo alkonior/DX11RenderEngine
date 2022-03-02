@@ -4,6 +4,7 @@
 #include "TransformUtils.h"
 #include "SimpleMath.h"
 
+#include "GDIPlusManager.h"
 #include "TexturesManager.h"
 #include "ModelsManager.h"
 
@@ -14,7 +15,7 @@
 class GraphicsBase {
 
 static Renderer::PresentationParameters GenParams(HWND hWnd, size_t width, size_t height);
-
+GDIPlusManager gpmt;
 public:
 	GraphicsBase(HWND hWnd, size_t width, size_t height);
 	void OnResize(size_t width, size_t height);

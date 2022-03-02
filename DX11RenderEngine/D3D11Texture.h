@@ -15,6 +15,7 @@ struct D3D11Texture : public Texture {
 	/* Basic Info */
 	int32_t levelCount = 0;
 	uint8_t isRenderTarget = false;
+	SurfaceFormat format;
 
 
 	size_t width = 0;
