@@ -10,8 +10,8 @@ PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t h
 	pp.backBufferHeight = height;
 	pp.deviceWindowHandle = hWnd;
 	pp.multiSampleCount = 0;
-	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_D24S8;
-	pp.presentationInterval = PresentInterval::PRESENTINTERVAL_DEFAULT;
+	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_D32;
+	pp.presentationInterval = PresentInterval::PRESENTINTERVAL_IMMEDIATE;
 
 	return pp;
 }

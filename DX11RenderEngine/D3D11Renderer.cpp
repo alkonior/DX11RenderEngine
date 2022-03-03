@@ -265,11 +265,11 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 		);
 	}
 	/* Draw! */
-	GFX_THROW_INFO_ONLY(context->DrawIndexed(
+	context->DrawIndexed(
 		PrimitiveVerts(primitiveType, primitiveCount),
 		(uint32_t)startIndex,
 		baseVertex
-	));
+	);
 
 
 
@@ -322,8 +322,8 @@ void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexSt
 
 }
 
-void D3D11Renderer::SetViewport(const Viewport& viewport) {
-	D3D11_VIEWPORT vp =
+void D3D11Renderer::SetViewport(const Viewport& viewport, uint32_t slot) {
+	this->viewport[slot] =
 	{
 		(float)viewport.x,
 		(float)viewport.y,
@@ -333,17 +333,8 @@ void D3D11Renderer::SetViewport(const Viewport& viewport) {
 		viewport.maxDepth
 	};
 
-	if (this->viewport.x != viewport.x ||
-		this->viewport.y != viewport.y ||
-		this->viewport.w != viewport.w ||
-		this->viewport.h != viewport.h ||
-		this->viewport.minDepth != viewport.minDepth ||
-		this->viewport.maxDepth != viewport.maxDepth) {
-		//std::lock_guard<std::mutex> guard(ctxLock);
-		this->viewport = viewport;
-		GFX_THROW_INFO_ONLY(context->RSSetViewports(1, &vp));
-
-	}
+	maxViewportSlot = std::max<int>(maxViewportSlot, slot);
+	GFX_THROW_INFO_ONLY(context->RSSetViewports(maxViewportSlot + 1, this->viewport));
 }
 
 void D3D11Renderer::SetScissorRect(Rect scissor) {
@@ -598,7 +589,8 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  SamplerState& samp
 
 }
 
-void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, uint8_t preserveTargetContents) {
+void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, 
+	Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport& viewport) {
 
 	D3D11Texture* tex;
 	D3D11Renderbuffer* rb;
@@ -621,8 +613,9 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 			views,
 			this->depthStencilBuffer.depth.dsView.Get()
 		);
-		RestoreTargetTextures();
+		//RestoreTargetTextures();
 
+		this->SetViewport(viewport, 0);
 
 		renderTargetViews[0] = comViews[0];
 		for (i = 1; i < MAX_RENDERTARGET_BINDINGS; i += 1) {
@@ -634,13 +627,13 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 
 	/* Update color buffers */
 	for (i = 0; i < std::min(numRenderTargets, MAX_RENDERTARGET_BINDINGS); i += 1) {
-		if (renderTargets[i].colorBuffer != NULL) {
-			rb = (D3D11Renderbuffer*)renderTargets[i].colorBuffer;
+		if (renderTargets[i]->colorBuffer != NULL) {
+			rb = (D3D11Renderbuffer*)renderTargets[i]->colorBuffer;
 			views[i] = rb->color.rtView.Get();
 			comViews[i] = rb->color.rtView;
 		}
 		else {
-			tex = (D3D11Texture*)renderTargets[i].texture;
+			tex = (D3D11Texture*)renderTargets[i]->texture;
 
 			//if (tex->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
 			//	views[i] = tex->twod.rtView;
@@ -649,10 +642,12 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding* renderTargets, int32_t
 			//		renderTargets[i].cube.face
 			//	];
 			//}
-
-			views[i] = tex->rtView.Get();
 			comViews[i] = tex->rtView;
+			views[i] = tex->rtView.Get();
+			
 		}
+
+		this->SetViewport(renderTargets[i]->viewport, i);
 	}
 	while (i < MAX_RENDERTARGET_BINDINGS) {
 		comViews[i] = nullptr;
@@ -1582,13 +1577,13 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters) {
 	));
 
 	/* This is the default render target */
-	SetRenderTargets(
-		NULL,
-		0,
-		NULL,
-		DEPTHFORMAT_NONE,
-		0
-	);
+	//SetRenderTargets(
+	//	NULL,
+	//	0,
+	//	NULL,
+	//	DEPTHFORMAT_NONE,
+	//	0
+	//);
 
 }
 
@@ -2322,7 +2317,6 @@ void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState) {
 	SetDepthStencilState(piplineState->dss);
 	SetBlendFactor(piplineState->bf);
 	ApplyRasterizerState(piplineState->rs);
-	SetViewport(piplineState->vp);
 }
 
 void D3D11Renderer::Flush() {

@@ -24,6 +24,12 @@ void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {
 	
 	pDataCB = renderer->CreateConstBuffer(sizeof(constBuffer));
 
+	vp.x = 0;
+	vp.y = 0;
+	vp.w = width;
+	vp.h = height;
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
 }
 
 void ParticlesRenderer::Init(LPCWSTR dirr) {
@@ -46,7 +52,7 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 		renderer->GetBackbufferSize(&width, &height);
 		size_t lastFlags = -1;
 
-		renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
+		renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
 
 		constBuffer.view = gfx.viewMatrix;
 		constBuffer.projection = gfx.cameraProjection;

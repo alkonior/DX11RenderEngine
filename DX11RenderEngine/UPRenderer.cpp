@@ -81,6 +81,14 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 
 void UPRenderer::Render(GraphicsBase& gfx) {
 	
+	RenderTargetBinding* targets[4] = {
+		 &gfx.texturesManger.diffuseColorRT,
+		 &gfx.texturesManger.directLightsRT,
+		 &gfx.texturesManger.blumeMaskRT,
+		 &gfx.texturesManger.alphaSurfacesRT,
+	};
+
+	renderer->SetRenderTargets(targets, 4, NULL, DepthFormat::DEPTHFORMAT_NONE, Viewport());
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);
@@ -97,7 +105,6 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelSampler(0, sampler);
 	renderer->VerifyPixelSampler(1, lightSampler);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.viewMatrix;
 	transformBuffer.projection = gfx.cameraProjection;
@@ -159,8 +166,19 @@ void UPRenderer::Flush() {
 	dynamicMeshes.Flush();
 }
 
-void UPRenderer::Clear() {
+void UPRenderer::Clear(GraphicsBase& gfx) {
 	drawCalls.clear();
+
+
+	RenderTargetBinding* targets[4] = {
+		 &gfx.texturesManger.diffuseColorRT,
+		 &gfx.texturesManger.directLightsRT,
+		 &gfx.texturesManger.blumeMaskRT,
+		 &gfx.texturesManger.alphaSurfacesRT,
+	};
+
+	renderer->SetRenderTargets(targets, 4, NULL, DepthFormat::DEPTHFORMAT_NONE, Viewport());
+	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 
 void UPRenderer::Destroy() {

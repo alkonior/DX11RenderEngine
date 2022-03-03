@@ -20,14 +20,13 @@ struct PipelineState {
 	BlendState bs;
 	RasterizerState rs;
 	Color bf;
-	Viewport vp;
 
 };
 
 
 struct InputLayoutDescription {
-	void* inputLayout;
-	size_t inputLayoutSize;
+	void* inputLayout = nullptr;
+	size_t inputLayoutSize = 0;
 };
 
 struct IStateProvider {

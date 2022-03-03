@@ -62,6 +62,8 @@ public:
 	~ModelRenderer();
 private:
 
+	Renderer::Viewport vp;
+
 	void Destroy();
 
 	Shader3DTranformCosntBuffer transformBuffer;

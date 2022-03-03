@@ -125,7 +125,7 @@ struct IRenderer {
 	 *
 	 * viewport: The new view dimensions for future draw calls.
 	 */
-	virtual void SetViewport(const Viewport& viewport) = 0;
+	virtual void SetViewport(const Viewport& viewport, uint32_t slot) = 0;
 
 	/* Sets the scissor box for rendering, relative to the active render target.
 	 * It is required to call this at least once after calling SetRenderTargets, as
@@ -257,11 +257,11 @@ struct IRenderer {
 	 * 			keep this at 0 to not waste GPU bandwidth.
 	 */
 	virtual void SetRenderTargets(
-		RenderTargetBinding* renderTargets,
+		RenderTargetBinding** renderTargets,
 		int32_t numRenderTargets,
 		Renderbuffer* depthStencilBuffer,
 		DepthFormat depthFormat,
-		uint8_t preserveTargetContents
+		const Viewport& viewports
 	) = 0;
 
 	/* After unsetting a render target, call this to resolve multisample targets or

@@ -59,7 +59,7 @@ public:
 
 	void Render(GraphicsBase& gfx);
 	void Flush();
-	void Clear();
+	void Clear(GraphicsBase& gfx);
 
 	~UPRenderer();
 

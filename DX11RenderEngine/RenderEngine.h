@@ -24,7 +24,8 @@ struct RenderDevice {
 		ModelsShader,
 		UPShader,
 		ParticlesShader,
-		SkyShader
+		SkyShader,
+		EndBSPShader,
 	};
 
 	struct ShaderData {

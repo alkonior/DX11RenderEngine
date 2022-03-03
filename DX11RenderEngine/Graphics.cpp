@@ -17,7 +17,8 @@ using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height),
-	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer) {
+	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer),
+	managerEndUP(&renderer){
 	//managerImGUI.Init();
 	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
@@ -27,7 +28,7 @@ void Graphics::BeginFrame() {
 	//managerImGUI.BeginFrame(*this);
 
 	manager3D.Clear();
-	managerUP.Clear();
+	managerUP.Clear(*this);
 	manager2D.Clear();
 	managerParticles.Clear();
 }
@@ -39,6 +40,12 @@ bool Graphics::EndFrame() {
 	renderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	renderer.EndEvent();
+
+
+	renderer.BeginEvent("End BSP draw.");
+	GFX_CATCH_RENDER(managerEndUP.Render(*this););
+	renderer.EndEvent();
+
 
 	renderer.BeginEvent("Models draw.");
 	GFX_CATCH_RENDER(manager3D.Render(*this););
@@ -76,6 +83,7 @@ bool Graphics::EndFrame() {
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
+	renderer.SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
 	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
 	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);

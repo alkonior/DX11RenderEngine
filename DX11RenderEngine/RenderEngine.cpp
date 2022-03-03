@@ -1,4 +1,4 @@
-﻿#include "RenderEngine.h"
+#include "RenderEngine.h"
 #include "pch.h"
 #include "RenderEngine.h"
 #include "PixelShader2D.h"
@@ -64,6 +64,13 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	{
 		//VertexShader2D::Release();
 		gfx->managerSkybox.Init(shD.data, shD.dataSize);
+		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
+	case ShaderType::EndBSPShader:
+	{
+		//VertexShader2D::Release();
+		gfx->managerEndUP.Init(shD.data, shD.dataSize);
 		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}

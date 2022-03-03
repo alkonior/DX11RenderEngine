@@ -59,6 +59,8 @@ public:
 	
 	~UIRenderer();
 private:
+	Renderer::Viewport vp;
+
 	Renderer::VertexBufferBinding vertexBuffer;
 	Renderer::Buffer* indexBuffer;
 	Shader2DCosntBuffer localBuffer;

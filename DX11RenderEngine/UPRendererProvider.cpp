@@ -40,12 +40,12 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 		refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 		refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 		refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-
-
+	
+	
 		refToPS->bs.multiSampleMask = -1;
-
+	
 		refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
-
+	
 		refToPS->bf = Renderer::Color{ 255,255,255,255 };
 	}
 
@@ -70,13 +70,6 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
 
-
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
 }
 
 

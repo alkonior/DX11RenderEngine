@@ -50,6 +50,13 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 
 
 
+	vp.x = 0;
+	vp.y = 0;
+	vp.w = width;
+	vp.h = height;
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 
 
@@ -90,7 +97,7 @@ void UIRenderer::Render() {
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 	renderer->VerifyPixelSampler(0, sampler);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
+	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
 	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
@@ -207,12 +214,6 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, 
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
 
 
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
 }
 
 

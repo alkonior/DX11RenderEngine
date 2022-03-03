@@ -55,7 +55,8 @@ private:
 	int32_t stencilRef;
 
 	/* Rasterizer State */
-	Viewport viewport;
+	D3D11_VIEWPORT viewport[10];
+	int maxViewportSlot = 0;
 	Rect scissorRect;
 	wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
 
@@ -114,7 +115,7 @@ public:
 	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount) override;
 	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount) override;
 	virtual void DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) override;
-	virtual void SetViewport(const Viewport& viewport) override;
+	virtual void SetViewport(const Viewport& viewport, uint32_t slot) override;
 	virtual void SetScissorRect(Rect scissor) override;
 	virtual void GetBlendFactor(Color& blendFactor) override;
 	virtual void SetBlendFactor(Color blendFactor) override;
@@ -130,7 +131,7 @@ public:
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
 	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
 
-	virtual void SetRenderTargets(RenderTargetBinding* renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, uint8_t preserveTargetContents) override;
+	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport& viewports) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
 

@@ -10,6 +10,7 @@
 #include "UPRenderer.h"
 #include "ParticlesRenderer.h"
 #include "SkyboxRenderer.h"
+#include "EndRenderer.h"
 
 
 #ifdef _DEBUG
@@ -71,6 +72,7 @@ public:
 	UIRenderer manager2D;
 	ModelRenderer manager3D;
 	UPRenderer managerUP;
+	EndRenderer managerEndUP;
 	//ImGUIRenderer managerImGUI;
 	ParticlesRenderer managerParticles;
 	SkyboxRenderer managerSkybox;

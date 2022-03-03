@@ -50,7 +50,7 @@ private:
 
 	void Destroy();
 
-
+	Renderer::Viewport vp;
 	DynamicMeshBuffer<ParticleVertex> particlesBuffer;
 
 

@@ -144,6 +144,8 @@ struct RenderTargetBinding {
 
 	/* If this is non-NULL, you MUST call ResolveTarget after rendering! */
 	Renderbuffer* colorBuffer;
+
+	Viewport viewport;
 };
 
 

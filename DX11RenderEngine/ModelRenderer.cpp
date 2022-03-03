@@ -30,6 +30,12 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	pTransformCB = renderer->CreateConstBuffer(sizeof(transformBuffer));
 	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
+	vp.x = 0;
+	vp.y = 0;
+	vp.w = width;
+	vp.h = height;
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
@@ -73,6 +79,10 @@ void ModelRenderer::Destroy() {
 void ModelRenderer::Render(const GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
+
+	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
+
+
 	size_t lastFlags = -1;
 
 	renderer->VerifyConstBuffer(pTransformCB, ModelsTransform.slot);
@@ -81,7 +91,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 	renderer->VerifyPixelSampler(0, sampler);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
 
 	transformBuffer.view = gfx.viewMatrix;
 	transformBuffer.projection = gfx.cameraProjection;
@@ -200,13 +209,6 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
 
-
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
 
 }
 

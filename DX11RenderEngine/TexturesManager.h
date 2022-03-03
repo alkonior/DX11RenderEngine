@@ -46,10 +46,20 @@ public:
 	Renderer::Texture* diffuseColor;
 	Renderer::Texture* directLights;
 	Renderer::Texture* blumeMask;
+	Renderer::Texture* blumeMask2;
+	Renderer::Texture* alphaSurfaces;
+
+	Renderer::RenderTargetBinding diffuseColorRT;
+	Renderer::RenderTargetBinding directLightsRT;
+	Renderer::RenderTargetBinding blumeMaskRT;
+	Renderer::RenderTargetBinding blumeMask2RT;
+	Renderer::RenderTargetBinding alphaSurfacesRT;
+
+	
 	//Renderer::Texture* blumeMask;
 
-
-
+	std::vector<Renderer::Texture*> renderTargets;
+		
 	~TexturesManager();
 private:
 	std::map<size_t, TextureCache> textures;

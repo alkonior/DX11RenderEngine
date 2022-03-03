@@ -45,13 +45,6 @@ void ParticlesRenderer::ParticlesRendererProvider::PatchPipelineState(Renderer::
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
 
-
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
 }
 
 

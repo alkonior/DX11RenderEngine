@@ -70,6 +70,16 @@ void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 
+
+
+
+	vp.x = 0;
+	vp.y = 0;
+	vp.w = width;
+	vp.h = height;
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+
 }
 
 void SkyboxRenderer::Init(LPCWSTR dirr) {
@@ -108,7 +118,7 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, 0);
+	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
 
 	renderer->VerifyConstBuffer(constBuffer, SkyboxTransform.slot);
 	localBuffer.projection = gfx.cameraProjection;
@@ -158,14 +168,6 @@ void SkyboxRenderer::SkyboxRendererProvider::PatchPipelineState(PipelineState* r
 	refToPS->rs.multiSampleAntiAlias = 0;
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
-
-
-	refToPS->vp.x = 0;
-	refToPS->vp.y = 0;
-	refToPS->vp.w = width;
-	refToPS->vp.h = height;
-	refToPS->vp.minDepth = 0.0f;
-	refToPS->vp.maxDepth = 1.0f;
 }
 
 
