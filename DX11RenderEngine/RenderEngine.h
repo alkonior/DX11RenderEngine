@@ -1,10 +1,6 @@
 #pragma once
-#include "Graphics.h"
-#include "SimpleMath.h"
-#include "TextureData.h"
+#include "CoreRenderSystem/Graphics.h"
 
-
-#include "imgui/imgui_impl_win32.h"
 
 struct RenderDevice {
 

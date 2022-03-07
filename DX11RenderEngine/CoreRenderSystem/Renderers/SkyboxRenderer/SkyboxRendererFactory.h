@@ -1,0 +1,29 @@
+#pragma once
+#include "IRenderer/PipelineState/PipelineFactory.h"
+#include "../../Utils/TransformUtils.h"
+
+
+enum  SkyboxDefines : std::uint32_t {
+	SKYZERO = 0,
+	SKYRED = 1,
+	SKYNOTHING = 2,
+
+};
+const Renderer::ShaderDefines SkyboxRendererDefines[] = {
+	Renderer::ShaderDefines("RED"),
+};
+
+
+struct VertexSkybox {
+	VertexSkybox(float3 pos) :pos(pos) {};
+	float3 pos;
+};
+
+
+
+class SkyboxRendererFactory :public Renderer::PipelineFactory {
+public:
+	SkyboxRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
+
+};
+

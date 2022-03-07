@@ -66,6 +66,9 @@
     <Filter Include="RenderEngine\Core\Rendereres\BSPEndRendrerer">
       <UniqueIdentifier>{4c5a04b5-7f8f-41a5-88a4-40012f3d46ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderEngine\Core\Rendereres\BloomRenderer">
+      <UniqueIdentifier>{b55baea0-68d2-4f49-83b5-b8ed04ea15c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\include\Geometry.h">
@@ -260,6 +263,15 @@
     <ClInclude Include="ShaderHolder.h">
       <Filter>RenderEngine\Primitives</Filter>
     </ClInclude>
+    <ClInclude Include="BloomRenderer.h">
+      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomFactory.h">
+      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomConstBuffer.h">
+      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -376,6 +388,9 @@
     <ClCompile Include="IRenderer.cpp" />
     <ClCompile Include="EndRenderer.cpp">
       <Filter>RenderEngine\Core\Rendereres\BSPEndRendrerer</Filter>
+    </ClCompile>
+    <ClCompile Include="BloomRenderer.cpp">
+      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
