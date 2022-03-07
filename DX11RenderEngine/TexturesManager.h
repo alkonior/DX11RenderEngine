@@ -46,13 +46,13 @@ public:
 	Renderer::Texture* diffuseColor;
 	Renderer::Texture* directLights;
 	Renderer::Texture* blumeMask;
-	Renderer::Texture* blumeMask2;
+	Renderer::Texture* bloomBlured;
 	Renderer::Texture* alphaSurfaces;
 
 	Renderer::RenderTargetBinding diffuseColorRT;
 	Renderer::RenderTargetBinding directLightsRT;
 	Renderer::RenderTargetBinding blumeMaskRT;
-	Renderer::RenderTargetBinding blumeMask2RT;
+	Renderer::RenderTargetBinding bloomBluredRT;
 	Renderer::RenderTargetBinding alphaSurfacesRT;
 
 	
@@ -63,6 +63,8 @@ public:
 	~TexturesManager();
 private:
 	std::map<size_t, TextureCache> textures;
+
+	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
 
 };
 

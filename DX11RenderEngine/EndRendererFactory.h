@@ -26,9 +26,6 @@ struct VertexEnd {
 class EndRendererFactory :public Renderer::PipelineFactory {
 public:
 	EndRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
-		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)EndRendererDefines, std::size(EndRendererDefines), shaderData, dataSize, D3DCOMPILE_DEBUG) 
-	{
-	}
-
+		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)EndRendererDefines, std::size(EndRendererDefines), shaderData, dataSize, D3DCOMPILE_DEBUG) {}
 };
 

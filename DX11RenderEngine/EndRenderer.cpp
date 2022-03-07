@@ -148,7 +148,7 @@ void EndRenderer::Render(GraphicsBase& gfx) {
 	// &gfx.texturesManger.alphaSurfacesRT,
 	//};
 
-	targets[0] = &gfx.texturesManger.blumeMask2RT;
+	targets[0] = &gfx.texturesManger.bloomBluredRT;
 	targets[1] = &gfx.texturesManger.blumeMaskRT;
 
 
@@ -161,7 +161,9 @@ void EndRenderer::Render(GraphicsBase& gfx) {
 		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-		std::swap(targets[0], targets[1]);
+		auto  buff = targets[0];
+		targets[0] = targets[1];
+		targets[1] = buff;
 	}
 
 
@@ -171,7 +173,7 @@ void EndRenderer::Render(GraphicsBase& gfx) {
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.directLights);
-	renderer->VerifyPixelTexture(2, targets[1]->texture);
+	renderer->VerifyPixelTexture(2, targets[0]->texture);
 
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	renderer->ApplyPipelineState(factory->GetState(ENDALPHA));

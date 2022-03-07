@@ -590,7 +590,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const  SamplerState& samp
 }
 
 void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, 
-	Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport& viewport) {
+	Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport viewport) {
 
 	D3D11Texture* tex;
 	D3D11Renderbuffer* rb;
@@ -618,6 +618,12 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
 		this->SetViewport(viewport, 0);
 
 		renderTargetViews[0] = comViews[0];
+		i = 1;
+		while (i < MAX_RENDERTARGET_BINDINGS) {
+			comViews[i] = nullptr;
+			views[i++] = nullptr;
+		}
+
 		for (i = 1; i < MAX_RENDERTARGET_BINDINGS; i += 1) {
 			renderTargetViews[i] = nullptr;
 		}

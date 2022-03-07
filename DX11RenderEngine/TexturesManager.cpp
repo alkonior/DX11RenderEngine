@@ -5,45 +5,11 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderer):renderer(rendere
 	int width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	diffuseColor = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_COLOR, width, height, 1, true);
-	directLights = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_COLOR, width, height, 1, true);
-	blumeMask    = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, 1, true);
-	blumeMask2    = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, 1, true);
-	alphaSurfaces = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_COLOR, width, height, 1, true);
-
-	renderTargets.push_back(diffuseColor);
-	renderTargets.push_back(directLights);
-	renderTargets.push_back(blumeMask);
-	renderTargets.push_back(blumeMask2);
-	renderTargets.push_back(alphaSurfaces);
-
-	Viewport defVP = {
-		0,0,width,height,0.0,1.0
-	};
-	
-	diffuseColorRT.viewport = defVP;
-	directLightsRT.viewport = defVP;
-	blumeMaskRT.viewport = defVP;
-	blumeMask2RT.viewport = defVP;
-	alphaSurfacesRT.viewport = defVP;
-
-	diffuseColorRT.texture = diffuseColor;
-	directLightsRT.texture = directLights;
-	blumeMaskRT.texture = blumeMask;
-	blumeMask2RT.texture = blumeMask2;
-	alphaSurfacesRT.texture = alphaSurfaces;
-
-	diffuseColorRT.levelCount = 1;
-	directLightsRT.levelCount = 1;
-	blumeMaskRT.levelCount = 1;
-	blumeMask2RT.levelCount = 1;
-	alphaSurfacesRT.levelCount = 1;
-
-	diffuseColorRT.multiSampleCount = 0;
-	directLightsRT.multiSampleCount = 0;
-	blumeMaskRT.multiSampleCount = 0;
-	blumeMask2RT.multiSampleCount = 0;
-	alphaSurfacesRT.multiSampleCount = 0;
+	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
+	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, directLights,   directLightsRT);
+	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, blumeMask,      blumeMaskRT);
+	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, bloomBlured,    bloomBluredRT);
+	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
 
 }
 
@@ -109,6 +75,22 @@ TexturesManager::~TexturesManager() {
 	}
 
 
+}
+
+void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget) {
+
+	texture = renderer->CreateTexture2D(format, width, height, 1, true);
+
+	renderTargets.push_back(texture);
+	Viewport defVP = {
+		0,0,width,height,0.0,1.0
+	};
+
+
+	renderTarget.viewport = defVP;
+	renderTarget.texture = texture;
+	renderTarget.levelCount = 1;
+	renderTarget.multiSampleCount = 0;
 }
 
 TexturesManager::TextureCache TexturesManager::GetImg(size_t id) {

@@ -131,7 +131,7 @@ public:
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
 	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
 
-	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport& viewports) override;
+	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport viewports) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
 

@@ -261,7 +261,7 @@ struct IRenderer {
 		int32_t numRenderTargets,
 		Renderbuffer* depthStencilBuffer,
 		DepthFormat depthFormat,
-		const Viewport& viewports
+		const Viewport viewports
 	) = 0;
 
 	/* After unsetting a render target, call this to resolve multisample targets or
