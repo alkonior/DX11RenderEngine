@@ -12,6 +12,7 @@
 #include "Renderers/SkyboxRenderer/SkyboxRenderer.h"
 #include "Renderers/EndRenderer/EndRenderer.h"
 #include "Renderers/BloomRenderer/BloomRenderer.h"
+#include "Renderers/FXAARenderer/FXAARenderer.h"
 
 
 #ifdef _DEBUG
@@ -30,7 +31,8 @@ public:
 
 
 	void BeginFrame();
-	bool EndFrame();
+	bool RenderFrame();
+	void EndFrame();
 	void ClearBuffer(sm::Vector4 color) noexcept;
 	void Flush();
 
@@ -78,6 +80,7 @@ public:
 	SkyboxRenderer	     managerSkybox;
 	BloomRenderer	     managerBloom;
 	ImGUIRenderer	     managerIMGUI;
+	FXAARenderer	     managerFXAA;
 
 private:
 

@@ -1,41 +1,47 @@
 #pragma 
 #include "../../GraphicsBase.h"
 #include "../../ResourceManagers/TexturesManager.h"
-#include "EndRendererFactory.h"
-#include "EndRendererConstBuffer.h"
+#include "FXAARendererFactory.h"
+#include "FXAARendererConstBuffer.h"
 
 
-class EndRenderer {
-	struct EndRendererProvider;
+class FXAARenderer {
+	struct FXAARendererProvider;
 	Renderer::IRenderer* renderer;
-	EndRendererFactory* factory = nullptr;
-	EndRendererProvider* provider = nullptr;
+	FXAARendererFactory* factory = nullptr;
+	FXAARendererProvider* provider = nullptr;
 
 	Renderer::Texture* skyTexture = nullptr;
 
-	struct EndRendererProvider : public Renderer::IStateProvider {
+	struct FXAARendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
-		EndRendererProvider(int32_t width, int32_t  height);
+		FXAARendererProvider(int32_t width, int32_t  height);
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
-		virtual ~EndRendererProvider() override;
+		virtual ~FXAARendererProvider() override;
 	};
 
 
 public:
 
 
-	EndRenderer(Renderer::IRenderer* renderer);
+	FXAARenderer(Renderer::IRenderer* renderer);
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
 
 	void Render(GraphicsBase& gfx);
 
-	~EndRenderer();
+	~FXAARenderer();
 private:
+	Renderer::ConstBuffer* constBuffer;
+	FXAACosntBuffer localBuffer;
 	Renderer::Viewport vp;
 
+
+	Renderer::Texture* preFXAA;
+	Renderer::RenderTargetBinding preFXAART;
+	
 	Renderer::VertexBufferBinding vertexBuffer;
 	Renderer::Buffer* indexBuffer;
 

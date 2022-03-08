@@ -23,6 +23,7 @@ struct RenderDevice {
 		SkyShader,
 		EndBSPShader,
 		BloomShader,
+		FXAAShader,
 	};
 
 	struct ShaderData {
@@ -44,6 +45,7 @@ struct RenderDevice {
 	void SetViewMatrix(matrix m);
 	void SetCameraPosition(float3 m);
 	bool Present();
+	void EndFrame();
 	void Clear(float r, float g, float b);
 
 	/* Resourse loading*/

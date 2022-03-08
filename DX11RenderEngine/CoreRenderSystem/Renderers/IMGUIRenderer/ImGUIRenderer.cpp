@@ -16,6 +16,9 @@ void ImGUIRenderer::BeginFrame(GraphicsBase& gfx) {
 }
 
 void ImGUIRenderer::Render() {
+	static bool show = true;
+	ImGui::ShowDemoWindow(&show);
+	
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

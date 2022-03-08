@@ -20,7 +20,7 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height),
 	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer),
 	managerParticles(&renderer), managerSkybox(&renderer),
-	managerEndUP(&renderer), managerBloom(&renderer)
+	managerEndUP(&renderer), managerBloom(&renderer), managerFXAA(&renderer)
 {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -34,7 +34,6 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 }
 
 void Graphics::BeginFrame() {
-	managerIMGUI.BeginFrame(*this);
 
 	manager3D.Clear();
 	managerUP.Clear(*this);
@@ -44,7 +43,9 @@ void Graphics::BeginFrame() {
 
 
 
-bool Graphics::EndFrame() {
+bool Graphics::RenderFrame() {
+	managerIMGUI.BeginFrame(*this);
+	
 	bool success = true;
 	renderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
@@ -72,17 +73,24 @@ bool Graphics::EndFrame() {
 	renderer.BeginEvent("Sky draw.");
 	GFX_CATCH_RENDER(managerSkybox.Render(*this););
 	renderer.EndEvent();
+	
+	renderer.BeginEvent("FXAA-pass.");
+	GFX_CATCH_RENDER(managerFXAA.Render(*this););
+	renderer.EndEvent();
 
 	renderer.BeginEvent("UI draw.");
 	GFX_CATCH_RENDER(manager2D.Render(););
 	renderer.EndEvent();
 	
+	return success;
+}
+
+void Graphics::EndFrame()
+{
 	renderer.BeginEvent("IMGUI draw.");
 	managerIMGUI.Render();
 	renderer.EndEvent();
-	
 	renderer.SwapBuffers();
-	return success;
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {

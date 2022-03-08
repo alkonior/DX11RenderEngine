@@ -6,15 +6,21 @@
 enum  EndRendererDefines : std::uint32_t {
 	ENDZERO = 0,
 	ENDRED = 1,
-	ENDBLUME = 2,
-	ENDALPHA = 4,
+	ENDALPHA = 2,
+	ENDBLOOMONLY = 4,
+	ENDCOLORONLY = 8,
+	ENDLIGHTONLY = 16,
+	ENDALPHAONLY = 16,
 
 };
 
 const Renderer::ShaderDefines EndRendererDefines[] = {
 	Renderer::ShaderDefines("RED"),
-	Renderer::ShaderDefines("BLUME"),
 	Renderer::ShaderDefines("ALPHA"),
+	Renderer::ShaderDefines("BLOOMONLY"),
+	Renderer::ShaderDefines("COLORONLY"),
+	Renderer::ShaderDefines("LIGHTONLY"),
+	Renderer::ShaderDefines("ALPHAONLY"),
 };
 
 

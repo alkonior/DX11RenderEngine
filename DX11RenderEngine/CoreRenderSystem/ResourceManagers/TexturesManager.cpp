@@ -8,8 +8,9 @@ TexturesManager::TexturesManager(IRenderer* renderer):renderer(renderer) {
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, directLights,   directLightsRT);
 	CreateRenderTarget(SURFACEFORMAT_SINGLE, width, height, luminance,      luminanceRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, bloomBlured,    bloomBluredRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, bloomBlured,    bloomBluredRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, preFXAAcolor,   preFXAAcolorRT);
 
 }
 

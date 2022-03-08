@@ -80,7 +80,8 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
+	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
+	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 
 
 	size_t lastFlags = -1;

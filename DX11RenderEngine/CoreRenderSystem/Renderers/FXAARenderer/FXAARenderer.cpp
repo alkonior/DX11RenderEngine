@@ -1,12 +1,12 @@
-#include "EndRenderer.h"
+#include "FXAARenderer.h"
 
 #include "imgui/imgui.h"
 
 using namespace Renderer;
 
-EndRenderer::EndRendererProvider::EndRendererProvider(int32_t width, int32_t height) {}
+FXAARenderer::FXAARendererProvider::FXAARendererProvider(int32_t width, int32_t height) {}
 
-void EndRenderer::EndRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
+void FXAARenderer::FXAARendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
 
 	refToPS->bs.enabled = false;
 	refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
@@ -20,32 +20,10 @@ void EndRenderer::EndRendererProvider::PatchPipelineState(Renderer::PipelineStat
 	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
 	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-
 	refToPS->bs.multiSampleMask = -1;
-
 	refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
 
 	refToPS->bf = Renderer::Color{ 255,255,255,255 };
-	if (definesFlags & (ENDALPHA)) {
-		refToPS->bs.enabled = true;
-		refToPS->bs.colorBlendFunction = BLENDFUNCTION_ADD;;
-		refToPS->bs.alphaBlendFunction = BLENDFUNCTION_ADD;
-		refToPS->bs.colorSourceBlend = Blend::BLEND_SOURCEALPHA;
-		refToPS->bs.colorDestinationBlend = Blend::BLEND_INVERSESOURCEALPHA;
-		refToPS->bs.alphaSourceBlend = Blend::BLEND_ONE;
-		refToPS->bs.alphaDestinationBlend = Blend::BLEND_ZERO;
-		refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL ^ ColorWriteChannels::COLORWRITECHANNELS_ALPHA;
-		refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-		refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-		refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	
-	
-		refToPS->bs.multiSampleMask = -1;
-	
-		refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
-	
-		refToPS->bf = Renderer::Color{ 255,255,255,255 };
-	}
 
 	refToPS->dss.depthBufferEnable = false;
 	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
@@ -68,32 +46,37 @@ const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
 };
 
 
-Renderer::InputLayoutDescription EndRenderer::EndRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
+Renderer::InputLayoutDescription FXAARenderer::FXAARendererProvider::GetInputLayoutDescription(size_t definesFlags) {
 	return Renderer::InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
-EndRenderer::EndRendererProvider::~EndRendererProvider() {}
+FXAARenderer::FXAARendererProvider::~FXAARendererProvider() {}
 
-EndRenderer::EndRenderer(Renderer::IRenderer* renderer):renderer(renderer) {}
+FXAARenderer::FXAARenderer(Renderer::IRenderer* renderer):renderer(renderer) {}
 
-void EndRenderer::Init(void* shaderData, size_t dataSize) {
+void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
 		//delete provider;
 		delete factory;
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
-		provider = new EndRendererProvider(width, height);
-		factory = new EndRendererFactory(renderer, provider, shaderData, dataSize);
+		provider = new FXAARendererProvider(width, height);
+		factory = new FXAARendererFactory(renderer, provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
-	provider = new EndRendererProvider(width, height);
-	factory = new EndRendererFactory(renderer, provider, shaderData, dataSize);
+	provider = new FXAARendererProvider(width, height);
+	factory = new FXAARendererFactory(renderer, provider, shaderData, dataSize);
 
+	struct VertexFXAA
+	{
+		float2 pos;
+		float2 uv;
+	};
 
-	VertexEnd vertices[] =
+	VertexFXAA vertices[] =
 	{
 		{  float2(-1.0f, 1.0f),  float2(0.0f, 0.0f), },
 		{  float2(-1.0f, -1.0f),  float2(0.0f, 1.0f), },
@@ -103,10 +86,10 @@ void EndRenderer::Init(void* shaderData, size_t dataSize) {
 	vertexBuffer.buffersCount = 1;
 	vertexBuffer.vertexBuffers = new Buffer * [1]();
 	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
-	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(VertexEnd), sizeof(VertexEnd), SetDataOptions::SETDATAOPTIONS_NONE);
+	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(VertexFXAA), sizeof(VertexFXAA), SetDataOptions::SETDATAOPTIONS_NONE);
 	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
 	vertexBuffer.vertexOffset = new (UINT)(0);
-	vertexBuffer.vertexStride = new (UINT)(sizeof(VertexEnd));
+	vertexBuffer.vertexStride = new (UINT)(sizeof(VertexFXAA));
 	// Bind vertex buffer to pipeline
 
 
@@ -126,78 +109,99 @@ void EndRenderer::Init(void* shaderData, size_t dataSize) {
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 
-
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-
+	
 	diffuseSampler.filter = TextureFilter::TEXTUREFILTER_ANISOTROPIC;
 	diffuseSampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	diffuseSampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	diffuseSampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	diffuseSampler.maxAnisotropy = 16;
+
+	localBuffer.fxaaQualitySubpix			= 0.75;
+	localBuffer.fxaaQualityEdgeThreshold	= 0.166;
+	localBuffer.fxaaQualityEdgeThresholdMin	= 0.0833;
+	localBuffer.fxaaConsoleEdgeSharpness	= 8.0;
+	localBuffer.fxaaConsoleEdgeThreshold	= 0.125;
+	localBuffer.fxaaConsoleEdgeThresholdMin	= 0.05;
+	
+	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 }
 
-void EndRenderer::Init(LPCWSTR dirr) {}
+void FXAARenderer::Init(LPCWSTR dirr) {}
 
-void EndRenderer::Render(GraphicsBase& gfx) {
+void FXAARenderer::Render(GraphicsBase& gfx) {
+	int32_t width, height;
+	renderer->GetBackbufferSize(&width, &height);
 
 	RenderIMGUI(gfx);
 	
-	uint64_t flags = 0;
-	if (lightOnly)
-		flags|=ENDLIGHTONLY;
-	if (colorOnly)
-		flags|=ENDCOLORONLY;
-	if (bloomOnly)
-		flags|=ENDBLOOMONLY;
-	if (alphaOnly)
-		flags|=ENDALPHAONLY;
+	//uint64_t flags = 0;
+	//if (lightOnly)
+	//	flags|=ENDLIGHTONLY;
+	//if (colorOnly)
+	//	flags|=ENDCOLORONLY;
+	//if (bloomOnly)
+	//	flags|=ENDBLOOMONLY;
+	//if (alphaOnly)
+	//	flags|=ENDALPHAONLY;
+	
+	gfx.texturesManger.CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, preFXAA, preFXAART);
 
 	
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
-	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preFXAAcolorRT};
-	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->VerifyConstBuffer(constBuffer, FXAABuffer.slot);
+	renderer->SetConstBuffer(constBuffer, &localBuffer);
+
 	
+	RenderTargetBinding* target[1] = {&preFXAART};
+	renderer->SetRenderTargets(target, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.preFXAAcolor);
 
-	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->VerifyPixelTexture(2, gfx.texturesManger.directLights);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomBlured);
-
-	renderer->ApplyPipelineState(factory->GetState(ENDZERO | flags));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-	renderer->ApplyPipelineState(factory->GetState(ENDALPHA | flags));
-	renderer->VerifyPixelTexture(3, gfx.texturesManger.alphaSurfaces);
+	renderer->ApplyPipelineState(factory->GetState(FXAASETLUMA));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
+
+	
+	renderer->SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->VerifyPixelSampler(0, diffuseSampler);
+	renderer->VerifyPixelTexture(0, preFXAA);
+	renderer->ApplyPipelineState(factory->GetState(FXAAZERO));
+	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+
+	
 
 }
 
 
-void EndRenderer::RenderIMGUI(GraphicsBase& gfx)
+void FXAARenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
-	ImGui::Begin("Postprocess settings.");                          // Create a window called "Hello, world!" and append into it.
-
-	ImGui::Checkbox("ColorOnly", &colorOnly);
-	ImGui::Checkbox("LightOnly", &lightOnly);
-	ImGui::Checkbox("BloomOnly", &bloomOnly);
-	ImGui::Checkbox("AlphaOnly", &colorOnly);
+	ImGui::Begin("FXAA settings.");                          // Create a window called "Hello, world!" and append into it.
+//
+	ImGui::SliderFloat("fxaaQualitySubpix",           &localBuffer.fxaaQualitySubpix			,0.0, 1.0 , "%.3f");
+	ImGui::SliderFloat("fxaaQualityEdgeThreshold",    &localBuffer.fxaaQualityEdgeThreshold		,0.0, 1.0 , "%.3f");
+	ImGui::SliderFloat("fxaaQualityEdgeThresholdMin", &localBuffer.fxaaQualityEdgeThresholdMin	,0.0, 1.0 , "%.3f");
+	ImGui::SliderFloat("fxaaConsoleEdgeSharpness",    &localBuffer.fxaaConsoleEdgeSharpness		,0.0, 10.0, "%.3f");
+	ImGui::SliderFloat("fxaaConsoleEdgeThreshold",    &localBuffer.fxaaConsoleEdgeThreshold		,0.0, 1.0 , "%.3f");
+	ImGui::SliderFloat("fxaaConsoleEdgeThresholdMin", &localBuffer.fxaaConsoleEdgeThresholdMin	,0.0, 1.0 , "%.3f");
 	
 	ImGui::End();
 }
 
 
-EndRenderer::~EndRenderer()
+FXAARenderer::~FXAARenderer()
 {
 	delete vertexBuffer.vertexOffset;
 	delete vertexBuffer.vertexStride;
 	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
 	delete[] vertexBuffer.vertexBuffers;
 	renderer->AddDisposeIndexBuffer(indexBuffer);
+	renderer->AddDisposeConstBuffer(constBuffer);
 	//renderer->AddDisposeConstBuffer(constBuffer);
 	//delete provider;
 	delete factory;

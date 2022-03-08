@@ -69,6 +69,12 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 		break;
 	}
 
+	case ShaderType::FXAAShader:
+	{
+		gfx->managerFXAA.Init(shD.data, shD.dataSize);
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -95,7 +101,12 @@ void RenderDevice::SetCameraPosition(float3 m) {
 }
 
 bool RenderDevice::Present() {
-	return gfx->EndFrame();
+	return gfx->RenderFrame();
+}
+
+void RenderDevice::EndFrame()
+{
+	gfx->EndFrame();
 }
 
 void RenderDevice::SetSky(size_t side, const TextureData& data) {

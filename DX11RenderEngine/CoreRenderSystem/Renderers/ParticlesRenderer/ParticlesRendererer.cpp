@@ -48,11 +48,14 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 	if (!drawCalls.empty()) {
 		particlesBuffer.UpdateBuffers(true);
 
+		
+
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		size_t lastFlags = -1;
 
-		renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
+		RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
+		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 
 		constBuffer.view = gfx.viewMatrix;
 		constBuffer.projection = gfx.cameraProjection;

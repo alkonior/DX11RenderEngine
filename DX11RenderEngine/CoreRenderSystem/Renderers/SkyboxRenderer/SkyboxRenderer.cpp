@@ -118,7 +118,8 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
+	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
+	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 
 	renderer->VerifyConstBuffer(constBuffer, SkyboxTransform.slot);
 	localBuffer.projection = gfx.cameraProjection;

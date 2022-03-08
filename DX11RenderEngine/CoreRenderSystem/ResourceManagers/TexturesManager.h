@@ -56,6 +56,9 @@ public:
 	Renderer::Texture* bloomBlured;
 	Renderer::RenderTargetBinding bloomBluredRT;
 	
+	Renderer::Texture* preFXAAcolor;
+	Renderer::RenderTargetBinding preFXAAcolorRT;
+	
 	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
 
 	
