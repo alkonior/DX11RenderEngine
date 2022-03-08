@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "dxerr.h"
+#include "../dxerr/dxerr.h"
 #include "DxgiInfoManager.h"
 #include <exception>
 #include <string>

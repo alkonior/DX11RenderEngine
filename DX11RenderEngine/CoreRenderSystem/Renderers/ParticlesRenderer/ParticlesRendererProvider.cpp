@@ -35,7 +35,7 @@ void ParticlesRenderer::ParticlesRendererProvider::PatchPipelineState(Renderer::
 	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
 	refToPS->dss.stencilEnable = false;
 
-	refToPS->dss.depthBufferWriteEnable = false;
+	refToPS->dss.depthBufferWriteEnable = true;
 
 
 	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;

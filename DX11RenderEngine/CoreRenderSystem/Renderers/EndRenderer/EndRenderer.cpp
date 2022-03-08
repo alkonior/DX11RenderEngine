@@ -185,7 +185,7 @@ void EndRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::Checkbox("ColorOnly", &colorOnly);
 	ImGui::Checkbox("LightOnly", &lightOnly);
 	ImGui::Checkbox("BloomOnly", &bloomOnly);
-	ImGui::Checkbox("AlphaOnly", &colorOnly);
+	ImGui::Checkbox("AlphaOnly", &alphaOnly);
 	
 	ImGui::End();
 }

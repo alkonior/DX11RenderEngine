@@ -730,7 +730,7 @@ void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, v
 		0,
 		data,
 		dataLength);
-
+	delete backbufferTexture;
 }
 
 void D3D11Renderer::GetBackbufferSize(int32_t* w, int32_t* h) { *w = static_cast<int32_t>(backBufferWidth); *h = static_cast<int32_t>(backBufferHeight); }

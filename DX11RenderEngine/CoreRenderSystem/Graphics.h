@@ -1,8 +1,7 @@
 #pragma once
 #include "pch.h"
-#include "SimpleMath.h"
+#include "Utils/include/SimpleMath.h"
 #include "GraphicsBase.h"
-#include "Geometry.h"
 
 #include "Renderers/UIRenderer/UIRenderer.h"
 #include "Renderers/ModelRenderer/ModelRenderer.h"

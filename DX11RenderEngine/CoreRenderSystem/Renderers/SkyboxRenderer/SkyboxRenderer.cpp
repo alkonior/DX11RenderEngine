@@ -159,6 +159,7 @@ void SkyboxRenderer::SkyboxRendererProvider::PatchPipelineState(PipelineState* r
 
 
 	refToPS->dss.depthBufferEnable = true;
+	refToPS->dss.depthBufferWriteEnable = false;
 	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
 	refToPS->dss.stencilEnable = false;
 

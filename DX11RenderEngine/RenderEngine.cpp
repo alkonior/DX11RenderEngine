@@ -3,7 +3,6 @@
 #include "RenderEngine.h"
 #include "PixelShader2D.h"
 #include "VertexShader2D.h"
-#include "imgui/imgui_impl_win32.h"
 
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();

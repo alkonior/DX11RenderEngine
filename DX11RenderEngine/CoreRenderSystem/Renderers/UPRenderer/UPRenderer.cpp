@@ -1,5 +1,4 @@
 #include "UPRenderer.h"
-#include "UPRenderer.h"
 
 
 using namespace Renderer;

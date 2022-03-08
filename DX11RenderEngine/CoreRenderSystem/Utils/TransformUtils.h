@@ -1,5 +1,5 @@
 #pragma once
-#include"SimpleMath.h"
+#include"Utils/include/SimpleMath.h"
 
 #define float4 DirectX::SimpleMath::Vector4
 #define matrix DirectX::SimpleMath::Matrix

@@ -66,13 +66,14 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(manager3D.Render(*this););
 	renderer.EndEvent();
 
+	renderer.BeginEvent("Sky draw.");
+	GFX_CATCH_RENDER(managerSkybox.Render(*this););
+	renderer.EndEvent();
+	
 	renderer.BeginEvent("Particles draw.");
 	GFX_CATCH_RENDER(managerParticles.Render(*this););
 	renderer.EndEvent();
 
-	renderer.BeginEvent("Sky draw.");
-	GFX_CATCH_RENDER(managerSkybox.Render(*this););
-	renderer.EndEvent();
 	
 	renderer.BeginEvent("FXAA-pass.");
 	GFX_CATCH_RENDER(managerFXAA.Render(*this););

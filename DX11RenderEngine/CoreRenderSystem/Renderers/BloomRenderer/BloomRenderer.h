@@ -35,6 +35,8 @@ public:
 
 	~BloomRenderer();
 private:
+	int kernel;
+	
 	Renderer::ConstBuffer* constBuffer;
 	BloomCosntBuffer localBuffer;
 	

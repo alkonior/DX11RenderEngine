@@ -108,10 +108,12 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 	
-	localBuffer.intensity = 1;
-	localBuffer.radius = 5;
-	localBuffer.sigma = 5;
-	localBuffer.threshold = 0.5;
+	localBuffer.intensity = 0.175;
+	localBuffer.radius =		7;
+	localBuffer.sigma =			2;
+	localBuffer.threshold =	  0.45;
+
+	kernel = 4;
 }
 
 void BloomRenderer::Init(LPCWSTR dirr) {}
@@ -143,7 +145,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 
 	targets[0] = &bloom2RT;
 	targets[1] = &bloom1RT;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < kernel; i++)
 	{
 		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
@@ -197,6 +199,8 @@ void BloomRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::SliderFloat("Sigma.", &localBuffer.sigma, 0.01f, 5.0f);
 	
 	ImGui::SliderFloat("Threshold.", &localBuffer.threshold, 0.0f, 1.0);
+	
+	ImGui::SliderInt("Kernel.", &kernel, 1, 10);
 	
 	ImGui::End();
 }

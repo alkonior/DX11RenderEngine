@@ -2,16 +2,12 @@
 #include "pch.h"
 #include "D3D11Renderer/D3D11Renderer.h"
 #include "Utils/TransformUtils.h"
-#include "SimpleMath.h"
+#include "Utils/include/SimpleMath.h"
 
 #include "Utils/GDIPlusManager.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "ResourceManagers/ModelsManager.h"
 
-#ifdef _DEBUG
-#define USE_PIX_ON_ALL_ARCHITECTURES
-#include "pix3.h"
-#endif
 class GraphicsBase {
 
 static Renderer::PresentationParameters GenParams(HWND hWnd, size_t width, size_t height);

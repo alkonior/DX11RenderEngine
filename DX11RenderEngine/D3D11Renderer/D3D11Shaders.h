@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "IRenderer/Utils.h"
-#include "SimpleMath.h"
 
 namespace Renderer {
 
