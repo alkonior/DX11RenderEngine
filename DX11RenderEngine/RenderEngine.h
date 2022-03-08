@@ -22,6 +22,7 @@ struct RenderDevice {
 		ParticlesShader,
 		SkyShader,
 		EndBSPShader,
+		BloomShader,
 	};
 
 	struct ShaderData {

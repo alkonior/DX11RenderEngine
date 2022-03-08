@@ -1,15 +1,15 @@
 #include "TexturesManager.h"
 
 using namespace Renderer;
-TexturesManager::TexturesManager(Renderer::IRenderer* renderer):renderer(renderer) {
+TexturesManager::TexturesManager(IRenderer* renderer):renderer(renderer) {
 	int width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
-	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, directLights,   directLightsRT);
-	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, blumeMask,      blumeMaskRT);
-	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height, bloomBlured,    bloomBluredRT);
-	CreateRenderTarget(SurfaceFormat::SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, directLights,   directLightsRT);
+	CreateRenderTarget(SURFACEFORMAT_SINGLE, width, height, luminance,      luminanceRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, bloomBlured,    bloomBluredRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
 
 }
 
@@ -50,7 +50,7 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id) {
 void TexturesManager::UpdateTexture(const ImageUpdate& updateData) {
 	auto& pTexture = textures[updateData.id];
 	if (pTexture.texture == nullptr) {
-		pTexture.texture = renderer->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_COLOR, updateData.width, updateData.height, 1, 0);
+		pTexture.texture = renderer->CreateTexture2D(SURFACEFORMAT_COLOR, updateData.width, updateData.height, 1, 0);
 		//return;
 	}
 	renderer->SetTextureData2D(pTexture.texture, updateData.box.x, updateData.box.y, updateData.box.w, updateData.box.h,
@@ -71,7 +71,7 @@ TexturesManager::~TexturesManager() {
 	}
 	
 	for (auto& texture: renderTargets) {
-		renderer->AddDisposeTexture(texture);
+		renderer->AddDisposeTexture(texture.second);
 	}
 
 
@@ -79,9 +79,17 @@ TexturesManager::~TexturesManager() {
 
 void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget) {
 
+	if (renderTargets.count(texture) > 0)
+	{
+		RenderTargetBinding* rt[] = {(&renderTarget)};
+		renderer->SetRenderTargets(rt,1,nullptr,DepthFormat::DEPTHFORMAT_NONE,Viewport());
+		renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET,{0,0,0,0},0,0);
+		return;
+	}
+	
 	texture = renderer->CreateTexture2D(format, width, height, 1, true);
 
-	renderTargets.push_back(texture);
+	renderTargets[texture] = texture;
 	Viewport defVP = {
 		0,0,width,height,0.0,1.0
 	};

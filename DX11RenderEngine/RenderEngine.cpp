@@ -3,6 +3,7 @@
 #include "RenderEngine.h"
 #include "PixelShader2D.h"
 #include "VertexShader2D.h"
+#include "imgui/imgui_impl_win32.h"
 
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
@@ -34,44 +35,37 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	switch (shD.type) {
 	case ShaderType::UIShader:
 	{
-		//PixelShader2D::Release();
 		gfx->manager2D.Init(shD.data, shD.dataSize);
-		//PixelShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::ModelsShader:
 	{
-		//VertexShader2D::Release();
 		gfx->manager3D.Init(shD.data, shD.dataSize);
-		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::UPShader:
 	{
-		//VertexShader2D::Release();
 		gfx->managerUP.Init(shD.data, shD.dataSize);
-		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::ParticlesShader:
 	{
-		//VertexShader2D::Release();
 		gfx->managerParticles.Init(shD.data, shD.dataSize);
-		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::SkyShader:
 	{
-		//VertexShader2D::Release();
 		gfx->managerSkybox.Init(shD.data, shD.dataSize);
-		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::EndBSPShader:
 	{
-		//VertexShader2D::Release();
 		gfx->managerEndUP.Init(shD.data, shD.dataSize);
-		//VertexShader2D::Init(*gfx, shD.data, shD.dataSize);
+		break;
+	}
+	case ShaderType::BloomShader:
+	{
+		gfx->managerBloom.Init(shD.data, shD.dataSize);
 		break;
 	}
 
@@ -199,9 +193,9 @@ void RenderDevice::DrawParticles(const ParticlesMesh& particles, const Particles
 
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
-	//	return true;
-    //}
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+		return true;
+    }
 	return false;
 }
 

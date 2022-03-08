@@ -141,39 +141,18 @@ void EndRenderer::Init(LPCWSTR dirr) {}
 
 void EndRenderer::Render(GraphicsBase& gfx) {
 
-	RenderTargetBinding* targets[4];// = {
-	// &gfx.texturesManger.diffuseColorRT,
-	// &gfx.texturesManger.directLightsRT,
-	// &gfx.texturesManger.blumeMaskRT,
-	// &gfx.texturesManger.alphaSurfacesRT,
-	//};
 
-	targets[0] = &gfx.texturesManger.bloomBluredRT;
-	targets[1] = &gfx.texturesManger.blumeMaskRT;
-
-
+	
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
-
-	renderer->ApplyPipelineState(factory->GetState(ENDBLUME));
-	renderer->VerifyPixelSampler(0, diffuseSampler);
-	for (size_t i = 0; i < 4; i++) {
-		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
-		renderer->VerifyPixelTexture(0, targets[1]->texture);
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-		auto  buff = targets[0];
-		targets[0] = targets[1];
-		targets[1] = buff;
-	}
-
 
 	renderer->ApplyPipelineState(factory->GetState(ENDZERO));
 	renderer->SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 	renderer->VerifyPixelSampler(0, sampler);
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.directLights);
-	renderer->VerifyPixelTexture(2, targets[0]->texture);
+	renderer->VerifyPixelTexture(2, gfx.texturesManger.directLights);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomBlured);
 
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	renderer->ApplyPipelineState(factory->GetState(ENDALPHA));
@@ -183,4 +162,14 @@ void EndRenderer::Render(GraphicsBase& gfx) {
 
 }
 
-EndRenderer::~EndRenderer() {}
+EndRenderer::~EndRenderer()
+{
+	delete vertexBuffer.vertexOffset;
+	delete vertexBuffer.vertexStride;
+	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
+	delete[] vertexBuffer.vertexBuffers;
+	renderer->AddDisposeIndexBuffer(indexBuffer);
+	//renderer->AddDisposeConstBuffer(constBuffer);
+	//delete provider;
+	delete factory;
+}

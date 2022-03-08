@@ -6,12 +6,12 @@
 
 #include "Renderers/UIRenderer/UIRenderer.h"
 #include "Renderers/ModelRenderer/ModelRenderer.h"
-//#include "ImGUIRenderer.h"
+#include "Renderers/IMGUIRenderer/ImGUIRenderer.h"
 #include "Renderers/UPRenderer/UPRenderer.h"
 #include "Renderers/ParticlesRenderer/ParticlesRenderer.h"
 #include "Renderers/SkyboxRenderer/SkyboxRenderer.h"
 #include "Renderers/EndRenderer/EndRenderer.h"
-#include "imgui/imgui_impl_win32.h"
+#include "Renderers/BloomRenderer/BloomRenderer.h"
 
 
 #ifdef _DEBUG
@@ -70,13 +70,14 @@ public:
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
 
-	UIRenderer manager2D;
-	ModelRenderer manager3D;
-	UPRenderer managerUP;
-	EndRenderer managerEndUP;
-	//ImGUIRenderer managerImGUI;
-	ParticlesRenderer managerParticles;
-	SkyboxRenderer managerSkybox;
+	UIRenderer			 manager2D;
+	ModelRenderer		 manager3D;
+	UPRenderer			 managerUP;
+	EndRenderer			 managerEndUP;
+	ParticlesRenderer	 managerParticles;
+	SkyboxRenderer	     managerSkybox;
+	BloomRenderer	     managerBloom;
+	ImGUIRenderer	     managerIMGUI;
 
 private:
 

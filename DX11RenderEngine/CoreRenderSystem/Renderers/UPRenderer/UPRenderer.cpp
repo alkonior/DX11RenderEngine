@@ -84,7 +84,7 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 	RenderTargetBinding* targets[4] = {
 		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.directLightsRT,
-		 &gfx.texturesManger.blumeMaskRT,
+		 &gfx.texturesManger.luminanceRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 
@@ -173,7 +173,7 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 	RenderTargetBinding* targets[4] = {
 		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.directLightsRT,
-		 &gfx.texturesManger.blumeMaskRT,
+		 &gfx.texturesManger.luminanceRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 

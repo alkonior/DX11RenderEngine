@@ -83,95 +83,14 @@
     <ClInclude Include="Bezier.h">
       <Filter>RenderEngine\MathUtils</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>RenderEngine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="DxgiInfoManager.h">
-      <Filter>RenderEngine\Exceptions</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsException.h">
-      <Filter>RenderEngine\Exceptions</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsBase.h">
-      <Filter>RenderEngine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureData.h">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="GDIPlusManager.h">
-      <Filter>RenderEngine\MathUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Renderer.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Texture.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>BaseRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="BlendState.h">
-      <Filter>BaseRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderer.h">
-      <Filter>BaseRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilState.h">
-      <Filter>BaseRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="SamplerState.h">
-      <Filter>BaseRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11RenderBuffer.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Shader.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Buffer.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11BackBuffer.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Shaders.h">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="RenderEngine.h">
       <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="PipelineFactory.h">
-      <Filter>BaseRenderer\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="PipelineState.h">
-      <Filter>BaseRenderer\PipelineState</Filter>
-    </ClInclude>
-    <ClInclude Include="UIRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="UIRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformUtils.h">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelData.h">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelRendererUtils.h">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
@@ -197,80 +116,158 @@
     <ClInclude Include="imgui\imgui_impl_win32.h">
       <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ModelsManager.h">
-      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
+    <ClInclude Include="CoreRenderSystem\CoreShaderInclude.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="TexturesManager.h">
-      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
+    <ClInclude Include="CoreRenderSystem\Graphics.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ImGUIRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
+    <ClInclude Include="CoreRenderSystem\GraphicsBase.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="UPRendererUtils.h">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\ModelsUtils\ModelData.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="UPRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\ModelsUtils\ModelUtils.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="UPRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\BloomRenderer\BloomConstBuffer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="CoreShaderInclude.h">
-      <Filter>RenderEngine\Primitives</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\BloomRenderer\BloomFactory.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="UIConstBuffers.h">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ModelConstBuffers.h">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="UPConstBuffers.h">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRendererConstBuffer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicMeshBuffer.h">
-      <Filter>RenderEngine\Primitives</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRendererFactory.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ParticlesRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ParticlesConstBuffer.h">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ModelRenderer\ModelConstBuffers.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ParticlesRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ParticlesUtils.h">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRendererFactory.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="SkyboxRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesConstBuffer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="SkyboxRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="SkyboxConstBuffers.h">
-      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="EndRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\BSPEndRendrerer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesUtils.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="EndRendererFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\BSPEndRendrerer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxConstBuffers.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="EndRendererConstBuffer.h">
-      <Filter>RenderEngine\Core\Rendereres\BSPEndRendrerer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderHolder.h">
-      <Filter>RenderEngine\Primitives</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="BloomRenderer.h">
-      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\UIRenderer\UIConstBuffers.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="BloomFactory.h">
-      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\UIRenderer\UIRenderer.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="BloomConstBuffer.h">
-      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
+    <ClInclude Include="CoreRenderSystem\Renderers\UIRenderer\UIRendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPConstBuffers.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererUtils.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\ModelsManager.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\TexturesManager.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Utils\DynamicMeshBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Utils\TextureData.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Utils\TransformUtils.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11BackBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11Buffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11RenderBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11Renderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11Shader.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11Shaders.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Renderer\D3D11Texture.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsExceptions\DxgiInfoManager.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsExceptions\GraphicsException.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\BlendState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\DepthStencilState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\IRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\PipelineState\PipelineFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\PipelineState\PipelineState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\SamplerState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\Utils.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\GDIPlusManager.h">
+      <Filter>RenderEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -295,51 +292,6 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
       <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="UIRendererFactory.cpp">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="UIRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\UIRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="DxgiInfoManager.cpp">
-      <Filter>RenderEngine\Exceptions</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsException.cpp">
-      <Filter>RenderEngine\Exceptions</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRendererFactory.cpp">
-      <Filter>RenderEngine\Core\Rendereres\ModelRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>RenderEngine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsBase.cpp">
-      <Filter>RenderEngine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="TexturesManager.cpp">
-      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelsManager.cpp">
-      <Filter>RenderEngine\Core\ResourcesManadgers</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11Renderer.cpp">
-      <Filter>RenderEngine\D3D11Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelData.cpp">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformUtils.cpp">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureData.cpp">
-      <Filter>RenderEngine\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="GDIPlusManager.cpp">
-      <Filter>RenderEngine\MathUtils</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\src\VertexTypes.cpp">
       <Filter>RenderEngine\MathUtils</Filter>
     </ClCompile>
@@ -349,49 +301,39 @@
     <ClCompile Include="Utils\src\SimpleMath.cpp">
       <Filter>RenderEngine\MathUtils</Filter>
     </ClCompile>
-    <ClCompile Include="PipelineFactory.cpp">
-      <Filter>BaseRenderer\PipelineState</Filter>
-    </ClCompile>
     <ClCompile Include="RenderEngine.cpp">
       <Filter>RenderEngine</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>RenderEngine</Filter>
     </ClCompile>
-    <ClCompile Include="ImGUIRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\IMGUIRenederer</Filter>
-    </ClCompile>
-    <ClCompile Include="UPRendererFactory.cpp">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="UPRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="UPRendererProvider.cpp">
-      <Filter>RenderEngine\Core\Rendereres\UPRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticlesRendererer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticlesRendererFactory.cpp">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticlesRendererProvider.cpp">
-      <Filter>RenderEngine\Core\Rendereres\ParticleRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyboxRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyboxRendererFactory.cpp">
-      <Filter>RenderEngine\Core\Rendereres\SkyboxRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="IRenderer.cpp" />
-    <ClCompile Include="EndRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\BSPEndRendrerer</Filter>
-    </ClCompile>
-    <ClCompile Include="BloomRenderer.cpp">
-      <Filter>RenderEngine\Core\Rendereres\BloomRenderer</Filter>
-    </ClCompile>
+    <ClCompile Include="CoreRenderSystem\Graphics.cpp" />
+    <ClCompile Include="CoreRenderSystem\GraphicsBase.cpp" />
+    <ClCompile Include="CoreRenderSystem\ModelsUtils\ModelData.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\EndRenderer\EndRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRendererFactory.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\UIRenderer\UIRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\UIRenderer\UIRendererFactory.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererProvider.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\ModelsManager.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\TexturesManager.cpp" />
+    <ClCompile Include="CoreRenderSystem\Utils\TextureData.cpp" />
+    <ClCompile Include="CoreRenderSystem\Utils\TransformUtils.cpp" />
+    <ClCompile Include="D3D11Renderer\D3D11Renderer.cpp" />
+    <ClCompile Include="GraphicsExceptions\DxgiInfoManager.cpp" />
+    <ClCompile Include="GraphicsExceptions\GraphicsException.cpp" />
+    <ClCompile Include="IRenderer\PipelineState\PipelineFactory.cpp" />
+    <ClCompile Include="Utils\GDIPlusManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -423,5 +365,6 @@
     <FxCompile Include="..\..\..\baseq2\BSPEndShader.hlsl">
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\BloomShader.hlsl" />
   </ItemGroup>
 </Project>

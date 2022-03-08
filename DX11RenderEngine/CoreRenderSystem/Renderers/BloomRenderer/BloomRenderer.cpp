@@ -1,5 +1,7 @@
 #include "BloomRenderer.h"
 
+#include "imgui/imgui.h"
+
 using namespace Renderer;
 
 BloomRenderer::BloomRendererProvider::BloomRendererProvider(int32_t width, int32_t height) {}
@@ -34,15 +36,18 @@ void BloomRenderer::BloomRendererProvider::PatchPipelineState(Renderer::Pipeline
 	refToPS->rs.multiSampleAntiAlias = 0;
 	refToPS->rs.scissorTestEnable = 0;
 	refToPS->rs.slopeScaleDepthBias = 0.0f;
+
 }
 
-//const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
-//{
-//};
+const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
+{
+	{"Position",  0, DXGI_FORMAT_R32G32_FLOAT,  0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,  0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
 
 
-Renderer::InputLayoutDescription BloomRenderer::BloomRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
-	return Renderer::InputLayoutDescription{ (void*)nullptr, 0 };
+InputLayoutDescription BloomRenderer::BloomRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
+	return Renderer::InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
 BloomRenderer::BloomRendererProvider::~BloomRendererProvider() {}
@@ -59,86 +64,139 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 		factory = new BloomRendererFactory(renderer, provider, shaderData, dataSize);
 		return;
 	}
+	struct VertexEnd
+	{
+		float2 pos;
+		float2 uv;
+	};
 
+	VertexEnd vertices[] =
+		{
+		{  float2(-1.0f, 1.0f),  float2(0.0f, 0.0f), },
+		{  float2(-1.0f, -1.0f),  float2(0.0f, 1.0f), },
+		{  float2(1.0f,  1.0f),  float2(1.0f, 0.0f), },
+		{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), }
+		};
+	vertexBuffer.buffersCount = 1;
+	vertexBuffer.vertexBuffers = new Buffer * [1]();
+	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
+	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(VertexEnd), sizeof(VertexEnd), SetDataOptions::SETDATAOPTIONS_NONE);
+	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
+	vertexBuffer.vertexOffset = new (UINT)(0);
+	vertexBuffer.vertexStride = new (UINT)(sizeof(VertexEnd));
+	// Bind vertex buffer to pipeline
+
+
+	// create index buffer
+	const uint16_t indices[] =
+	{
+		0,1,2,3
+	};
+	indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, 12);
+	renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
+
+	
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new BloomRendererProvider(width, height);
 	factory = new BloomRendererFactory(renderer, provider, shaderData, dataSize);
 
-
-	//VertexBloom vertices[] =
-	//{
-	//	{  float2(-1.0f, 1.0f),  float2(0.0f, 0.0f), },
-	//	{  float2(-1.0f, -1.0f),  float2(0.0f, 1.0f), },
-	//	{  float2(1.0f,  1.0f),  float2(1.0f, 0.0f), },
-	//	{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), }
-	//};
-	//vertexBuffer.buffersCount = 1;
-	//vertexBuffer.vertexBuffers = new Buffer * [1]();
-	//vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
-	//renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4, sizeof(VertexBloom), sizeof(VertexBloom), SetDataOptions::SETDATAOPTIONS_NONE);
-	////GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-	//vertexBuffer.vertexOffset = new (UINT)(0);
-	//vertexBuffer.vertexStride = new (UINT)(sizeof(VertexBloom));
-	//// Bind vertex buffer to pipeline
-	//
-	//
-	//// create index buffer
-	//const uint16_t indices[] =
-	//{
-	//	0,1,2,3
-	//};
-	//indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, 12);
-	//renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
-
-
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+
+	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
+	
+	localBuffer.intensity = 1;
+	localBuffer.radius = 5;
+	localBuffer.sigma = 5;
+	localBuffer.threshold = 0.5;
 }
 
 void BloomRenderer::Init(LPCWSTR dirr) {}
 
 void BloomRenderer::Render(GraphicsBase& gfx) {
+	int32_t width, height;
+	renderer->GetBackbufferSize(&width, &height);
 
-	RenderTargetBinding* targets[4];// = {
-	// &gfx.texturesManger.diffuseColorRT,
-	// &gfx.texturesManger.directLightsRT,
-	// &gfx.texturesManger.blumeMaskRT,
-	// &gfx.texturesManger.alphaSurfacesRT,
-	//};
+	RenderTargetBinding* targets[3];
 
-	targets[0] = &gfx.texturesManger.bloomBluredRT;
-	targets[1] = &gfx.texturesManger.blumeMaskRT;
+	gfx.texturesManger.CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, bloom1, bloom1RT);
+	gfx.texturesManger.CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, bloom2, bloom2RT);
 
+	renderer->ApplyVertexBufferBinding(vertexBuffer);
+	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
-	renderer->ApplyPipelineState(factory->GetState(BLOOMZERO));
+	RenderIMGUI(gfx);
+	
+	renderer->VerifyConstBuffer(constBuffer, BloomCosntants.slot);
+	renderer->SetConstBuffer(constBuffer, &localBuffer);
+	
+	targets[0] = &bloom1RT;
+	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
+	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
 	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.luminance);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.diffuseColor);
+	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+
+	targets[0] = &bloom2RT;
+	targets[1] = &bloom1RT;
+	for (int i = 0; i < 4; i++)
+	{
+		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+		renderer->VerifyPixelTexture(0, targets[1]->texture);
+		
+		renderer->ApplyPipelineState(factory->GetState(BLOOMVERTICAL));
+		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		targets[2] = targets[0];
+		targets[0] = targets[1];
+		targets[1] = targets[2];
 
 		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
+
+		renderer->ApplyPipelineState(factory->GetState(BLOOMHORISONTAL));
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-		auto  buff = targets[0];
+		
+		targets[2] = targets[0];
 		targets[0] = targets[1];
-		targets[1] = buff;
+		targets[1] = targets[2];
+	}
+
+	targets[0] = &gfx.texturesManger.bloomBluredRT;
 	
+	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+	renderer->ApplyPipelineState(factory->GetState(BLOOMEND));
+	renderer->VerifyPixelTexture(0, targets[1]->texture);
 
-
-	//renderer->ApplyPipelineState(factory->GetState(ENDZERO));
-	//renderer->SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
-	//renderer->VerifyPixelSampler(0, sampler);
-	//
-	//renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	//renderer->VerifyPixelTexture(1, gfx.texturesManger.directLights);
-	//renderer->VerifyPixelTexture(2, targets[0]->texture);
-	//
-	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-	//renderer->ApplyPipelineState(factory->GetState(ENDALPHA));
-	//renderer->VerifyPixelTexture(3, gfx.texturesManger.alphaSurfaces);
-	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-
-
+	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	
 }
 
-BloomRenderer::~BloomRenderer() {}
+BloomRenderer::~BloomRenderer(){
+	delete vertexBuffer.vertexOffset;
+	delete vertexBuffer.vertexStride;
+	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);
+	delete[] vertexBuffer.vertexBuffers;
+	renderer->AddDisposeIndexBuffer(indexBuffer);
+	renderer->AddDisposeConstBuffer(constBuffer);
+	//delete provider;
+	delete factory;
+}
+
+void BloomRenderer::RenderIMGUI(GraphicsBase& gfx)
+{	
+	ImGui::Begin("Bloom settings.");                          // Create a window called "Hello, world!" and append into it.
+          
+	ImGui::SliderFloat("Intensity.", &localBuffer.intensity, 0.0f, 1.0f);
+	
+	ImGui::SliderInt("Radius.", &localBuffer.radius, 0, 10);
+	       
+	ImGui::SliderFloat("Sigma.", &localBuffer.sigma, 0.01f, 5.0f);
+	
+	ImGui::SliderFloat("Threshold.", &localBuffer.threshold, 0.0f, 1.0);
+	
+	ImGui::End();
+}

@@ -1,4 +1,3 @@
-#pragma once
 #ifdef __cplusplus
 #pragma once
 #include "Utils/TransformUtils.h"
@@ -6,10 +5,10 @@
 #endif
 
 struct BloomCosntBuffer {
-	uint16_t radius;
+	int radius;
 	float sigma;
 	float threshold;
 	float intensity;
 };
 
-STRUCTURE(0, BloomCosntBuffer, BloomBuffer)
+STRUCTURE(0, BloomCosntBuffer, BloomCosntants)

@@ -485,10 +485,6 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture) {
 						1,
 						D3D11Texture::NullTexture.shaderView.GetAddressOf()
 					));
-					GFX_THROW_INFO_ONLY(context->PSSetSamplers(
-						index,
-						1,
-						pixelSamplers[index].GetAddressOf()));
 				}
 
 			}

@@ -8,6 +8,7 @@
 
 
 #include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -17,15 +18,23 @@ using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	:GraphicsBase(hWnd, width, height),
-	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer), managerParticles(&renderer), managerSkybox(&renderer),
-	managerEndUP(&renderer){
+	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer),
+	managerParticles(&renderer), managerSkybox(&renderer),
+	managerEndUP(&renderer), managerBloom(&renderer)
+{
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
+	
 	//managerImGUI.Init();
 	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
 }
 
 void Graphics::BeginFrame() {
-	//managerImGUI.BeginFrame(*this);
+	managerIMGUI.BeginFrame(*this);
 
 	manager3D.Clear();
 	managerUP.Clear(*this);
@@ -41,6 +50,11 @@ bool Graphics::EndFrame() {
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	renderer.EndEvent();
 
+
+	renderer.BeginEvent("Bloom pass.");
+	GFX_CATCH_RENDER(managerBloom.Render(*this););
+	renderer.EndEvent();
+	
 
 	renderer.BeginEvent("End BSP draw.");
 	GFX_CATCH_RENDER(managerEndUP.Render(*this););
@@ -63,22 +77,11 @@ bool Graphics::EndFrame() {
 	GFX_CATCH_RENDER(manager2D.Render(););
 	renderer.EndEvent();
 	
-
-
-
+	renderer.BeginEvent("IMGUI draw.");
+	managerIMGUI.Render();
+	renderer.EndEvent();
+	
 	renderer.SwapBuffers();
-	//
-	//
-	//#ifndef NDEBUG
-	//	infoManager.Set();
-	//#endif
-	//	if (FAILED(hr = pSwap->Present(1u, 0u))) {
-	//		if (hr == DXGI_ERROR_DEVICE_REMOVED) {
-	//			throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
-	//		} else {
-	//			throw GFX_EXCEPT(hr);
-	//		}
-	//	}
 	return success;
 }
 

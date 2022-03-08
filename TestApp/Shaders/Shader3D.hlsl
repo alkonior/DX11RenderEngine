@@ -16,7 +16,7 @@ struct VSIn {
 #endif
 
 
-struct VSOut {
+struct PSIn {
 	float4 pos : SV_Position;
 	float2 uv  : TEXCOORD;
 };
@@ -35,8 +35,8 @@ cbuffer LerpExternalData {
 #endif
 
 
-VSOut vsIn(VSIn input) {
-	VSOut vso;
+PSIn vsIn(VSIn input) {
+	PSIn vso;
 
 #ifdef LERP
 	float3 worldPosition = input.pos1 * alpha + (1 - alpha) * input.pos2;
@@ -55,7 +55,7 @@ Texture2D tex : register(t0);
 SamplerState basicSampler : register(s0);
 
 
-float4 psIn(VSOut input) : SV_Target
+float4 psIn(PSIn input) : SV_Target
 {
 	return float4(1.0, 0,0, 1.0f);
 #ifdef RED

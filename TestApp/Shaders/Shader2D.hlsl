@@ -3,7 +3,7 @@ struct VSIn {
 	float2 uv  : TEXCOORD;
 };
 
-struct VSOut {
+struct PSIn {
 	float4 pos : SV_Position;
 	float2 uv  : TEXCOORD;
 };
@@ -16,8 +16,8 @@ cbuffer externalData {
 }
 
 
-VSOut vsIn(VSIn input) {
-	VSOut vso;
+PSIn vsIn(VSIn input) {
+	PSIn vso;
 	vso.pos = mul(float4(input.pos.x, input.pos.y, 0.0f, 1.0f), transform);
 	vso.uv = input.uv*uvScale+uvShift;
 	return vso;
@@ -29,7 +29,7 @@ Texture2D tex : register(t0);
 SamplerState basicSampler : register(s0);
 
 
-float4 psIn(VSOut input) : SV_Target
+float4 psIn(PSIn input) : SV_Target
 {
 #ifdef RED
 	return float4(1,0, 0.0f ,1.0f);

@@ -1,6 +1,6 @@
 #pragma once
-#include "IRenderer.h"
-#include "GraphicsBase.h"
+#include "IRenderer/IRenderer.h"
+#include "CoreRenderSystem/GraphicsBase.h"
 #include "BloomFactory.h"
 #include "BloomConstBuffer.h"
 #include "ResourceManagers/TexturesManager.h"
@@ -35,9 +35,22 @@ public:
 
 	~BloomRenderer();
 private:
+	Renderer::ConstBuffer* constBuffer;
+	BloomCosntBuffer localBuffer;
+	
 
+	Renderer::VertexBufferBinding vertexBuffer;
+	Renderer::Buffer* indexBuffer;
 
+	Renderer::Texture* bloom1;
+	Renderer::RenderTargetBinding  bloom1RT;
+	
+	Renderer::Texture* bloom2;
+	Renderer::RenderTargetBinding  bloom2RT;
+	
+	
 	Renderer::SamplerState sampler;
 
+	void RenderIMGUI(GraphicsBase& gfx);
 };
 
