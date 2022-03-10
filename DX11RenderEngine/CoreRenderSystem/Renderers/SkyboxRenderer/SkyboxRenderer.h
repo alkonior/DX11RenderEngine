@@ -26,7 +26,7 @@ class SkyboxRenderer {
 public:
 
 
-	SkyboxRenderer(Renderer::IRenderer* renderer);
+	SkyboxRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

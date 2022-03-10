@@ -25,7 +25,7 @@ class EndRenderer {
 public:
 
 
-	EndRenderer(Renderer::IRenderer* renderer);
+	EndRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

@@ -19,6 +19,7 @@ namespace Renderer {
 
 struct IRenderer {
 
+	static IRenderer* renderer;
 
 	/* Creates a rendering context for use on the calling thread.
 	 *

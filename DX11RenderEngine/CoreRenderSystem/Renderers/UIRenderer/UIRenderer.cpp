@@ -4,7 +4,7 @@ using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
 
-UIRenderer::UIRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
+UIRenderer::UIRenderer() :renderer(IRenderer::renderer) {}
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

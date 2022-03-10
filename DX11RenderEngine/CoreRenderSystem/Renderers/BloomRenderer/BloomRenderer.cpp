@@ -52,7 +52,7 @@ InputLayoutDescription BloomRenderer::BloomRendererProvider::GetInputLayoutDescr
 
 BloomRenderer::BloomRendererProvider::~BloomRendererProvider() {}
 
-BloomRenderer::BloomRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
+BloomRenderer::BloomRenderer() :renderer(IRenderer::renderer) {}
 
 void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

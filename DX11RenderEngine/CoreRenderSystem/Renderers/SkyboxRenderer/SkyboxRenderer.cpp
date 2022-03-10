@@ -4,7 +4,7 @@ using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
 
-SkyboxRenderer::SkyboxRenderer(Renderer::IRenderer* renderer) :renderer(renderer) {}
+SkyboxRenderer::SkyboxRenderer() :renderer(IRenderer::renderer) {}
 
 void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

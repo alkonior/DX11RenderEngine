@@ -52,7 +52,7 @@ Renderer::InputLayoutDescription FXAARenderer::FXAARendererProvider::GetInputLay
 
 FXAARenderer::FXAARendererProvider::~FXAARendererProvider() {}
 
-FXAARenderer::FXAARenderer(Renderer::IRenderer* renderer):renderer(renderer) {}
+FXAARenderer::FXAARenderer():renderer(IRenderer::renderer) {}
 
 void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

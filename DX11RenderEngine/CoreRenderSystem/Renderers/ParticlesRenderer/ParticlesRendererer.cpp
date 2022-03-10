@@ -2,8 +2,8 @@
 
 using namespace Renderer;
 
-ParticlesRenderer::ParticlesRenderer(IRenderer* renderer) :
-	renderer(renderer), particlesBuffer(renderer, 1000, 200) {}
+ParticlesRenderer::ParticlesRenderer() :
+	renderer(IRenderer::renderer), particlesBuffer(1000, 200) {}
 
 
 void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {

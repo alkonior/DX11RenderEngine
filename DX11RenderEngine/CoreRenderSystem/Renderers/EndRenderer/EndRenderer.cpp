@@ -74,7 +74,7 @@ Renderer::InputLayoutDescription EndRenderer::EndRendererProvider::GetInputLayou
 
 EndRenderer::EndRendererProvider::~EndRendererProvider() {}
 
-EndRenderer::EndRenderer(Renderer::IRenderer* renderer):renderer(renderer) {}
+EndRenderer::EndRenderer():renderer(IRenderer::renderer) {}
 
 void EndRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

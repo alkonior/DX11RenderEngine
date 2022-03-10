@@ -32,5 +32,3 @@ void ImGUIRenderer::Render() {
 	}
 }
 
-void ImGUIRenderer::Destroy() {
-}

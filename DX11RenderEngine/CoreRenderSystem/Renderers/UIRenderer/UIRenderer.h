@@ -44,7 +44,7 @@ class UIRenderer {
 public:
 
 
-	UIRenderer(Renderer::IRenderer* renderer);
+	UIRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

@@ -4,8 +4,8 @@
 using namespace Renderer;
 
 
-UPRenderer::UPRenderer(Renderer::IRenderer* renderer) :
-	renderer(renderer), staticMeshes(renderer, 20000, 20000), dynamicMeshes(renderer, 2000, 2000) {}
+UPRenderer::UPRenderer() :
+	renderer(IRenderer::renderer), staticMeshes(20000, 20000), dynamicMeshes(2000, 2000) {}
 
 void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

@@ -54,8 +54,8 @@ public:
 	};
 
 
-	DynamicMeshBuffer(Renderer::IRenderer* renderer, size_t vertexBuffCapacity, size_t indexBuffCapacity) :
-		renderer(renderer), vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity) {
+	DynamicMeshBuffer(size_t vertexBuffCapacity, size_t indexBuffCapacity) :
+		renderer(Renderer::IRenderer::renderer), vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity) {
 
 		 mesh.vertexBuffer.buffersCount = 1;
 		 mesh.vertexBuffer.vertexBuffers = new Renderer::Buffer * [1]();

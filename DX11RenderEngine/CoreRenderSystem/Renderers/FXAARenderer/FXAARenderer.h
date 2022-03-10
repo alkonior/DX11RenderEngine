@@ -25,7 +25,7 @@ class FXAARenderer {
 public:
 
 
-	FXAARenderer(Renderer::IRenderer* renderer);
+	FXAARenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

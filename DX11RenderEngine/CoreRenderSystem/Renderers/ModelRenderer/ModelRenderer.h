@@ -49,7 +49,7 @@ class ModelRenderer {
 
 public:
 
-	ModelRenderer(Renderer::IRenderer* renderer);
+	ModelRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

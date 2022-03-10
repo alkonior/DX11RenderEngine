@@ -47,7 +47,7 @@ class UPRenderer {
 
 public:
 
-	UPRenderer(Renderer::IRenderer* renderer);
+	UPRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

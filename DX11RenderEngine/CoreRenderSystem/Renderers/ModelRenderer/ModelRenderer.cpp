@@ -8,7 +8,7 @@ ModelRenderer::DrawCall::DrawCall(ModelsManager::ModelCache model, TexturesManag
 ModelRenderer::DrawLerpCall::DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData& data) :
 	model(model), texture(texture), data(data) {}
 
-ModelRenderer::ModelRenderer(Renderer::IRenderer* renderer) : renderer(renderer) {}
+ModelRenderer::ModelRenderer() : renderer(IRenderer::renderer) {}
 
 void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {

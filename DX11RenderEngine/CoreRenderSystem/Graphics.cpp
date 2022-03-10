@@ -17,10 +17,7 @@
 using namespace Renderer;
 
 Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height),
-	manager2D(&renderer), manager3D(&renderer), managerUP(&renderer),
-	managerParticles(&renderer), managerSkybox(&renderer),
-	managerEndUP(&renderer), managerBloom(&renderer), managerFXAA(&renderer)
+	:GraphicsBase(hWnd, width, height)
 {
 	ImGui::CreateContext();
 	

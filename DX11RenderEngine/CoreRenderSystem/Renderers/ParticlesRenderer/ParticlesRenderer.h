@@ -35,7 +35,7 @@ class ParticlesRenderer {
 
 public:
 
-	ParticlesRenderer(Renderer::IRenderer* renderer);
+	ParticlesRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);

@@ -26,7 +26,7 @@ class BloomRenderer {
 public:
 
 
-	BloomRenderer(Renderer::IRenderer* renderer);
+	BloomRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
