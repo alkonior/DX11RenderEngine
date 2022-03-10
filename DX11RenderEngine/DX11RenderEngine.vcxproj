@@ -751,7 +751,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.cpp" />
-    <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />

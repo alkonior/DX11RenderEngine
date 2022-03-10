@@ -108,11 +108,10 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 	
-	localBuffer.intensity = 0.175;
-	localBuffer.radius =		7;
-	localBuffer.sigma =			2;
+	localBuffer.intensity = 5;
+	localBuffer.radius =		9;
+	localBuffer.sigma =			4.7;
 	localBuffer.threshold =	  0.45;
-
 	kernel = 4;
 }
 
@@ -192,7 +191,7 @@ void BloomRenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
 	ImGui::Begin("Bloom settings.");                          // Create a window called "Hello, world!" and append into it.
           
-	ImGui::SliderFloat("Intensity.", &localBuffer.intensity, 0.0f, 1.0f);
+	ImGui::SliderFloat("Intensity.", &localBuffer.intensity, 0.0f, 10.0f);
 	
 	ImGui::SliderInt("Radius.", &localBuffer.radius, 0, 10);
 	       

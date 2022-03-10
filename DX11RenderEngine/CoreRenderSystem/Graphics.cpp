@@ -23,8 +23,10 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	managerEndUP(&renderer), managerBloom(&renderer), managerFXAA(&renderer)
 {
 	ImGui::CreateContext();
+	
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
+	
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 	

@@ -26,6 +26,12 @@ const Renderer::ShaderDefines BloomRendererDefines[] = {
 class BloomRendererFactory :public Renderer::PipelineFactory {
 public:
 	BloomRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize)
-		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)BloomRendererDefines, std::size(BloomRendererDefines), shaderData, dataSize, D3DCOMPILE_DEBUG) {}
+		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)BloomRendererDefines, std::size(BloomRendererDefines), shaderData, dataSize,
+#ifdef DEBUG 
+		D3DCOMPILE_DEBUG
+#else
+0
+#endif
+) {}
 };
 

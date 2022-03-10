@@ -19,6 +19,12 @@ const Renderer::ShaderDefines FXAARendererDefines[] = {
 class FXAARendererFactory :public Renderer::PipelineFactory {
 public:
 	FXAARendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
-		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)FXAARendererDefines, std::size(FXAARendererDefines), shaderData, dataSize, D3DCOMPILE_DEBUG) {}
+		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)FXAARendererDefines, std::size(FXAARendererDefines), shaderData, dataSize,
+#ifdef DEBUG 
+		D3DCOMPILE_DEBUG
+#else
+0
+#endif
+) {}
 };
 

@@ -19,8 +19,17 @@ void ImGUIRenderer::Render() {
 	static bool show = true;
 	ImGui::ShowDemoWindow(&show);
 	
+	ImGuiIO& io = ImGui::GetIO();
+	
+	
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
 }
 
 void ImGUIRenderer::Destroy() {
