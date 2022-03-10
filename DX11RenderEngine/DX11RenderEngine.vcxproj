@@ -88,7 +88,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -210,6 +210,7 @@
     <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRenderer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererUtils.h" />
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\BlendStates.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\ModelsManager.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\TexturesManager.h" />
     <ClInclude Include="CoreRenderSystem\Utils\DynamicMeshBuffer.h" />
@@ -911,6 +912,7 @@
     <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\UPRenderer\UPRendererProvider.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\BlendStates.cpp" />
     <ClCompile Include="CoreRenderSystem\ResourceManagers\ModelsManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

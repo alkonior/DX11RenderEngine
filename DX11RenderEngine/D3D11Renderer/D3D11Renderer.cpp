@@ -2489,9 +2489,8 @@ namespace Renderer
         ApplyComputeShader(piplineState->cs);
         ApplyGeometryShader(piplineState->gs);
 
-        SetBlendState(piplineState->bs);
+        SetBlendState(*piplineState->bs);
         SetDepthStencilState(piplineState->dss);
-        SetBlendFactor(piplineState->bf);
         ApplyRasterizerState(piplineState->rs);
     }
 

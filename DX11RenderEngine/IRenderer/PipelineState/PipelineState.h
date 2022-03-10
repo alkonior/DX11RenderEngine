@@ -17,9 +17,8 @@ struct PipelineState {
 	ComputeShader* cs;
 
 	DepthStencilState dss;
-	BlendState bs;
+	BlendState* bs;
 	RasterizerState rs;
-	Color bf;
 
 };
 

@@ -7,6 +7,7 @@
 #include "Utils/GDIPlusManager.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "ResourceManagers/ModelsManager.h"
+#include "ResourceManagers\BlendStates.h"
 
 class GraphicsBase {
 

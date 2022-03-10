@@ -1,5 +1,6 @@
 #include "SkyboxRenderer.h"
 
+
 using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
@@ -144,18 +145,8 @@ void SkyboxRenderer::SkyboxRendererProvider::PatchPipelineState(PipelineState* r
 	//refToPS->bs.alphaBlendFunction = ;
 
 
-	refToPS->bs.enabled = false;
+	refToPS->bs = &BlendStates::NoAlpha;
 
-	refToPS->bs.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-	refToPS->bs.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
-
-	refToPS->bs.multiSampleMask = -1;
-
-	refToPS->bs.blendFactor = Renderer::Color{ 255,255,255,255 };
-
-	refToPS->bf = Renderer::Color{ 255,255,255,255 };
 
 
 	refToPS->dss.depthBufferEnable = true;

@@ -3,6 +3,7 @@
 #include "UIRendererFactory.h"
 #include "UIConstBuffers.h"
 #include "ResourceManagers/TexturesManager.h"
+#include "CoreRenderSystem\GraphicsBase.h"
 
 struct UIDrawData {
 
