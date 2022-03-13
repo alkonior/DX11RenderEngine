@@ -39,12 +39,9 @@ struct RenderDevice {
 
 	/* Presentation */
 
-	void OnResize(size_t width, size_t height);
 
 	void BeginFrame();
-	void SetPerspectiveMatrix(matrix m);
-	void SetViewMatrix(matrix m);
-	void SetCameraPosition(float3 m);
+	void SetRenderData(const RenderData& data);
 	bool Present();
 	void EndFrame();
 	void Clear(float r, float g, float b);

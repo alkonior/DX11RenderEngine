@@ -55,9 +55,6 @@ private:
 	DynamicMeshBuffer<ParticleVertex> particlesBuffer;
 
 
-	ParticlesCosntBuffer constBuffer;
-
-	Renderer::ConstBuffer* pDataCB;
 
 	std::vector<DrawCall> drawCalls;
 

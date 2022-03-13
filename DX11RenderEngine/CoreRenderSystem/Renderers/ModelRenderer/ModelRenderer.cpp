@@ -27,7 +27,6 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new ModelRendererFactory(renderer, provider, shaderData, dataSize);
 
 
-	pTransformCB = renderer->CreateConstBuffer(sizeof(transformBuffer));
 	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
 	vp.x = 0;
@@ -37,11 +36,6 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 
-	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
-	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.mipMapLevelOfDetailBias = 0;
 }
 
 void ModelRenderer::Init(LPCWSTR dirr) {
@@ -70,7 +64,6 @@ ModelRenderer::~ModelRenderer() { Destroy(); }
 
 void ModelRenderer::Destroy() {
 
-	renderer->AddDisposeConstBuffer(pTransformCB);
 	renderer->AddDisposeConstBuffer(pDataCB);
 	//delete provider;
 	delete factory;
@@ -86,15 +79,11 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffer(pTransformCB, ModelsTransform.slot);
-	renderer->VerifyConstBuffer(pDataCB, ModelsExtraData.slot);
+	renderer->VerifyConstBuffer(pDataCB, modelsCosntBuffer.slot);
 
 
-	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 
-
-	transformBuffer.view = gfx.viewMatrix;
-	transformBuffer.projection = gfx.cameraProjection;
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].flags != lastFlags) {
@@ -108,10 +97,6 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		auto  pTexture = drawCalls[i].texture.texture;
 		renderer->VerifyPixelTexture(0, pTexture);
 
-		transformBuffer.world = drawCalls[i].position.GetTransform();
-
-
-		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0,
 			drawCalls[i].model.primitiveCount);
@@ -151,14 +136,12 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 		auto  pTexture = drawLerpCalls[i].texture.texture;
 		renderer->VerifyPixelTexture(0, pTexture);
 
-		transformBuffer.world = drawLerpCalls[i].data.position.GetTransform();
 
 		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
 		dataBuffer.wh = float2(drawLerpCalls[i].texture.width, drawLerpCalls[i].texture.height);
 		dataBuffer.color = drawLerpCalls[i].data.color;
-
-
-		renderer->SetConstBuffer(pTransformCB, &transformBuffer);
+		dataBuffer.world = drawLerpCalls[i].data.position.GetTransform();
+		
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
 

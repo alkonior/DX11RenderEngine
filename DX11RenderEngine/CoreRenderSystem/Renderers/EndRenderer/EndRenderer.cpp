@@ -129,7 +129,7 @@ void EndRenderer::Render(GraphicsBase& gfx) {
 	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preFXAAcolorRT};
 	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 	
-	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelSampler(0, Samplers::point);
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(2, gfx.texturesManger.directLights);

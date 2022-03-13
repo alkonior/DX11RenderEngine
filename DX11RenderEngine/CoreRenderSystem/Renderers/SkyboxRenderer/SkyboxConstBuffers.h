@@ -4,9 +4,9 @@
 #include "../../CoreShaderInclude.h"
 #endif
 
-struct SkyboxCosntBuffer {
-	matrix projection;
-	matrix view;
+struct SkyboxCosntBuffer
+{
+    matrix skyboxView;
 };
 
-STRUCTURE(0, SkyboxCosntBuffer, SkyboxTransform)
+STRUCTURE(1, SkyboxCosntBuffer, skyboxCosntBuffer)

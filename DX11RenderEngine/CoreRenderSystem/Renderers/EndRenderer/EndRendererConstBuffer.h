@@ -9,4 +9,4 @@ struct EndCosntBuffer {
 	//matrix view;
 };
 
-STRUCTURE(0, EndCosntBuffer, EndBuffer)
+STRUCTURE(1, EndCosntBuffer, EndBuffer)

@@ -79,24 +79,13 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	}
 }
 
-void RenderDevice::OnResize(size_t width, size_t height) {
-	gfx->OnResize(width, height);
-}
 
 void RenderDevice::BeginFrame() {
 	gfx->BeginFrame();
 }
 
-void RenderDevice::SetPerspectiveMatrix(matrix m) {
-	gfx->SetCameraProjection(m);
-}
-
-void RenderDevice::SetViewMatrix(matrix m) {
-	gfx->SetCameraMatrix(m);
-}
-
-void RenderDevice::SetCameraPosition(float3 m) {
-	gfx->SetCameraPosition(m);
+void RenderDevice::SetRenderData(const RenderData& data){
+	gfx->SetRenderData(data);
 }
 
 bool RenderDevice::Present() {

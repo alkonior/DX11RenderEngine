@@ -23,7 +23,6 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	provider = new UPRendererProvider(width, height);
 	factory = new UPRendererFactory(renderer, provider, shaderData, dataSize);
 
-	pTransformCB = renderer->CreateConstBuffer(sizeof(transformBuffer));
 	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
 
@@ -98,16 +97,12 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffer(pTransformCB, UPTransform.slot);
-	renderer->VerifyConstBuffer(pDataCB, UPExtraData.slot);
+	renderer->VerifyConstBuffer(pDataCB, upCosntBuffer.slot);
 
-	renderer->VerifyPixelSampler(0, sampler);
-	renderer->VerifyPixelSampler(1, lightSampler);
+	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
+	renderer->VerifyPixelSampler(1, Samplers::anisotropic16);
 
 
-	transformBuffer.view = gfx.viewMatrix;
-	transformBuffer.projection = gfx.cameraProjection;
-	renderer->SetConstBuffer(pTransformCB, &transformBuffer);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].data.flags != lastFlags) {
@@ -123,16 +118,10 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		renderer->VerifyPixelTexture(1, pLightMap);
 	
 
-		auto newWorld = drawCalls[i].data.position.GetTransform();
-		if (transformBuffer.world != newWorld) {
-			transformBuffer.world = drawCalls[i].data.position.GetTransform();
-			renderer->SetConstBuffer(pTransformCB, &transformBuffer);
-		}
-
-		if (dataBuffer.color != drawCalls[i].data.light) {
-			dataBuffer.color = drawCalls[i].data.light;
-			renderer->SetConstBuffer(pDataCB, &dataBuffer);
-		}
+		dataBuffer.world = drawCalls[i].data.position.GetTransform();
+		dataBuffer.texOffset = drawCalls[i].data.texOffset;
+		dataBuffer.color = drawCalls[i].data.light;
+		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
 
 		if (drawCalls[i].data.dynamicLight)
@@ -182,7 +171,6 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 
 void UPRenderer::Destroy() {
 
-	renderer->AddDisposeConstBuffer(pTransformCB);
 	renderer->AddDisposeConstBuffer(pDataCB);
 	delete factory;
 }

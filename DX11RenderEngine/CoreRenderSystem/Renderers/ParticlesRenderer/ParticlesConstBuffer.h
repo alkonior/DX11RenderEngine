@@ -4,10 +4,5 @@
 #include "../../CoreShaderInclude.h"
 #endif
 
-struct ParticlesCosntBuffer {
-    //matrix world;
-    matrix view;
-    matrix projection;
-};
 
-STRUCTURE(0, ParticlesCosntBuffer, ParticlesCB)
+//STRUCTURE(0, ParticlesCosntBuffer, ParticlesCB)

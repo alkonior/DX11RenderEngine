@@ -1,7 +1,8 @@
 #ifndef HLSL
 #pragma once
-
+#include "Utils/TransformUtils.h"
 // COMMON
+
 
 struct CONST_HANDLE {
 	CONST_HANDLE(int slot) { this->slot = slot; }
@@ -25,6 +26,27 @@ struct TEXTURE_HANDLE {
 #else
 #define TEXTURE_2D(slot, type, typeName, name) const TEXTURE_HANDLE  name(slot);
 #endif
+
+
+struct MainConstants {
+	
+	matrix view;
+	matrix projection;
+	matrix inverseView;
+	matrix inverseProjection;
+	
+	matrix past_view;
+	matrix past_projection;
+	matrix past_inverseView;
+	matrix past_inverseProjection;
+	
+	float  dt;
+};
+
+
+STRUCTURE(0, MainConstants, mainConstants)
+
+
 
 /*
 // HEADER

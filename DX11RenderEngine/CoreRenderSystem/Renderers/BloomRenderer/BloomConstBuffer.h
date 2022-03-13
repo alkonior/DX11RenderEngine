@@ -11,4 +11,4 @@ struct BloomCosntBuffer {
 	float intensity;
 };
 
-STRUCTURE(0, BloomCosntBuffer, BloomCosntants)
+STRUCTURE(1, BloomCosntBuffer, BloomCosntants)

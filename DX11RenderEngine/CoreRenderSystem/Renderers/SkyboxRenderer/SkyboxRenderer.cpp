@@ -66,11 +66,6 @@ void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 
 
-	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
-	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-
 
 
 
@@ -122,12 +117,11 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
 	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
 
-	renderer->VerifyConstBuffer(constBuffer, SkyboxTransform.slot);
-	localBuffer.projection = gfx.cameraProjection;
-	localBuffer.view = (matrix::CreateRotationX(1.570796)*( gfx.viewMatrix.Transpose())).Transpose();
+	renderer->VerifyConstBuffer(constBuffer, skyboxCosntBuffer.slot);
+	localBuffer.skyboxView = (matrix::CreateRotationX(1.570796)*( gfx.localConstants.view.Transpose())).Transpose();
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 
-	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 	renderer->VerifyPixelTexture(0, skyTexture);
 
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,

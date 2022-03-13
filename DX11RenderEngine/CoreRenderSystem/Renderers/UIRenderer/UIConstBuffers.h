@@ -11,4 +11,4 @@ struct Shader2DCosntBuffer {
 	float4 color;
 };
 
-STRUCTURE(0, Shader2DCosntBuffer, UITransform)
+STRUCTURE(1, Shader2DCosntBuffer, UITransform)

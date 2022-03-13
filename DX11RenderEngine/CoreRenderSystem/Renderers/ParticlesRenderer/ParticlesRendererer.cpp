@@ -22,7 +22,6 @@ void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {
 	provider = new ParticlesRendererProvider(width, height);
 	factory = new ParticlesRendererFactory(renderer, provider, shaderData, dataSize);
 	
-	pDataCB = renderer->CreateConstBuffer(sizeof(constBuffer));
 
 	vp.x = 0;
 	vp.y = 0;
@@ -47,21 +46,14 @@ void ParticlesRenderer::Draw(const ParticlesMesh& particles, const ParticlesDraw
 void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 	if (!drawCalls.empty()) {
 		particlesBuffer.UpdateBuffers(true);
-
 		
-
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		size_t lastFlags = -1;
 
 		RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
 		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
-
-		constBuffer.view = gfx.viewMatrix;
-		constBuffer.projection = gfx.cameraProjection;
-		renderer->SetConstBuffer(pDataCB, &constBuffer);
-
-		renderer->VerifyConstBuffer(pDataCB, ParticlesCB.slot);
+		
 		renderer->ApplyMeshBuffersBinding(particlesBuffer.mesh);
 
 		for (size_t i = 0; i < drawCalls.size(); i++) {
@@ -91,6 +83,5 @@ ParticlesRenderer::~ParticlesRenderer()
 }
 
 void ParticlesRenderer::Destroy() {
-	renderer->AddDisposeConstBuffer(pDataCB);
 	delete factory;
 }

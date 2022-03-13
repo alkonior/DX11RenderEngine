@@ -124,7 +124,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	targets[0] = &bloom1RT;
 	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
 	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
-	renderer->VerifyPixelSampler(0, sampler);
+	renderer->VerifyPixelSampler(0, Samplers::point);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.luminance);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.diffuseColor);
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);

@@ -20,22 +20,26 @@ GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
 	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1),
 	modelsManadger(&renderer), texturesManger(&renderer) {
 
-
-		cameraProjection = matrix::CreatePerspective(width, height, 100, 1000);
+	pLocalConstants = renderer.CreateConstBuffer(sizeof(localConstants));
+	renderer.VerifyConstBuffer(pLocalConstants, mainConstants.slot);
 }
 
-void GraphicsBase::OnResize(size_t width, size_t height) {
 
+void GraphicsBase::SetRenderData(const RenderData& data){
+	localConstants.dt = data.time - time; 
+	time = data.time;
+	
+	localConstants.past_projection = localConstants.projection;
+	localConstants.past_inverseProjection = localConstants.inverseProjection;
+	localConstants.past_view = localConstants.view;
+	localConstants.past_inverseView = localConstants.inverseView;
+	localConstants.view = data.view.Transpose();
+	localConstants.inverseView = data.view.Invert().Transpose();
+
+	localConstants.projection = data.projection.Transpose();
+	localConstants.inverseProjection = data.projection.Invert().Transpose();
+	
+	renderer.SetConstBuffer(pLocalConstants, &localConstants);
+	
 }
 
-void GraphicsBase::SetCameraPosition(float3 position) {
-	cameraPosition = position;
-}
-
-void GraphicsBase::SetCameraMatrix(matrix position) {
-	viewMatrix = position;
-}
-
-void GraphicsBase::SetCameraProjection(matrix projection) {
-	cameraProjection = projection;
-}

@@ -66,13 +66,10 @@ private:
 
 	void Destroy();
 
-	Shader3DTranformCosntBuffer transformBuffer;
-	Shader3DDataCosntBuffer dataBuffer;
+	ModelsCosntBuffer dataBuffer;
 
-	Renderer::ConstBuffer* pTransformCB;
 	Renderer::ConstBuffer* pDataCB;
 
-	Renderer::SamplerState sampler;
 	std::vector<DrawCall> drawCalls;
 	std::vector<DrawLerpCall> drawLerpCalls;
 

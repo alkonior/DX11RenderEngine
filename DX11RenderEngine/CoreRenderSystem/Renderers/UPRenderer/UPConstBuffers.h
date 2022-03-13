@@ -4,16 +4,11 @@
 #include "CoreShaderInclude.h"
 #endif
 
-struct UPTranformCosntBuffer {
+
+struct UPCosntBuffer {
     matrix world;
-    matrix view;
-    matrix projection;
-};
-
-struct UPDataCosntBuffer {
     float4 color;
-    //float2 texOffset;
+    float2 texOffset;
 };
 
-STRUCTURE(0, UPTranformCosntBuffer, UPTransform)
-STRUCTURE(1, UPDataCosntBuffer, UPExtraData)
+STRUCTURE(1, UPCosntBuffer, upCosntBuffer)

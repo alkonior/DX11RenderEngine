@@ -13,4 +13,4 @@ struct FXAACosntBuffer {
 	float fxaaConsoleEdgeThresholdMin	;
 };
 
-STRUCTURE(0, FXAACosntBuffer, FXAABuffer)
+STRUCTURE(1, FXAACosntBuffer, FXAABuffer)

@@ -75,10 +75,8 @@ private:
 	//void ResizeBigIndexBuffer(size_t newIndexBuffSize);
 
 
-	UPTranformCosntBuffer transformBuffer;
-	UPDataCosntBuffer dataBuffer;
+	UPCosntBuffer dataBuffer;
 
-	Renderer::ConstBuffer* pTransformCB;
 	Renderer::ConstBuffer* pDataCB;
 
 	Renderer::SamplerState sampler;

@@ -43,7 +43,6 @@ private:
 
 	SkyboxCosntBuffer localBuffer;
 	Renderer::ConstBuffer* constBuffer;
-	Renderer::SamplerState sampler;
 
 };
 

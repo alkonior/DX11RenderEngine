@@ -5,17 +5,12 @@
 #endif
 
 
-struct Shader3DTranformCosntBuffer {
-    matrix world;
-    matrix view;
-    matrix projection;
-};
 
-struct Shader3DDataCosntBuffer {
+struct ModelsCosntBuffer {
+    matrix world;
     float4 color;
     float alpha;
     float2 wh;
 };
 
-STRUCTURE(0, Shader3DTranformCosntBuffer, ModelsTransform)
-STRUCTURE(1, Shader3DDataCosntBuffer, ModelsExtraData)
+STRUCTURE(1, ModelsCosntBuffer, modelsCosntBuffer)
