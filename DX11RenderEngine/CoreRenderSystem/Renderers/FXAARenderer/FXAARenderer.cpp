@@ -144,7 +144,7 @@ void FXAARenderer::Render(GraphicsBase& gfx) {
 
 	
 	RenderTargetBinding* target[1] = {&preFXAART};
-	renderer->SetRenderTargets(target, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->SetRenderTargets(target, 1, nullptr, vp);
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.preFXAAcolor);
 
@@ -153,7 +153,7 @@ void FXAARenderer::Render(GraphicsBase& gfx) {
 
 
 	
-	renderer->SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
 	renderer->VerifyPixelSampler(0, diffuseSampler);
 	renderer->VerifyPixelTexture(0, preFXAA);
 	renderer->ApplyPipelineState(factory->GetState(FXAAZERO));

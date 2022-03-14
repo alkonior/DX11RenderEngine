@@ -49,8 +49,7 @@ namespace Renderer
     IRenderer* IRenderer::renderer = nullptr;
 
     D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
-        IRenderer(presentationParameters, debugMode),
-        depthStencilBuffer(RENDERBUFFER_DEPTH)
+        IRenderer(presentationParameters, debugMode)
     {
         IRenderer::renderer = this;
 
@@ -200,11 +199,11 @@ namespace Renderer
         {
             dsClearFlags |= D3D11_CLEAR_STENCIL;
         }
-        if (dsClearFlags != 0 && depthStencilBuffer.texture != nullptr)
+        if (dsClearFlags != 0 && depthStencilBuffer != nullptr && depthStencilBuffer->texture != nullptr)
         {
             /* Clear! */
             GFX_THROW_INFO_ONLY(context->ClearDepthStencilView(
-                depthStencilBuffer.depth.dsView.Get(),
+                depthStencilBuffer->depth.dsView.Get(),
                 dsClearFlags,
                 depth,
                 (uint8_t)stencil
@@ -611,11 +610,11 @@ namespace Renderer
     }
 
     void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets,
-                                         Renderbuffer* depthStencilBuffer, DepthFormat depthFormat,
-                                         const Viewport viewport)
+                                         Renderbuffer* depthStencilBuffer, const Viewport viewport)
     {
         D3D11Texture* tex;
         D3D11Renderbuffer* rb;
+        this->depthStencilBuffer = (D3D11Renderbuffer*)depthStencilBuffer;
         ID3D11RenderTargetView* views[MAX_RENDERTARGET_BINDINGS];
         wrl::ComPtr<ID3D11RenderTargetView> comViews[MAX_RENDERTARGET_BINDINGS];
         int32_t i;
@@ -631,13 +630,22 @@ namespace Renderer
 
             ////std::lock_guard<std::mutex> guard(ctxLock);
             /* No need to discard textures, this is a backbuffer bind */
-            context->OMSetRenderTargets(
-                1,
-                views,
-                this->depthStencilBuffer.depth.dsView.Get()
-            );
-            //RestoreTargetTextures();
-
+            if (depthStencilBuffer == nullptr)
+            {
+                context->OMSetRenderTargets(
+                    1,
+                    views,
+                    NULL
+                );
+            }
+            else
+            {
+                context->OMSetRenderTargets(
+                    1,
+                    views,
+                    this->depthStencilBuffer->depth.dsView.Get()
+                );
+            }
             this->SetViewport(viewport, 0);
 
             renderTargetViews[0] = comViews[0];
@@ -687,20 +695,27 @@ namespace Renderer
             views[i++] = nullptr;
         }
 
-        /* Update depth stencil buffer */
-        D3D11Renderbuffer* dsb = &this->depthStencilBuffer;
-        if (depthStencilBuffer != nullptr)
-            dsb = (D3D11Renderbuffer*)depthStencilBuffer;
-
+        
 
         /* Actually set the render targets, finally. */
         //std::lock_guard<std::mutex> guard(ctxLock);
         DiscardTargetTextures(views, numRenderTargets);
-        GFX_THROW_INFO_ONLY(context->OMSetRenderTargets(
-            numRenderTargets,
-            views,
-            dsb->depth.dsView.Get()
-        ));
+        if (depthStencilBuffer == nullptr)
+        {
+            GFX_THROW_INFO_ONLY(context->OMSetRenderTargets(
+                numRenderTargets,
+                views,
+                NULL
+            ));
+        }
+        else
+        {
+            GFX_THROW_INFO_ONLY(context->OMSetRenderTargets(
+                numRenderTargets,
+                views,
+                 this->depthStencilBuffer->depth.dsView.Get()
+            ));
+        }
         RestoreTargetTextures();
 
 
@@ -772,7 +787,7 @@ namespace Renderer
 
     DepthFormat D3D11Renderer::GetBackbufferDepthFormat()
     {
-        return currentDepthFormat;
+        return  this->depthStencilBuffer->depth.format;
     }
 
 
@@ -963,6 +978,8 @@ namespace Renderer
     void D3D11Renderer::AddDisposeTexture(Texture* texture)
     {
         D3D11Texture* tex = (D3D11Texture*)texture;
+        if (texture == nullptr)
+            return;
 
         /* Unbind the texture */
         for (int i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1)
@@ -1178,11 +1195,12 @@ namespace Renderer
     {
         D3D11_TEXTURE2D_DESC desc;
         D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_DEPTH);
-
+        result->depth.dsView.Detach();
         /* Initialize the renderbuffer */
         result->multiSampleCount = multiSampleCount;
         result->depth.format = format;
-
+        D3D11Texture* texture = new D3D11Texture();
+        
         /* Create the backing texture */
         desc.Width = width;
         desc.Height = height;
@@ -1197,13 +1215,24 @@ namespace Renderer
         desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
         desc.CPUAccessFlags = 0;
         desc.MiscFlags = 0;
-
+        
         GFX_THROW_INFO(device->CreateTexture2D(
             &desc,
             NULL,
-            &result->handle
+            &texture->handle
         ));
-
+        
+        texture->isRenderTarget = false;
+        
+        device->CreateShaderResourceView(
+            result->handle.Get(),
+            NULL,
+            &texture->shaderView
+        );
+        
+        result->handle = texture->handle;
+        result->texture = texture;
+        
         /* Create the render target view */
         GFX_THROW_INFO(device->CreateDepthStencilView(
             result->handle.Get(),
@@ -1217,6 +1246,9 @@ namespace Renderer
     void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer)
     {
         D3D11Renderbuffer* d3dRenderbuffer = (D3D11Renderbuffer*)renderbuffer;
+        D3D11Texture* d3dTexture = (D3D11Texture*)(renderbuffer->texture);
+        AddDisposeTexture(d3dTexture);
+        
         int32_t i;
 
         if (d3dRenderbuffer->type == RENDERBUFFER_DEPTH)
@@ -1233,7 +1265,7 @@ namespace Renderer
             }
             d3dRenderbuffer->color.rtView = nullptr;
         }
-
+        
         d3dRenderbuffer->handle = nullptr;
         delete d3dRenderbuffer;
     }
@@ -1594,46 +1626,6 @@ namespace Renderer
         backBufferWidth = parameters.backBufferWidth;
         backBufferHeight = parameters.backBufferHeight;
 
-        //backBufferWidth = 1024;w:1024,h:576
-        //backBufferHeight = 583;
-
-        if (parameters.depthStencilFormat != DEPTHFORMAT_NONE)
-        {
-            depthStencilDesc.Width = parameters.backBufferWidth;
-            depthStencilDesc.Height = parameters.backBufferHeight;
-
-            depthStencilDesc.Width = 1024;
-            depthStencilDesc.Height = 576;
-
-            depthStencilDesc.MipLevels = 1;
-            depthStencilDesc.ArraySize = 1;
-            depthStencilDesc.Format = D3D11DepthFormat[parameters.depthStencilFormat];
-            depthStencilDesc.SampleDesc.Count = 1;
-            depthStencilDesc.SampleDesc.Quality = 0;
-            depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-            depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-            depthStencilDesc.CPUAccessFlags = 0;
-            depthStencilDesc.MiscFlags = 0;
-            GFX_THROW_INFO(device->CreateTexture2D(
-                &depthStencilDesc,
-                NULL,
-                &depthStencilBuffer.texture
-            ));
-
-            depthStencilBuffer.depth.format = parameters.depthStencilFormat;
-            /* Update the depth-stencil view */
-            depthStencilViewDesc.Format = depthStencilDesc.Format;
-            depthStencilViewDesc.Flags = 0;
-            depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-            depthStencilViewDesc.Texture2D.MipSlice = 0;
-            GFX_THROW_INFO(device->CreateDepthStencilView(
-                depthStencilBuffer.texture.Get(),
-                NULL,
-                &depthStencilBuffer.depth.dsView
-            ));
-        }
-
-
         /* Create a render target view for the swapchain */
         swapchainViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         swapchainViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -1650,15 +1642,6 @@ namespace Renderer
             NULL,
             &swapchainRTView
         ));
-
-        /* This is the default render target */
-        //SetRenderTargets(
-        //	NULL,
-        //	0,
-        //	NULL,
-        //	DEPTHFORMAT_NONE,
-        //	0
-        //);
     }
 
 
@@ -1867,7 +1850,8 @@ namespace Renderer
         0.0f, /* DepthFormat.None */
         (float)((1 << 16) - 1), /* DepthFormat.Depth16 */
         (float)((1 << 24) - 1), /* DepthFormat.Depth24 */
-        (float)((1 << 24) - 1) /* DepthFormat.Depth24Stencil8 */
+        (float)((1 << 24) - 1), /* DepthFormat.Depth24Stencil8 */
+        (float)((1 << 32) - 1)  /* DepthFormat.Depth32 */
     };
 
     static D3D11_CULL_MODE D3D11CullMode[] =
@@ -1897,13 +1881,13 @@ namespace Renderer
         wrl::ComPtr<ID3D11RasterizerState> result;
 
 
-        depthBias = state.depthBias * DepthBiasScale[currentDepthFormat];
+        //depthBias = state.depthBias * DepthBiasScale[];
 
 
         /* We have to make a new rasterizer state... */
         desc.AntialiasedLineEnable = 0;
         desc.CullMode = D3D11CullMode[state.cullMode];
-        desc.DepthBias = (int32_t)depthBias;
+        desc.DepthBias = 0;
         desc.DepthBiasClamp = D3D11_FLOAT32_MAX;
         desc.DepthClipEnable = 1;
         desc.FillMode = D3D11FillMode[state.fillMode];

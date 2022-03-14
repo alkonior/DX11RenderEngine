@@ -94,7 +94,7 @@ void Graphics::EndFrame()
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
-	renderer.SetRenderTargets(nullptr, 0, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+	renderer.SetRenderTargets(nullptr, 0, texturesManger.depthRBuffer, Viewport());
 	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
 	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);

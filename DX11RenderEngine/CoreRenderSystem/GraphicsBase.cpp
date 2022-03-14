@@ -17,8 +17,7 @@ PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t h
 }
 
 GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
-	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1),
-	modelsManadger(&renderer), texturesManger(&renderer) {
+	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1){
 
 	pLocalConstants = renderer.CreateConstBuffer(sizeof(localConstants));
 	renderer.VerifyConstBuffer(pLocalConstants, mainConstants.slot);

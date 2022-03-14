@@ -86,10 +86,8 @@ private:
 	size_t backBufferHeight;
 	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
 	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
-	//wrl::ComPtr<ID3D11Texture2D> depthStencilBuffer;
-	//wrl::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	D3D11Renderbuffer depthStencilBuffer;
-	DepthFormat currentDepthFormat;
+	
+	D3D11Renderbuffer* depthStencilBuffer;
 
 
 	std::mutex ctxLock;
@@ -128,7 +126,7 @@ public:
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
 	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
 
-	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, DepthFormat depthFormat, const Viewport viewports) override;
+	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, const Viewport viewports) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
 

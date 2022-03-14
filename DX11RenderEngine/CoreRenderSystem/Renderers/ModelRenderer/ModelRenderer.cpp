@@ -74,7 +74,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 
 	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthRBuffer, vp);
 
 
 	size_t lastFlags = -1;

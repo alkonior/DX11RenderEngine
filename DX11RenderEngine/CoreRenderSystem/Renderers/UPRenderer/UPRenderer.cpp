@@ -86,7 +86,7 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 
-	renderer->SetRenderTargets(targets, 4, NULL, DepthFormat::DEPTHFORMAT_NONE, Viewport());
+	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthRBuffer, Viewport());
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);
@@ -165,7 +165,7 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 
-	renderer->SetRenderTargets(targets, 4, NULL, DepthFormat::DEPTHFORMAT_NONE, Viewport());
+	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthRBuffer, Viewport());
 	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 

@@ -115,7 +115,7 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
 	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, vp);
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthRBuffer, vp);
 
 	renderer->VerifyConstBuffer(constBuffer, skyboxCosntBuffer.slot);
 	localBuffer.skyboxView = (matrix::CreateRotationX(1.570796)*( gfx.localConstants.view.Transpose())).Transpose();

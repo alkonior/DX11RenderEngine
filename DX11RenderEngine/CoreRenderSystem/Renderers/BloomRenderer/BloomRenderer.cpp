@@ -123,7 +123,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	
 	targets[0] = &bloom1RT;
 	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
-	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 	renderer->VerifyPixelSampler(0, Samplers::point);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.luminance);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.diffuseColor);
@@ -133,7 +133,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	targets[1] = &bloom1RT;
 	for (int i = 0; i < kernel; i++)
 	{
-		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+		renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
 		
 		renderer->ApplyPipelineState(factory->GetState(BLOOMVERTICAL));
@@ -142,7 +142,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 		targets[0] = targets[1];
 		targets[1] = targets[2];
 
-		renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+		renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
 
 		renderer->ApplyPipelineState(factory->GetState(BLOOMHORISONTAL));
@@ -155,7 +155,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 
 	targets[0] = &gfx.texturesManger.bloomBluredRT;
 	
-	renderer->SetRenderTargets(targets, 1, nullptr, DepthFormat::DEPTHFORMAT_D32, Viewport());
+	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 	renderer->ApplyPipelineState(factory->GetState(BLOOMEND));
 	renderer->VerifyPixelTexture(0, targets[1]->texture);
 

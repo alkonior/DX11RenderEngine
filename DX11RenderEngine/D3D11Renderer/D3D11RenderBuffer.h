@@ -26,7 +26,6 @@ struct D3D11Renderbuffer : Renderbuffer {
 			wrl::ComPtr<ID3D11DepthStencilView> dsView = nullptr;
 		} depth;
 	};
-	wrl::ComPtr<ID3D11Texture2D> texture;
 
 
 	~D3D11Renderbuffer() {

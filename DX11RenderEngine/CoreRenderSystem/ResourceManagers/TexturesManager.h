@@ -28,7 +28,7 @@ public:
 	};
 
 public:
-	TexturesManager(Renderer::IRenderer* renderer);
+	TexturesManager();
 
 	void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
 	void RegTexture(const TextureData& tx, size_t id);
@@ -42,6 +42,9 @@ public:
 	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
 	//RenderTeargets::
+
+	Renderer::Renderbuffer* depthRBuffer;
+	
 
 	Renderer::Texture* diffuseColor;
 	Renderer::Texture* directLights;

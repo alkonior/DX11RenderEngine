@@ -8,7 +8,10 @@ namespace Renderer {
 struct Texture {};
 struct Buffer {};
 struct ConstBuffer {};
-struct Renderbuffer {};
+struct Renderbuffer
+{
+	Texture* texture = nullptr;
+};
 
 struct VertexBufferBinding {
 	size_t buffersCount = 0;

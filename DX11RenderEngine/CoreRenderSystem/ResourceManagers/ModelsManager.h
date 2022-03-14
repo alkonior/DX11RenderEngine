@@ -19,7 +19,7 @@ public:
 	};
 
 public:
-	ModelsManager(Renderer::IRenderer* renderer);
+	ModelsManager();
 
 	void RegisterModel(const ModelData& model, size_t id);
 	void RegisterFramedModel(const FramedModelData& model, size_t id);

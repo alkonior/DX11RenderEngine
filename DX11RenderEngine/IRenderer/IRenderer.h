@@ -261,7 +261,6 @@ struct IRenderer {
 		RenderTargetBinding** renderTargets,
 		int32_t numRenderTargets,
 		Renderbuffer* depthStencilBuffer,
-		DepthFormat depthFormat,
 		const Viewport viewports
 	) = 0;
 

@@ -97,7 +97,7 @@ void UIRenderer::Render() {
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 	renderer->VerifyPixelSampler(0, Samplers::point);
 
-	renderer->SetRenderTargets(NULL, 0, NULL, DepthFormat::DEPTHFORMAT_NONE, vp);
+	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
 	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
