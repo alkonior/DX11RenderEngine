@@ -4,9 +4,10 @@
 #include "../../CoreShaderInclude.h"
 #endif
 
-struct EndCosntBuffer {
+struct MotionBlurCosntBuffer {
 	//matrix projection;
-	//matrix view;
+	int numSampes;
+	float strength;
 };
 
-STRUCTURE(1, EndCosntBuffer, EndBuffer)
+STRUCTURE(1, MotionBlurCosntBuffer, motionBlurCosntBuffer)

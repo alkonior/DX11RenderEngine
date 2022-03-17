@@ -9,21 +9,8 @@ void ParticlesRenderer::ParticlesRendererProvider::PatchPipelineState(Renderer::
 	refToPS->bs = &BlendStates::Alpha;
 
 
-
-
-	refToPS->dss.depthBufferEnable = true;
-	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
-	refToPS->dss.stencilEnable = false;
-
-	refToPS->dss.depthBufferWriteEnable = true;
-
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
+	refToPS->dss = &DepthStencilStates::NoWrite;
+	refToPS->rs = &RasterizerStates::ClockWise;
 
 }
 
@@ -38,4 +25,8 @@ Renderer::InputLayoutDescription ParticlesRenderer::ParticlesRendererProvider::G
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
-ParticlesRenderer::ParticlesRendererProvider::~ParticlesRendererProvider() {}
+const char* ParticlesRenderer::ParticlesRendererProvider::GetShaderName()
+{
+	return "Particles shader";
+}
+

@@ -50,27 +50,28 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	renderer.EndEvent();
 
+	renderer.BeginEvent("Motion blur draw.");
+	GFX_CATCH_RENDER(managerMB.Render(*this););
+	renderer.EndEvent();
+	
+	renderer.BeginEvent("Models draw.");
+	GFX_CATCH_RENDER(manager3D.Render(*this););
+	renderer.EndEvent();
+	
+	renderer.BeginEvent("Sky draw.");
+	GFX_CATCH_RENDER(managerSkybox.Render(*this););
+	renderer.EndEvent();
+
+	renderer.BeginEvent("Particles draw.");
+	GFX_CATCH_RENDER(managerParticles.Render(*this););
+	renderer.EndEvent();
 
 	renderer.BeginEvent("Bloom pass.");
 	GFX_CATCH_RENDER(managerBloom.Render(*this););
 	renderer.EndEvent();
-	
 
 	renderer.BeginEvent("End BSP draw.");
-	GFX_CATCH_RENDER(managerEndUP.Render(*this););
-	renderer.EndEvent();
-
-
-	renderer.BeginEvent("Models draw.");
-	GFX_CATCH_RENDER(manager3D.Render(*this););
-	renderer.EndEvent();
-
-	renderer.BeginEvent("Sky draw.");
-	GFX_CATCH_RENDER(managerSkybox.Render(*this););
-	renderer.EndEvent();
-	
-	renderer.BeginEvent("Particles draw.");
-	GFX_CATCH_RENDER(managerParticles.Render(*this););
+	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	renderer.EndEvent();
 
 	
@@ -94,7 +95,7 @@ void Graphics::EndFrame()
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
-	renderer.SetRenderTargets(nullptr, 0, texturesManger.depthRBuffer, Viewport());
+	renderer.SetRenderTargets(nullptr, 0, texturesManger.depthBuffer, Viewport());
 	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
 	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);

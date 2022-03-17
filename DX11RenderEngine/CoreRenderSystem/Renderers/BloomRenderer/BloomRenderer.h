@@ -3,10 +3,11 @@
 #include "CoreRenderSystem/GraphicsBase.h"
 #include "BloomFactory.h"
 #include "BloomConstBuffer.h"
+#include "..\QuadRenderer.h"
 #include "ResourceManagers/TexturesManager.h"
 
 
-class BloomRenderer {
+class BloomRenderer : QuadRenderer {
 	struct BloomRendererProvider;
 	Renderer::IRenderer* renderer;
 	BloomRendererFactory* factory = nullptr;
@@ -19,7 +20,7 @@ class BloomRenderer {
 		BloomRendererProvider(int32_t width, int32_t  height);
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
-		virtual ~BloomRendererProvider() override;
+		virtual const char* GetShaderName() override;
 	};
 
 
@@ -40,9 +41,6 @@ private:
 	Renderer::ConstBuffer* constBuffer;
 	BloomCosntBuffer localBuffer;
 	
-
-	Renderer::VertexBufferBinding vertexBuffer;
-	Renderer::Buffer* indexBuffer;
 
 	Renderer::Texture* bloom1;
 	Renderer::RenderTargetBinding  bloom1RT;

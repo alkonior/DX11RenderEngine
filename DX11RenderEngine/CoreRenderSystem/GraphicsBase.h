@@ -8,6 +8,8 @@
 #include "ResourceManagers\TexturesManager.h"
 #include "ResourceManagers\ModelsManager.h"
 #include "ResourceManagers\BlendStates.h"
+#include "ResourceManagers\RasterizerStates.h"
+#include "ResourceManagers\DSStates.h"
 #include "ResourceManagers\Samplers.h"
 
 struct RenderData{

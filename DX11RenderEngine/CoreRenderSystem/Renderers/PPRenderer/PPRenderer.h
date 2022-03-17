@@ -1,52 +1,52 @@
 #pragma 
 #include "../../GraphicsBase.h"
 #include "../../ResourceManagers/TexturesManager.h"
-#include "EndRendererFactory.h"
-#include "EndRendererConstBuffer.h"
+#include "PPRendererFactory.h"
+#include "PPConstBuffer.h"
+#include "..\QuadRenderer.h"
 
 
-class EndRenderer {
-	struct EndRendererProvider;
+class PPRenderer : QuadRenderer {
+	struct PPRendererProvider;
 	Renderer::IRenderer* renderer;
-	EndRendererFactory* factory = nullptr;
-	EndRendererProvider* provider = nullptr;
+	PPRendererFactory* factory = nullptr;
+	PPRendererProvider* provider = nullptr;
 
 	Renderer::Texture* skyTexture = nullptr;
 
-	struct EndRendererProvider : public Renderer::IStateProvider {
+	struct PPRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
-		EndRendererProvider(int32_t width, int32_t  height);
+		PPRendererProvider(int32_t width, int32_t  height);
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
-		virtual ~EndRendererProvider() override;
+		virtual const char* GetShaderName() override;
 	};
 
 
 public:
 
 
-	EndRenderer();
+	PPRenderer();
 
 	void Init(void* shaderData, size_t dataSize);
 	void Init(LPCWSTR dirr);
 
 	void Render(GraphicsBase& gfx);
 
-	~EndRenderer();
+	~PPRenderer();
 private:
-	Renderer::Viewport vp;
-
-	Renderer::VertexBufferBinding vertexBuffer;
-	Renderer::Buffer* indexBuffer;
 
 	Renderer::SamplerState diffuseSampler;
 	Renderer::SamplerState sampler;
 
+	PPCosntBuffer localData;
+	Renderer::ConstBuffer* pConstBuffer;
 	//Settings
 	bool bloomOnly;
 	bool colorOnly;
 	bool lightOnly;
 	bool alphaOnly;
+	bool blureOnly;
 
 	
 	void RenderIMGUI(GraphicsBase& gfx);

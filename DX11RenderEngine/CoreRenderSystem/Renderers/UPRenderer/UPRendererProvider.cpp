@@ -15,27 +15,12 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 		refToPS->bs = &BlendStates::Alpha;
 	}
 
-
-
-
-	refToPS->dss.depthBufferEnable = true;
-	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
-	refToPS->dss.stencilEnable = false;
-
+	refToPS->dss = &DepthStencilStates::DSS;
+	refToPS->rs = &RasterizerStates::ClockWise;
+	
 	if (definesFlags & (UPALPHA)) {
-		refToPS->dss.depthBufferWriteEnable = false;
+		refToPS->dss = &DepthStencilStates::NoWrite;
 	}
-
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
-	//refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	//refToPS->rs.fillMode = FillMode::FILLMODE_WIREFRAME;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
-
 }
 
 
@@ -50,4 +35,8 @@ Renderer::InputLayoutDescription UPRenderer::UPRendererProvider::GetInputLayoutD
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
-UPRenderer::UPRendererProvider::~UPRendererProvider() {}
+const char* UPRenderer::UPRendererProvider::GetShaderName()
+{
+	return "BSP shader";
+}
+

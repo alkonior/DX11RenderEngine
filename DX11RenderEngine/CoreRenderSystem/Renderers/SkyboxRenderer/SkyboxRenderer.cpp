@@ -114,8 +114,11 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
 
-	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthRBuffer, vp);
+	RenderTargetBinding* targets[] = {
+		&gfx.texturesManger.diffuseColorRT,
+		&gfx.texturesManger.lightColorRT,
+	};
+	renderer->SetRenderTargets(targets, 2, gfx.texturesManger.depthBuffer, vp);
 
 	renderer->VerifyConstBuffer(constBuffer, skyboxCosntBuffer.slot);
 	localBuffer.skyboxView = (matrix::CreateRotationX(1.570796)*( gfx.localConstants.view.Transpose())).Transpose();
@@ -142,19 +145,8 @@ void SkyboxRenderer::SkyboxRendererProvider::PatchPipelineState(PipelineState* r
 	refToPS->bs = &BlendStates::NoAlpha;
 
 
-
-	refToPS->dss.depthBufferEnable = true;
-	refToPS->dss.depthBufferWriteEnable = false;
-	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
-	refToPS->dss.stencilEnable = false;
-
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
+	refToPS->dss = &DepthStencilStates::NoWrite;
+	refToPS->rs = &RasterizerStates::All;
 }
 
 
@@ -165,6 +157,11 @@ const D3D11_INPUT_ELEMENT_DESC SkyboxInputElements[] =
 
 InputLayoutDescription SkyboxRenderer::SkyboxRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
 	return InputLayoutDescription{ (void*)SkyboxInputElements, std::size(SkyboxInputElements) };
+}
+
+const char* SkyboxRenderer::SkyboxRendererProvider::GetShaderName()
+{
+	return "Skybox";
 }
 
 SkyboxRenderer::SkyboxRendererProvider::~SkyboxRendererProvider() {}

@@ -51,8 +51,8 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 		renderer->GetBackbufferSize(&width, &height);
 		size_t lastFlags = -1;
 
-		RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-		renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthRBuffer, vp);
+		RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.alphaSurfacesRT };
+		renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, vp);
 		
 		renderer->ApplyMeshBuffersBinding(particlesBuffer.mesh);
 

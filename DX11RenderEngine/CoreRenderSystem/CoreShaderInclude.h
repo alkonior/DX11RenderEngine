@@ -39,6 +39,13 @@ struct MainConstants {
 	matrix past_projection;
 	matrix past_inverseView;
 	matrix past_inverseProjection;
+
+
+	matrix viewProjection;
+	matrix past_viewProjection;
+	matrix viewProjectionInverse;
+	matrix past_viewProjectionInverse;
+	
 	
 	float  dt;
 };

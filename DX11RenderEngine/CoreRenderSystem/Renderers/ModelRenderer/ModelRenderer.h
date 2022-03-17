@@ -4,6 +4,7 @@
 #include "ResourceManagers/TexturesManager.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "ModelConstBuffers.h"
+#include "..\..\..\..\..\..\ref_dx11\external\debug_console.h"
 
 struct LerpModelDrawData {
 	Transform position;
@@ -30,7 +31,7 @@ class ModelRenderer {
 		ModelRendererProvider(int32_t width, int32_t  height);
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
-		virtual ~ModelRendererProvider() override;
+		virtual const char* GetShaderName() override;
 	};
 	
 	struct DrawCall {

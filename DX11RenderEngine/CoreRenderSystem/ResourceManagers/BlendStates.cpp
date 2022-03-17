@@ -7,8 +7,8 @@ BlendState BlendStates::Alpha;
 int BlendStates::Init()
 {
     Alpha.enabled = true;
-    Alpha.colorBlendFunction = BLENDFUNCTION_ADD;;
-    Alpha.alphaBlendFunction = BLENDFUNCTION_MAX;
+    Alpha.colorBlendFunction = BLENDFUNCTION_ADD;
+    Alpha.alphaBlendFunction = BLENDFUNCTION_ADD;
     Alpha.colorSourceBlend = Blend::BLEND_SOURCEALPHA;
     Alpha.colorDestinationBlend = Blend::BLEND_INVERSESOURCEALPHA;
     Alpha.alphaSourceBlend = Blend::BLEND_ONE;

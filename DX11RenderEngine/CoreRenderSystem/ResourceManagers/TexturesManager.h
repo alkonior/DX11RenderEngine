@@ -43,17 +43,15 @@ public:
 
 	//RenderTeargets::
 
-	Renderer::Renderbuffer* depthRBuffer;
+	Renderer::Renderbuffer* depthBuffer;
 	
 
 	Renderer::Texture* diffuseColor;
-	Renderer::Texture* directLights;
-	Renderer::Texture* luminance;
+	Renderer::Texture* lightColor;
 	Renderer::Texture* alphaSurfaces;
 
 	Renderer::RenderTargetBinding diffuseColorRT;
-	Renderer::RenderTargetBinding directLightsRT;
-	Renderer::RenderTargetBinding luminanceRT;
+	Renderer::RenderTargetBinding lightColorRT;
 	Renderer::RenderTargetBinding alphaSurfacesRT;
 	
 	Renderer::Texture* bloomBlured;

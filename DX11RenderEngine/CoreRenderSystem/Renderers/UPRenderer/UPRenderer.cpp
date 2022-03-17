@@ -79,14 +79,13 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 
 void UPRenderer::Render(GraphicsBase& gfx) {
 	
-	RenderTargetBinding* targets[4] = {
+	RenderTargetBinding* targets[3] = {
 		 &gfx.texturesManger.diffuseColorRT,
-		 &gfx.texturesManger.directLightsRT,
-		 &gfx.texturesManger.luminanceRT,
+		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 
-	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthRBuffer, Viewport());
+	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, Viewport());
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);
@@ -145,8 +144,6 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		}
 
 	}
-
-
 }
 
 void UPRenderer::Flush() {
@@ -158,14 +155,13 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 	drawCalls.clear();
 
 
-	RenderTargetBinding* targets[4] = {
+	RenderTargetBinding* targets[3] = {
 		 &gfx.texturesManger.diffuseColorRT,
-		 &gfx.texturesManger.directLightsRT,
-		 &gfx.texturesManger.luminanceRT,
+		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 	};
 
-	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthRBuffer, Viewport());
+	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, Viewport());
 	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 

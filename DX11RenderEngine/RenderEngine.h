@@ -25,6 +25,7 @@ struct RenderDevice {
 		EndBSPShader,
 		BloomShader,
 		FXAAShader,
+		MBShader,
 	};
 
 	struct ShaderData {

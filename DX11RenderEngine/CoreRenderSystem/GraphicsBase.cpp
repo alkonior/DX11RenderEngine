@@ -32,11 +32,22 @@ void GraphicsBase::SetRenderData(const RenderData& data){
 	localConstants.past_inverseProjection = localConstants.inverseProjection;
 	localConstants.past_view = localConstants.view;
 	localConstants.past_inverseView = localConstants.inverseView;
+	localConstants.past_viewProjection = localConstants.viewProjection;
+	localConstants.past_viewProjectionInverse = localConstants.viewProjectionInverse;
+	
+
+	
 	localConstants.view = data.view.Transpose();
 	localConstants.inverseView = data.view.Invert().Transpose();
+	
 
 	localConstants.projection = data.projection.Transpose();
 	localConstants.inverseProjection = data.projection.Invert().Transpose();
+
+	matrix viewProjection = data.view * data.projection;
+	localConstants.viewProjection = viewProjection.Transpose();
+	localConstants.viewProjectionInverse = viewProjection.Invert().Transpose();
+	
 	
 	renderer.SetConstBuffer(pLocalConstants, &localConstants);
 	

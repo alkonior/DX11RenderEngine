@@ -765,41 +765,33 @@ struct IRenderer {
 	virtual void ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize) = 0;
 	virtual void ApplyMeshBuffersBinding(const MeshBindings& bindings) = 0;
 
+	struct ShaderData
+	{
+		void* shaderData; size_t dataSize; 
+		ShaderDefines* defines; size_t definesSize; 
+		void* includes;
+		const char* enteryPoint;
+		const char* target;
+		uint16_t flags;
+#ifdef _DEBUG
+		const char* name;
+#endif
+	};
 
 	virtual PixelShader* CompilePixelShader(
-		void* shaderData, size_t dataSize, 
-		ShaderDefines defines[], size_t definesSize, 
-		void* includes,
-		const char* enteryPoint,
-		const char* target,
-		uint16_t flags
+		const ShaderData& shaderData
 	) = 0;
 
 	virtual ComputeShader* CompileComputeShader(
-		void* shaderData, size_t dataSize, 
-		ShaderDefines defines[], size_t definesSize, 
-		void* includes,
-		const char* enteryPoint,
-		const char* target,
-		uint16_t flags
+		const ShaderData& shaderData
 	) = 0;
 
 	virtual GeometryShader* CompileGeometryShader(
-		void* shaderData, size_t dataSize, 
-		ShaderDefines defines[], size_t definesSize, 
-		void* includes,
-		const char* enteryPoint,
-		const char* target,
-		uint16_t flags
+		const ShaderData& shaderData
 	) = 0;
 	
 	virtual VertexShader* CompileVertexShader(
-		void* shaderData, size_t dataSize, 
-		ShaderDefines defines[], size_t definesSize, 
-		void* includes,
-		const char* enteryPoint,
-		const char* target,
-		uint16_t flags,
+		const ShaderData& shaderData,
 		void* inpitLayout,
 		size_t inputLayoutSize
 	) = 0;

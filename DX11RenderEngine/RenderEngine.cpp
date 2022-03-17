@@ -1,8 +1,6 @@
 #include "RenderEngine.h"
 #include "pch.h"
 #include "RenderEngine.h"
-#include "PixelShader2D.h"
-#include "VertexShader2D.h"
 
 void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 	if (gfx != nullptr) DestroyDevice();
@@ -59,7 +57,7 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	}
 	case ShaderType::EndBSPShader:
 	{
-		gfx->managerEndUP.Init(shD.data, shD.dataSize);
+		gfx->managerPostProcess.Init(shD.data, shD.dataSize);
 		break;
 	}
 	case ShaderType::BloomShader:
@@ -71,6 +69,12 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	case ShaderType::FXAAShader:
 	{
 		gfx->managerFXAA.Init(shD.data, shD.dataSize);
+		break;
+	}
+
+	case ShaderType::MBShader:
+	{
+		gfx->managerMB.Init(shD.data, shD.dataSize);
 		break;
 	}
 

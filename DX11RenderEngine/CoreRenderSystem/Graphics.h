@@ -1,21 +1,22 @@
 #pragma once
 #include "pch.h"
-#include "Utils/include/SimpleMath.h"
+#include "Utils\include\SimpleMath.h"
 #include "GraphicsBase.h"
 
-#include "Renderers/UIRenderer/UIRenderer.h"
-#include "Renderers/ModelRenderer/ModelRenderer.h"
-#include "Renderers/IMGUIRenderer/ImGUIRenderer.h"
-#include "Renderers/UPRenderer/UPRenderer.h"
-#include "Renderers/ParticlesRenderer/ParticlesRenderer.h"
-#include "Renderers/SkyboxRenderer/SkyboxRenderer.h"
-#include "Renderers/EndRenderer/EndRenderer.h"
-#include "Renderers/BloomRenderer/BloomRenderer.h"
-#include "Renderers/FXAARenderer/FXAARenderer.h"
+#include "Renderers\UIRenderer\UIRenderer.h"
+#include "Renderers\ModelRenderer\ModelRenderer.h"
+#include "Renderers\IMGUIRenderer\ImGUIRenderer.h"
+#include "Renderers\UPRenderer\UPRenderer.h"
+#include "Renderers\ParticlesRenderer\ParticlesRenderer.h"
+#include "Renderers\SkyboxRenderer\SkyboxRenderer.h"
+#include "Renderers\PPRenderer\PPRenderer.h"
+#include "Renderers\BloomRenderer\BloomRenderer.h"
+#include "Renderers\FXAARenderer\FXAARenderer.h"
+#include "Renderers\MotionBlurRenderer\MotionBlurRenderer.h"
 
 
 #ifdef _DEBUG
-#include "GraphicsExceptions/DxgiInfoManager.h"
+#include "GraphicsExceptions\DxgiInfoManager.h"
 #endif
 
 namespace sm = DirectX::SimpleMath;
@@ -73,8 +74,9 @@ public:
 
 	UIRenderer			 manager2D;
 	ModelRenderer		 manager3D;
+	MotionBlurRenderer	 managerMB;
 	UPRenderer			 managerUP;
-	EndRenderer			 managerEndUP;
+	PPRenderer			 managerPostProcess;
 	ParticlesRenderer	 managerParticles;
 	SkyboxRenderer	     managerSkybox;
 	BloomRenderer	     managerBloom;

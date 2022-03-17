@@ -16,9 +16,9 @@ struct PipelineState {
 	GeometryShader* gs;
 	ComputeShader* cs;
 
-	DepthStencilState dss;
+	DepthStencilState* dss;
 	BlendState* bs;
-	RasterizerState rs;
+	RasterizerState* rs;
 
 };
 
@@ -31,6 +31,7 @@ struct InputLayoutDescription {
 struct IStateProvider {
 	virtual void PatchPipelineState(PipelineState* refToPS, size_t definesFlags) = 0;
 	virtual InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) = 0;
+	virtual const char* GetShaderName() = 0;
 	virtual ~IStateProvider() = default;
 };
 

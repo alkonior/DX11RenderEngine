@@ -159,7 +159,6 @@ public:
 private:
 	void SetPresentationInterval(PresentInterval presentInterval);
 	void CreateBackbuffer(const PresentationParameters& parameters);
-	void CreateSwapChain(const PresentationParameters& pp);
 	void ResizeSwapChain(const PresentationParameters& pp);
 
 	std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>>				hashBS;
@@ -177,14 +176,25 @@ private:
 	void RestoreTargetTextures();
 public:
 
-	virtual PixelShader* CompilePixelShader(void* shaderData, size_t dataSize, ShaderDefines defines[ ], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
+	virtual PixelShader* CompilePixelShader(const ShaderData& shaderData) override;
 	virtual void ApplyPixelShader(PixelShader* pixelShader) override;
 	virtual void AddDisposePixelShader(PixelShader* pixelShader) override;
 
-	virtual VertexShader* CompileVertexShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags, void* inpitLayout, size_t inputLayoutSize) override;
+	virtual VertexShader* CompileVertexShader(const ShaderData& shaderData, void* inpitLayout, size_t inputLayoutSize) override;
 	virtual void AddDisposeVertexShader(VertexShader* vertexShader) override;
 	virtual void ApplyVertexShader(VertexShader* vertexShader) override;
 
+
+
+	virtual GeometryShader* CompileGeometryShader(const ShaderData& shaderData) override;
+	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
+	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
+	
+
+	virtual ComputeShader* CompileComputeShader(const ShaderData& shaderData);
+	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
+	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
+	
 	virtual ConstBuffer* CreateConstBuffer(size_t size) override;
 	virtual void VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) override;
 	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) override;
@@ -193,20 +203,7 @@ public:
 	virtual void BeginEvent(const char* name) override;
 	virtual void EndEvent() override;
 	virtual void SetMarker(const char* name) override;
-
-
-	virtual GeometryShader* CompileGeometryShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
-	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
-	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
-
-
-
-
-	virtual ComputeShader* CompileComputeShader(void* shaderData, size_t dataSize, ShaderDefines defines[], size_t definesSize, void* includes, const char* enteryPoint, const char* target, uint16_t flags) override;
-	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
-	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
-
-
+	
 	virtual Texture* CreateTextureCube(SurfaceFormat format, int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
 	virtual void SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) override;
 

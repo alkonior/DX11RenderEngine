@@ -42,23 +42,59 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 	}
 	{
 		ps = new PipelineState();
-
+			
 		auto definesArray = GetDefines(definesFlags);
-
-		ps->ps = renderer->CompilePixelShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, 
-			"psIn", "ps_4_0", compileFlags);
+		const char* name = provider->GetShaderName(); 
+		ps->ps = renderer->CompilePixelShader(
+			IRenderer::ShaderData{
+			shaderData, dataSize,
+			definesArray.data(),
+			definesArray.size(),
+			D3D_COMPILE_STANDARD_FILE_INCLUDE, 
+			"psIn", "ps_4_0", compileFlags,
+#ifdef _DEBUG
+				name
+#endif
+			}
+			);
 
 		auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-		ps->vs = renderer->CompileVertexShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			"vsIn", "vs_4_0", compileFlags, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize);
+		ps->vs = renderer->CompileVertexShader(
+			IRenderer::ShaderData{
+			shaderData, dataSize, definesArray.data(),
+			definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			"vsIn", "vs_4_0", compileFlags, 
+#ifdef _DEBUG
+				name
+#endif
+			},inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize
+			);
 
 		if (useShaders & UseGeometryShader) 
-			ps->gs = renderer->CompileGeometryShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "gsIn", "gs_4_0", compileFlags);
+			ps->gs = renderer->CompileGeometryShader(
+			IRenderer::ShaderData{
+			shaderData, dataSize, definesArray.data(),
+				definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				"gsIn", "gs_4_0", compileFlags,
+#ifdef _DEBUG
+				name
+#endif
+				}
+				);
 		else
 			ps->gs = nullptr;
 
 		if (useShaders & UseComputeShader) 
-			ps->cs = renderer->CompileComputeShader(shaderData, dataSize, definesArray.data(), definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE, "csIn", "cs_4_0", compileFlags);
+			ps->cs = renderer->CompileComputeShader(
+			IRenderer::ShaderData{
+			shaderData, dataSize, definesArray.data(),
+				definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				"csIn", "cs_4_0", compileFlags,
+#ifdef _DEBUG
+				name
+#endif
+				}
+				);
 		else
 			ps->cs = nullptr;
 

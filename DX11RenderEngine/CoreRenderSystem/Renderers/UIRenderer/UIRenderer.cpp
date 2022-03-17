@@ -172,19 +172,10 @@ UIRenderer::UIRendererProvider::UIRendererProvider(int32_t width, int32_t height
 
 void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, size_t definesFlags) {
 
-	//refToPS->bs.alphaBlendFunction = ;
 	refToPS->bs = &BlendStates::Alpha;
 
-	refToPS->dss.stencilEnable = false;
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_NONE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
-
-
+	refToPS->dss = &DepthStencilStates::NoDSS;
+	refToPS->rs = &RasterizerStates::CClockWise;
 }
 
 
@@ -198,5 +189,9 @@ InputLayoutDescription UIRenderer::UIRendererProvider::GetInputLayoutDescription
 	return InputLayoutDescription{ (void*)UIInputElements, std::size(UIInputElements) };
 }
 
-UIRenderer::UIRendererProvider::~UIRendererProvider() {}
+const char* UIRenderer::UIRendererProvider::GetShaderName()
+{
+	return "UI shader";
+}
+
 

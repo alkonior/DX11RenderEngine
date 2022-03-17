@@ -76,8 +76,9 @@ private:
 
 class CompileException : public HrException {
 	std::string compileError;
+	std::string shaderName;
 public:
-	CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept;
+	CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError, const char* shaderName) noexcept;
 	const char* what() const noexcept override;
 	//const char* GetType() const noexcept override;
 	//std::string GetErrorInfo() const noexcept;

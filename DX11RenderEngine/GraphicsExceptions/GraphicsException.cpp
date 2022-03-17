@@ -130,15 +130,20 @@ std::string InfoException::GetErrorInfo() const noexcept {
 	return info;
 }
 
-CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError) noexcept :
+CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs,
+	const char* compileError, const char* shaderName) noexcept :
 	HrException(line, file, hr, infoMsgs) {
 	this->compileError = std::string(compileError);
+	this->shaderName = std::string(shaderName);
 }
 
 const char* CompileException::what() const noexcept {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()<< std::endl
+		<< std::endl
+		<< "[Shader name:] " << shaderName
+		<< std::endl
 		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
 		<< "[Error String] " << GetErrorString() << std::endl
 		<< "[Description] " << GetErrorDescription() << std::endl;

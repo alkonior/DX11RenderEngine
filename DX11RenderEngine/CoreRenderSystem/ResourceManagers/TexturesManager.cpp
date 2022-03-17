@@ -5,11 +5,10 @@ TexturesManager::TexturesManager():renderer(IRenderer::renderer) {
 	int width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	depthRBuffer = renderer->GenDepthStencilRenderbuffer(width,height,DepthFormat::DEPTHFORMAT_D32,0);
+	depthBuffer = renderer->GenDepthStencilRenderbuffer(width,height,DepthFormat::DEPTHFORMAT_D32,0);
 
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, directLights,   directLightsRT);
-	CreateRenderTarget(SURFACEFORMAT_SINGLE, width, height, luminance,      luminanceRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, lightColor,   lightColorRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, bloomBlured,    bloomBluredRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, preFXAAcolor,   preFXAAcolorRT);
@@ -77,7 +76,7 @@ TexturesManager::~TexturesManager() {
 		renderer->AddDisposeTexture(texture.second);
 	}
 
-	renderer->AddDisposeRenderbuffer(depthRBuffer);
+	renderer->AddDisposeRenderbuffer(depthBuffer);
 }
 
 void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget) {

@@ -1,11 +1,10 @@
 #pragma 
-#include "../../GraphicsBase.h"
-#include "../../ResourceManagers/TexturesManager.h"
+#include "../QuadRenderer.h"
 #include "FXAARendererFactory.h"
 #include "FXAARendererConstBuffer.h"
 
 
-class FXAARenderer {
+class FXAARenderer: QuadRenderer {
 	struct FXAARendererProvider;
 	Renderer::IRenderer* renderer;
 	FXAARendererFactory* factory = nullptr;
@@ -18,7 +17,7 @@ class FXAARenderer {
 		FXAARendererProvider(int32_t width, int32_t  height);
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
-		virtual ~FXAARendererProvider() override;
+		virtual const char* GetShaderName() override;
 	};
 
 
@@ -36,24 +35,10 @@ public:
 private:
 	Renderer::ConstBuffer* constBuffer;
 	FXAACosntBuffer localBuffer;
-	Renderer::Viewport vp;
 
 
 	Renderer::Texture* preFXAA;
 	Renderer::RenderTargetBinding preFXAART;
-	
-	Renderer::VertexBufferBinding vertexBuffer;
-	Renderer::Buffer* indexBuffer;
-
-	Renderer::SamplerState diffuseSampler;
-	Renderer::SamplerState sampler;
-
-	//Settings
-	bool bloomOnly;
-	bool colorOnly;
-	bool lightOnly;
-	bool alphaOnly;
-
 	
 	void RenderIMGUI(GraphicsBase& gfx);
 };

@@ -74,7 +74,7 @@ void ModelRenderer::Render(const GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 
 	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthRBuffer, vp);
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;
@@ -160,21 +160,9 @@ void ModelRenderer::ModelRendererProvider::PatchPipelineState(Renderer::Pipeline
 
 	refToPS->bs = &BlendStates::NoAlpha;
 
+	refToPS->dss = &DepthStencilStates::DSS;
 
-	refToPS->dss.depthBufferEnable = true;
-	refToPS->dss.depthBufferFunction = CompareFunction::COMPAREFUNCTION_LESSEQUAL;
-	refToPS->dss.stencilEnable = false;
-
-
-	refToPS->rs.cullMode = CullMode::CULLMODE_CULLCLOCKWISEFACE;
-
-	if (definesFlags & ModelDefines::MBAD_UV)
-		refToPS->rs.cullMode = CullMode::CULLMODE_CULLCOUNTERCLOCKWISEFACE;
-	refToPS->rs.depthBias = 0.0f;
-	refToPS->rs.fillMode = FillMode::FILLMODE_SOLID;
-	refToPS->rs.multiSampleAntiAlias = 0;
-	refToPS->rs.scissorTestEnable = 0;
-	refToPS->rs.slopeScaleDepthBias = 0.0f;
+	refToPS->rs = &RasterizerStates::CClockWise;
 
 
 }
@@ -215,5 +203,9 @@ InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescr
 
 }
 
-ModelRenderer::ModelRendererProvider::~ModelRendererProvider() {}
+const char* ModelRenderer::ModelRendererProvider::GetShaderName()
+{
+	return "Modles shader";
+}
+
 
