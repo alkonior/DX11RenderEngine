@@ -69,12 +69,16 @@ void ModelRenderer::Destroy() {
 	delete factory;
 }
 
-void ModelRenderer::Render(const GraphicsBase& gfx) {
+void ModelRenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	RenderTargetBinding* targets[] = { (RenderTargetBinding*)&gfx.texturesManger.preFXAAcolorRT };
-	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, vp);
+	RenderTargetBinding* targets[2] = {
+		&gfx.texturesManger.diffuseColorRT,
+		&gfx.texturesManger.lightColorRT,
+   };
+	
+	renderer->SetRenderTargets(targets, 2, gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;

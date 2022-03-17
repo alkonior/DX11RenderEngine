@@ -77,12 +77,14 @@ void MotionBlurRenderer::Render(GraphicsBase& gfx) {
 	renderer->SetRenderTargets(targets, 2, nullptr, vp);
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.lightColor);
+	renderer->VerifyPixelTexture(2, gfx.texturesManger.depthBuffer->texture);
 
 	renderer->ApplyPipelineState(factory->GetState(MBZERO));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
+	
+	renderer->VerifyPixelTexture(2, nullptr);
 	targets[0] = &gfx.texturesManger.diffuseColorRT;
 	targets[1] = &gfx.texturesManger.lightColorRT;
 	
@@ -100,7 +102,7 @@ void MotionBlurRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::Begin("Motion blur settings.");                          // Create a window called "Hello, world!" and append into it.
 //
 	ImGui::SliderFloat("Strength",           &localBuffer.strength		,0.0, 1.0 , "%.3f");
-	ImGui::SliderInt("NumSamples",    &localBuffer.numSampes		,0.0, 1.0 , "%.3f");
+	ImGui::SliderInt("NumSamples",    &localBuffer.numSampes		,1, 20 , "%.3f");
 	
 	ImGui::End();
 }

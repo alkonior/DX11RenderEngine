@@ -70,7 +70,7 @@ void PPRenderer::Init(void* shaderData, size_t dataSize) {
 	diffuseSampler.maxAnisotropy = 16;
 
 	pConstBuffer = renderer->CreateConstBuffer(sizeof(localData));
-	//localData.strength = 0;
+	localData.lightAdd = 0.3;
 	//localData.numSampes = 1;
 }
 
@@ -114,7 +114,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 
 void PPRenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
-	ImGui::Begin("Postprocess settings.");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("PostProcess settings.");                          // Create a window called "Hello, world!" and append into it.
 
 	ImGui::Checkbox("ColorOnly", &colorOnly);
 	ImGui::Checkbox("LightOnly", &lightOnly);
@@ -122,7 +122,7 @@ void PPRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::Checkbox("AlphaOnly", &alphaOnly);
 	ImGui::Checkbox("BlureOnly", &blureOnly);
 	//ImGui::SliderInt("MotionBlure samples", &localData.numSampes, 1,10);
-	//ImGui::SliderFloat("MotionBlure strength", &localData.strength, 0, 100);
+	ImGui::SliderFloat("light Add", &localData.lightAdd, 0, 1.0);
 	ImGui::End();
 }
 

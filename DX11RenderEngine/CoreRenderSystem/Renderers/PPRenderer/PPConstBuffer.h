@@ -5,6 +5,7 @@
 #endif
 
 struct PPCosntBuffer {
+    float lightAdd;
 };
 
 STRUCTURE(1, PPCosntBuffer, ppCosntBuffer)

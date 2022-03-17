@@ -81,7 +81,7 @@ TexturesManager::~TexturesManager() {
 
 void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget) {
 
-	if (renderTargets.count(texture) > 0)
+	if (renderTargets.count(&texture) > 0)
 	{
 		RenderTargetBinding* rt[] = {(&renderTarget)};
 		renderer->SetRenderTargets(rt,1,nullptr,Viewport());
@@ -91,7 +91,7 @@ void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t 
 	
 	texture = renderer->CreateTexture2D(format, width, height, 1, true);
 
-	renderTargets[texture] = texture;
+	renderTargets[&texture] = texture;
 	Viewport defVP = {
 		0,0,width,height,0.0,1.0
 	};

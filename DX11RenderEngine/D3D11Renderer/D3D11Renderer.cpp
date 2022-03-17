@@ -1190,9 +1190,18 @@ namespace Renderer
     static DXGI_FORMAT D3D11DepthRVFormat[] =
     {
         DXGI_FORMAT_UNKNOWN, /* DepthFormat.None */
-        DXGI_FORMAT_R16_FLOAT, /* DepthFormat.Depth16 */
-        DXGI_FORMAT_R32_FLOAT, /* DepthFormat.Depth24 */
-        DXGI_FORMAT_R32_FLOAT, /* DepthFormat.Depth24Stencil8 */
+        DXGI_FORMAT_R16_TYPELESS, /* DepthFormat.Depth16 */
+        DXGI_FORMAT_R24G8_TYPELESS, /* DepthFormat.Depth24 */
+        DXGI_FORMAT_R24G8_TYPELESS, /* DepthFormat.Depth24Stencil8 */
+        DXGI_FORMAT_R32_TYPELESS /* DepthFormat.Depth24Stencil8 */
+    };
+
+    static DXGI_FORMAT D3D11DepthSVFormat[] =
+    {
+        DXGI_FORMAT_UNKNOWN, /* DepthFormat.None */
+        DXGI_FORMAT_R16_UNORM, /* DepthFormat.Depth16 */
+        DXGI_FORMAT_R24_UNORM_X8_TYPELESS, /* DepthFormat.Depth24 */
+        DXGI_FORMAT_R24_UNORM_X8_TYPELESS, /* DepthFormat.Depth24Stencil8 */
         DXGI_FORMAT_R32_FLOAT /* DepthFormat.Depth24Stencil8 */
     };
 
@@ -1212,7 +1221,7 @@ namespace Renderer
         desc.Height = height;
         desc.MipLevels = 1;
         desc.ArraySize = 1;
-        desc.Format = D3D11DepthFormat[format];
+        desc.Format = D3D11DepthRVFormat[format];
         desc.SampleDesc.Count = (multiSampleCount > 1 ? multiSampleCount : 1);
         desc.SampleDesc.Quality = (
             multiSampleCount > 1 ? D3D11_STANDARD_MULTISAMPLE_PATTERN : 0
@@ -1230,7 +1239,7 @@ namespace Renderer
 
         texture->isRenderTarget = false;
         D3D11_SHADER_RESOURCE_VIEW_DESC rvDesc;
-        rvDesc.Format = D3D11DepthRVFormat[format];
+        rvDesc.Format = D3D11DepthSVFormat[format];
         rvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
         rvDesc.Texture2D.MipLevels = 1;
         rvDesc.Texture2D.MostDetailedMip = 0;
@@ -1247,7 +1256,7 @@ namespace Renderer
         dsDesc.Format = D3D11DepthFormat[format];
         dsDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         dsDesc.Texture2D.MipSlice = 0;
-
+        dsDesc.Flags = 0;
         /* Create the render target view */
         GFX_THROW_INFO(device->CreateDepthStencilView(
             result->handle.Get(),

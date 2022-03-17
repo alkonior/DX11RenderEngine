@@ -65,7 +65,7 @@ public:
 	
 	//Renderer::Texture* blumeMask;
 
-	std::unordered_map<Renderer::Texture*, Renderer::Texture*> renderTargets;
+	std::unordered_map<Renderer::Texture**, Renderer::Texture*> renderTargets;
 		
 	~TexturesManager();
 private:
