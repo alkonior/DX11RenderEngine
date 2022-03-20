@@ -19,6 +19,6 @@ const ShaderDefines UPRendererDefines[] = {
 
 class UPRendererFactory : public Renderer::PipelineFactory  {
 public:
-    UPRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
+    UPRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
 };
 

@@ -140,15 +140,6 @@
     <ClInclude Include="CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRenderer.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRendererConstBuffer.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreRenderSystem\Renderers\EndRenderer\EndRendererFactory.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -281,6 +272,51 @@
     <ClInclude Include="CoreRenderSystem\Renderers\FXAARenderer\FXAARendererFactory.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\BaseRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\BeamRenderer\BeamConstBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\PPRenderer\PPRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\PPRenderer\PPConstBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\PPRenderer\PPRendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurConstBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\QuadRenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\BlendStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\DSStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\RasterizerStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer\RasterizerState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -323,10 +359,8 @@
     <ClCompile Include="CoreRenderSystem\GraphicsBase.cpp" />
     <ClCompile Include="CoreRenderSystem\ModelsUtils\ModelData.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.cpp" />
-    <ClCompile Include="CoreRenderSystem\Renderers\EndRenderer\EndRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.cpp" />
-    <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />
@@ -347,12 +381,31 @@
     <ClCompile Include="IRenderer\PipelineState\PipelineFactory.cpp" />
     <ClCompile Include="Utils\GDIPlusManager.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\FXAARenderer\FXAARenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRendererer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRendererProvider.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\PPRenderer\PPRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\QuadRenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\BlendStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\DSStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\RasterizerStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\Samplers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
       <Filter>RenderEngine\MathUtils</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="..\..\..\baseq2\MotionBlurShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\MotionBlurShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\BloomShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\BSPShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\FXAAShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\ModelsShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\ParticlesShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\PostProcessShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\SkyShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\UIShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">
@@ -375,10 +428,8 @@
     <FxCompile Include="..\..\..\baseq2\SkyShader.hlsl">
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\BSPEndShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\..\baseq2\BloomShader.hlsl" />
     <FxCompile Include="..\..\..\baseq2\FXAAShader.hlsl" />
+    <FxCompile Include="..\..\..\baseq2\PostProcessShader.hlsl" />
   </ItemGroup>
 </Project>

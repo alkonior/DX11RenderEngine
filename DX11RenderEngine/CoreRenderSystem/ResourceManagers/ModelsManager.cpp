@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-ModelsManager::ModelsManager() :renderer(IRenderer::renderer) {}
+ModelsManager::ModelsManager() {}
 
 void ModelsManager::RegisterModel(const ModelData& model, size_t id) {
 	auto& pModel = models[id];

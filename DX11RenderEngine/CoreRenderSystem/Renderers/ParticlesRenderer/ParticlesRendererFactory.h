@@ -16,5 +16,5 @@ const ShaderDefines ParticlesRendererDefines[] = {
 
 class ParticlesRendererFactory : public Renderer::PipelineFactory {
 public:
-    ParticlesRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
+    ParticlesRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
 };

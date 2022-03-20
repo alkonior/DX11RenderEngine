@@ -1,12 +1,12 @@
 #include "PipelineFactory.h"
 using namespace Renderer;
 
-Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const ShaderDefines* defines, size_t defineCount, uint16_t compileFlags):
-	renderer(renderer),  provider(provider), defines(defines), defineCount(defineCount), compileFlags(compileFlags), dataSize(0), shaderData(nullptr)
+Renderer::PipelineFactory::PipelineFactory(IStateProvider* provider,const ShaderDefines* defines, size_t defineCount, uint16_t compileFlags):
+	provider(provider), defines(defines), defineCount(defineCount), compileFlags(compileFlags), dataSize(0), shaderData(nullptr)
 {}
 
-Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider,const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags):
-	PipelineFactory(renderer, provider, defines, defineCount, compileFlags)
+Renderer::PipelineFactory::PipelineFactory(IStateProvider* provider,const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags):
+	PipelineFactory(provider, defines, defineCount, compileFlags)
 {
 	this->dataSize = (dataSize); 
 	this->shaderData = malloc(dataSize);
@@ -14,8 +14,8 @@ Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* 
 	this->dataSize = dataSize;
 }
 
-Renderer::PipelineFactory::PipelineFactory(IRenderer* renderer, IStateProvider* provider, const ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, UsedShaders shaders, uint16_t compileFlags) :
-	PipelineFactory(renderer, provider, defines, defineCount,  shaderData, dataSize, compileFlags)
+Renderer::PipelineFactory::PipelineFactory(IStateProvider* provider, const ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, UsedShaders shaders, uint16_t compileFlags) :
+	PipelineFactory(provider, defines, defineCount,  shaderData, dataSize, compileFlags)
 {
 	useShaders = shaders;
 }

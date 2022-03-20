@@ -17,7 +17,6 @@ struct ImageUpdate {
 };
 
 class TexturesManager {
-	Renderer::IRenderer* renderer;
 public:
 
 	struct TextureCache {

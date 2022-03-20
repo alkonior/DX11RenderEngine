@@ -23,7 +23,7 @@ struct VertexSkybox {
 
 class SkyboxRendererFactory :public Renderer::PipelineFactory {
 public:
-	SkyboxRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
+	SkyboxRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
 
 };
 

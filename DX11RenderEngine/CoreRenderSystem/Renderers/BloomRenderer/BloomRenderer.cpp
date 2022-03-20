@@ -31,7 +31,7 @@ const char* BloomRenderer::BloomRendererProvider::GetShaderName()
 }
 
 
-BloomRenderer::BloomRenderer() :renderer(IRenderer::renderer) {}
+BloomRenderer::BloomRenderer() : QuadRenderer("BloomShader.hlsl") {}
 
 void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -40,7 +40,7 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new BloomRendererProvider(width, height);
-		factory = new BloomRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new BloomRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 	struct VertexEnd
@@ -62,7 +62,7 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new BloomRendererProvider(width, height);
-	factory = new BloomRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new BloomRendererFactory(provider, shaderData, dataSize);
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
@@ -78,7 +78,6 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 	kernel = 4;
 }
 
-void BloomRenderer::Init(LPCWSTR dirr) {}
 
 void BloomRenderer::Render(GraphicsBase& gfx) {
 	QuadRenderer::Render();

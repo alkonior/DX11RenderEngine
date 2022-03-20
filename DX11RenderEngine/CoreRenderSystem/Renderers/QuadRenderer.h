@@ -1,27 +1,22 @@
 ﻿#pragma once
-#include "../GraphicsBase.h"
-#include "IRenderer\IRenderer.h"
+#include "BaseRenderer.h"
 
-
-class QuadRenderer
+class QuadRenderer : public BaseRenderer
 {
-
-	
 	struct QuadRendererVertex
 	{
 		float2 pos;
 		float2 uv;
 	};
 	
-	Renderer::IRenderer* renderer;
 public:
 
-	QuadRenderer();
+	QuadRenderer(const char*);
     void Init();
     void Render();
 	Renderer::Viewport vp;
 	
-    ~QuadRenderer();
+    ~QuadRenderer() override;
 
 private:
     	

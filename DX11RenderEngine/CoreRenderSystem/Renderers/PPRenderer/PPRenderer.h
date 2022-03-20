@@ -6,9 +6,8 @@
 #include "..\QuadRenderer.h"
 
 
-class PPRenderer : QuadRenderer {
+class PPRenderer : public QuadRenderer {
 	struct PPRendererProvider;
-	Renderer::IRenderer* renderer;
 	PPRendererFactory* factory = nullptr;
 	PPRendererProvider* provider = nullptr;
 
@@ -28,12 +27,14 @@ public:
 
 	PPRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 	void Init(LPCWSTR dirr);
 
 	void Render(GraphicsBase& gfx);
+	
+	virtual void Clear() override {}; 
 
-	~PPRenderer();
+	~PPRenderer() override;
 private:
 
 	Renderer::SamplerState diffuseSampler;

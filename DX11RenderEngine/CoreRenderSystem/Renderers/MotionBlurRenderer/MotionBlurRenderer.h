@@ -4,9 +4,8 @@
 #include "MotionBlurRendererFactory.h"
 
 
-class MotionBlurRenderer: QuadRenderer {
+class MotionBlurRenderer: public QuadRenderer {
 	struct MotionBlurRendererProvider;
-	Renderer::IRenderer* renderer;
 	MotionBlurRendererFactory* factory = nullptr;
 	MotionBlurRendererProvider* provider = nullptr;
 
@@ -26,12 +25,14 @@ public:
 
 	MotionBlurRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 	void Init(LPCWSTR dirr);
 
 	void Render(GraphicsBase& gfx);
 
-	~MotionBlurRenderer();
+	virtual void Clear() override;
+
+	~MotionBlurRenderer() override;
 private:
 	Renderer::ConstBuffer* constBuffer;
 	MotionBlurCosntBuffer localBuffer;

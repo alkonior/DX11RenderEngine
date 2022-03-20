@@ -6,7 +6,6 @@
 
 class ModelsManager {
 
-	Renderer::IRenderer* renderer;
 public:
 
 	struct ModelCache {
@@ -18,7 +17,6 @@ public:
 
 	};
 
-public:
 	ModelsManager();
 
 	void RegisterModel(const ModelData& model, size_t id);

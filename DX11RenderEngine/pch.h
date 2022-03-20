@@ -130,6 +130,9 @@ namespace Gdiplus
 #endif
 
 #include <mutex>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;

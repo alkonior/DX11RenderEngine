@@ -7,9 +7,8 @@
 #include "ResourceManagers/TexturesManager.h"
 
 
-class BloomRenderer : QuadRenderer {
+class BloomRenderer : public QuadRenderer {
 	struct BloomRendererProvider;
-	Renderer::IRenderer* renderer;
 	BloomRendererFactory* factory = nullptr;
 	BloomRendererProvider* provider = nullptr;
 
@@ -29,12 +28,13 @@ public:
 
 	BloomRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 
 	void Render(GraphicsBase& gfx);
 
-	~BloomRenderer();
+	virtual void Clear() override {};
+	
+	~BloomRenderer() override;
 private:
 	int kernel;
 	

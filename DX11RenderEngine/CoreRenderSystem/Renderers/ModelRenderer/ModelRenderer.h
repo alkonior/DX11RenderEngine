@@ -5,6 +5,7 @@
 #include "ResourceManagers/ModelsManager.h"
 #include "ModelConstBuffers.h"
 #include "..\..\..\..\..\..\ref_dx11\external\debug_console.h"
+#include "Renderers\BaseRenderer.h"
 
 struct LerpModelDrawData {
 	Transform position;
@@ -19,10 +20,9 @@ struct LerpModelDrawData {
 
 };
 
-class ModelRenderer {
+class ModelRenderer :public BaseRenderer {
 	struct ModelRendererProvider;
 
-	Renderer::IRenderer* renderer;
 	ModelRendererFactory* factory = nullptr;
 	ModelRendererProvider* provider = nullptr;
 
@@ -52,15 +52,17 @@ public:
 
 	ModelRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 
 	void Draw(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags);
 	void DrawLerp(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData&);
 
 	void Render(GraphicsBase& gfx);
-	void Clear();
-	~ModelRenderer();
+	
+	virtual void Clear() override;
+
+	
+	~ModelRenderer() override;
 private:
 
 	Renderer::Viewport vp;

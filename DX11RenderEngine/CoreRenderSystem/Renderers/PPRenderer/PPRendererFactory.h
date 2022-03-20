@@ -25,8 +25,8 @@ const Renderer::ShaderDefines PPRendererDefines[] = {
 
 class PPRendererFactory :public Renderer::PipelineFactory {
 public:
-	PPRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
-		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)PPRendererDefines, std::size(PPRendererDefines), shaderData, dataSize,
+	PPRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
+		:PipelineFactory(provider, (const Renderer::ShaderDefines*)PPRendererDefines, std::size(PPRendererDefines), shaderData, dataSize,
 #ifdef _DEBUG 
 		D3DCOMPILE_DEBUG
 #else

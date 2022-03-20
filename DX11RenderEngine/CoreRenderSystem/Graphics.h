@@ -71,19 +71,23 @@ public:
 
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
-
-	UIRenderer			 manager2D;
-	ModelRenderer		 manager3D;
+	
+	void ReinitShaders(const char *);
+	
+	SkyboxRenderer	     managerSkybox;
+private:
+	std::vector<BaseRenderer*> renderPasses;
+	
+	UIRenderer			 managerUI;
+	ModelRenderer		 managerModels;
 	MotionBlurRenderer	 managerMB;
 	UPRenderer			 managerUP;
 	PPRenderer			 managerPostProcess;
 	ParticlesRenderer	 managerParticles;
-	SkyboxRenderer	     managerSkybox;
 	BloomRenderer	     managerBloom;
 	ImGUIRenderer	     managerIMGUI;
 	FXAARenderer	     managerFXAA;
 
-private:
 
 	enum class DrawCall {
 		draw2D,

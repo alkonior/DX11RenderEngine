@@ -18,8 +18,8 @@ const Renderer::ShaderDefines MotionBlurRendererDefines[] = {
 
 class MotionBlurRendererFactory :public Renderer::PipelineFactory {
 public:
-	MotionBlurRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
-		:PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)MotionBlurRendererDefines, std::size(MotionBlurRendererDefines), shaderData, dataSize,
+	MotionBlurRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize) 
+		:PipelineFactory(provider, (const Renderer::ShaderDefines*)MotionBlurRendererDefines, std::size(MotionBlurRendererDefines), shaderData, dataSize,
 #ifdef _DEBUG 
 		D3DCOMPILE_DEBUG
 #else

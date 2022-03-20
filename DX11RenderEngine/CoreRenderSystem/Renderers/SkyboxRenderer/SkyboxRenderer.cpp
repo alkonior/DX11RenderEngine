@@ -5,7 +5,7 @@ using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
 
-SkyboxRenderer::SkyboxRenderer() :renderer(IRenderer::renderer) {}
+SkyboxRenderer::SkyboxRenderer() : BaseRenderer("SkyShader.hlsl") {}
 
 void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -14,14 +14,14 @@ void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new SkyboxRendererProvider(width, height);
-		factory = new SkyboxRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new SkyboxRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new SkyboxRendererProvider(width, height);
-	factory = new SkyboxRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new SkyboxRendererFactory(provider, shaderData, dataSize);
 
 	constexpr float side = 1.0f;
 	VertexSkybox vertices[8] =
@@ -78,13 +78,6 @@ void SkyboxRenderer::Init(void* shaderData, size_t dataSize) {
 
 }
 
-void SkyboxRenderer::Init(LPCWSTR dirr) {
-	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\Shader2D.hlsl").c_str(), &buff);
-	auto data = buff->GetBufferPointer();
-	auto size = buff->GetBufferSize();
-	Init(data, size);
-}
 
 //int sideSequence[6] = { 3, 1, 4, 5, 0, 2 };
 //
@@ -132,6 +125,8 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 
 }
 
+void SkyboxRenderer::Clear() {}
+
 SkyboxRenderer::~SkyboxRenderer() { Destroy(); }
 
 
@@ -163,6 +158,3 @@ const char* SkyboxRenderer::SkyboxRendererProvider::GetShaderName()
 {
 	return "Skybox";
 }
-
-SkyboxRenderer::SkyboxRendererProvider::~SkyboxRendererProvider() {}
-

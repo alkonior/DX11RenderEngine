@@ -17,10 +17,10 @@ PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t h
 }
 
 GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
-	:width(width), height(height), renderer(GenParams(hWnd, width, height), 1){
+	:width(width), height(height), pRenderer(GenParams(hWnd, width, height), 1){
 
-	pLocalConstants = renderer.CreateConstBuffer(sizeof(localConstants));
-	renderer.VerifyConstBuffer(pLocalConstants, mainConstants.slot);
+	pLocalConstants = renderer->CreateConstBuffer(sizeof(localConstants));
+	renderer->VerifyConstBuffer(pLocalConstants, mainConstants.slot);
 }
 
 
@@ -49,7 +49,7 @@ void GraphicsBase::SetRenderData(const RenderData& data){
 	localConstants.viewProjectionInverse = viewProjection.Invert().Transpose();
 	
 	
-	renderer.SetConstBuffer(pLocalConstants, &localConstants);
+	renderer->SetConstBuffer(pLocalConstants, &localConstants);
 	
 }
 

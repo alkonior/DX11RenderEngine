@@ -3,6 +3,7 @@
 #include "UPRendererFactory.h"
 #include "UPRendererUtils.h"
 #include "UPConstBuffers.h"
+#include "Renderers\BaseRenderer.h"
 #include "ResourceManagers/TexturesManager.h"
 
 
@@ -20,10 +21,9 @@ struct UPDrawData {
 	uint64_t flags;
 };
 
-class UPRenderer {
+class UPRenderer : public BaseRenderer {
 	struct UPRendererProvider;
 
-	Renderer::IRenderer* renderer;
 	UPRendererFactory* factory = nullptr;
 	UPRendererProvider* provider = nullptr;
 
@@ -49,8 +49,7 @@ public:
 
 	UPRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 
 	MeshHashData Register(UPModelData model, bool dynamic);
 	void Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data);
@@ -59,9 +58,10 @@ public:
 
 	void Render(GraphicsBase& gfx);
 	void Flush();
-	void Clear(GraphicsBase& gfx);
+	virtual void Clear(GraphicsBase& gfx) override;
+	virtual void Clear() override {}; 
 
-	~UPRenderer();
+	~UPRenderer() override;
 
 private:
 

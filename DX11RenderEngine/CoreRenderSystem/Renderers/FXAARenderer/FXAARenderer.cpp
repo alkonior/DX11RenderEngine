@@ -28,7 +28,7 @@ Renderer::InputLayoutDescription FXAARenderer::FXAARendererProvider::GetInputLay
 }
 
 
-FXAARenderer::FXAARenderer() : renderer(IRenderer::renderer) {}
+FXAARenderer::FXAARenderer() : QuadRenderer("FXAAShader.hlsl") {}
 
 void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -37,7 +37,7 @@ void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new FXAARendererProvider(width, height);
-		factory = new FXAARendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new FXAARendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 	QuadRenderer::Init();
@@ -45,7 +45,7 @@ void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new FXAARendererProvider(width, height);
-	factory = new FXAARendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new FXAARendererFactory(provider, shaderData, dataSize);
 	
 
 	localBuffer.fxaaQualitySubpix			= 0.75;
@@ -57,8 +57,6 @@ void FXAARenderer::Init(void* shaderData, size_t dataSize) {
 	
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 }
-
-void FXAARenderer::Init(LPCWSTR dirr) {}
 
 void FXAARenderer::Render(GraphicsBase& gfx) {
 	QuadRenderer::Render();

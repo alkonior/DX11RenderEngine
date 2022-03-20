@@ -25,19 +25,36 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 	
 	ImGui_ImplWin32_Init(hWnd);
-	ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
+	ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());
 	
 	//managerImGUI.Init();
 	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
 
+	renderPasses.push_back(&managerSkybox);
+	renderPasses.push_back(&managerUI);
+	renderPasses.push_back(&managerModels);
+	renderPasses.push_back(&managerMB);
+	renderPasses.push_back(&managerUP);
+	renderPasses.push_back(&managerPostProcess);
+	renderPasses.push_back(&managerParticles);
+	renderPasses.push_back(&managerBloom);
+	renderPasses.push_back(&managerFXAA);
+
 }
 
-void Graphics::BeginFrame() {
+void Graphics::ReinitShaders(const char * dirr)
+{
+	for(auto pass : renderPasses)
+	{
+		pass->Init(dirr);
+	}
+};
 
-	manager3D.Clear();
-	managerUP.Clear(*this);
-	manager2D.Clear();
-	managerParticles.Clear();
+void Graphics::BeginFrame() {
+	for(auto pass : renderPasses)
+	{
+		pass->Clear(*this);
+	}
 }
 
 
@@ -46,59 +63,59 @@ bool Graphics::RenderFrame() {
 	managerIMGUI.BeginFrame(*this);
 	
 	bool success = true;
-	renderer.BeginEvent("BSP draw.");
+	pRenderer.BeginEvent("BSP draw.");
 	GFX_CATCH_RENDER(managerUP.Render(*this););
-	renderer.EndEvent();
-
-	renderer.BeginEvent("Motion blur draw.");
+	pRenderer.EndEvent();
+	
+	pRenderer.BeginEvent("Motion blur draw.");
 	GFX_CATCH_RENDER(managerMB.Render(*this););
-	renderer.EndEvent();
+	pRenderer.EndEvent();
 	
-	renderer.BeginEvent("Models draw.");
-	GFX_CATCH_RENDER(manager3D.Render(*this););
-	renderer.EndEvent();
+	pRenderer.BeginEvent("Models draw.");
+	GFX_CATCH_RENDER(managerModels.Render(*this););
+	pRenderer.EndEvent();
+
 	
-	renderer.BeginEvent("Sky draw.");
+	pRenderer.BeginEvent("Sky draw.");
 	GFX_CATCH_RENDER(managerSkybox.Render(*this););
-	renderer.EndEvent();
+	pRenderer.EndEvent();
 
-	renderer.BeginEvent("Particles draw.");
+	pRenderer.BeginEvent("Particles draw.");
 	GFX_CATCH_RENDER(managerParticles.Render(*this););
-	renderer.EndEvent();
+	pRenderer.EndEvent();
 
-	renderer.BeginEvent("Bloom pass.");
+	pRenderer.BeginEvent("Bloom pass.");
 	GFX_CATCH_RENDER(managerBloom.Render(*this););
-	renderer.EndEvent();
+	pRenderer.EndEvent();
 
-	renderer.BeginEvent("End BSP draw.");
+	pRenderer.BeginEvent("End BSP draw.");
 	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
-	renderer.EndEvent();
-
+	pRenderer.EndEvent();
 	
-	renderer.BeginEvent("FXAA-pass.");
+	pRenderer.BeginEvent("FXAA-pass.");
 	GFX_CATCH_RENDER(managerFXAA.Render(*this););
-	renderer.EndEvent();
+	pRenderer.EndEvent();
 
-	renderer.BeginEvent("UI draw.");
-	GFX_CATCH_RENDER(manager2D.Render(););
-	renderer.EndEvent();
+	pRenderer.BeginEvent("UI draw.");
+	GFX_CATCH_RENDER(managerUI.Render(););
+	pRenderer.EndEvent();
 	
 	return success;
 }
 
 void Graphics::EndFrame()
 {
-	renderer.BeginEvent("IMGUI draw.");
+	pRenderer.BeginEvent("IMGUI draw.");
 	managerIMGUI.Render();
-	renderer.EndEvent();
-	renderer.SwapBuffers();
+	pRenderer.EndEvent();
+	pRenderer.SwapBuffers();
 }
 
 void Graphics::ClearBuffer(sm::Vector4 color) noexcept {
-	renderer.SetRenderTargets(nullptr, 0, texturesManger.depthBuffer, Viewport());
-	renderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
+	pRenderer.SetRenderTargets(nullptr, 0, texturesManger.depthBuffer, Viewport());
+	pRenderer.Clear((ClearOptions)7, { color.x, color.y, color.z, color.w }, 1, 0u);
 	//pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
-	//pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	//pContext->ClearDepthStencilView(pDSV.Get(), DModels11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void Graphics::Flush() {
@@ -109,12 +126,12 @@ void Graphics::Flush() {
 
 void Graphics::DrawImg(size_t texId, const UIDrawData& data) {
 	//queue.push_back(DrawCall::draw2D).
-	manager2D.Draw(texturesManger.GetImg(texId), data);
+	managerUI.Draw(texturesManger.GetImg(texId), data);
 }
 
 
 void Graphics::DrawColor(const UIDrawData& data) {
-	manager2D.Draw(data);
+	managerUI.Draw(data);
 }
 
 void Graphics::RegisterImg(size_t id, const TextureData& text) {
@@ -151,7 +168,7 @@ void Graphics::RegisterImg(size_t id, int width, int height, void* data, bool mi
 }
 
 void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
-	manager3D.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
+	managerModels.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
 }
 
 void Graphics::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
@@ -170,7 +187,7 @@ MeshHashData Graphics::RegisterhUserPolygon(UPModelData model, bool dynamic) {
 }
 
 void Graphics::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
-	manager3D.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), data);
+	managerModels.DrawLerp(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), data);
 }
 
 void Graphics::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data) {

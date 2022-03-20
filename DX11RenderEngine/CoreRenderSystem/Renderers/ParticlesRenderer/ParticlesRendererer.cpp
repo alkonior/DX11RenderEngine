@@ -2,8 +2,8 @@
 
 using namespace Renderer;
 
-ParticlesRenderer::ParticlesRenderer() :
-	renderer(IRenderer::renderer), particlesBuffer(1000, 200) {}
+ParticlesRenderer::ParticlesRenderer() : BaseRenderer("ParticlesShader.hlsl"),
+particlesBuffer(1000, 200) {}
 
 
 void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {
@@ -13,14 +13,14 @@ void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new ParticlesRendererProvider(width, height);
-		factory = new ParticlesRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new ParticlesRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new ParticlesRendererProvider(width, height);
-	factory = new ParticlesRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new ParticlesRendererFactory(provider, shaderData, dataSize);
 	
 
 	vp.x = 0;
@@ -29,14 +29,6 @@ void ParticlesRenderer::Init(void* shaderData, size_t dataSize) {
 	vp.h = height;
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-}
-
-void ParticlesRenderer::Init(LPCWSTR dirr) {
-	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\ParticlesShader.hlsl").c_str(), &buff);
-	auto data = buff->GetBufferPointer();
-	auto size = buff->GetBufferSize();
-	Init(data, size);
 }
 
 void ParticlesRenderer::Draw(const ParticlesMesh& particles, const ParticlesDrawData& data) {

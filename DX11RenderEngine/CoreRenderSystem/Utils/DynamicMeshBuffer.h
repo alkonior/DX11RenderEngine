@@ -12,9 +12,6 @@ struct MeshHashData {
 template<class VertexType>
 class DynamicMeshBuffer {
 
-
-	Renderer::IRenderer* renderer;
-
 	size_t vertexBuffSize = 0;
 	size_t indexBuffSize = 0;
 	size_t vertexBuffCapacity = 20000;
@@ -54,18 +51,16 @@ public:
 	};
 
 
-	DynamicMeshBuffer(size_t vertexBuffCapacity, size_t indexBuffCapacity) :
-		renderer(Renderer::IRenderer::renderer), vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity) {
+	DynamicMeshBuffer(size_t vertexBuffCapacity, size_t indexBuffCapacity) : vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity) {
+		mesh.vertexBuffer.buffersCount = 1;
+		mesh.vertexBuffer.vertexBuffers = new Renderer::Buffer * [1]();
+		mesh.vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(VertexType) * vertexBuffCapacity);
+		mesh.vertexBuffer.vertexOffset = new (UINT)(0);
+		mesh.vertexBuffer.vertexStride = new (UINT)(sizeof(VertexType));
 
-		 mesh.vertexBuffer.buffersCount = 1;
-		 mesh.vertexBuffer.vertexBuffers = new Renderer::Buffer * [1]();
-		 mesh.vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(VertexType) * vertexBuffCapacity);
-		 mesh.vertexBuffer.vertexOffset = new (UINT)(0);
-		 mesh.vertexBuffer.vertexStride = new (UINT)(sizeof(VertexType));
+		mesh.indexSize = 32;
 
-		 mesh.indexSize = 32;
-
-		 mesh.indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * indexBuffCapacity);
+		mesh.indexBuffer = renderer->GenIndexBuffer(1, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(uint32_t) * indexBuffCapacity);
 
 		cpuVertices.reserve(vertexBuffCapacity);
 		cpuIndexes.reserve(indexBuffCapacity);

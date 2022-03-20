@@ -3,6 +3,7 @@
 #include "ParticlesUtils.h"
 #include "ParticlesConstBuffer.h"
 #include "GraphicsBase.h"
+#include "../BaseRenderer.h"
 
 
 
@@ -10,10 +11,9 @@ struct ParticlesDrawData {
 	uint64_t flags;
 };
 
-class ParticlesRenderer {
+class ParticlesRenderer : public BaseRenderer {
 	struct ParticlesRendererProvider;
 
-	Renderer::IRenderer* renderer;
 	ParticlesRendererFactory* factory = nullptr;
 	ParticlesRendererProvider* provider = nullptr;
 
@@ -37,15 +37,15 @@ public:
 
 	ParticlesRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual  void Init(void* shaderData, size_t dataSize) override;
+	
 
 	void Draw(const ParticlesMesh& particles, const ParticlesDrawData& data);
 	
 	void Render(const GraphicsBase& gfx);
 	void Clear();
 
-	~ParticlesRenderer();
+	~ParticlesRenderer() override;
 
 private:
 

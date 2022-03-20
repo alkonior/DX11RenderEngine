@@ -4,6 +4,7 @@
 #include "UIConstBuffers.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "CoreRenderSystem\GraphicsBase.h"
+#include "Renderers\BaseRenderer.h"
 
 struct UIDrawData {
 
@@ -14,9 +15,8 @@ struct UIDrawData {
 	uint64_t flag;
 };
 
-class UIRenderer {
+class UIRenderer : public BaseRenderer {
 	struct UIRendererProvider;
-	Renderer::IRenderer* renderer;
 	UIRendererFactory* factory = nullptr;
 	UIRendererProvider* provider = nullptr;
 
@@ -47,8 +47,7 @@ public:
 
 	UIRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 
 	void Destroy();
 
@@ -58,7 +57,7 @@ public:
 	void Render();
 	void Clear();
 	
-	~UIRenderer();
+	~UIRenderer() override;
 private:
 	Renderer::Viewport vp;
 

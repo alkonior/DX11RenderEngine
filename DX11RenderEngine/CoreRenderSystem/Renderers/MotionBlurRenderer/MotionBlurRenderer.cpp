@@ -30,7 +30,7 @@ const char* MotionBlurRenderer::MotionBlurRendererProvider::GetShaderName()
 }
 
 
-MotionBlurRenderer::MotionBlurRenderer() : renderer(IRenderer::renderer) {}
+MotionBlurRenderer::MotionBlurRenderer() : QuadRenderer("MotionBlurShader.hlsl") {}
 
 void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -39,7 +39,7 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new MotionBlurRendererProvider(width, height);
-		factory = new MotionBlurRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new MotionBlurRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 	QuadRenderer::Init();
@@ -47,7 +47,7 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new MotionBlurRendererProvider(width, height);
-	factory = new MotionBlurRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new MotionBlurRendererFactory(provider, shaderData, dataSize);
 	
 
 	localBuffer.strength	= 0.75;
@@ -95,6 +95,8 @@ void MotionBlurRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(MBCOPY));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 }
+
+void MotionBlurRenderer::Clear(){}
 
 
 void MotionBlurRenderer::RenderIMGUI(GraphicsBase& gfx)

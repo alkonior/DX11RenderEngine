@@ -8,7 +8,7 @@ ModelRenderer::DrawCall::DrawCall(ModelsManager::ModelCache model, TexturesManag
 ModelRenderer::DrawLerpCall::DrawLerpCall(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, const LerpModelDrawData& data) :
 	model(model), texture(texture), data(data) {}
 
-ModelRenderer::ModelRenderer() : renderer(IRenderer::renderer) {}
+ModelRenderer::ModelRenderer() : BaseRenderer("ModelsShader.hlsl") {}
 
 void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -17,14 +17,14 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new ModelRendererProvider(width, height);
-		factory = new ModelRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new ModelRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new ModelRendererProvider(width, height);
-	factory = new ModelRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new ModelRendererFactory(provider, shaderData, dataSize);
 
 
 	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
@@ -36,14 +36,6 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 
-}
-
-void ModelRenderer::Init(LPCWSTR dirr) {
-	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\ModelsShader.hlsl").c_str(), &buff);
-	auto data = buff->GetBufferPointer();
-	auto size = buff->GetBufferSize();
-	Init(data, size);
 }
 
 void ModelRenderer::Draw(ModelsManager::ModelCache model, TexturesManager::TextureCache texture, Transform position, size_t flags) {

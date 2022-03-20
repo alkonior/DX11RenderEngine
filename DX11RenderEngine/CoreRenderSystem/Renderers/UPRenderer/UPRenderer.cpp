@@ -4,8 +4,8 @@
 using namespace Renderer;
 
 
-UPRenderer::UPRenderer() :
-	renderer(IRenderer::renderer), staticMeshes(20000, 20000), dynamicMeshes(2000, 2000) {}
+UPRenderer::UPRenderer() : BaseRenderer("BSPShader.hlsl"),
+staticMeshes(20000, 20000), dynamicMeshes(2000, 2000) {}
 
 void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -14,14 +14,14 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new UPRendererProvider(width, height);
-		factory = new UPRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new UPRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new UPRendererProvider(width, height);
-	factory = new UPRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new UPRendererFactory(provider, shaderData, dataSize);
 
 	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
@@ -38,14 +38,6 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	lightSampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	lightSampler.mipMapLevelOfDetailBias = 0;
 	lightSampler.maxAnisotropy = 16;
-}
-
-void UPRenderer::Init(LPCWSTR dirr) {
-	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\BSPShader.hlsl").c_str(), &buff);
-	auto data = buff->GetBufferPointer();
-	auto size = buff->GetBufferSize();
-	Init(data, size);
 }
 
 MeshHashData UPRenderer::Register(UPModelData model, bool dynamic) {

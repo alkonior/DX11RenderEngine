@@ -47,12 +47,13 @@ namespace Renderer
     {
     }
 
-    IRenderer* IRenderer::renderer = nullptr;
+    IRenderer* IRenderer::pRenderer = nullptr;
+
 
     D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
         IRenderer(presentationParameters, debugMode)
     {
-        IRenderer::renderer = this;
+        renderer = this;
 
         //DXGI_ADAPTER_DESC adapterDesc;
         D3D_FEATURE_LEVEL levels[] =
@@ -2466,12 +2467,16 @@ namespace Renderer
         D3D11_BUFFER_DESC cbd;
         cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         cbd.Usage = D3D11_USAGE_DEFAULT;
+        //cbd.Usage = D3D11_USAGE_DYNAMIC;
+        //cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         cbd.CPUAccessFlags = 0u;
         cbd.MiscFlags = 0u;
         cbd.ByteWidth = (UINT)((size / 16 + (size % 16 != 0)) * 16);
         cbd.StructureByteStride = 0u;
         GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->handle));
 
+        result->size = size;
+        
         return result;
     }
 
@@ -2488,10 +2493,29 @@ namespace Renderer
     void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data)
     {
         D3D11ConstBuffer* buffer = (D3D11ConstBuffer*)constBuffers;
-        //std::lock_guard<std::mutex> guard(ctxLock);
+        D3D11_MAPPED_SUBRESOURCE subres;
+        
+        std::lock_guard<std::mutex> guard(ctxLock);
         GFX_THROW_INFO_ONLY(context->UpdateSubresource(
             buffer->handle.Get(), 0, 0,
             data, 0, 0));
+
+       //GFX_THROW_INFO_ONLY(context->Map(
+       //      buffer->handle.Get(),
+       //      0,
+       //      D3D11_MAP_WRITE_DISCARD,
+       //      0,
+       //      &subres
+       //  ));
+       //memcpy(
+       //    (uint8_t*)subres.pData,
+       //    data,
+       //    buffer->size
+       //);
+       //GFX_THROW_INFO_ONLY(context->Unmap(
+       //    buffer->handle.Get(),
+       //    0
+       //));
     }
 
     void D3D11Renderer::AddDisposeConstBuffer(ConstBuffer* constBuffers)

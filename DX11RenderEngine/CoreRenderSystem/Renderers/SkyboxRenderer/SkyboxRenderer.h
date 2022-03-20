@@ -1,14 +1,13 @@
 ﻿#pragma once
 #include "IRenderer/IRenderer.h"
-#include "../../GraphicsBase.h"
+#include "CoreRenderSystem\GraphicsBase.h"
 #include "SkyboxRendererFactory.h"
 #include "SkyboxConstBuffers.h"
-#include "../../ResourceManagers/TexturesManager.h"
+#include "..\BaseRenderer.h"
 
 
-class SkyboxRenderer {
+class SkyboxRenderer :public BaseRenderer {
 	struct SkyboxRendererProvider;
-	Renderer::IRenderer* renderer;
 	SkyboxRendererFactory* factory = nullptr;
 	SkyboxRendererProvider* provider = nullptr;
 
@@ -20,7 +19,6 @@ class SkyboxRenderer {
 		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
 		virtual const char* GetShaderName() override;
-		virtual ~SkyboxRendererProvider() override;
 	};
 
 
@@ -29,14 +27,16 @@ public:
 
 	SkyboxRenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
+	
 	void UpdateSkybox(const TextureData& sky, int side);
 
 	void Destroy();
 	void Render(GraphicsBase& gfx);
 	
-	~SkyboxRenderer();
+	virtual void Clear() override;
+	
+	~SkyboxRenderer() override;
 private:
 	Renderer::Viewport vp;
 	Renderer::VertexBufferBinding vertexBuffer;

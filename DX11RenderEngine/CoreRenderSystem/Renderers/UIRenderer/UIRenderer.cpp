@@ -4,7 +4,7 @@ using namespace Renderer;
 using namespace DirectX::SimpleMath;;
 
 
-UIRenderer::UIRenderer() :renderer(IRenderer::renderer) {}
+UIRenderer::UIRenderer() : BaseRenderer("UIShader.hlsl") {}
 
 void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -13,14 +13,14 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new UIRendererProvider(width, height);
-		factory = new UIRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new UIRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new UIRendererProvider(width, height);
-	factory = new UIRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new UIRendererFactory(provider, shaderData, dataSize);
 
 	Vertex2D vertices[] =
 	{
@@ -65,14 +65,6 @@ void UIRenderer::Init(void* shaderData, size_t dataSize) {
 	sampler.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	sampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 
-}
-
-void UIRenderer::Init(LPCWSTR dirr) {
-	wrl::ComPtr<ID3DBlob> buff;
-	D3DReadFileToBlob((std::wstring(dirr) + L"\\Shader2D.hlsl").c_str(), &buff);
-	auto data = buff->GetBufferPointer();
-	auto size = buff->GetBufferSize();
-	Init(data, size);
 }
 
 void UIRenderer::Destroy() {

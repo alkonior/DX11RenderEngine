@@ -40,7 +40,7 @@ const char* PPRenderer::PPRendererProvider::GetShaderName()
 }
 
 
-PPRenderer::PPRenderer():renderer(IRenderer::renderer) {}
+PPRenderer::PPRenderer():QuadRenderer("PostProcessShader.hlsl") {}
 
 void PPRenderer::Init(void* shaderData, size_t dataSize) {
 	if (provider != nullptr) {
@@ -49,14 +49,14 @@ void PPRenderer::Init(void* shaderData, size_t dataSize) {
 		int32_t width, height;
 		renderer->GetBackbufferSize(&width, &height);
 		provider = new PPRendererProvider(width, height);
-		factory = new PPRendererFactory(renderer, provider, shaderData, dataSize);
+		factory = new PPRendererFactory(provider, shaderData, dataSize);
 		return;
 	}
 	QuadRenderer::Init();
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	provider = new PPRendererProvider(width, height);
-	factory = new PPRendererFactory(renderer, provider, shaderData, dataSize);
+	factory = new PPRendererFactory(provider, shaderData, dataSize);
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
 	sampler.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;

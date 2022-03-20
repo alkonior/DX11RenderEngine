@@ -1,7 +1,7 @@
 #include "TexturesManager.h"
 
 using namespace Renderer;
-TexturesManager::TexturesManager():renderer(IRenderer::renderer) {
+TexturesManager::TexturesManager() {
 	int width, height;
 	renderer->GetBackbufferSize(&width, &height);
 

@@ -13,22 +13,12 @@ void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
 
 }
 
-void RenderDevice::InitShaders(LPCWSTR dirr) {
-	gfx->manager2D.Init(dirr);
-	gfx->manager3D.Init(dirr);
-	//PixelShader2D::Init(*gfx, dirr);
-	//VertexShader2D::Init(*gfx, dirr);
-}
-
-void RenderDevice::ReloadShaders(LPCWSTR dirr) {
-	//PixelShader2D::Release();
-	//VertexShader2D::Release();
-	//
-	//PixelShader2D::Init(*gfx, dirr);
-	//VertexShader2D::Init(*gfx, dirr);
+void RenderDevice::InitShaders(const char* dirr) {
+	gfx->ReinitShaders(dirr);
 }
 
 void RenderDevice::ReloadShader(ShaderData shD) {
+	/*
 	switch (shD.type) {
 	case ShaderType::UIShader:
 	{
@@ -81,6 +71,7 @@ void RenderDevice::ReloadShader(ShaderData shD) {
 	default:
 		break;
 	}
+	*/
 }
 
 

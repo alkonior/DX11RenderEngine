@@ -34,8 +34,8 @@ struct RenderDevice {
 		size_t dataSize;
 	};
 
-	void InitShaders(LPCWSTR);
-	void ReloadShaders(LPCWSTR);
+	void InitShaders(const char* dirr);
+	//void ReloadShaders(LPCWSTR);
 	void ReloadShader(ShaderData shD);
 
 	/* Presentation */

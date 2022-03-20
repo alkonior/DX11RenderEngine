@@ -17,9 +17,14 @@ namespace Renderer {
 
 #define MAX_RENDERTARGET_BINDINGS	8
 
+#define renderer Renderer::IRenderer::pRenderer
+	
 struct IRenderer {
 
-	static IRenderer* renderer;
+	static IRenderer* pRenderer;
+
+
+
 
 	/* Creates a rendering context for use on the calling thread.
 	 *

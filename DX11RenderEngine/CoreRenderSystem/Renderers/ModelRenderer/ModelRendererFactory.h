@@ -25,8 +25,8 @@ const Renderer::ShaderDefines ModelRendererDefines[] = {
 
 class ModelRendererFactory: public Renderer::PipelineFactory {
 public:
-    ModelRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize):
-    PipelineFactory(renderer, provider, (const Renderer::ShaderDefines*)ModelRendererDefines, std::size(ModelRendererDefines), shaderData, dataSize,
+    ModelRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize):
+    PipelineFactory(provider, (const Renderer::ShaderDefines*)ModelRendererDefines, std::size(ModelRendererDefines), shaderData, dataSize,
 #ifdef _DEBUG 
         D3DCOMPILE_DEBUG
 #else

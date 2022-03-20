@@ -1,7 +1,7 @@
 ﻿#include "QuadRenderer.h"
 
 using namespace Renderer;
-QuadRenderer::QuadRenderer() : renderer(IRenderer::renderer) {};
+QuadRenderer::QuadRenderer(const char* name) : BaseRenderer(name) {};
 void QuadRenderer::Init()
 {
     int32_t width, height;

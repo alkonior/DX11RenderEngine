@@ -4,9 +4,8 @@
 #include "FXAARendererConstBuffer.h"
 
 
-class FXAARenderer: QuadRenderer {
+class FXAARenderer:public QuadRenderer {
 	struct FXAARendererProvider;
-	Renderer::IRenderer* renderer;
 	FXAARendererFactory* factory = nullptr;
 	FXAARendererProvider* provider = nullptr;
 
@@ -26,12 +25,13 @@ public:
 
 	FXAARenderer();
 
-	void Init(void* shaderData, size_t dataSize);
-	void Init(LPCWSTR dirr);
+	virtual void Init(void* shaderData, size_t dataSize) override;
 
 	void Render(GraphicsBase& gfx);
+	
+	virtual void Clear() override {}; 
 
-	~FXAARenderer();
+	~FXAARenderer() override;
 private:
 	Renderer::ConstBuffer* constBuffer;
 	FXAACosntBuffer localBuffer;

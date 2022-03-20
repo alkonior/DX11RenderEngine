@@ -28,7 +28,7 @@ struct Vertex2D {
 
 class UIRendererFactory :public Renderer::PipelineFactory {
 public:
-	UIRendererFactory(Renderer::IRenderer* renderer, Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
+	UIRendererFactory(Renderer::IStateProvider* provider, void* shaderData, size_t dataSize);
 
 };
 

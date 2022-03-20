@@ -26,7 +26,7 @@ GDIPlusManager gpmt;
 public:
 	GraphicsBase(HWND hWnd, size_t width, size_t height);
 
-	Renderer::D3D11Renderer renderer;
+	Renderer::D3D11Renderer pRenderer;
 
 	size_t width;
 	size_t height;

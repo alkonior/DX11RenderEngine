@@ -13,7 +13,7 @@ enum UsedShaders: uint16_t {
 };
 
 class PipelineFactory {
-	IRenderer* renderer;
+	//IRenderer* renderer;
 	IStateProvider* provider;
 
 
@@ -28,10 +28,10 @@ class PipelineFactory {
 
 	std::map<size_t, PipelineState*> dictinary;
 
-	PipelineFactory(IRenderer* renderer, IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, uint16_t compileFlags);
+	PipelineFactory(IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, uint16_t compileFlags);
 public:
-	PipelineFactory(IRenderer* renderer, IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags = 0);
-	PipelineFactory(IRenderer* renderer, IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, UsedShaders shaders, uint16_t compileFlags = 0);
+	PipelineFactory(IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, uint16_t compileFlags = 0);
+	PipelineFactory(IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, void* shaderData, size_t dataSize, UsedShaders shaders, uint16_t compileFlags = 0);
 
 	std::vector<ShaderDefines> GetDefines(size_t definesFlags);
 
