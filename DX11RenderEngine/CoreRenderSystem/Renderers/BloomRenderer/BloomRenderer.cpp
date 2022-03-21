@@ -79,6 +79,25 @@ void BloomRenderer::Init(void* shaderData, size_t dataSize) {
 }
 
 
+void BloomRenderer::RenderBloomMask(GraphicsBase& gfx)
+{
+	QuadRenderer::Render();
+	
+
+	RenderTargetBinding* targets[1];
+	
+	renderer->VerifyConstBuffer(constBuffer, BloomCosntants.slot);
+	renderer->SetConstBuffer(constBuffer, &localBuffer);
+	
+	targets[0] = &gfx.texturesManger.bloomMaskRT;
+	
+	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
+	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
+	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
+	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	
+}
 void BloomRenderer::Render(GraphicsBase& gfx) {
 	QuadRenderer::Render();
 	
@@ -93,7 +112,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	RenderIMGUI(gfx);
 	
 	renderer->VerifyConstBuffer(constBuffer, BloomCosntants.slot);
-	renderer->SetConstBuffer(constBuffer, &localBuffer);
+	//renderer->SetConstBuffer(constBuffer, &localBuffer);
 	
 	targets[0] = &bloom1RT;
 	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
@@ -126,7 +145,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 		targets[1] = targets[2];
 	}
 
-	targets[0] = &gfx.texturesManger.bloomBluredRT;
+	targets[0] = &gfx.texturesManger.bloomMaskRT;
 	
 	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 	renderer->ApplyPipelineState(factory->GetState(BLOOMEND));

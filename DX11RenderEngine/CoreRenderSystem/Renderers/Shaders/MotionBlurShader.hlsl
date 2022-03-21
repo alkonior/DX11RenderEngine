@@ -28,6 +28,7 @@ PSIn vsIn(VSIn input)
 Texture2D diffuseColor : register(t0);
 Texture2D lightColor : register(t1);
 Texture2D<float> depthTexture : register(t2);
+Texture2D bloomMask : register(t3);
 
 SamplerState basicSampler : register(s0);
 
@@ -69,20 +70,29 @@ PSOut psIn(PSIn input) : SV_Target{
     float2 velocity = (currentPos - previousPos)/2.f * motionBlurCosntBuffer.strength;
     // Get the initial color at this pixel.
     float4 color = diffuseColor.Sample(basicSampler, texCoord);
+    float4 bloomColor = bloomMask.Sample(basicSampler, texCoord);
+    float hasBloom = saturate(dot(bloomColor.rgb,float3(1,1,1))*10000);
+    color += motionBlurCosntBuffer.bloomStrength * color * hasBloom;
     float4 light = lightColor.Sample(basicSampler, texCoord);
     texCoord += velocity;
     
+    
+    float totalStrength = 1 + (motionBlurCosntBuffer.bloomStrength) * hasBloom;
+    
     for(int i = 1; i < motionBlurCosntBuffer.numSampes; ++i, texCoord += velocity)
     {   // Sample the color buffer along the velocity vector.
-        float4 currentColor = diffuseColor.Sample(basicSampler, texCoord);;
-        float4 currentLight = lightColor.Sample(basicSampler, texCoord);;
+        float4 currentColor = diffuseColor.Sample(basicSampler, texCoord);
+        float4 currentBloomColor = bloomMask.Sample(basicSampler, texCoord);
+        float4 currentLight = lightColor.Sample(basicSampler, texCoord);
         // Add the current color to our color sum.
-        color += currentColor;
+        hasBloom = saturate(dot(currentBloomColor.rgb,float3(1,1,1))*10000);
+        color += currentColor + motionBlurCosntBuffer.bloomStrength * currentColor * hasBloom;
         light += currentLight;
+        totalStrength += 1 + (motionBlurCosntBuffer.bloomStrength) * hasBloom;
     }
     
     // Average all of the samples to get the final blur color.
-    pso.color = color / motionBlurCosntBuffer.numSampes;
+    pso.color = color / totalStrength;
     pso.light = light / motionBlurCosntBuffer.numSampes;
     
     return pso;

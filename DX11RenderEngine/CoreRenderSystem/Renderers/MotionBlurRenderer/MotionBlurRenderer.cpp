@@ -51,6 +51,7 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 	
 
 	localBuffer.strength	= 0.75;
+	localBuffer.bloomStrength	= 0.75;
 	localBuffer.numSampes	= 5;
 	
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
@@ -79,6 +80,7 @@ void MotionBlurRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.lightColor);
 	renderer->VerifyPixelTexture(2, gfx.texturesManger.depthBuffer->texture);
+	renderer->VerifyPixelTexture(3, gfx.texturesManger.bloomMask);
 
 	renderer->ApplyPipelineState(factory->GetState(MBZERO));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
@@ -103,8 +105,9 @@ void MotionBlurRenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
 	ImGui::Begin("Motion blur settings.");                          // Create a window called "Hello, world!" and append into it.
 //
-	ImGui::SliderFloat("Strength",           &localBuffer.strength		,0.0, 1.0 , "%.3f");
-	ImGui::SliderInt("NumSamples",    &localBuffer.numSampes		,1, 20 , "%.3f");
+	ImGui::SliderFloat("Strength",      &localBuffer.strength		,0.0, 1.0 );
+	ImGui::SliderFloat("BloomStrength", &localBuffer.bloomStrength	,0.0, 200.0);
+	ImGui::SliderInt("NumSamples",      &localBuffer.numSampes		,1,   20 );
 	
 	ImGui::End();
 }

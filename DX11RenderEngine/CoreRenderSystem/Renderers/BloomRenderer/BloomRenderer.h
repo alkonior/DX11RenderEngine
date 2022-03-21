@@ -30,6 +30,8 @@ public:
 
 	virtual void Init(void* shaderData, size_t dataSize) override;
 
+	void RenderBloomMask(GraphicsBase& gfx);
+	
 	void Render(GraphicsBase& gfx);
 
 	virtual void Clear() override {};

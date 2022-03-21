@@ -46,15 +46,16 @@ public:
 	
 
 	Renderer::Texture* diffuseColor;
-	Renderer::Texture* lightColor;
-	Renderer::Texture* alphaSurfaces;
-
 	Renderer::RenderTargetBinding diffuseColorRT;
+	
+	Renderer::Texture* lightColor;
 	Renderer::RenderTargetBinding lightColorRT;
+	
+	Renderer::Texture* alphaSurfaces;
 	Renderer::RenderTargetBinding alphaSurfacesRT;
 	
-	Renderer::Texture* bloomBlured;
-	Renderer::RenderTargetBinding bloomBluredRT;
+	Renderer::Texture* bloomMask;
+	Renderer::RenderTargetBinding bloomMaskRT;
 	
 	Renderer::Texture* preFXAAcolor;
 	Renderer::RenderTargetBinding preFXAAcolorRT;

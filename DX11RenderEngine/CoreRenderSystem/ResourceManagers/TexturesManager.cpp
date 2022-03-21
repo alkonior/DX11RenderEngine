@@ -8,8 +8,8 @@ TexturesManager::TexturesManager() {
 	depthBuffer = renderer->GenDepthStencilRenderbuffer(width,height,DepthFormat::DEPTHFORMAT_D32,0);
 
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, diffuseColor,   diffuseColorRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, lightColor,   lightColorRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, bloomBlured,    bloomBluredRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, lightColor,     lightColorRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, bloomMask,      bloomMaskRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, alphaSurfaces,  alphaSurfacesRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,  width, height, preFXAAcolor,   preFXAAcolorRT);
 

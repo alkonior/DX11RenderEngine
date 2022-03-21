@@ -98,7 +98,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomBlured);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomMask);
 	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
 	renderer->SetConstBuffer(pConstBuffer, &localData);
 

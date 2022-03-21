@@ -67,6 +67,10 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer.EndEvent();
 	
+	pRenderer.BeginEvent("BloomMask draw.");
+	GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
+	pRenderer.EndEvent();
+	
 	pRenderer.BeginEvent("Motion blur draw.");
 	GFX_CATCH_RENDER(managerMB.Render(*this););
 	pRenderer.EndEvent();
