@@ -32,7 +32,7 @@ PSIn vsIn(VSIn input) {
 
 	vso.pos =    mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.viewProjection);
 	float4 oldPos = mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.past_viewProjection);
-	vso.velocity = (vso.pos - oldPos)/2.f;
+	vso.velocity = (vso.pos/vso.pos.w - oldPos/oldPos.w)/2.f;
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;

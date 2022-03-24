@@ -6,12 +6,14 @@
 enum MBRendererDefines : std::uint32_t {
 	MBZERO = 0,
 	MBRED = 1,
-	MBCOPY = 2,
+	MBDYNAMIC = 2,
+	MBCOPY = 4,
 
 };
 
 const Renderer::ShaderDefines MotionBlurRendererDefines[] = {
 	Renderer::ShaderDefines("RED"),
+	Renderer::ShaderDefines("DYNAMIC"),
 	Renderer::ShaderDefines("COPY"),
 };
 

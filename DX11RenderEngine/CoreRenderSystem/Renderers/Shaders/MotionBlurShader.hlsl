@@ -23,12 +23,19 @@ PSIn vsIn(VSIn input)
     return output;
 }
 
-
+//#define DYNAMIC
 
 Texture2D diffuseColor : register(t0);
 Texture2D lightColor : register(t1);
+
+#ifndef DYNAMIC
 Texture2D<float> depthTexture : register(t2);
 Texture2D bloomMask : register(t3);
+#endif
+#ifdef DYNAMIC
+Texture2D<float2> velocityTexture : register(t2);
+Texture2D blurStrength : register(t3);
+#endif
 
 SamplerState basicSampler : register(s0);
 
@@ -46,7 +53,8 @@ PSOut psIn(PSIn input) : SV_Target{
     pso.light = lightColor.Sample(basicSampler, texCoord);
     return pso;
 #endif
-    
+
+#ifndef DYNAMIC
     float zOverW = depthTexture.Sample(basicSampler, texCoord);
     // H is the viewport position at this pixel in the range -1 to 1.
     float4 H = float4(texCoord.x * 2 - 1, (1 - texCoord.y) * 2 - 1, zOverW, 1);
@@ -94,6 +102,34 @@ PSOut psIn(PSIn input) : SV_Target{
     // Average all of the samples to get the final blur color.
     pso.color = color / totalStrength;
     pso.light = light / motionBlurCosntBuffer.numSampes;
+
+#endif
+    
+#ifdef DYNAMIC
+   
+    float2 velocity = velocityTexture.Sample(basicSampler, texCoord)
+        * blurStrength.Sample(basicSampler, texCoord)
+        * motionBlurCosntBuffer.strength;
+    // Get the initial color at this pixel.
+    float4 color = diffuseColor.Sample(basicSampler, texCoord);
+    color += motionBlurCosntBuffer.bloomStrength * color;
+    float4 light = lightColor.Sample(basicSampler, texCoord);
+    texCoord += velocity;
+    
+    for(int i = 1; i < motionBlurCosntBuffer.numSampes; ++i, texCoord += velocity)
+    {   // Sample the color buffer along the velocity vector.
+        float4 currentColor = diffuseColor.Sample(basicSampler, texCoord);
+        float4 currentLight = lightColor.Sample(basicSampler, texCoord);
+        // Add the current color to our color sum.
+        color += currentColor;
+        light += currentLight;
+    }
+    
+    // Average all of the samples to get the final blur color.
+    pso.color = color / motionBlurCosntBuffer.numSampes;
+    pso.light = light / motionBlurCosntBuffer.numSampes;
+
+#endif
     
     return pso;
 }

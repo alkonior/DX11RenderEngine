@@ -11,8 +11,10 @@ struct LerpModelDrawData {
 	Transform oldPosition;
 	Transform newPosition;
 	bool isSingle;
+	bool isGun;
 
 	float alpha;
+	float oldAlpha;
 	size_t currentFrame;
 	size_t nextFrame;
 	float4 color;

@@ -19,8 +19,8 @@ public:
     ~QuadRenderer() override;
 
 private:
-    	
-    Renderer::VertexBufferBinding vertexBuffer;
-    Renderer::Buffer* indexBuffer;
+    static bool isInited;	
+    static Renderer::VertexBufferBinding vertexBuffer;
+    static Renderer::Buffer* indexBuffer;
 	
 };

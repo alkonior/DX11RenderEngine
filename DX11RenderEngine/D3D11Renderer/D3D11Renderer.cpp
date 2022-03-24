@@ -260,9 +260,9 @@ namespace Renderer
     {
         D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
         /* Bind index buffer */
-        if (indexBuffer != d3dIndices->handle || this->indexElementSize != indexElementSize)
+        if (indexBuffer != d3dIndices->handle.Get() || this->indexElementSize != indexElementSize)
         {
-            indexBuffer = d3dIndices->handle;
+            indexBuffer = d3dIndices->handle.Get();
             this->indexElementSize = indexElementSize;
             context->IASetIndexBuffer(
                 d3dIndices->handle.Get(),
@@ -1497,7 +1497,7 @@ namespace Renderer
     {
         D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
 
-        if (d3dBuffer->handle == indexBuffer)
+        if (d3dBuffer->handle.Get() == indexBuffer)
         {
             indexBuffer = nullptr;
             //std::lock_guard<std::mutex> guard(ctxLock);
@@ -2167,10 +2167,10 @@ namespace Renderer
         if (vertexBuffer.buffersCount == 1)
         {
             //std::lock_guard<std::mutex> guard(ctxLock);
-            auto buff = (D3D11Buffer*)(*vertexBuffer.vertexBuffers);
-            if (this->vertexBuffer != buff->handle)
+            auto buff = (D3D11Buffer*)(vertexBuffer.vertexBuffers[0]);
+            if (this->vertexBuffer != buff->handle.Get())
             {
-                this->vertexBuffer = buff->handle;
+                this->vertexBuffer = buff->handle.Get();
                 GFX_THROW_INFO_ONLY(
                     context->IASetVertexBuffers(0u, 1u, buff->handle.GetAddressOf(), vertexBuffer.vertexStride,
                         vertexBuffer.vertexOffset));
@@ -2182,6 +2182,7 @@ namespace Renderer
             {
                 buffers[i] = ((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i])->handle.Get();
             }
+            this->vertexBuffer = buffers[0];
             //std::lock_guard<std::mutex> guard(ctxLock);
             GFX_THROW_INFO_ONLY(
                 context->IASetVertexBuffers(0u, (UINT)vertexBuffer.buffersCount, buffers.data(), vertexBuffer.

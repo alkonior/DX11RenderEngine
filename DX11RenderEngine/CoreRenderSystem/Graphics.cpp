@@ -71,14 +71,17 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
 	pRenderer.EndEvent();
 	
-	pRenderer.BeginEvent("Motion blur draw.");
-	GFX_CATCH_RENDER(managerMB.Render(*this););
+	pRenderer.BeginEvent("Static motion blur draw.");
+	GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Models draw.");
 	GFX_CATCH_RENDER(managerModels.Render(*this););
 	pRenderer.EndEvent();
 
+	pRenderer.BeginEvent("Dynamic motion blur draw.");
+	GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Sky draw.");
 	GFX_CATCH_RENDER(managerSkybox.Render(*this););

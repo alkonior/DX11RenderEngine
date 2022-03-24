@@ -20,10 +20,14 @@ struct VSIn {
 
 
 struct PSIn {
-	float4 pos      : SV_Position;
-	float2 uv       : TEXCOORD;
-	float3 normal   : NORMAL;
-	float2 velocity : VELOCITY;
+	float4 pos			: SV_Position;
+	float2 uv			: TEXCOORD;
+	float3 normal		: NORMAL;
+	float2 velocity		: VELOCITY;
+	//float3 oldPos		: OLDPOS;
+	//float3 newPos		: NEWPOS;
+	//float4 oldPixelPos	: OLDPOIX;
+	//float4 newPixelPos	: NEWPIX ;
 };
 
 matrix lerp(float alpha, matrix old, matrix next)
@@ -45,9 +49,9 @@ PSIn vsIn(VSIn input) {
 	matrix oldWorldMat; 
 #ifdef LERP
 	worlPos = lerp(modelsCosntBuffer.alpha, input.pos1, input.pos2);
-	worldMat = lerp(modelsCosntBuffer.alpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
+	worldMat = lerp(1.0-modelsCosntBuffer.alpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
 	oldWorlPos = lerp(modelsCosntBuffer.oldAlpha, input.pos1, input.pos2);
-	oldWorldMat = lerp(modelsCosntBuffer.oldAlpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
+	oldWorldMat = lerp(1.0-modelsCosntBuffer.oldAlpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
 #else
 	worlPos = input.pos;
 	worldMat = modelsCosntBuffer.world;
@@ -55,12 +59,16 @@ PSIn vsIn(VSIn input) {
 	oldWorldMat = modelsCosntBuffer.world;
 #endif
 
+	//vso.oldPos = oldWorlPos;
+	//vso.newPos = worlPos;
 	vso.pos = mul(mul(float4(worlPos, 1.0f), worldMat), mainConstants.viewProjection);
 	float4 oldPos = mul(mul(float4(oldWorlPos, 1.0f), oldWorldMat), mainConstants.past_viewProjection);
 	
+	//vso.oldPixelPos = mul(float4(worlPos, 1.0f), worldMat);
+	//vso.newPixelPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);
 	
 
-	vso.velocity = (((vso.pos/vso.pos.w) - (oldPos/oldPos.w))/2.f).xy;
+	vso.velocity = (((vso.pos/vso.pos.w).xy - (oldPos/oldPos.w).xy)/2.f);
 	
 
 	
@@ -97,12 +105,14 @@ struct PSOut {
 	float4 color      : SV_Target0;
 	float4 light      : SV_Target1;
 	float2 velocity   : SV_Target2;
+	float  blurMask   : SV_Target3;
 };
 
 PSOut psIn(PSIn input) : SV_Target
 {
 	PSOut pso = (PSOut)0;
 	pso.velocity = input.velocity;
+	pso.blurMask = modelsCosntBuffer.blurStrength;
 #ifdef RED
 	pso.color = float4(1.0, input.uv.x, input.uv.y, 1.0f);
 	return pso;

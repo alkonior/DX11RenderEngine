@@ -2,8 +2,16 @@
 
 using namespace Renderer;
 QuadRenderer::QuadRenderer(const char* name) : BaseRenderer(name) {};
+
+
+VertexBufferBinding QuadRenderer::vertexBuffer;
+Buffer* QuadRenderer::indexBuffer = nullptr;
+bool QuadRenderer::isInited = false;
+
 void QuadRenderer::Init()
 {
+	if (isInited)
+		return;
     int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
@@ -52,6 +60,9 @@ void QuadRenderer::Render()
 
 QuadRenderer::~QuadRenderer()
 {
+	if(!isInited)
+		return;
+	isInited = false;
 	delete vertexBuffer.vertexOffset;
 	delete vertexBuffer.vertexStride;
 	renderer->AddDisposeVertexBuffer(vertexBuffer.vertexBuffers[0]);

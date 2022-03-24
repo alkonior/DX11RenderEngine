@@ -28,9 +28,11 @@ public:
 	virtual void Init(void* shaderData, size_t dataSize) override;
 	void Init(LPCWSTR dirr);
 
-	void Render(GraphicsBase& gfx);
+	void RenderStatic(GraphicsBase& gfx);
+	void RenderDynamic(GraphicsBase& gfx);
 
 	virtual void Clear() override;
+	virtual void Clear(GraphicsBase& gfx) override;
 
 	~MotionBlurRenderer() override;
 private:

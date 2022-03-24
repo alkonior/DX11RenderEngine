@@ -69,8 +69,8 @@ private:
 	std::vector<wrl::ComPtr<ID3D11Buffer>> vertexBuffers;
 	std::vector<uint32_t> vertexBufferOffsets;
 	std::vector<uint32_t> vertexBufferStrides;
-	wrl::ComPtr<ID3D11Buffer> indexBuffer;
-	wrl::ComPtr<ID3D11Buffer> vertexBuffer;
+	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* vertexBuffer;
 	size_t indexElementSize;
 
 	///* Resource Caches */

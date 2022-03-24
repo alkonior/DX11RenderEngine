@@ -13,6 +13,7 @@ struct ModelsCosntBuffer {
     float oldAlpha;
     float alpha;
     float2 wh;
+    float blurStrength;
 };
 
 STRUCTURE(1, ModelsCosntBuffer, modelsCosntBuffer)

@@ -59,7 +59,7 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 
 void MotionBlurRenderer::Init(LPCWSTR dirr) {}
 
-void MotionBlurRenderer::Render(GraphicsBase& gfx) {
+void MotionBlurRenderer::RenderStatic(GraphicsBase& gfx) {
 	QuadRenderer::Render();
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -84,6 +84,34 @@ void MotionBlurRenderer::Render(GraphicsBase& gfx) {
 
 	renderer->ApplyPipelineState(factory->GetState(MBZERO));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	
+	renderer->VerifyPixelTexture(2, nullptr);
+	
+}
+
+void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
+	QuadRenderer::Render();
+	QuadRenderer::Render();
+	int32_t width, height;
+	renderer->GetBackbufferSize(&width, &height);
+
+	//RenderIMGUI(gfx);
+	
+	RenderTargetBinding* targets[] = {&buffColorRT, &buffLightRT};
+	
+	renderer->VerifyConstBuffer(constBuffer, motionBlurCosntBuffer.slot);
+	renderer->SetConstBuffer(constBuffer, &localBuffer);
+
+	
+	renderer->SetRenderTargets(targets, 2, nullptr, vp);
+	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.lightColor);
+	renderer->VerifyPixelTexture(2, gfx.texturesManger.velocityField);
+	renderer->VerifyPixelTexture(3, gfx.texturesManger.blurMask);
+
+	renderer->ApplyPipelineState(factory->GetState(MBDYNAMIC));
+	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	
 	renderer->VerifyPixelTexture(2, nullptr);
@@ -98,7 +126,18 @@ void MotionBlurRenderer::Render(GraphicsBase& gfx) {
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 }
 
-void MotionBlurRenderer::Clear(){}
+void MotionBlurRenderer::Clear() {}
+
+void MotionBlurRenderer::Clear(GraphicsBase& gfx)
+{
+
+	RenderTargetBinding* targets[1] = {
+		&gfx.texturesManger.blurMaskRT
+   };
+
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, Viewport());
+	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
+}
 
 
 void MotionBlurRenderer::RenderIMGUI(GraphicsBase& gfx)

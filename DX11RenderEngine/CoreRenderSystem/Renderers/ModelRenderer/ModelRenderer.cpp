@@ -50,6 +50,8 @@ void ModelRenderer::Clear() {
 
 	drawCalls.clear();
 	drawLerpCalls.clear();
+
+	
 }
 
 ModelRenderer::~ModelRenderer() { Destroy(); }
@@ -65,13 +67,14 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	RenderTargetBinding* targets[3] = {
+	RenderTargetBinding* targets[4] = {
 		&gfx.texturesManger.diffuseColorRT,
 		&gfx.texturesManger.lightColorRT,
-		&gfx.texturesManger.velocityFieldRT
+		&gfx.texturesManger.velocityFieldRT,
+		&gfx.texturesManger.blurMaskRT,
    };
 	
-	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, vp);
+	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;
@@ -135,11 +138,14 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 
 
 		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
+		dataBuffer.oldAlpha = drawLerpCalls[i].data.oldAlpha;
 		dataBuffer.wh = float2(drawLerpCalls[i].texture.width, drawLerpCalls[i].texture.height);
 		dataBuffer.color = drawLerpCalls[i].data.color;
 		dataBuffer.world = drawLerpCalls[i].data.newPosition.GetTransform();
 		dataBuffer.oldWorld = drawLerpCalls[i].data.oldPosition.GetTransform();
-		
+		dataBuffer.blurStrength = 1.f;
+		if (drawLerpCalls[i].data.isGun)
+			dataBuffer.blurStrength = 0.f;
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
 

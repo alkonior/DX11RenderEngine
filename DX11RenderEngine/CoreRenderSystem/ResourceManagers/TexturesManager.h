@@ -60,6 +60,9 @@ public:
 	Renderer::Texture* velocityField;
 	Renderer::RenderTargetBinding velocityFieldRT;
 	
+	Renderer::Texture* blurMask;
+	Renderer::RenderTargetBinding blurMaskRT;
+	
 	Renderer::Texture* preFXAAcolor;
 	Renderer::RenderTargetBinding preFXAAcolorRT;
 	
