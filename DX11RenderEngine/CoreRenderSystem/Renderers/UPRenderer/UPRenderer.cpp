@@ -71,13 +71,14 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 
 void UPRenderer::Render(GraphicsBase& gfx) {
 	
-	RenderTargetBinding* targets[3] = {
+	RenderTargetBinding* targets[4] = {
 		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
+		 &gfx.texturesManger.velocityFieldRT,
 	};
 
-	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, Viewport());
+	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthBuffer, Viewport());
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);

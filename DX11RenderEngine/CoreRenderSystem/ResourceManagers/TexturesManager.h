@@ -57,8 +57,12 @@ public:
 	Renderer::Texture* bloomMask;
 	Renderer::RenderTargetBinding bloomMaskRT;
 	
+	Renderer::Texture* velocityField;
+	Renderer::RenderTargetBinding velocityFieldRT;
+	
 	Renderer::Texture* preFXAAcolor;
 	Renderer::RenderTargetBinding preFXAAcolorRT;
+	
 	
 	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
 

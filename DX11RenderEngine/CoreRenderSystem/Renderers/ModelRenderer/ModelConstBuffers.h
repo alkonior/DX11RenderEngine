@@ -7,8 +7,10 @@
 
 
 struct ModelsCosntBuffer {
+    matrix oldWorld;
     matrix world;
     float4 color;
+    float oldAlpha;
     float alpha;
     float2 wh;
 };

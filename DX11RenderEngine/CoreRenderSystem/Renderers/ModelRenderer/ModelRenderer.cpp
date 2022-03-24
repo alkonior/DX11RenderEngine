@@ -65,12 +65,13 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	RenderTargetBinding* targets[2] = {
+	RenderTargetBinding* targets[3] = {
 		&gfx.texturesManger.diffuseColorRT,
 		&gfx.texturesManger.lightColorRT,
+		&gfx.texturesManger.velocityFieldRT
    };
 	
-	renderer->SetRenderTargets(targets, 2, gfx.texturesManger.depthBuffer, vp);
+	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;
@@ -136,7 +137,8 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 		dataBuffer.alpha = drawLerpCalls[i].data.alpha;
 		dataBuffer.wh = float2(drawLerpCalls[i].texture.width, drawLerpCalls[i].texture.height);
 		dataBuffer.color = drawLerpCalls[i].data.color;
-		dataBuffer.world = drawLerpCalls[i].data.position.GetTransform();
+		dataBuffer.world = drawLerpCalls[i].data.newPosition.GetTransform();
+		dataBuffer.oldWorld = drawLerpCalls[i].data.oldPosition.GetTransform();
 		
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 

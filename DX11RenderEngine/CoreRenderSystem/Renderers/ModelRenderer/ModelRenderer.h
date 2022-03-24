@@ -8,7 +8,8 @@
 #include "Renderers\BaseRenderer.h"
 
 struct LerpModelDrawData {
-	Transform position;
+	Transform oldPosition;
+	Transform newPosition;
 	bool isSingle;
 
 	float alpha;

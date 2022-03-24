@@ -90,7 +90,7 @@ namespace Renderer
         swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         swapchainDesc.BufferCount = 3;
         swapchainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-        swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+        swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         //swapchainDesc.BufferDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
         swapchainDesc.Flags = 0;
         swapchainDesc.OutputWindow = (HWND)presentationParameters.deviceWindowHandle;

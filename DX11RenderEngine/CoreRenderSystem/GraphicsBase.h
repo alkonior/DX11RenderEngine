@@ -7,10 +7,10 @@
 #include "Utils\GDIPlusManager.h"
 #include "ResourceManagers\TexturesManager.h"
 #include "ResourceManagers\ModelsManager.h"
-#include "ResourceManagers\BlendStates.h"
-#include "ResourceManagers\RasterizerStates.h"
-#include "ResourceManagers\DSStates.h"
-#include "ResourceManagers\Samplers.h"
+#include "ResourceManagers\States\BlendStates.h"
+#include "ResourceManagers\States\RasterizerStates.h"
+#include "ResourceManagers\States\DSStates.h"
+#include "ResourceManagers\States\Samplers.h"
 
 struct RenderData{
 	float  time;
