@@ -13,7 +13,7 @@ int BlendStates::Init()
     Alpha.colorDestinationBlend = Blend::BLEND_INVERSESOURCEALPHA;
     Alpha.alphaSourceBlend = Blend::BLEND_ONE;
     Alpha.alphaDestinationBlend = Blend::BLEND_ZERO;
-    Alpha.colorWriteEnable = ColorWriteChannels::COLORWRITECHANNELS_ALL ^ ColorWriteChannels::COLORWRITECHANNELS_ALPHA;
+    Alpha.colorWriteEnable  = ColorWriteChannels::COLORWRITECHANNELS_ALL;
     Alpha.colorWriteEnable1 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
     Alpha.colorWriteEnable2 = ColorWriteChannels::COLORWRITECHANNELS_ALL;
     Alpha.colorWriteEnable3 = ColorWriteChannels::COLORWRITECHANNELS_ALL;

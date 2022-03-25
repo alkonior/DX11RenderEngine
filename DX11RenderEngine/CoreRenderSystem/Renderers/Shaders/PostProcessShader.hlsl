@@ -25,13 +25,11 @@ PSIn vsIn(VSIn input)
 
 
 Texture2D diffuseColor : register(t0);
-Texture2D lightmap : register(t2);
 Texture2D bloomMask : register(t1);
+Texture2D lightmap : register(t2);
 Texture2D depthTex : register(t3);
+Texture2D alphaSurfaces : register(t4);
 
-#ifdef ALPHA
-Texture2D alphaSurfaces : register(t3);
-#endif
 
 SamplerState blureSampler : register(s0);
 SamplerState pointSampler : register(s1);
@@ -61,7 +59,8 @@ float4 psIn(PSIn input) : SV_Target
 
 #ifdef ALPHA
 	float4 alphaColor = alphaSurfaces.Sample(blureSampler, texCoord);
-	alphaColor.w = 0.3;
+	float depth = depthTex.Sample(blureSampler, texCoord);
+    alphaColor.w = 0.3;
 	return alphaColor;
 #endif
 

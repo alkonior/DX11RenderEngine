@@ -143,9 +143,9 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 		dataBuffer.color = drawLerpCalls[i].data.color;
 		dataBuffer.world = drawLerpCalls[i].data.newPosition.GetTransform();
 		dataBuffer.oldWorld = drawLerpCalls[i].data.oldPosition.GetTransform();
-		dataBuffer.blurStrength = 1.f;
+		dataBuffer.blurSwitch = 2.f;
 		if (drawLerpCalls[i].data.isGun)
-			dataBuffer.blurStrength = 0.f;
+			dataBuffer.blurSwitch = 1.f;
 		renderer->SetConstBuffer(pDataCB, &dataBuffer);
 
 

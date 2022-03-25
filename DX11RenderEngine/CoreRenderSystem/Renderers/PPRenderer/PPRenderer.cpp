@@ -15,11 +15,6 @@ void PPRenderer::PPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 	}
 
 	refToPS->dss = &DepthStencilStates::NoDSS;
-	
-	refToPS->rs = &RasterizerStates::All;
-
-
-	refToPS->dss = &DepthStencilStates::NoDSS;
 	refToPS->rs = &RasterizerStates::All;
 
 }
@@ -97,18 +92,24 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelSampler(0, Samplers::point);
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomMask);
+	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
+	renderer->VerifyPixelTexture(4, gfx.texturesManger.alphaSurfaces);
+	
 	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
 	renderer->SetConstBuffer(pConstBuffer, &localData);
 
 	renderer->ApplyPipelineState(factory->GetState(PPZERO | flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+
+
+	renderer->VerifyPixelTexture(3, gfx.texturesManger.depthBuffer->texture);
+	
 	renderer->ApplyPipelineState(factory->GetState(PPALPHA | flags));
-	renderer->VerifyPixelTexture(3, gfx.texturesManger.alphaSurfaces);
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	
+	renderer->VerifyPixelTexture(3, nullptr);
 }
 
 

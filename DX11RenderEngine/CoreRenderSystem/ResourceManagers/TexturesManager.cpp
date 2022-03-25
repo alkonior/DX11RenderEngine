@@ -10,7 +10,7 @@ TexturesManager::TexturesManager() {
 	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height, diffuseColor,   diffuseColorRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height, lightColor,     lightColorRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height, bloomMask,      bloomMaskRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height, alphaSurfaces,  alphaSurfacesRT);
+	CreateRenderTarget(SURFACEFORMAT_VECTOR4,    width, height, alphaSurfaces,  alphaSurfacesRT);
 	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height, preFXAAcolor,   preFXAAcolorRT);
 	CreateRenderTarget(SURFACEFORMAT_VECTOR2,  width, height, velocityField,  velocityFieldRT);
 	CreateRenderTarget(SURFACEFORMAT_SINGLE,  width, height,  blurMask,	   blurMaskRT);

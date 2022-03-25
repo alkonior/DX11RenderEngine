@@ -10,10 +10,10 @@ struct VSIn {
 
 
 struct PSIn {
-	float4 pos      : SV_Position;
-	float2 uv       : TEXCOORD;
-	float2 luv      : LIGHTTEXCOORD;
-	float2 velocity : VELOCITY;
+	float4 pos          : SV_Position;
+	float2 uv           : TEXCOORD;
+	float2 luv          : LIGHTTEXCOORD;
+	float4 worldPos     : WPOS;
 };
 
 
@@ -29,10 +29,11 @@ struct PSIn {
 
 PSIn vsIn(VSIn input) {
 	PSIn vso = (PSIn)0;
-
-	vso.pos =    mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.viewProjection);
-	float4 oldPos = mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.past_viewProjection);
-	vso.velocity = (vso.pos/vso.pos.w - oldPos/oldPos.w)/2.f;
+	
+	vso.worldPos = mul(float4(input.pos, 1.0f), upCosntBuffer.world);
+	vso.pos =    mul(vso.worldPos, mainConstants.viewProjection);
+	//float4 oldPos = mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.past_viewProjection);
+	//vso.velocity = (vso.pos/vso.pos.w - oldPos/oldPos.w)/2.f;
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
@@ -48,27 +49,22 @@ SamplerState basicSampler : register(s0);
 SamplerState lightSampler : register(s1);
 
 
+#ifndef ALPHA
 struct PSOut {
 	float4 color   : SV_Target0;
-
 	float4 light   : SV_Target1;
-	
 	float4 alpha   : SV_Target2;
-
 	float2 velocity: SV_Target3;
-	
 };
 
 
-PSOut psIn(PSIn input) : SV_Target
+PSOut psIn(PSIn input) 
 {
 	PSOut pso = (PSOut)0;
-
 	
-    
-	// Use this frame's position and last frame's to compute the pixel
-	// velocity.
-	pso.velocity = input.velocity;
+	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
+	float4 oldPixelPos = mul(input.worldPos, mainConstants.past_viewProjection);
+	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f;
 	
 #ifdef RED
 	pso.color = float4(1.0, 0, 0, 1.0f);
@@ -77,29 +73,43 @@ PSOut psIn(PSIn input) : SV_Target
 	pso.worldPos = input.worldPos;
 	return pso;
 #endif
+	
+	pso.light = float4(1, 1, 1, 1);
 
 #ifdef COLORED
 	pso.color = color;
-	pso.light = float4(1, 1, 1, 1);
 	return pso;
 #endif
+	
+	pso.color = tex.Sample(basicSampler, input.uv);
 
-
-#ifdef ALPHA
-	pso.velocity = 0;
-	pso.alpha = tex.Sample(basicSampler, input.uv);
-#ifdef LIGHTMAPPED
-	pso.alpha *= lightMapText.Sample(lightSampler, input.luv);
-#endif
-#else
-	pso.color = tex.Sample(basicSampler, input.uv) ;
 #ifdef LIGHTMAPPED
 	pso.light = lightMapText.Sample(lightSampler, input.luv);
-#endif 
 #endif 
 
 	return pso;
 }
+
+
+#else
+
+struct PSOut {
+	float4 alpha   : SV_Target2;
+};
+
+PSOut psIn(PSIn input) {
+	PSOut pso = (PSOut)0;
+	
+	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
+	pso.alpha = tex.Sample(basicSampler, input.uv);
+#ifdef LIGHTMAPPED
+	pso.alpha *= lightMapText.Sample(lightSampler, input.luv);
+#endif
+	pso.alpha.w = curPixelPos.z/curPixelPos.w;
+
+	return pso;
+}
+#endif
 
 
 

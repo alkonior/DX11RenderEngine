@@ -1238,7 +1238,7 @@ namespace Renderer
             &result->handle
         ));
 
-        texture->isRenderTarget = false;
+        texture->isRenderTarget = true;
         D3D11_SHADER_RESOURCE_VIEW_DESC rvDesc;
         rvDesc.Format = D3D11DepthSVFormat[format];
         rvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -1251,6 +1251,7 @@ namespace Renderer
             &texture->shaderView
         ));
 
+        texture->handle = result->handle;
         result->texture = texture;
 
         D3D11_DEPTH_STENCIL_VIEW_DESC dsDesc;

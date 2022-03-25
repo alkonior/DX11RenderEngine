@@ -10,10 +10,6 @@ void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState*
 
 	
 	refToPS->bs = &BlendStates::NoAlpha;
-	
-	if (definesFlags & (UPALPHA)) {
-		refToPS->bs = &BlendStates::Alpha;
-	}
 
 	refToPS->dss = &DepthStencilStates::DSS;
 	refToPS->rs = &RasterizerStates::ClockWise;

@@ -101,18 +101,22 @@ PSOut psIn(PSIn input) : SV_Target{
     
     // Average all of the samples to get the final blur color.
     pso.color = color / totalStrength;
-    pso.light = light / motionBlurCosntBuffer.numSampes;
+    pso.light = light / motionBlurCosntBuffer.numSampes;\
+    pso.color.w = 1;
+    pso.light.w = 1;
 
 #endif
     
 #ifdef DYNAMIC
-   
+    float blurSwitch = blurStrength.Sample(basicSampler, texCoord);
+    float hasBlur = 0.0;
+    if (blurSwitch > 1.5)
+        hasBlur = 1.0;
     float2 velocity = velocityTexture.Sample(basicSampler, texCoord)
-        * blurStrength.Sample(basicSampler, texCoord)
+        * hasBlur
         * motionBlurCosntBuffer.strength;
     // Get the initial color at this pixel.
     float4 color = diffuseColor.Sample(basicSampler, texCoord);
-    color += motionBlurCosntBuffer.bloomStrength * color;
     float4 light = lightColor.Sample(basicSampler, texCoord);
     texCoord += velocity;
     
@@ -128,6 +132,8 @@ PSOut psIn(PSIn input) : SV_Target{
     // Average all of the samples to get the final blur color.
     pso.color = color / motionBlurCosntBuffer.numSampes;
     pso.light = light / motionBlurCosntBuffer.numSampes;
+    pso.color.w = saturate(saturate(blurSwitch - 0.5) + 0.5);
+    pso.light.w = saturate(saturate(blurSwitch - 0.5) + 0.5);
 
 #endif
     

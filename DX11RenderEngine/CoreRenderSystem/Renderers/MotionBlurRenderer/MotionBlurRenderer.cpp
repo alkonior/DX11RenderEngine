@@ -9,6 +9,9 @@ MotionBlurRenderer::MotionBlurRendererProvider::MotionBlurRendererProvider(int32
 void MotionBlurRenderer::MotionBlurRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
 
 	refToPS->bs = &BlendStates::NoAlpha;
+	if (definesFlags&MBDYNAMIC)
+		refToPS->bs = &BlendStates::Alpha;
+		
 	refToPS->dss = &DepthStencilStates::NoDSS;
 	refToPS->rs = &RasterizerStates::All;
 
@@ -50,8 +53,8 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new MotionBlurRendererFactory(provider, shaderData, dataSize);
 	
 
-	localBuffer.strength	= 0.75;
-	localBuffer.bloomStrength	= 0.75;
+	localBuffer.strength	= 0.01;
+	localBuffer.bloomStrength	= 20;
 	localBuffer.numSampes	= 5;
 	
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
@@ -131,11 +134,12 @@ void MotionBlurRenderer::Clear() {}
 void MotionBlurRenderer::Clear(GraphicsBase& gfx)
 {
 
-	RenderTargetBinding* targets[1] = {
-		&gfx.texturesManger.blurMaskRT
+	RenderTargetBinding* targets[] = {
+		&gfx.texturesManger.blurMaskRT,
+		&gfx.texturesManger.velocityFieldRT,
    };
 
-	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, Viewport());
+	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, Viewport());
 	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 

@@ -23,11 +23,11 @@ struct PSIn {
 	float4 pos			: SV_Position;
 	float2 uv			: TEXCOORD;
 	float3 normal		: NORMAL;
-	float2 velocity		: VELOCITY;
+	//float2 velocity		: VELOCITY;
 	//float3 oldPos		: OLDPOS;
 	//float3 newPos		: NEWPOS;
-	//float4 oldPixelPos	: OLDPOIX;
-	//float4 newPixelPos	: NEWPIX ;
+	float4 oldWorldPos	: OLDWPOS;
+	float4 worldPos	    : NEWWPOS;
 };
 
 matrix lerp(float alpha, matrix old, matrix next)
@@ -62,13 +62,14 @@ PSIn vsIn(VSIn input) {
 	//vso.oldPos = oldWorlPos;
 	//vso.newPos = worlPos;
 	vso.pos = mul(mul(float4(worlPos, 1.0f), worldMat), mainConstants.viewProjection);
-	float4 oldPos = mul(mul(float4(oldWorlPos, 1.0f), oldWorldMat), mainConstants.past_viewProjection);
+	vso.oldWorldPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);
+	vso.worldPos = mul(float4(worlPos, 1.0f), worldMat);
 	
 	//vso.oldPixelPos = mul(float4(worlPos, 1.0f), worldMat);
 	//vso.newPixelPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);
 	
 
-	vso.velocity = (((vso.pos/vso.pos.w).xy - (oldPos/oldPos.w).xy)/2.f);
+	
 	
 
 	
@@ -111,8 +112,12 @@ struct PSOut {
 PSOut psIn(PSIn input) : SV_Target
 {
 	PSOut pso = (PSOut)0;
-	pso.velocity = input.velocity;
-	pso.blurMask = modelsCosntBuffer.blurStrength;
+	
+	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
+	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection);
+	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f;
+	
+	pso.blurMask = modelsCosntBuffer.blurSwitch;
 #ifdef RED
 	pso.color = float4(1.0, input.uv.x, input.uv.y, 1.0f);
 	return pso;
