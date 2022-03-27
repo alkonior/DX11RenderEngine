@@ -28,7 +28,11 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());
 	
 	//managerImGUI.Init();
-	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());
+	//ImGui_ImplDX11_Init(renderer.device.Get(), renderer.context.Get());7
+
+	pLocalConstants = renderer->CreateConstBuffer(sizeof(taaConstants));
+	taaConstants.taaStrength = 1;
+	renderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
 
 	renderPasses.push_back(&managerSkybox);
 	renderPasses.push_back(&managerUI);
@@ -39,6 +43,7 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	renderPasses.push_back(&managerParticles);
 	renderPasses.push_back(&managerBloom);
 	renderPasses.push_back(&managerFXAA);
+	renderPasses.push_back(&managerTAA);
 
 }
 
@@ -61,6 +66,11 @@ void Graphics::BeginFrame() {
 
 bool Graphics::RenderFrame() {
 	managerIMGUI.BeginFrame(*this);
+
+	
+	managerTAA.UpdateHaltonSequence();
+	taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
+	renderer->SetConstBuffer(pLocalConstants, &taaConstants);
 	
 	bool success = true;
 	pRenderer.BeginEvent("BSP draw.");
@@ -99,8 +109,8 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer.EndEvent();
 	
-	pRenderer.BeginEvent("FXAA-pass.");
-	GFX_CATCH_RENDER(managerFXAA.Render(*this););
+	pRenderer.BeginEvent("TAA-pass.");
+	GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("UI draw.");

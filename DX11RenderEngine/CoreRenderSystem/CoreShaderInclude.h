@@ -50,8 +50,14 @@ struct MainConstants {
 	float  dt;
 };
 
+struct TAAShiftBuffer {
+	float2  taaPixelShift;
+	float  taaStrength;
+};
+
 
 STRUCTURE(0, MainConstants, mainConstants)
+STRUCTURE(8, TAAShiftBuffer, taaShiftBuffer)
 
 
 

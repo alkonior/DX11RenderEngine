@@ -33,6 +33,11 @@ PSIn CreateQuadVertex(GSIn input, float2 offset) {
 	PSIn gso = (PSIn)0;
 	input.pos.xy += offset;
 	gso.pos = mul(input.pos, mainConstants.projection);
+
+	gso.pos.xy += taaShiftBuffer.taaStrength*
+	taaShiftBuffer.taaPixelShift*
+		gso.pos.w;
+	
 	gso.color = input.color;
 	return gso;
 }

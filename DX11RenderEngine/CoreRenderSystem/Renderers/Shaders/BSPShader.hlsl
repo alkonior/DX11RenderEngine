@@ -31,7 +31,10 @@ PSIn vsIn(VSIn input) {
 	PSIn vso = (PSIn)0;
 	
 	vso.worldPos = mul(float4(input.pos, 1.0f), upCosntBuffer.world);
-	vso.pos =    mul(vso.worldPos, mainConstants.viewProjection);
+	vso.pos =    mul(vso.worldPos, mainConstants.viewProjection) ;
+	vso.pos.xy += taaShiftBuffer.taaStrength*
+		taaShiftBuffer.taaPixelShift*
+			vso.pos.w;
 	//float4 oldPos = mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.past_viewProjection);
 	//vso.velocity = (vso.pos/vso.pos.w - oldPos/oldPos.w)/2.f;
 	

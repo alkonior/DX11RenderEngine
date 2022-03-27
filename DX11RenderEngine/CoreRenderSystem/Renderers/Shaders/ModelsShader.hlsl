@@ -64,6 +64,10 @@ PSIn vsIn(VSIn input) {
 	vso.pos = mul(mul(float4(worlPos, 1.0f), worldMat), mainConstants.viewProjection);
 	vso.oldWorldPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);
 	vso.worldPos = mul(float4(worlPos, 1.0f), worldMat);
+
+	vso.pos.xy += taaShiftBuffer.taaStrength*
+	taaShiftBuffer.taaPixelShift*
+		vso.pos.w;
 	
 	//vso.oldPixelPos = mul(float4(worlPos, 1.0f), worldMat);
 	//vso.newPixelPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);

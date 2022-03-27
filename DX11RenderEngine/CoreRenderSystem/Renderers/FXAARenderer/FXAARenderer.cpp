@@ -74,7 +74,7 @@ void FXAARenderer::Render(GraphicsBase& gfx) {
 	RenderTargetBinding* target[1] = {&preFXAART};
 	renderer->SetRenderTargets(target, 1, nullptr, vp);
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
-	renderer->VerifyPixelTexture(0, gfx.texturesManger.preFXAAcolor);
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.preAAcolor);
 
 	renderer->ApplyPipelineState(factory->GetState(FXAASETLUMA));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);

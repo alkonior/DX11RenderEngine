@@ -667,33 +667,42 @@ namespace Renderer
         /* Update color buffers */
         for (i = 0; i < std::min(numRenderTargets, MAX_RENDERTARGET_BINDINGS); i += 1)
         {
-            if (renderTargets[i]->colorBuffer != NULL)
+            if (renderTargets[i] == nullptr)
             {
-                rb = (D3D11Renderbuffer*)renderTargets[i]->colorBuffer;
-                views[i] = rb->color.rtView.Get();
-                comViews[i] = rb->color.rtView;
-            } else
+                views[i] = swapchainRTView.Get();
+                comViews[i] = swapchainRTView;
+                this->SetViewport(viewport, i);
+            }else
             {
-                tex = (D3D11Texture*)renderTargets[i]->texture;
+                if (renderTargets[i]->colorBuffer != NULL)
+                {
+                    rb = (D3D11Renderbuffer*)renderTargets[i]->colorBuffer;
+                    views[i] = rb->color.rtView.Get();
+                    comViews[i] = rb->color.rtView;
+                } else
+                {
+                    tex = (D3D11Texture*)renderTargets[i]->texture;
 
-                //if (tex->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
-                //	views[i] = tex->twod.rtView;
-                //} else if (tex->rtType == FNA3D_RENDERTARGET_TYPE_CUBE) {
-                //	views[i] = tex->cube.rtViews[
-                //		renderTargets[i].cube.face
-                //	];
-                //}
-                comViews[i] = tex->rtView;
-                views[i] = tex->rtView.Get();
+                    //if (tex->rtType == FNA3D_RENDERTARGET_TYPE_2D) {
+                    //	views[i] = tex->twod.rtView;
+                    //} else if (tex->rtType == FNA3D_RENDERTARGET_TYPE_CUBE) {
+                    //	views[i] = tex->cube.rtViews[
+                    //		renderTargets[i].cube.face
+                    //	];
+                    //}
+                    comViews[i] = tex->rtView;
+                    views[i] = tex->rtView.Get();
+                }
+                this->SetViewport(renderTargets[i]->viewport, i);
             }
 
-            this->SetViewport(renderTargets[i]->viewport, i);
         }
         while (i < MAX_RENDERTARGET_BINDINGS)
         {
             comViews[i] = nullptr;
             views[i++] = nullptr;
         }
+        
 
 
         /* Actually set the render targets, finally. */

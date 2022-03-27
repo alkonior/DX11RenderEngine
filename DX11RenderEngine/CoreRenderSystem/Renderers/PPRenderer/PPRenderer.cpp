@@ -86,7 +86,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 		flags|=PPALPHAONLY;
 	
 
-	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preFXAAcolorRT};
+	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preAAcolorRT};
 	renderer->SetRenderTargets(targets, 1, nullptr, vp);
 	
 	renderer->VerifyPixelSampler(0, Samplers::point);

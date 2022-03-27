@@ -114,7 +114,7 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->SetRenderTargets(targets, 2, gfx.texturesManger.depthBuffer, vp);
 
 	renderer->VerifyConstBuffer(constBuffer, skyboxCosntBuffer.slot);
-	localBuffer.skyboxView = (matrix::CreateRotationX(1.570796)*( gfx.localConstants.view.Transpose())).Transpose();
+	localBuffer.skyboxView = (matrix::CreateRotationX(1.570796)*( gfx.viewConstants.view.Transpose())).Transpose();
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);

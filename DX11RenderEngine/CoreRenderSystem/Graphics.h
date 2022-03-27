@@ -13,6 +13,7 @@
 #include "Renderers\BloomRenderer\BloomRenderer.h"
 #include "Renderers\FXAARenderer\FXAARenderer.h"
 #include "Renderers\MotionBlurRenderer\MotionBlurRenderer.h"
+#include "Renderers\TAARenderer\TAARenderer.h"
 
 
 #ifdef _DEBUG
@@ -87,14 +88,9 @@ private:
 	BloomRenderer	     managerBloom;
 	ImGUIRenderer	     managerIMGUI;
 	FXAARenderer	     managerFXAA;
+	TAARenderer	         managerTAA;
 
 
-	enum class DrawCall {
-		draw2D,
-		draw3D,
-		drawUP,
-	};
-
-	std::vector<DrawCall> queue;
+	Renderer::ConstBuffer* pLocalConstants;
 
 };

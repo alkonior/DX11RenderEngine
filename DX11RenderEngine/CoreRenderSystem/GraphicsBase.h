@@ -38,7 +38,8 @@ public:
 	float time;
 	void UpdateBaseConstants ();
 
-	MainConstants localConstants;
+	TAAShiftBuffer taaConstants;
+	MainConstants viewConstants;
 	Renderer::ConstBuffer* pLocalConstants;
 	
 	TexturesManager texturesManger;

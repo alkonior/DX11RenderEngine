@@ -63,8 +63,13 @@ public:
 	Renderer::Texture* blurMask;
 	Renderer::RenderTargetBinding blurMaskRT;
 	
-	Renderer::Texture* preFXAAcolor;
-	Renderer::RenderTargetBinding preFXAAcolorRT;
+	Renderer::Texture* preAAcolor;
+	Renderer::RenderTargetBinding preAAcolorRT;
+	
+	Renderer::Texture* pastColor;
+	Renderer::RenderTargetBinding pastColorRT;
+	Renderer::Texture* pastDepth;
+	Renderer::RenderTargetBinding pastDepthRT;
 	
 	
 	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);

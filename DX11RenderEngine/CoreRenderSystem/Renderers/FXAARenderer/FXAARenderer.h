@@ -32,10 +32,15 @@ public:
 	virtual void Clear() override {}; 
 
 	~FXAARenderer() override;
+
+	
 private:
 	Renderer::ConstBuffer* constBuffer;
 	FXAACosntBuffer localBuffer;
 
+
+	std::vector<float2> haltonSequence;
+	void UpdateHaltonSequence();
 
 	Renderer::Texture* preFXAA;
 	Renderer::RenderTargetBinding preFXAART;
