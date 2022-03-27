@@ -3,6 +3,7 @@ using namespace Renderer;
 
 SamplerState Samplers::anisotropic16;
 SamplerState Samplers::point;
+SamplerState Samplers::linear;
 
 int Samplers::Init()
 {
@@ -17,6 +18,12 @@ int Samplers::Init()
    anisotropic16.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
    anisotropic16.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
    anisotropic16.maxAnisotropy = 16;
+
+    
+    linear.filter = TextureFilter::TEXTUREFILTER_LINEAR;
+    linear.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+    linear.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+    linear.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
     
     
     return 0;

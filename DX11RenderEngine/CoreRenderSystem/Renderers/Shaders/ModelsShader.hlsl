@@ -119,7 +119,7 @@ PSOut psIn(PSIn input) : SV_Target
 	
 	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
 	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection);
-	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f;
+	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f - taaShiftBuffer.taaPixelShift;
 	
 	pso.blurMask = modelsCosntBuffer.blurSwitch;
 #ifdef RED
