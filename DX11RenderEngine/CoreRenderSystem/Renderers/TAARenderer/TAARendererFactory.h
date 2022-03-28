@@ -7,12 +7,14 @@ enum  TAARendererDefines : std::uint32_t {
 	TAAZERO = 0,
 	TAARED = 1,
 	TAACOPY = 2,
+	TAAUSEYUV = 4,
 
 };
 
 const Renderer::ShaderDefines TAARendererDefines[] = {
 	Renderer::ShaderDefines("RED"),
 	Renderer::ShaderDefines("COPY"),
+	Renderer::ShaderDefines("USEYUV"),
 };
 
 

@@ -28,6 +28,7 @@ PSIn vsIn(VSIn input)
 #ifndef COPY
 
 Texture2D curColor  : register(t0);
+
 Texture2D curDepth  : register(t1);
 Texture2D pastColor : register(t2);
 Texture2D pastDepth : register(t3);
@@ -50,7 +51,17 @@ float3 ycbcr_to_rgb(float3 yuv) {
 }
 
 SamplerState basicSampler : register(s0);
-SamplerState lianearSampler : register(s1);
+SamplerState linearSampler : register(s1);
+
+
+float3 getColor(float2 texCord, SamplerState smpl, Texture2D tex)
+{
+#ifdef  USEYUV
+	return rgb_to_ycbcr(tex.Sample(smpl, texCord));
+#else
+	return tex.Sample(smpl, texCord);
+#endif
+}
 
 float3 lerp(float alpha, float3 left, float3 right)
 {
@@ -143,7 +154,7 @@ float2 LoadVelocity(float2 screenPos)
 
 	if (DilationMode == 0)
 	{
-		velocity = velocityField.Sample(basicSampler, screenPos);
+		velocity = velocityField.Sample(basicSampler, screenPos) + taaShiftBuffer.taaPixelShift;
 	}
 	else if (DilationMode == 1) // nearest depth
 	{
@@ -152,7 +163,7 @@ float2 LoadVelocity(float2 screenPos)
 		{
 			for (int x = -1; x <= 1; x++)
 			{
-				float2 neighborVelocity = velocityField.Sample(basicSampler, screenPos + shift*int2(x, y));
+				float2 neighborVelocity = velocityField.Sample(basicSampler, screenPos + shift*int2(x, y)) + taaShiftBuffer.taaPixelShift;
 				float neighborDepth = curDepth.Sample(basicSampler, screenPos + shift*int2(x, y));
 
 				if (neighborDepth < closestDepth)
@@ -245,7 +256,7 @@ float4 psIn(PSIn input) : SV_Target
 		{
 			//float2 samplePos = screenPos + float2(x, y);
 
-			float3 tap = rgb_to_ycbcr(curColor.Sample(basicSampler, texCords + shift*int2(x, y)));;
+			float3 tap = getColor(texCords + shift*int2(x, y), basicSampler, curColor);
 
 			clrMin = min(clrMin, tap);
 			clrMax = max(clrMax, tap);
@@ -256,19 +267,20 @@ float4 psIn(PSIn input) : SV_Target
 		}
 	}
 
-	float3 current = rgb_to_ycbcr(curColor.Sample(basicSampler, texCords));
+	float3 current = getColor(texCords, basicSampler, curColor);
+	
 	float3 history;
 	
 	int ReprojectionMode = TAABuffer.ReprojectionMode;
 
 	if (ReprojectionMode == 0)
 	{
-		history = rgb_to_ycbcr(pastColor.Sample(basicSampler, texCords));
+		history = getColor(texCords, basicSampler, pastColor);
 			//historyBuffer[screenPos].rgb;
 	}
 	else if (ReprojectionMode == 1)
 	{
-		history = rgb_to_ycbcr(pastColor.Sample(lianearSampler, texCords));
+		history = getColor(texCords, linearSampler, pastColor);
 	}
 	else
 	{
@@ -277,13 +289,13 @@ float4 psIn(PSIn input) : SV_Target
 		int ReprojectionFilter = 1;
 
 		float2 reprojectedPos = historyUV * w * h;
-		for (int y = -1; y <= 2; y++)
+		for (int y = -1; y <= 1; y++)
 		{
-			for (int x = -1; x <= 2; x++)
+			for (int x = -1; x <= 1; x++)
 			{
 				float2 samplePos = floor(reprojectedPos + float2(x, y)) + 0.5f;
-				float3 reprojectedSample = rgb_to_ycbcr(pastColor.Sample(basicSampler, texCords + shift*int2(x, y)));
-
+				float3 reprojectedSample = getColor(texCords + shift*int2(x, y), linearSampler, pastColor);
+				
 				float2 sampleDist = abs(samplePos - reprojectedPos);
 				float filterWeight = Filter(sampleDist.x, ReprojectionFilter) * Filter(sampleDist.y, ReprojectionFilter);
 
@@ -322,9 +334,14 @@ float4 psIn(PSIn input) : SV_Target
 		float3 maxc = mu + VarianceClipGamma * sigma;
 		history = ClipAABB(minc, maxc, history, mu);
 	}
+	float3 result = lerp(1.0 -  1.0 / TAABuffer.numSamples, current, history);
+
+#ifdef  USEYUV
+	return float4(ycbcr_to_rgb(result), 1.0);
+#else
+	return float4(result, 1.0);
+#endif
 	
-	
-  return float4(ycbcr_to_rgb(lerp(1.0 -  1.0 / TAABuffer.numSamples, current, history)), 1.0);
 }
 
 #else

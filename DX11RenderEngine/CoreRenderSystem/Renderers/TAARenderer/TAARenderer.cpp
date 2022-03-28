@@ -76,7 +76,10 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 		&gfx.texturesManger.pastColorRT,
 		&gfx.texturesManger.pastDepthRT,
 	};
-	
+
+	size_t flags = TAAZERO;
+	if (useyuv)
+		flags |= TAAUSEYUV;
 	
 	renderer->SetRenderTargets(target, 1, nullptr, vp);
 	renderer->VerifyPixelSampler(0, Samplers::point);
@@ -87,7 +90,7 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.pastDepth);
 	renderer->VerifyPixelTexture(4, gfx.texturesManger.velocityField);
 
-	renderer->ApplyPipelineState(factory->GetState(TAAZERO));
+	renderer->ApplyPipelineState(factory->GetState(flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 
@@ -131,6 +134,7 @@ void TAARenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
 	ImGui::SliderInt("NumSamples",				&localBuffer.numSamples , 1, 20 , "%.3f");
 	ImGui::SliderFloat("TAAShiftStrength",     &gfx.taaConstants.taaStrength, 0.0, 100.0  , "%.3f");
+	ImGui::Checkbox("Use YCbCr?", &useyuv);
 
 	
 	ImGui::SliderInt("DilationMode",			&localBuffer.DilationMode , 1, 3 , "%.3f");

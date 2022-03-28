@@ -41,7 +41,8 @@ public:
 private:
 	Renderer::ConstBuffer* constBuffer;
 	TAACosntBuffer localBuffer;
-	
+
+	bool useyuv = false;
 
 	Renderer::Texture* TAAresult;
 	Renderer::RenderTargetBinding TAAresultRT;

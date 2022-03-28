@@ -75,7 +75,8 @@ PSOut psIn(PSIn input) : SV_Target{
     previousPos /= previousPos.w;
     // Use this frame's position and last frame's to compute the pixel
     // velocity.
-    float2 velocity = (currentPos - previousPos)/2.f * motionBlurCosntBuffer.strength;
+    float2 velocity = (currentPos - previousPos)/2.f * motionBlurCosntBuffer.strength
+    *mainConstants.dt;
     // Get the initial color at this pixel.
     float4 color = diffuseColor.Sample(basicSampler, texCoord);
     float4 bloomColor = bloomMask.Sample(basicSampler, texCoord);
@@ -114,7 +115,8 @@ PSOut psIn(PSIn input) : SV_Target{
         hasBlur = 1.0;
     float2 velocity = velocityTexture.Sample(basicSampler, texCoord)
         * hasBlur
-        * motionBlurCosntBuffer.strength;
+        * motionBlurCosntBuffer.strength
+        * mainConstants.dt;
     // Get the initial color at this pixel.
     float4 color = diffuseColor.Sample(basicSampler, texCoord);
     float4 light = lightColor.Sample(basicSampler, texCoord);
