@@ -254,7 +254,7 @@ namespace DirectX
             float LengthSquared() const noexcept;
 
             float Dot(const Vector3& V) const noexcept;
-            void Cross(const Vector3& V, Vector3& result) const noexcept;
+            Vector3 Cross(const Vector3& a, const Vector3& b) const noexcept;
             Vector3 Cross(const Vector3& V) const noexcept;
 
             void Normalize() noexcept;
@@ -374,7 +374,7 @@ namespace DirectX
             float LengthSquared() const noexcept;
 
             float Dot(const Vector4& V) const noexcept;
-            void Cross(const Vector4& v1, const Vector4& v2, Vector4& result) const noexcept;
+            Vector4 Cross(const Vector4& a, const Vector4& b, const  Vector4& c) const noexcept;
             Vector4 Cross(const Vector4& v1, const Vector4& v2) const noexcept;
 
             void Normalize() noexcept;
@@ -536,6 +536,8 @@ namespace DirectX
 
             Matrix Invert() const noexcept;
             void Invert(Matrix& result) const noexcept;
+            
+            Matrix InvertHighPrecision() const noexcept;
 
             float Determinant() const noexcept;
 

@@ -49,6 +49,8 @@ void GraphicsBase::SetRenderData(const RenderData& data){
 	viewConstants.viewProjectionInverse = viewProjection.Invert().Transpose();
 	
 	
+	viewConstants.reprojectionMatrix    = viewProjection.InvertHighPrecision() * viewConstants.past_viewProjection;
+	
 	renderer->SetConstBuffer(pLocalConstants, &viewConstants);
 	
 }

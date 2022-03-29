@@ -837,12 +837,12 @@ inline float Vector3::Dot(const Vector3& V) const noexcept {
     return XMVectorGetX(X);
 }
 
-inline void Vector3::Cross(const Vector3& V, Vector3& result) const noexcept {
-    using namespace DirectX;
-    XMVECTOR v1 = XMLoadFloat3(this);
-    XMVECTOR v2 = XMLoadFloat3(&V);
-    XMVECTOR R = XMVector3Cross(v1, v2);
-    XMStoreFloat3(&result, R);
+inline Vector3 Vector3::Cross(const Vector3& a, const Vector3& b) const noexcept {
+    Vector3 ret;
+    ret.x = a.y * b.z - a.z * b.y;
+    ret.y = a.z * b.x - a.x * b.z;
+    ret.z = a.x * b.y - a.y * b.x;
+    return ret;
 }
 
 inline Vector3 Vector3::Cross(const Vector3& V) const noexcept {
@@ -1371,14 +1371,16 @@ inline float Vector4::Dot(const Vector4& V) const noexcept {
     return XMVectorGetX(X);
 }
 
-inline void Vector4::Cross(const Vector4& v1, const Vector4& v2, Vector4& result) const noexcept {
+inline Vector4 Vector4::Cross(const Vector4& a, const Vector4& b, const  Vector4& c) const noexcept {
     using namespace DirectX;
-    XMVECTOR x1 = XMLoadFloat4(this);
-    XMVECTOR x2 = XMLoadFloat4(&v1);
-    XMVECTOR x3 = XMLoadFloat4(&v2);
-    XMVECTOR R = XMVector4Cross(x1, x2, x3);
-    XMStoreFloat4(&result, R);
+    Vector4 ret;
+    ret.x = a.y * ( b.z * c.w - c.z * b.w ) - a.z * ( b.y * c.w - c.y * b.w ) + a.w * ( b.y * c.z - b.z *c.y );
+    ret.y = -( a.x * ( b.z * c.w - c.z * b.w ) - a.z * ( b.x * c.w - c.x * b.w ) + a.w * ( b.x * c.z - c.x * b.z ) );
+    ret.z = a.x * ( b.y * c.w - c.y * b.w ) - a.y * ( b.x *c.w - c.x * b.w ) + a.w * ( b.x * c.y - c.x * b.y );
+    ret.w = -( a.x * ( b.y * c.z - c.y * b.z ) - a.y * ( b.x * c.z - c.x *b.z ) + a.z * ( b.x * c.y - c.x * b.y ) );
+    return ret;
 }
+
 
 inline Vector4 Vector4::Cross(const Vector4& v1, const Vector4& v2) const noexcept {
     using namespace DirectX;
@@ -2149,6 +2151,41 @@ inline void Matrix::Invert(Matrix& result) const noexcept {
     XMMATRIX M = XMLoadFloat4x4(this);
     XMVECTOR det;
     XMStoreFloat4x4(&result, XMMatrixInverse(&det, M));
+}
+
+inline Matrix Matrix::InvertHighPrecision() const
+{
+    double det = Determinant( );
+    Matrix result;
+
+    int a;
+    Vector4 v, vec[3];
+
+    float sign = 1;
+    for( int i = 0; i < 4; i++ )
+    {
+        for( int j = 0; j < 4; j++ )
+        {
+            if( j != i )
+            {
+                a = j;
+                if( j > i ) a = a - 1;
+                vec[a].x = m[j][0];
+                vec[a].y = m[j][1];
+                vec[a].z = m[j][2];
+                vec[a].w = m[j][3];
+            }
+        }
+        v = Vector4::Cross( vec[0], vec[1], vec[2] );
+
+        result.m[0][i] = (float)( sign * v.x / det );
+        result.m[1][i] = (float)( sign * v.y / det );
+        result.m[2][i] = (float)( sign * v.z / det );
+        result.m[3][i] = (float)( sign * v.w / det );
+        sign *= -1;
+    }
+
+    return result;
 }
 
 inline float Matrix::Determinant() const noexcept {

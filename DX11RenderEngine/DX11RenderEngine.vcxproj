@@ -211,7 +211,6 @@
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxConstBuffers.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.h" />
-    <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\halton.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererFactory.h" />
@@ -228,7 +227,6 @@
     <ClInclude Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\States\Samplers.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\TexturesManager.h" />
-    <ClInclude Include="CoreRenderSystem\Utils\DynamicMeshBuffer.h" />
     <ClInclude Include="CoreRenderSystem\Utils\TextureData.h" />
     <ClInclude Include="CoreRenderSystem\Utils\TransformUtils.h" />
     <ClInclude Include="D3D11Renderer\D3D11BackBuffer.h" />
@@ -300,7 +298,9 @@
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils\GDIPlusManager.h" />
+    <ClInclude Include="Utils\include\DynamicMeshBuffer.h" />
     <ClInclude Include="Utils\include\Geometry.h" />
+    <ClInclude Include="Utils\include\halton.h" />
     <ClInclude Include="Utils\include\SimpleMath.h" />
     <ClInclude Include="Utils\include\VertexTypes.h" />
   </ItemGroup>
@@ -1155,7 +1155,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="CoreRenderSystem\Renderers\TAARenderer\halton.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -2120,6 +2119,82 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="Utils\src\Geometry.cpp" />
+    <ClCompile Include="Utils\src\halton.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>P:\Quake-2\Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;DEBUG;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
     <ClCompile Include="Utils\src\SimpleMath.cpp" />
     <ClCompile Include="Utils\src\VertexTypes.cpp" />
   </ItemGroup>

@@ -46,6 +46,8 @@ struct MainConstants {
 	matrix viewProjectionInverse;
 	matrix past_viewProjectionInverse;
 	
+	matrix reprojectionMatrix;
+	
 	
 	float  dt;
 };
