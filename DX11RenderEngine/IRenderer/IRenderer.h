@@ -215,6 +215,8 @@ struct IRenderer {
 	 */
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) = 0;
 	virtual void VerifyPixelTexture(int32_t index, const Texture* texture) = 0;
+	
+	virtual void VerifyUATexture(int32_t index, const Texture* texture) = 0;
 
 	/* Updates a vertex sampler slot with new texture/sampler data for future draw
 	 * calls. This should only be called on slots that have modified texture/sampler
@@ -353,6 +355,13 @@ struct IRenderer {
 		int32_t height,
 		int32_t levelCount,
 		uint8_t isRenderTarget
+	) = 0;
+	
+	virtual Texture* CreateUATexture2D(
+		SurfaceFormat format,
+		int32_t width,
+		int32_t height,
+		int32_t levelCount
 	) = 0;
 
 	virtual Texture* CreateTexture2D(
@@ -790,6 +799,8 @@ struct IRenderer {
 	virtual ComputeShader* CompileComputeShader(
 		const ShaderData& shaderData
 	) = 0;
+	
+	virtual void Dispatch(size_t x, size_t y, size_t z = 1) = 0;
 
 	virtual GeometryShader* CompileGeometryShader(
 		const ShaderData& shaderData

@@ -1,3 +1,5 @@
+#ifndef _CORE_SHADER_
+#define _CORE_SHADER_
 #ifndef HLSL
 #pragma once
 #include "Utils/TransformUtils.h"
@@ -13,7 +15,10 @@ struct TEXTURE_HANDLE {
 	TEXTURE_HANDLE(int slot) { this->slot = slot; }
 	int slot;
 };
+#else
+#include "P:/Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/CoreRenderSystem/Renderers\Shaders\PixelPacking_Velocity.hlsl"
 #endif
+
 
 #ifdef HLSL
 #define STRUCTURE(slot, typeName, name) cbuffer __buffer##slot : register(b##slot) { typeName name : packoffset(c0); }
@@ -94,3 +99,4 @@ SetConstBuffer(camera.slot, constBuffer);
 SetShaderResource(colorTexture.slot, /* ... /);
 
 */
+#endif

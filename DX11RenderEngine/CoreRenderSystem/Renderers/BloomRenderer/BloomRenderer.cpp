@@ -130,6 +130,8 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 		
 		renderer->ApplyPipelineState(factory->GetState(BLOOMVERTICAL));
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		renderer->VerifyPixelTexture(0, nullptr);
+		
 		targets[2] = targets[0];
 		targets[0] = targets[1];
 		targets[1] = targets[2];
@@ -139,6 +141,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 
 		renderer->ApplyPipelineState(factory->GetState(BLOOMHORISONTAL));
 		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		renderer->VerifyPixelTexture(0, nullptr);
 		
 		targets[2] = targets[0];
 		targets[0] = targets[1];

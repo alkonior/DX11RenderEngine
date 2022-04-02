@@ -16,9 +16,9 @@ struct PipelineState {
 	GeometryShader* gs;
 	ComputeShader* cs;
 
-	DepthStencilState* dss;
-	BlendState* bs;
-	RasterizerState* rs;
+	DepthStencilState* dss = nullptr;
+	BlendState* bs = nullptr;
+	RasterizerState* rs = nullptr; 
 
 };
 

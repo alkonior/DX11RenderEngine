@@ -10,7 +10,8 @@ struct D3D11Texture : public Texture {
 
 	/* D3D Handles */
 	wrl::ComPtr<ID3D11Texture2D> handle; /* ID3D11Texture2D or ID3D11Texture3D */
-	wrl::ComPtr<ID3D11ShaderResourceView> shaderView;
+	wrl::ComPtr<ID3D11ShaderResourceView> shaderView = nullptr;
+	wrl::ComPtr<ID3D11UnorderedAccessView> uaView = nullptr;
 
 	/* Basic Info */
 	int32_t levelCount = 0;

@@ -211,6 +211,7 @@
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxConstBuffers.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.h" />
+    <ClInclude Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORendererConstBuffer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h" />
     <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererFactory.h" />
@@ -227,6 +228,7 @@
     <ClInclude Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\States\Samplers.h" />
     <ClInclude Include="CoreRenderSystem\ResourceManagers\TexturesManager.h" />
+    <ClInclude Include="CoreRenderSystem\Utils\DynamicMeshBuffer.h" />
     <ClInclude Include="CoreRenderSystem\Utils\TextureData.h" />
     <ClInclude Include="CoreRenderSystem\Utils\TransformUtils.h" />
     <ClInclude Include="D3D11Renderer\D3D11BackBuffer.h" />
@@ -298,7 +300,6 @@
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils\GDIPlusManager.h" />
-    <ClInclude Include="Utils\include\DynamicMeshBuffer.h" />
     <ClInclude Include="Utils\include\Geometry.h" />
     <ClInclude Include="Utils\include\halton.h" />
     <ClInclude Include="Utils\include\SimpleMath.h" />
@@ -1003,6 +1004,8 @@
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\QuadRenderer.cpp" />
+    <EditorConfigFiles Include="CoreRenderSystem\Renderers\Shaders\PixelPacking_Velocity.hlsl" />
+    <ClCompile Include="CoreRenderSystem\Renderers\Shaders\SSAO.hlsl" />
     <ClCompile Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

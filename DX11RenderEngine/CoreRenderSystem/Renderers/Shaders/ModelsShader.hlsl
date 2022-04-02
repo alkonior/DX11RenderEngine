@@ -109,7 +109,7 @@ SamplerState basicSampler : register(s0);
 struct PSOut {
 	float4 color      : SV_Target0;
 	float4 light      : SV_Target1;
-	float2 velocity   : SV_Target2;
+	packed_velocity_t velocity   : SV_Target2;
 	float  blurMask   : SV_Target3;
 };
 
@@ -119,7 +119,7 @@ PSOut psIn(PSIn input) : SV_Target
 	
 	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
 	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection);
-	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f - taaShiftBuffer.taaPixelShift;
+	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f);
 	
 	pso.blurMask = modelsCosntBuffer.blurSwitch;
 #ifdef RED

@@ -244,6 +244,7 @@ namespace Renderer
         DXGI_FORMAT_A8_UNORM, /* SurfaceFormat.Alpha8 */
         DXGI_FORMAT_R32_FLOAT, /* SurfaceFormat.Single */
         DXGI_FORMAT_R32G32_FLOAT, /* SurfaceFormat.Vector2 */
+        DXGI_FORMAT_R32_UINT, /* SurfaceFormat.Uint */
         DXGI_FORMAT_R32G32B32A32_FLOAT, /* SurfaceFormat.Vector4 */
         DXGI_FORMAT_R16_FLOAT, /* SurfaceFormat.HalfSingle */
         DXGI_FORMAT_R16G16_FLOAT, /* SurfaceFormat.HalfVector2 */
@@ -485,13 +486,17 @@ namespace Renderer
         if (index < MAX_TEXTURE_SAMPLERS)
         {
             D3D11Texture* d3dTexture = (D3D11Texture*)texture;
-
+            ID3D11ShaderResourceView * views[] = {nullptr};
             if (texture == nullptr)
             {
                 GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
                     index,
                     1,
-                    D3D11Texture::NullTexture.shaderView.GetAddressOf()));
+                    views));
+                GFX_THROW_INFO_ONLY(context->CSSetShaderResources(
+                    index,
+                    1,
+                    views));
                 return;
             }
 
@@ -505,6 +510,11 @@ namespace Renderer
                     if (index < MAX_TEXTURE_SAMPLERS)
                     {
                         GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
+                            index,
+                            1,
+                            D3D11Texture::NullTexture.shaderView.GetAddressOf()
+                        ));
+                        GFX_THROW_INFO_ONLY(context->CSSetShaderResources(
                             index,
                             1,
                             D3D11Texture::NullTexture.shaderView.GetAddressOf()
@@ -523,7 +533,36 @@ namespace Renderer
                     index,
                     1,
                     d3dTexture->shaderView.GetAddressOf()));
+                GFX_THROW_INFO_ONLY(context->CSSetShaderResources(
+                    index,
+                    1,
+                    d3dTexture->shaderView.GetAddressOf()));
             }
+        }
+    }
+
+    void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)
+    {
+        if (index < MAX_RENDERTARGET_BINDINGS)
+        {
+            D3D11Texture* d3dTexture = (D3D11Texture*)texture;
+            ID3D11UnorderedAccessView* view[1] = { nullptr };
+            static UINT iiiii[] = {0}; 
+            if (texture == nullptr)
+            {
+                GFX_THROW_INFO_ONLY(context->CSSetUnorderedAccessViews(
+                    index,
+                    1,
+                    view,
+                    iiiii));
+                return;
+            }
+            view[0] = d3dTexture->uaView.Get();
+            GFX_THROW_INFO_ONLY(context->CSSetUnorderedAccessViews(
+                   index,
+                   1,
+                   view,
+                   iiiii));
         }
     }
 
@@ -540,6 +579,10 @@ namespace Renderer
                 pixelSamplers[index] = d3dSamplerState;
                 //std::lock_guard<std::mutex> guard(ctxLock);
                 GFX_THROW_INFO_ONLY(context->PSSetSamplers(
+                    index,
+                    1,
+                    d3dSamplerState.GetAddressOf()));
+                GFX_THROW_INFO_ONLY(context->CSSetSamplers(
                     index,
                     1,
                     d3dSamplerState.GetAddressOf()));
@@ -858,6 +901,73 @@ namespace Renderer
                 &result->rtView
             ));
         }
+
+        return result;
+    }
+
+    Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount)
+    {
+        D3D11Texture* result = new D3D11Texture();
+        D3D11_TEXTURE2D_DESC desc;
+        D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
+
+        /* Initialize descriptor */
+        desc.Width = width;
+        desc.Height = height;
+        desc.MipLevels = levelCount;
+        desc.ArraySize = 1;
+        desc.Format = ToD3D_TextureFormat[format];
+        desc.SampleDesc.Count = 1;
+        desc.SampleDesc.Quality = 0;
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = 0;
+        desc.MiscFlags = 0;
+
+      
+        desc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
+        desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+        
+
+        /* Create the texture */
+        GFX_THROW_INFO(device->CreateTexture2D(
+            &desc,
+            NULL,
+            &result->handle
+        ));
+
+        /* Initialize D3D11Texture */
+        result->levelCount = levelCount;
+        result->isRenderTarget = true;
+        result->width = width;
+        result->height = height;
+        result->format = format;
+
+        /* Create the shader resource view */
+        GFX_THROW_INFO(device->CreateShaderResourceView(
+            result->handle.Get(),
+            NULL,
+            &result->shaderView
+        ));
+
+        /* Create the render target view, if applicable */
+        
+        result->isRenderTarget = 1;
+        rtViewDesc.Format = desc.Format;
+        rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+        rtViewDesc.Texture2D.MipSlice = 0;
+        GFX_THROW_INFO(device->CreateRenderTargetView(
+            result->handle.Get(),
+            &rtViewDesc,
+            &result->rtView
+        ));
+
+        GFX_THROW_INFO(device->CreateUnorderedAccessView(
+            result->handle.Get(),
+            NULL,
+            &result->uaView
+        ));
+        
 
         return result;
     }
@@ -2460,12 +2570,16 @@ namespace Renderer
 
     void D3D11Renderer::ApplyPixelShader(PixelShader* pixelShader)
     {
+        if (!pixelShader)
+            return;
         D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
         GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
     }
 
     void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
     {
+        if (!vertexShader)
+            return;
         D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
         GFX_THROW_INFO_ONLY(context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u));
         GFX_THROW_INFO_ONLY(context->IASetInputLayout(shader->pInputLayout.Get()));
@@ -2541,10 +2655,12 @@ namespace Renderer
         ApplyVertexShader(piplineState->vs);
         ApplyComputeShader(piplineState->cs);
         ApplyGeometryShader(piplineState->gs);
-
-        SetBlendState(*piplineState->bs);
-        SetDepthStencilState(*piplineState->dss);
-        ApplyRasterizerState(*piplineState->rs);
+        if (piplineState->bs) 
+            SetBlendState(*piplineState->bs);
+        if (piplineState->dss) 
+            SetDepthStencilState(*piplineState->dss);
+        if (piplineState->rs) 
+            ApplyRasterizerState(*piplineState->rs);
     }
 
     void D3D11Renderer::Flush()
@@ -2611,6 +2727,11 @@ namespace Renderer
         {
             GFX_THROW_INFO_ONLY(context->CSSetShader(NULL, nullptr, 0u));
         }
+    }
+
+    void D3D11Renderer::Dispatch(size_t x, size_t y, size_t z)
+    {
+        context->Dispatch(x,y,z);
     }
 
     void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader)

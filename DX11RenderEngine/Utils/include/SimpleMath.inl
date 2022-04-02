@@ -1371,7 +1371,7 @@ inline float Vector4::Dot(const Vector4& V) const noexcept {
     return XMVectorGetX(X);
 }
 
-inline Vector4 Vector4::Cross(const Vector4& a, const Vector4& b, const  Vector4& c) const noexcept {
+inline Vector4 Vector4::Cross(const Vector4& a, const Vector4& b, const  Vector4& c) noexcept {
     using namespace DirectX;
     Vector4 ret;
     ret.x = a.y * ( b.z * c.w - c.z * b.w ) - a.z * ( b.y * c.w - c.y * b.w ) + a.w * ( b.y * c.z - b.z *c.y );
@@ -2153,8 +2153,7 @@ inline void Matrix::Invert(Matrix& result) const noexcept {
     XMStoreFloat4x4(&result, XMMatrixInverse(&det, M));
 }
 
-inline Matrix Matrix::InvertHighPrecision() const
-{
+inline Matrix Matrix::InvertHighPrecision() const noexcept {
     double det = Determinant( );
     Matrix result;
 

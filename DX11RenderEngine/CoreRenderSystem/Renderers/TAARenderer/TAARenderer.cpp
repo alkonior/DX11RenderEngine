@@ -49,11 +49,21 @@ void TAARenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new TAARendererFactory(provider, shaderData, dataSize);
 	
 
+	TAAHistory = renderer->CreateUATexture2D(SURFACEFORMAT_VECTOR4,width, height,1);
+
+	
 	localBuffer.numSamples		= 10;
+	UpdateHaltonSequence();
+	localBuffer.Jitter = HaltonSequence[HaltonIndex];
+	localBuffer.Resolution = float4(width, height, 1.f/width, 1.f/height);
+	localBuffer.FrameNumber = HaltonIndex;
+	
+	/*
 	localBuffer.depthThreshold  = 0.0001;
 	localBuffer.DilationMode = 1;
 	localBuffer.ReprojectionMode = 1;
 	localBuffer.NeighborhoodClampMode = 1;
+	*/
 	
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 }
@@ -65,39 +75,65 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 
 	RenderIMGUI(gfx);
 	
-	renderer->VerifyConstBuffer(constBuffer, TAABuffer.slot);
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 	
-	gfx.texturesManger.CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, TAAresult, TAAresultRT);
 
+	size_t flags = TAAZERO;
+	localBuffer.DebugFlags = 0;
+	if (markNoHistoryPixels)
+		localBuffer.DebugFlags |= MarkNoHistoryPixels;
 	
+	if (allowBicubicFilter)
+		localBuffer.DebugFlags |= AllowBicubicFilter;
+	
+	if (allowDepthThreshold)
+		localBuffer.DebugFlags |= AllowDepthThreshold;
+	
+	if (allowNeighbourhoodSampling)
+		localBuffer.DebugFlags |= AllowNeighbourhoodSampling;
+	
+	if (allowVarianceClipping)
+		localBuffer.DebugFlags |= AllowVarianceClipping;
+	
+	if (allowLongestVelocityVector)
+		localBuffer.DebugFlags |= AllowLongestVelocityVector;
+	
+	if (allowYCoCg)
+		localBuffer.DebugFlags |= allowYCoCg;
+	
+	renderer->VerifyConstBuffer(constBuffer, CBData.slot);
+	
+	renderer->VerifyUATexture(0, TAAHistory);
+	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(1, Samplers::linear);
+	
+	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
+	
+	renderer->VerifyPixelTexture(0, gfx.texturesManger.velocityField);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.preAAcolor);
+	renderer->VerifyPixelTexture(2, gfx.texturesManger.pastColor);
+	renderer->VerifyPixelTexture(3, gfx.texturesManger.pastDepth);
+	renderer->VerifyPixelTexture(4, gfx.texturesManger.depthBuffer->texture);
+	
+	renderer->ApplyPipelineState(factory->GetComputeState(flags));
+	renderer->Dispatch((width + TAA_NUM_THREADS_X -1) / (TAA_NUM_THREADS_X),
+		(height + TAA_NUM_THREADS_Y -1) / (TAA_NUM_THREADS_Y));
+	renderer->VerifyUATexture(0, nullptr);
+	renderer->VerifyPixelTexture(0, nullptr);
+	renderer->VerifyPixelTexture(1, nullptr);
+	renderer->VerifyPixelTexture(2, nullptr);
+	renderer->VerifyPixelTexture(3, nullptr);
+	renderer->VerifyPixelTexture(4, nullptr);
 	RenderTargetBinding* target[3] = {
-		&TAAresultRT,
+		nullptr,
 		&gfx.texturesManger.pastColorRT,
 		&gfx.texturesManger.pastDepthRT,
 	};
-
-	size_t flags = TAAZERO;
-	if (useyuv)
-		flags |= TAAUSEYUV;
-	
-	renderer->SetRenderTargets(target, 1, nullptr, vp);
-	renderer->VerifyPixelSampler(0, Samplers::point);
-	renderer->VerifyPixelSampler(0, Samplers::point);
-	renderer->VerifyPixelTexture(0, gfx.texturesManger.preAAcolor);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
-	renderer->VerifyPixelTexture(2, gfx.texturesManger.pastColor);
-	renderer->VerifyPixelTexture(3, gfx.texturesManger.pastDepth);
-	renderer->VerifyPixelTexture(4, gfx.texturesManger.velocityField);
-
-	renderer->ApplyPipelineState(factory->GetState(flags));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-
-
-	target[0] = nullptr;
+	//target[0] = nullptr;
 	renderer->SetRenderTargets(target, 3, nullptr, vp);
 	renderer->VerifyPixelSampler(0, Samplers::point);
-	renderer->VerifyPixelTexture(0, TAAresult);
+	renderer->VerifyPixelTexture(0, TAAHistory);
+	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
 	renderer->ApplyPipelineState(factory->GetState(TAACOPY));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
@@ -131,17 +167,18 @@ void TAARenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
 	ImGui::Begin("TAA settings.");                          // Create a window called "Hello, world!" and append into it.
 //
-	ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
+	//ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
 	ImGui::SliderInt("NumSamples",				&localBuffer.numSamples , 1, 20 , "%.3f");
 	ImGui::SliderFloat("TAAShiftStrength",     &gfx.taaConstants.taaStrength, 0.0, 100.0  , "%.3f");
-	ImGui::Checkbox("Use YCbCr?", &useyuv);
+	ImGui::Checkbox("markNoHistoryPixels	    ", &markNoHistoryPixels		    );
+	ImGui::Checkbox("allowBicubicFilter		    ", &allowBicubicFilter		    );
+	ImGui::Checkbox("allowDepthThreshold	 	", &allowDepthThreshold		    );
+	ImGui::Checkbox("allowVarianceClipping	    ", &allowVarianceClipping		);
+	ImGui::Checkbox("allowNeighbourhoodSampling", &allowNeighbourhoodSampling	);
+	ImGui::Checkbox("allowYCoCg				    ", &allowYCoCg					);
+	ImGui::Checkbox("allowLongestVelocityVector", &allowLongestVelocityVector	);
 
 	
-	ImGui::SliderInt("DilationMode",			&localBuffer.DilationMode , 1, 3 , "%.3f");
-	ImGui::SliderInt("ReprojectionMode",		&localBuffer.ReprojectionMode , 1, 3 , "%.3f");
-	ImGui::SliderInt("NeighborhoodClampMode",	&localBuffer.NeighborhoodClampMode , 1, 3 , "%.3f");
-	//ImGui::SliderFloat("fxaaQualityEdgeThreshold"   ,    &localBuffer.fxaaQualityEdgeThreshold		,0.0, 1.0 , "%.3f");
-	//ImGui::SliderFloat("fxaaQualityEdgeThresholdMin", &localBuffer.fxaaQualityEdgeThresholdMin	,0.0, 1.0 , "%.3f");
 
 
 	ImGui::End();

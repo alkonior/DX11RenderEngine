@@ -85,6 +85,7 @@ private:
 	size_t backBufferWidth;
 	size_t backBufferHeight;
 	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
+	wrl::ComPtr<ID3D11UnorderedAccessView> swapchainUAView;
 	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
 	
 	D3D11Renderbuffer* depthStencilBuffer;
@@ -99,7 +100,7 @@ private:
 
 public:
 
-	virtual ~D3D11Renderer();
+	~D3D11Renderer() override;
 	D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode);
 
 
@@ -122,6 +123,7 @@ public:
 
 
 	virtual void VerifyPixelTexture(int32_t index, const Texture* texture) override;
+	virtual void VerifyUATexture(int32_t index, const Texture* texture) override;
 	virtual void VerifyVertexTexture(int32_t index, const Texture* texture) override;
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
 	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
@@ -134,6 +136,7 @@ public:
 	virtual void GetBackbufferSize(int32_t* w, int32_t* h) override;
 	virtual DepthFormat GetBackbufferDepthFormat() override;
 	virtual Texture* CreateTexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount,  uint8_t isRenderTarget) override;
+	virtual Texture* CreateUATexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount) override;
 	virtual void AddDisposeTexture(Texture* texture) override;
 	virtual void SetTextureData2D(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
 	virtual void GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level, void* data, int32_t dataLength) override;
@@ -191,9 +194,10 @@ public:
 	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
 	
 
-	virtual ComputeShader* CompileComputeShader(const ShaderData& shaderData);
+	virtual ComputeShader* CompileComputeShader(const ShaderData& shaderData) override;
 	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
 	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
+	virtual void Dispatch(size_t x, size_t y, size_t z = 1) override;
 	
 	virtual ConstBuffer* CreateConstBuffer(size_t size) override;
 	virtual void VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot) override;

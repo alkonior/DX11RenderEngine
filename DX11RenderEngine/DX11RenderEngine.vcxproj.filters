@@ -305,16 +305,31 @@
     <ClInclude Include="CoreRenderSystem\Renderers\QuadRenderer.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="CoreRenderSystem\ResourceManagers\BlendStates.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreRenderSystem\ResourceManagers\DSStates.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="CoreRenderSystem\ResourceManagers\RasterizerStates.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="IRenderer\RasterizerState.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\TAARenderer\TAARendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\States\BlendStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\States\DSStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\ResourceManagers\States\Samplers.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\include\halton.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -386,10 +401,13 @@
     <ClCompile Include="CoreRenderSystem\Renderers\PPRenderer\PPRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\QuadRenderer.cpp" />
-    <ClCompile Include="CoreRenderSystem\ResourceManagers\BlendStates.cpp" />
-    <ClCompile Include="CoreRenderSystem\ResourceManagers\DSStates.cpp" />
-    <ClCompile Include="CoreRenderSystem\ResourceManagers\RasterizerStates.cpp" />
-    <ClCompile Include="CoreRenderSystem\ResourceManagers\Samplers.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\Shaders\PixelPacking_Velocity.hlsl" />
+    <ClCompile Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\States\BlendStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\States\DSStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.cpp" />
+    <ClCompile Include="CoreRenderSystem\ResourceManagers\States\Samplers.cpp" />
+    <ClCompile Include="Utils\src\halton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -406,6 +424,7 @@
     <None Include="CoreRenderSystem\Renderers\Shaders\PostProcessShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\SkyShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\UIShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\TAAShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

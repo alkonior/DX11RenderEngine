@@ -108,6 +108,33 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 	}
 }
 
+PipelineState* Renderer::PipelineFactory::GetComputeState(size_t definesFlags) {
+	PipelineState* ps;
+	if (computeDictinary.count(definesFlags /*int*/)) {
+		return computeDictinary[definesFlags];
+	}
+	{
+		ps = new PipelineState();
+			
+		auto definesArray = GetDefines(definesFlags);
+		const char* name = provider->GetShaderName();
+		
+		ps->cs = renderer->CompileComputeShader(
+		IRenderer::ShaderData{
+		shaderData, dataSize, definesArray.data(),
+				definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				"main", "cs_5_0", compileFlags,
+#ifdef _DEBUG
+				name
+#endif
+			}
+			);
+
+		computeDictinary.insert({ definesFlags, ps });
+		return ps;
+	}
+}
+
 Renderer::PipelineFactory::~PipelineFactory() {
 	delete provider;
 	for (auto& [key, ps] : dictinary) {

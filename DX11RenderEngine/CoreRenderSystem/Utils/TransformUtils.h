@@ -6,6 +6,7 @@
 #define float4x4 DirectX::SimpleMath::Matrix
 #define float3 DirectX::SimpleMath::Vector3
 #define float2 DirectX::SimpleMath::Vector2
+typedef uint32_t uint;
 
 class Transform {
 	matrix transform;

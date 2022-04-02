@@ -27,6 +27,7 @@ class PipelineFactory {
 	uint32_t useShaders;
 
 	std::map<size_t, PipelineState*> dictinary;
+	std::map<size_t, PipelineState*> computeDictinary;
 
 	PipelineFactory(IStateProvider* provider, const  ShaderDefines* defines, size_t defineCount, uint16_t compileFlags);
 public:
@@ -36,6 +37,7 @@ public:
 	std::vector<ShaderDefines> GetDefines(size_t definesFlags);
 
 	PipelineState* GetState(size_t definesFlags);
+	PipelineState* GetComputeState(size_t definesFlags);
 	
 
 	~PipelineFactory();

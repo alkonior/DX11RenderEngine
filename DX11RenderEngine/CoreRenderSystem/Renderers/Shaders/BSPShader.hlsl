@@ -58,7 +58,7 @@ struct PSOut {
 	float4 color   : SV_Target0;
 	float4 light   : SV_Target1;
 	float4 alpha   : SV_Target2;
-	float2 velocity: SV_Target3;
+	packed_velocity_t velocity: SV_Target3;
 };
 
 
@@ -68,7 +68,7 @@ PSOut psIn(PSIn input)
 	
 	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
 	float4 oldPixelPos = mul(input.worldPos, mainConstants.past_viewProjection);
-	pso.velocity = (curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f;
+	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f);
 	
 #ifdef RED
 	pso.color = float4(1.0, 0, 0, 1.0f);

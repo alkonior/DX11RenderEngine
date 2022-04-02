@@ -42,10 +42,15 @@ private:
 	Renderer::ConstBuffer* constBuffer;
 	TAACosntBuffer localBuffer;
 
-	bool useyuv = false;
+	bool markNoHistoryPixels = false;
+	bool allowDepthThreshold = true;
+	bool allowBicubicFilter = true;
+	bool allowVarianceClipping = true;
+	bool allowYCoCg = true;
+	bool allowNeighbourhoodSampling = true;
+	bool allowLongestVelocityVector = true;
 
-	Renderer::Texture* TAAresult;
-	Renderer::RenderTargetBinding TAAresultRT;
+	Renderer::Texture* TAAHistory;
 	
 	void RenderIMGUI(GraphicsBase& gfx);
 };

@@ -8,9 +8,9 @@ SamplerState Samplers::linear;
 int Samplers::Init()
 {
    point.filter = TextureFilter::TEXTUREFILTER_POINT;
-   point.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-   point.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-   point.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+   point.addressU = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
+   point.addressV = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
+   point.addressW = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
 
     
    anisotropic16.filter = TextureFilter::TEXTUREFILTER_ANISOTROPIC;
@@ -21,9 +21,9 @@ int Samplers::Init()
 
     
     linear.filter = TextureFilter::TEXTUREFILTER_LINEAR;
-    linear.addressU = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-    linear.addressV = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
-    linear.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
+    linear.addressU = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
+    linear.addressV = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
+    linear.addressW = TextureAddressMode::TEXTUREADDRESSMODE_CLAMP;
     
     
     return 0;

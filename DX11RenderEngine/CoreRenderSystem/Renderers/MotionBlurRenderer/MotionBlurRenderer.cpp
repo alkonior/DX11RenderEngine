@@ -88,6 +88,8 @@ void MotionBlurRenderer::RenderStatic(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(MBZERO));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
+	renderer->VerifyPixelTexture(0, nullptr);
+	renderer->VerifyPixelTexture(1, nullptr);
 	renderer->VerifyPixelTexture(2, nullptr);
 	
 }
