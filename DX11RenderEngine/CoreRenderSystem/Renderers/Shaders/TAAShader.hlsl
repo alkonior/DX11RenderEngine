@@ -702,7 +702,7 @@ fp16_t4 GetFinalColour( fp16_t3 inCurrentColour, fp16_t3 inHistoryColour, fp16_t
 #else
     fp16_t4 toReturn = fp16_t4( InverseReinhard( lerp( Reinhard( inCurrentColour ), Reinhard( inHistoryColour ), inWeight ) ), newWeight );
 #endif
-    toReturn.w *= 1.0f/CBData.numSamples;
+    //toReturn.w *= CBData.numSamples;
     return toReturn;
 }
 

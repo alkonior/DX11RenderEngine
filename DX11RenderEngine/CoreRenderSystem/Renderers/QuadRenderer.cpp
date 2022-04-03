@@ -21,12 +21,14 @@ void QuadRenderer::Init()
 		{  float2(-1.0f, 1.0f),  float2(0.0f, 0.0f), },
 		{  float2(-1.0f, -1.0f),  float2(0.0f, 1.0f), },
 		{  float2(1.0f,  1.0f),  float2(1.0f, 0.0f), },
-		{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), }
+		{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), },
+		{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), },
+		{  float2(1.0f,  -1.0f),  float2(1.0f, 1.0f), },
 	};
 	vertexBuffer.buffersCount = 1;
 	vertexBuffer.vertexBuffers = new Buffer * [1]();
 	vertexBuffer.vertexBuffers[0] = renderer->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, sizeof(vertices));
-	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, 4,
+	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, &vertices, std::size(vertices),
 		sizeof(QuadRendererVertex), sizeof(QuadRendererVertex), SetDataOptions::SETDATAOPTIONS_NONE);
 	//GFX_THROW_INFO(gfx.pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
 	vertexBuffer.vertexOffset = new (UINT)(0);
@@ -37,10 +39,10 @@ void QuadRenderer::Init()
 	// create index buffer
 	const uint16_t indices[] =
 	{
-		0,1,2,3
+		0,1,2,3,4,5
 	};
-	indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, 12);
-	renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, 12, SetDataOptions::SETDATAOPTIONS_DISCARD);
+	indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(indices));
+	renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, sizeof(indices), SetDataOptions::SETDATAOPTIONS_DISCARD);
 
 
 	vp.x = 0;

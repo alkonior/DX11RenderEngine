@@ -7,15 +7,17 @@ TexturesManager::TexturesManager() {
 
 	depthBuffer = renderer->GenDepthStencilRenderbuffer(width,height,DepthFormat::DEPTHFORMAT_D32,0);
 
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height,  diffuseColor,   diffuseColorRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height,  lightColor,     lightColorRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height,  bloomMask,      bloomMaskRT);
-	CreateRenderTarget(SURFACEFORMAT_VECTOR4,  width, height,  alphaSurfaces,  alphaSurfacesRT);
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height,  preAAcolor,     preAAcolorRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  diffuseColor,   diffuseColorRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  lightColor,     lightColorRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  bloomMask,      bloomMaskRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  alphaSurfaces,  alphaSurfacesRT);
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  preAAcolor,     preAAcolorRT);
 	CreateRenderTarget(SURFACEFORMAT_RGBA1010102,  width, height,  velocityField,  velocityFieldRT);
-	CreateRenderTarget(SURFACEFORMAT_SINGLE,   width, height,  blurMask,	   blurMaskRT);;
-	CreateRenderTarget(SURFACEFORMAT_COLOR,    width, height,  pastColor,      pastColorRT);
-	CreateRenderTarget(SURFACEFORMAT_SINGLE,   width, height,  pastDepth,      pastDepthRT);
+	CreateRenderTarget(SURFACEFORMAT_SINGLE,       width, height,  blurMask,	    blurMaskRT);;
+	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  pastColor,      pastColorRT);
+	CreateRenderTarget(SURFACEFORMAT_SINGLE,       width, height,  pastDepth,      pastDepthRT);
+	CreateRenderTarget(SURFACEFORMAT_VECTOR4,      width, height,  normalsField,    normalsFieldRT);
+	CreateRenderTarget(SURFACEFORMAT_SINGLE,      width, height,  oclusionField,    oclusionFieldRT);
 
 }
 

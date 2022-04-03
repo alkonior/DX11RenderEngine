@@ -14,6 +14,7 @@
 #include "Renderers\FXAARenderer\FXAARenderer.h"
 #include "Renderers\MotionBlurRenderer\MotionBlurRenderer.h"
 #include "Renderers\TAARenderer\TAARenderer.h"
+#include "Renderers\SSAORenderer\SSAORenderer.h"
 
 
 #ifdef _DEBUG
@@ -89,6 +90,7 @@ private:
 	ImGUIRenderer	     managerIMGUI;
 	FXAARenderer	     managerFXAA;
 	TAARenderer	         managerTAA;
+	SSAORenderer	     managerSSAO;
 
 
 	Renderer::ConstBuffer* pLocalConstants;

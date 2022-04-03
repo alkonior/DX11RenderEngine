@@ -93,7 +93,7 @@ void BloomRenderer::RenderBloomMask(GraphicsBase& gfx)
 	
 	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
 	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
-	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
@@ -117,7 +117,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	targets[0] = &bloom1RT;
 	renderer->ApplyPipelineState(factory->GetState(BLOOMTHRESHOLD));
 	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
-	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 

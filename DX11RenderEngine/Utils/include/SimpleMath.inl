@@ -837,12 +837,12 @@ inline float Vector3::Dot(const Vector3& V) const noexcept {
     return XMVectorGetX(X);
 }
 
-inline Vector3 Vector3::Cross(const Vector3& a, const Vector3& b) const noexcept {
-    Vector3 ret;
-    ret.x = a.y * b.z - a.z * b.y;
-    ret.y = a.z * b.x - a.x * b.z;
-    ret.z = a.x * b.y - a.y * b.x;
-    return ret;
+inline Vector3 Vector3::Cross(const Vector3& a, const Vector3& b) noexcept {
+    //Vector3 ret;
+    //ret.x = a.y * b.z - a.z * b.y;
+    //ret.y = a.z * b.x - a.x * b.z;
+    //ret.z = a.x * b.y - a.y * b.x;
+    return a.Cross(b);
 }
 
 inline Vector3 Vector3::Cross(const Vector3& V) const noexcept {

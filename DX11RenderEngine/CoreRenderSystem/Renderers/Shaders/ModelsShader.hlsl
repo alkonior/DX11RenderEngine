@@ -89,6 +89,8 @@ PSIn vsIn(VSIn input) {
 	vso.normal = input.normal;
 #endif
 
+	vso.normal = mul(float4(vso.normal, 1.0f), worldMat);
+
 #ifdef BAD_UV
 	vso.uv = input.uv / modelsCosntBuffer.wh;
 	vso.uv.y = vso.uv.y;
@@ -111,6 +113,7 @@ struct PSOut {
 	float4 light      : SV_Target1;
 	packed_velocity_t velocity   : SV_Target2;
 	float  blurMask   : SV_Target3;
+	float4  normal   : SV_Target4;
 };
 
 PSOut psIn(PSIn input) : SV_Target
@@ -120,6 +123,9 @@ PSOut psIn(PSIn input) : SV_Target
 	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
 	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection);
 	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f);
+	
+	if (dot(input.normal, input.normal) > 0.00001)
+		pso.normal.xyz = input.normal;
 	
 	pso.blurMask = modelsCosntBuffer.blurSwitch;
 #ifdef RED

@@ -11,6 +11,7 @@ enum  PPRendererDefines : std::uint32_t {
 	PPCOLORONLY = 8,
 	PPLIGHTONLY = 16,
 	PPALPHAONLY = 32,
+	PPOCCLUSIONONLY = 64,
 
 };
 
@@ -21,6 +22,7 @@ const Renderer::ShaderDefines PPRendererDefines[] = {
 	Renderer::ShaderDefines("COLORONLY"),
 	Renderer::ShaderDefines("LIGHTONLY"),
 	Renderer::ShaderDefines("ALPHAONLY"),
+	Renderer::ShaderDefines("OCCLUSIONONLY"),
 };
 
 class PPRendererFactory :public Renderer::PipelineFactory {

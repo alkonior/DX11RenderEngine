@@ -70,6 +70,13 @@ public:
 	Renderer::RenderTargetBinding pastColorRT;
 	Renderer::Texture* pastDepth;
 	Renderer::RenderTargetBinding pastDepthRT;
+
+	
+	Renderer::Texture* normalsField;
+	Renderer::RenderTargetBinding normalsFieldRT;
+	
+	Renderer::Texture* oclusionField;
+	Renderer::RenderTargetBinding oclusionFieldRT;
 	
 	
 	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);

@@ -22,19 +22,22 @@
 
 struct SSAOCosntBuffer
 {
-    float4x4 gProjTex;
-    float4   gOffsetVectors[14];
+    float4x4 gProjTex;//+++
+    float4   gOffsetVectors[14];//+++
 
-    // For SsaoBlur.hlsl
-    float4 gBlurWeights[8];
 
     float2 gInvRenderTargetSize; // 1/width, 1/ height
 
     // Coordinates given in view space.
-    float    gOcclusionRadius   = 0.5;
-    float    gOcclusionFadeStart = 0.2;
-    float    gOcclusionFadeEnd   = 1.0;
-    float    gSurfaceEpsilon   = 0.05;
+    float    gOcclusionRadius;
+    float    gOcclusionFadeStart;
+    float    gOcclusionFadeEnd;
+    float    gSurfaceEpsilon;
+
+    
+    float sigma;//++
+    float inencity;//++
+    uint  kernel;//++
 };
 
 STRUCTURE(1, SSAOCosntBuffer, SSAOData)

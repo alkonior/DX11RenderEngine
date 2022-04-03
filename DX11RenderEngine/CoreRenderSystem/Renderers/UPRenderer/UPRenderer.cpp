@@ -71,14 +71,15 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 
 void UPRenderer::Render(GraphicsBase& gfx) {
 	
-	RenderTargetBinding* targets[4] = {
+	RenderTargetBinding* targets[] = {
 		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 		 &gfx.texturesManger.velocityFieldRT,
+		 &gfx.texturesManger.normalsFieldRT,
 	};
 
-	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthBuffer, Viewport());
+	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, Viewport());
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);
@@ -148,13 +149,14 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 	drawCalls.clear();
 
 
-	RenderTargetBinding* targets[3] = {
+	RenderTargetBinding* targets[] = {
 		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
+		 &gfx.texturesManger.normalsFieldRT,
 	};
 
-	renderer->SetRenderTargets(targets, 3, gfx.texturesManger.depthBuffer, Viewport());
+	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, Viewport());
 	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 

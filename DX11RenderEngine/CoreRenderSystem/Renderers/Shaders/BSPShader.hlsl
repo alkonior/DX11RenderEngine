@@ -4,6 +4,7 @@
 
 struct VSIn {
 	float3 pos     : Position;
+	float3 normal  : NORMAL;
 	float2 uv      : TEXCOORD;
 	float2 luv     : LIGHTTEXCOORD;
 };
@@ -14,6 +15,7 @@ struct PSIn {
 	float2 uv           : TEXCOORD;
 	float2 luv          : LIGHTTEXCOORD;
 	float4 worldPos     : WPOS;
+	float3 normal       : NORMAL;
 };
 
 
@@ -41,7 +43,7 @@ PSIn vsIn(VSIn input) {
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
-
+	vso.normal = mul(input.normal, upCosntBuffer.world);
 	return vso;
 }
 
@@ -59,6 +61,7 @@ struct PSOut {
 	float4 light   : SV_Target1;
 	float4 alpha   : SV_Target2;
 	packed_velocity_t velocity: SV_Target3;
+	float4 normal: SV_Target4;
 };
 
 
@@ -69,7 +72,9 @@ PSOut psIn(PSIn input)
 	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
 	float4 oldPixelPos = mul(input.worldPos, mainConstants.past_viewProjection);
 	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f);
-	
+	if (dot(input.normal, input.normal) > 0.00001)
+		pso.normal.xyz = input.normal;
+
 #ifdef RED
 	pso.color = float4(1.0, 0, 0, 1.0f);
 	pso.light = float4(1.0, 0, 0, 1.0f);

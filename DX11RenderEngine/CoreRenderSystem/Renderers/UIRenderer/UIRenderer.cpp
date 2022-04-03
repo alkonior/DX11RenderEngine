@@ -87,7 +87,7 @@ void UIRenderer::Render() {
 
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);
-	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 
 	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
 	renderer->VerifyConstBuffer(constBuffer, UITransform.slot);

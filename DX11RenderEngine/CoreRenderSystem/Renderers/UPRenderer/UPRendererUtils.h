@@ -4,6 +4,7 @@
 
 struct UPVertex {
 	float3 position;
+	float3 normal;
 	float2 texcoord;
 	float2 lightTexcoord;
 };

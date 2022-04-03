@@ -46,7 +46,7 @@ private:
 	bool allowDepthThreshold = true;
 	bool allowBicubicFilter = true;
 	bool allowVarianceClipping = true;
-	bool allowYCoCg = true;
+	bool allowYCoCg = false;
 	bool allowNeighbourhoodSampling = true;
 	bool allowLongestVelocityVector = true;
 

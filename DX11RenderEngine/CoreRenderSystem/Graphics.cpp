@@ -44,6 +44,7 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	renderPasses.push_back(&managerBloom);
 	renderPasses.push_back(&managerFXAA);
 	renderPasses.push_back(&managerTAA);
+	renderPasses.push_back(&managerSSAO);
 
 }
 
@@ -91,6 +92,10 @@ bool Graphics::RenderFrame() {
 
 	pRenderer.BeginEvent("Dynamic motion blur draw.");
 	GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+	pRenderer.EndEvent();
+	
+	pRenderer.BeginEvent("SSAO draw.");
+	GFX_CATCH_RENDER(managerSSAO.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Sky draw.");

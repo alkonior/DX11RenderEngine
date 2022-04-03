@@ -29,6 +29,7 @@ Texture2D bloomMask : register(t1);
 Texture2D lightmap : register(t2);
 Texture2D depthTex : register(t3);
 Texture2D alphaSurfaces : register(t4);
+Texture2D occlusion : register(t5);
 
 
 SamplerState blureSampler : register(s0);
@@ -46,6 +47,13 @@ float4 psIn(PSIn input) : SV_Target
 #endif
 #ifdef LIGHTONLY
 	return lightmap.Sample(blureSampler, texCoord);
+#endif
+#ifdef OCCLUSIONONLY
+    float x = occlusion.Sample(blureSampler, texCoord);
+#ifdef ALPHA
+    return float4(0,0,0,0);
+#endif
+	return float4(x,x,x,1.0);
 #endif
     
 #ifdef ALPHAONLY

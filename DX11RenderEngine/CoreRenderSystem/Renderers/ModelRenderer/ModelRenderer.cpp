@@ -67,14 +67,15 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
-	RenderTargetBinding* targets[4] = {
+	RenderTargetBinding* targets[5] = {
 		&gfx.texturesManger.diffuseColorRT,
 		&gfx.texturesManger.lightColorRT,
 		&gfx.texturesManger.velocityFieldRT,
 		&gfx.texturesManger.blurMaskRT,
+		&gfx.texturesManger.normalsFieldRT,
    };
 	
-	renderer->SetRenderTargets(targets, 4, gfx.texturesManger.depthBuffer, vp);
+	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;

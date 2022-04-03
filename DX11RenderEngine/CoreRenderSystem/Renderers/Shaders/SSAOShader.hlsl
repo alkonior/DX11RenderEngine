@@ -1,4 +1,4 @@
-﻿#define HLSL
+#define HLSL
 #include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
 #include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\Renderers\SSAORenderer\SSAORendererConstBuffer.h"
 
@@ -32,20 +32,20 @@ struct VertexOut
 	float2 TexC : TEXCOORD0;
 };
 
-VertexOut VS(uint vid : SV_VertexID)
+VertexOut vsIn(uint vid : SV_VertexID)
 {
-    VertexOut vout;
+	VertexOut vout;
 
-    vout.TexC = gTexCoords[vid];
+	vout.TexC = gTexCoords[vid];
 
-    // Quad covering screen in NDC space.
-    vout.PosH = float4(2.0f*vout.TexC.x - 1.0f, 1.0f - 2.0f*vout.TexC.y, 0.0f, 1.0f);
+	// Quad covering screen in NDC space.
+	vout.PosH = float4(2.0f*vout.TexC.x - 1.0f, 1.0f - 2.0f*vout.TexC.y, 0.0f, 1.0f);
  
-    // Transform quad corners to view space near plane.
-    float4 ph = mul(vout.PosH, mainConstants.inverseProjection);
-    vout.PosV = ph.xyz / ph.w;
+	// Transform quad corners to view space near plane.
+	float4 ph = mul(vout.PosH, mainConstants.inverseProjection);
+	vout.PosV = ph.xyz / ph.w;
 
-    return vout;
+	return vout;
 }
 
 // Determines how much the sample point q occludes the point p as a function
@@ -91,7 +91,7 @@ float NdcDepthToViewDepth(float z_ndc)
     return viewZ;
 }
  
-float4 PS(VertexOut pin) : SV_Target
+float4 psIn(VertexOut pin) : SV_Target
 {
 	// p -- the point we are computing the ambient occlusion for.
 	// n -- normal vector at p.

@@ -84,17 +84,21 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 		flags|=PPBLOOMONLY;
 	if (alphaOnly)
 		flags|=PPALPHAONLY;
+	if (occlusionOnly)
+		flags|=PPOCCLUSIONONLY;
 	
 
 	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preAAcolorRT};
 	renderer->SetRenderTargets(targets, 1, nullptr, vp);
 	
-	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomMask);
 	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
+	renderer->VerifyPixelTexture(3, gfx.texturesManger.depthBuffer->texture);
 	renderer->VerifyPixelTexture(4, gfx.texturesManger.alphaSurfaces);
+	renderer->VerifyPixelTexture(5, gfx.texturesManger.oclusionField);
 	
 	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
 	renderer->SetConstBuffer(pConstBuffer, &localData);
@@ -102,8 +106,8 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(PPZERO | flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
+	renderer->VerifyPixelTexture(5, nullptr);
 
-	renderer->VerifyPixelTexture(3, gfx.texturesManger.depthBuffer->texture);
 	
 	renderer->ApplyPipelineState(factory->GetState(PPALPHA | flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
@@ -122,6 +126,7 @@ void PPRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::Checkbox("BloomOnly", &bloomOnly);
 	ImGui::Checkbox("AlphaOnly", &alphaOnly);
 	ImGui::Checkbox("BlureOnly", &blureOnly);
+	ImGui::Checkbox("OcclusionOnly", &occlusionOnly);
 	//ImGui::SliderInt("MotionBlure samples", &localData.numSampes, 1,10);
 	ImGui::SliderFloat("light Add", &localData.lightAdd, 0, 1.0);
 	ImGui::End();

@@ -75,8 +75,6 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 
 	RenderIMGUI(gfx);
 	
-	renderer->SetConstBuffer(constBuffer, &localBuffer);
-	
 
 	size_t flags = TAAZERO;
 	localBuffer.DebugFlags = 0;
@@ -101,11 +99,13 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 	if (allowYCoCg)
 		localBuffer.DebugFlags |= allowYCoCg;
 	
+	
+	renderer->SetConstBuffer(constBuffer, &localBuffer);
 	renderer->VerifyConstBuffer(constBuffer, CBData.slot);
 	
 	renderer->VerifyUATexture(0, TAAHistory);
-	renderer->VerifyPixelSampler(0, Samplers::point);
-	renderer->VerifyPixelSampler(1, Samplers::linear);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
+	renderer->VerifyPixelSampler(1, Samplers::linearClamp);
 	
 	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
 	
@@ -131,7 +131,7 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 	};
 	//target[0] = nullptr;
 	renderer->SetRenderTargets(target, 3, nullptr, vp);
-	renderer->VerifyPixelSampler(0, Samplers::point);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelTexture(0, TAAHistory);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
 	renderer->ApplyPipelineState(factory->GetState(TAACOPY));
