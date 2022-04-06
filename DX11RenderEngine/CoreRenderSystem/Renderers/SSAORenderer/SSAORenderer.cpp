@@ -138,7 +138,7 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 	0.0f, -0.5f, 0.0f, 0.0f,
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.5f, 0.5f, 0.0f, 1.0f);
-	localBuffer.gProjTex = (gfx.viewConstants.viewProjection.Transpose()*T).Transpose();
+	localBuffer.gProjTex = (gfx.viewConstants.projection.Transpose()*T).Transpose();
 	
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);

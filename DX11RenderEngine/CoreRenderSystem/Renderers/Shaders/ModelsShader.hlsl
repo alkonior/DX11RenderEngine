@@ -30,15 +30,15 @@ struct PSIn {
 	float4 worldPos	    : NEWWPOS;
 };
 
-matrix lerp(float alpha, matrix old, matrix next)
-{
-	return old * alpha + next * (1 - alpha) ;
-};
-
-float3 lerp(float alpha, float3 old,  float3 next)
-{
-	return old * alpha + next * (1 - alpha) ;
-}; 
+//matrix lerp(float alpha, matrix old, matrix next)
+//{
+//	return old * alpha + next * (1 - alpha) ;
+//};
+//
+//float3 lerp(float alpha, float3 old,  float3 next)
+//{
+//	return old * alpha + next * (1 - alpha) ;
+//}; 
 
 
 PSIn vsIn(VSIn input) {
@@ -48,10 +48,10 @@ PSIn vsIn(VSIn input) {
 	float3 oldWorlPos;
 	matrix oldWorldMat; 
 #ifdef LERP
-	worlPos = lerp(modelsCosntBuffer.alpha, input.pos1, input.pos2);
-	worldMat = lerp(1.0-modelsCosntBuffer.alpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
-	oldWorlPos = lerp(modelsCosntBuffer.oldAlpha, input.pos1, input.pos2);
-	oldWorldMat = lerp(1.0-modelsCosntBuffer.oldAlpha, modelsCosntBuffer.world, modelsCosntBuffer.oldWorld);
+	worlPos = lerp( input.pos1, input.pos2, 1.0-modelsCosntBuffer.alpha);
+	worldMat = lerp(modelsCosntBuffer.world, modelsCosntBuffer.oldWorld, modelsCosntBuffer.alpha);
+	oldWorlPos = lerp(input.pos1, input.pos2, 1.0-modelsCosntBuffer.oldAlpha);
+	oldWorldMat = lerp( modelsCosntBuffer.world, modelsCosntBuffer.oldWorld, modelsCosntBuffer.oldAlpha);
 #else
 	worlPos = input.pos;
 	worldMat = modelsCosntBuffer.world;
@@ -79,12 +79,13 @@ PSIn vsIn(VSIn input) {
 	
 
 #ifdef LERP
-	if (modelsCosntBuffer.alpha < 0.5) {
-		vso.normal = input.normal1;
-	}
-	else {
-		vso.normal = input.normal2;
-	}
+	vso.normal = lerp( input.normal1 , input.normal2, 1.0-modelsCosntBuffer.alpha);
+	//if (modelsCosntBuffer.alpha < 0.5) {
+	//	vso.normal = input.normal1;
+	//}
+	//else {
+	//	vso.normal = input.normal2;
+	//}
 #else
 	vso.normal = input.normal;
 #endif

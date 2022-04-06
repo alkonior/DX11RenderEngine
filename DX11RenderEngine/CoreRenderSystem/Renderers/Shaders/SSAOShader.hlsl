@@ -87,7 +87,7 @@ float OcclusionFunction(float distZ)
 float NdcDepthToViewDepth(float z_ndc)
 {
     // z_ndc = A + B/viewZ, where gProj[2,2]=A and gProj[3,2]=B.
-    float viewZ = mainConstants.projection[3][2] / (z_ndc - mainConstants.projection[2][2]);
+    float viewZ = mainConstants.projection[2][3] / (z_ndc - mainConstants.projection[2][2]);
     return viewZ;
 }
  
@@ -99,9 +99,14 @@ float4 psIn(VertexOut pin) : SV_Target
 	// r -- a potential occluder that might occlude p.
 
 	// Get viewspace normal and z-coord of this pixel.  
-    float3 n = normalize(gNormalMap.SampleLevel(gsamPointClamp, pin.TexC, 0.0f).xyz);
+    float3 n = normalize(gNormalMap.SampleLevel(gsamPointClamp, pin.TexC, 0.0f).xyz) ;
     float pz = gDepthMap.SampleLevel(gsamDepthMap, pin.TexC, 0.0f).r;
-    pz = NdcDepthToViewDepth(pz);
+	
+	float4 H = float4(pin.TexC.x * 2 - 1, (1 - pin.TexC.y) * 2 - 1, pz, 1);
+	// Transform by the view-projection inverse.
+	float4 D = mul(H, mainConstants.viewProjectionInverse);
+    //pz = NdcDepthToViewDepth(pz);
+	
 
 	//
 	// Reconstruct full view space position (x,y,z).
@@ -110,13 +115,14 @@ float4 psIn(VertexOut pin) : SV_Target
 	// t = p.z / pin.PosV.z
 	//
 	float3 p = (pz/pin.PosV.z)*pin.PosV;
-	
+	p = D/D.w;
 	// Extract random vector and map from [0,1] --> [-1, +1].
 	float3 randVec = 2.0f*gRandomVecMap.SampleLevel(gsamLinearWrap, 4.0f*pin.TexC, 0.0f).rgb - 1.0f;
 
 	float occlusionSum = 0.0f;
 	
 	// Sample neighboring points about p in the hemisphere oriented by n.
+	
 	for(int i = 0; i < gSampleCount; ++i)
 	{
 		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
@@ -131,7 +137,9 @@ float4 psIn(VertexOut pin) : SV_Target
 		float3 q = p + flip * SSAOData.gOcclusionRadius * offset;
 		
 		// Project q and generate projective tex-coords.  
-		float4 projQ = mul(float4(q, 1.0f), SSAOData.gProjTex);
+		//float4 projQ = mul(float4(q, 1.0f), mainConstants.viewProjection);
+		float4 projQ = mul(float4(q, 1.0f), mainConstants.view);
+		projQ = mul(projQ, SSAOData.gProjTex);
 		projQ /= projQ.w;
 
 		// Find the nearest depth value along the ray from the eye to q (this is not
@@ -139,13 +147,14 @@ float4 psIn(VertexOut pin) : SV_Target
 		// occupy empty space).  To find the nearest depth we look it up in the depthmap.
 
 		float rz = gDepthMap.SampleLevel(gsamDepthMap, projQ.xy, 0.0f).r;
-        rz = NdcDepthToViewDepth(rz);
+       // rz = NdcDepthToViewDepth(rz);
 
 		// Reconstruct full view space position r = (rx,ry,rz).  We know r
 		// lies on the ray of q, so there exists a t such that r = t*q.
 		// r.z = t*q.z ==> t = r.z / q.z
-
-		float3 r = (rz / q.z) * q;
+		H = float4(projQ.x * 2 - 1, (1 - projQ.y) * 2 - 1, rz, 1);
+		D = mul(H, mainConstants.viewProjectionInverse);
+		float3 r = D/D.w;
 		
 		//
 		// Test whether r occludes p.

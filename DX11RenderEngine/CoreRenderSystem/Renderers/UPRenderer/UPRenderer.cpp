@@ -120,8 +120,6 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		if (drawCalls[i].data.dynamicLight)
 		{
 			gfx.texturesManger.UpdateTexture(*drawCalls[i].data.lightUpdate);
-			delete[] drawCalls[i].data.lightUpdate->data;
-			delete drawCalls[i].data.lightUpdate;
 		}
 
 		if (drawCalls[i].data.dynamic) {
@@ -146,7 +144,17 @@ void UPRenderer::Flush() {
 }
 
 void UPRenderer::Clear(GraphicsBase& gfx) {
+	for (auto& drawCall: drawCalls)
+	{
+		if (drawCall.data.dynamicLight)
+		{
+			delete[] drawCall.data.lightUpdate->data;
+			delete drawCall.data.lightUpdate;
+		}
+	}
+
 	drawCalls.clear();
+	
 
 
 	RenderTargetBinding* targets[] = {

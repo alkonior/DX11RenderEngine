@@ -38,6 +38,7 @@ SamplerState pointSampler : register(s1);
 
 float4 psIn(PSIn input) : SV_Target
 {
+    float4 x = 0;
     float2 texCoord = input.uv;
 
 #ifdef BLOOMONLY
@@ -50,16 +51,15 @@ float4 psIn(PSIn input) : SV_Target
 	return lightmap.Sample(blureSampler, texCoord);
 #endif
 #ifdef OCCLUSIONONLY
-    float x = occlusion.Sample(blureSampler, texCoord);
+     x.xyz = occlusion.Sample(blureSampler, texCoord);
 #ifdef ALPHA
     return float4(0,0,0,0);
 #endif
-	return float4(x,x,x,1.0);
+	return float4(x.xxx,1.0);
 #endif
-#define NORMALSONLY
 #ifdef NORMALSONLY
-    float4 x = normals.Sample(blureSampler, texCoord);
-    x = mul(x, mainConstants.view);
+    x = normals.Sample(blureSampler, texCoord);
+    //x = mul(x, mainConstants.view);
     x+= float4(1,1,1,1);
     x/=2;
 #ifdef ALPHA
