@@ -86,6 +86,8 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 		flags|=PPALPHAONLY;
 	if (occlusionOnly)
 		flags|=PPOCCLUSIONONLY;
+	if (normalsOnly)
+		flags|=NORMALSONLY;
 	
 
 	RenderTargetBinding* targets[1] = {&gfx.texturesManger.preAAcolorRT};
@@ -99,6 +101,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.depthBuffer->texture);
 	renderer->VerifyPixelTexture(4, gfx.texturesManger.alphaSurfaces);
 	renderer->VerifyPixelTexture(5, gfx.texturesManger.oclusionField);
+	renderer->VerifyPixelTexture(6, gfx.texturesManger.normalsField);
 	
 	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
 	renderer->SetConstBuffer(pConstBuffer, &localData);
@@ -106,12 +109,15 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(PPZERO | flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
-	renderer->VerifyPixelTexture(5, nullptr);
-
 	
-	renderer->ApplyPipelineState(factory->GetState(PPALPHA | flags));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->VerifyPixelTexture(5, nullptr);
+	renderer->VerifyPixelTexture(6, nullptr);
 
+	if (!flags)
+	{
+		renderer->ApplyPipelineState(factory->GetState(PPALPHA | flags));
+		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	}
 	
 	renderer->VerifyPixelTexture(3, nullptr);
 }
@@ -127,6 +133,7 @@ void PPRenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::Checkbox("AlphaOnly", &alphaOnly);
 	ImGui::Checkbox("BlureOnly", &blureOnly);
 	ImGui::Checkbox("OcclusionOnly", &occlusionOnly);
+	ImGui::Checkbox("NormalsOnly", &normalsOnly);
 	//ImGui::SliderInt("MotionBlure samples", &localData.numSampes, 1,10);
 	ImGui::SliderFloat("light Add", &localData.lightAdd, 0, 1.0);
 	ImGui::End();

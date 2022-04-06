@@ -89,7 +89,7 @@ PSIn vsIn(VSIn input) {
 	vso.normal = input.normal;
 #endif
 
-	vso.normal = mul(float4(vso.normal, 1.0f), worldMat);
+	vso.normal = mul(float4(vso.normal, 0.0f), worldMat);
 
 #ifdef BAD_UV
 	vso.uv = input.uv / modelsCosntBuffer.wh;

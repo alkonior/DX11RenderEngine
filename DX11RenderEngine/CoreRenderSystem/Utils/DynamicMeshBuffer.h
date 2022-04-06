@@ -98,9 +98,10 @@ public:
 		for (size_t i = 0; i < model.indexes.size(); i++) {
 			cpuIndexes.push_back(model.indexes[i] + cpuVertices.size());
 		}
-
+		
 		for (size_t i = 0; i < model.vertixes.size(); i++) {
 			cpuVertices.push_back(model.vertixes[i]);
+			
 		}
 
 		return res;

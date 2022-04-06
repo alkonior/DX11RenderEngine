@@ -43,7 +43,7 @@ PSIn vsIn(VSIn input) {
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
-	vso.normal = mul(input.normal, upCosntBuffer.world);
+	vso.normal = mul(float4(input.normal, 0), upCosntBuffer.world);
 	return vso;
 }
 

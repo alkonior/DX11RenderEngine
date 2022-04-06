@@ -49,6 +49,7 @@ private:
 	bool alphaOnly;
 	bool blureOnly;
 	bool occlusionOnly;
+	bool normalsOnly;
 
 	
 	void RenderIMGUI(GraphicsBase& gfx);
