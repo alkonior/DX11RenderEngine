@@ -115,7 +115,7 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.pastDepth);
 	renderer->VerifyPixelTexture(4, gfx.texturesManger.depthBuffer->texture);
 	
-	renderer->ApplyPipelineState(factory->GetComputeState(flags));
+	renderer->ApplyPipelineState(factory->GetComputeState(flags, "main"));
 	renderer->Dispatch((width + TAA_NUM_THREADS_X -1) / (TAA_NUM_THREADS_X),
 		(height + TAA_NUM_THREADS_Y -1) / (TAA_NUM_THREADS_Y));
 	renderer->VerifyUATexture(0, nullptr);

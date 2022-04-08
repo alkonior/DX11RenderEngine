@@ -834,6 +834,8 @@ struct IRenderer {
 	virtual void EndEvent() = 0;
 	virtual void SetMarker(const char* name) = 0;
 
+	virtual void ClearState() = 0;
+
 
 };
 

@@ -15,8 +15,9 @@
 
 #endif
 
-#define SSAO_NUM_THREADS_X 8
-#define SSAO_NUM_THREADS_Y 8
+#define SSAO_NUM_THREADS_X 1
+#define SSAOBLUR_NUM_THREADS 8
+#define SSAO_NUM_THREADS_Y 1
 
 
 
@@ -24,7 +25,7 @@ struct SSAOCosntBuffer
 {
     float4x4 gProjTex;//+++
     float4   gOffsetVectors[14];//+++
-
+    
 
     float2 gInvRenderTargetSize; // 1/width, 1/ height
 
@@ -35,9 +36,10 @@ struct SSAOCosntBuffer
     float    gSurfaceEpsilon;
 
     
-    float sigma;//++
-    float inencity;//++
-    uint  kernel;//++
+    float sigma;
+    float intensity;
+    //int radius;
+    //int  kernel;//++
 };
 
 STRUCTURE(1, SSAOCosntBuffer, SSAOData)

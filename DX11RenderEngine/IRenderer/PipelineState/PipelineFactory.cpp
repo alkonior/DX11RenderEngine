@@ -108,10 +108,11 @@ PipelineState* Renderer::PipelineFactory::GetState(size_t definesFlags) {
 	}
 }
 
-PipelineState* Renderer::PipelineFactory::GetComputeState(size_t definesFlags) {
+PipelineState* Renderer::PipelineFactory::GetComputeState(size_t definesFlags, const char* nameShader) {
 	PipelineState* ps;
-	if (computeDictinary.count(definesFlags /*int*/)) {
-		return computeDictinary[definesFlags];
+	auto id = std::make_pair(definesFlags, nameShader);
+	if (computeDictinary.count(id )) {
+		return computeDictinary[id];
 	}
 	{
 		ps = new PipelineState();
@@ -123,14 +124,14 @@ PipelineState* Renderer::PipelineFactory::GetComputeState(size_t definesFlags) {
 		IRenderer::ShaderData{
 		shaderData, dataSize, definesArray.data(),
 				definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-				"main", "cs_5_0", compileFlags,
+				nameShader, "cs_5_0", compileFlags,
 #ifdef _DEBUG
 				name
 #endif
 			}
 			);
 
-		computeDictinary.insert({ definesFlags, ps });
+		computeDictinary.insert({ id, ps });
 		return ps;
 	}
 }

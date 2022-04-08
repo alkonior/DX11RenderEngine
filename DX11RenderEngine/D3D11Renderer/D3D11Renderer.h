@@ -226,6 +226,8 @@ public:
 	virtual Texture* CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount, uint8_t isRenderTarget) override;
 
 	// Inherited via IRenderer
+
+	virtual void ClearState() override;
 };
 
 };

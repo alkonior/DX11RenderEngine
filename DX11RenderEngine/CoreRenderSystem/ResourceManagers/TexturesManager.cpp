@@ -17,7 +17,8 @@ TexturesManager::TexturesManager() {
 	CreateRenderTarget(SURFACEFORMAT_COLOR,        width, height,  pastColor,      pastColorRT);
 	CreateRenderTarget(SURFACEFORMAT_SINGLE,       width, height,  pastDepth,      pastDepthRT);
 	CreateRenderTarget(SURFACEFORMAT_VECTOR4,      width, height,  normalsField,    normalsFieldRT);
-	CreateRenderTarget(SURFACEFORMAT_SINGLE,      width, height,  oclusionField,    oclusionFieldRT);
+	
+	CreateUATarget(SURFACEFORMAT_SINGLE,      width, height,  oclusionField,    oclusionFieldRT);
 
 }
 
@@ -96,6 +97,32 @@ void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t 
 	}
 	
 	texture = renderer->CreateTexture2D(format, width, height, 1, true);
+
+	renderTargets[&texture] = texture;
+	Viewport defVP = {
+		0,0,width,height,0.0,1.0
+	};
+
+
+	renderTarget.viewport = defVP;
+	renderTarget.texture = texture;
+	renderTarget.levelCount = 1;
+	renderTarget.multiSampleCount = 0;
+}
+
+void TexturesManager::CreateUATarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget) {
+
+	if (renderTargets.count(&texture) > 0)
+	{
+		RenderTargetBinding* rt[] = {(&renderTarget)};
+		renderer->SetRenderTargets(rt,1,nullptr,Viewport());
+		renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET,{0,0,0,0},0,0);
+		
+		renderer->SetRenderTargets(nullptr,0,nullptr,Viewport());
+		return;
+	}
+	
+	texture = renderer->CreateUATexture2D(format, width, height, 1);
 
 	renderTargets[&texture] = texture;
 	Viewport defVP = {

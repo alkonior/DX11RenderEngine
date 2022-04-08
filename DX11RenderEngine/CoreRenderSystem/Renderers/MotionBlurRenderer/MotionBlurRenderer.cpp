@@ -119,6 +119,8 @@ void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	
+	renderer->VerifyPixelTexture(0, nullptr);
+	renderer->VerifyPixelTexture(1, nullptr);
 	renderer->VerifyPixelTexture(2, nullptr);
 	targets[0] = &gfx.texturesManger.diffuseColorRT;
 	targets[1] = &gfx.texturesManger.lightColorRT;

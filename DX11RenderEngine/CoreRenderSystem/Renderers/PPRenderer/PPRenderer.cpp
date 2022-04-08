@@ -100,15 +100,28 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(2, gfx.texturesManger.lightColor);
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.depthBuffer->texture);
 	renderer->VerifyPixelTexture(4, gfx.texturesManger.alphaSurfaces);
-	renderer->VerifyPixelTexture(5, gfx.texturesManger.oclusionField);
-	renderer->VerifyPixelTexture(6, gfx.texturesManger.normalsField);
+	renderer->VerifyPixelTexture(8, gfx.texturesManger.oclusionField);
+	renderer->VerifyPixelTexture(9, gfx.texturesManger.normalsField);
 	
 	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
 	renderer->SetConstBuffer(pConstBuffer, &localData);
 
 	renderer->ApplyPipelineState(factory->GetState(PPZERO | flags));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-
+	
+	renderer->VerifyPixelTexture(0,nullptr);
+	renderer->VerifyPixelTexture(1,nullptr);
+	renderer->VerifyPixelTexture(2,nullptr);
+	renderer->VerifyPixelTexture(3,nullptr);
+	renderer->VerifyPixelTexture(4,nullptr);
+	renderer->VerifyPixelTexture(8,nullptr);
+	renderer->VerifyPixelTexture(9,nullptr);
+	
+	
+	renderer->VerifyConstBuffer(pConstBuffer, ppCosntBuffer.slot);
+	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
+	
+	renderer->SetRenderTargets(targets, 1, nullptr, vp);
 	
 	renderer->VerifyPixelTexture(5, nullptr);
 	renderer->VerifyPixelTexture(6, nullptr);

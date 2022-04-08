@@ -489,6 +489,7 @@ namespace Renderer
             ID3D11ShaderResourceView * views[] = {nullptr};
             if (texture == nullptr)
             {
+                pixelTextures[index] = nullptr;
                 GFX_THROW_INFO_ONLY(context->PSSetShaderResources(
                     index,
                     1,
@@ -525,7 +526,7 @@ namespace Renderer
             }
 
             /* Bind the correct texture */
-            if (d3dTexture->handle != pixelTextures[index]->handle)
+            if (!pixelTextures[index] || d3dTexture->handle != pixelTextures[index]->handle)
             {
                 pixelTextures[index] = d3dTexture;
                 //std::lock_guard<std::mutex> guard(ctxLock);
@@ -1101,7 +1102,7 @@ namespace Renderer
         /* Unbind the texture */
         for (int i = 0; i < MAX_TEXTURE_SAMPLERS; i += 1)
         {
-            if (pixelTextures[i]->handle == tex->handle)
+            if (pixelTextures[i] && pixelTextures[i]->handle == tex->handle)
             {
                 pixelTextures[i] = &D3D11Texture::NullTexture;
             }
@@ -2124,7 +2125,7 @@ namespace Renderer
             for (int32_t j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1)
             {
                 const D3D11Texture* texture = pixelTextures[j];
-                if (!texture->isRenderTarget)
+                if (!texture || !texture->isRenderTarget)
                 {
                     continue;
                 }
@@ -2158,7 +2159,7 @@ namespace Renderer
             for (int32_t j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1)
             {
                 const D3D11Texture* texture = vertexTextures[j];
-                if (!texture->isRenderTarget)
+                if (!texture || !texture->isRenderTarget)
                 {
                     continue;
                 }
@@ -2205,7 +2206,7 @@ namespace Renderer
             for (int32_t j = 0; j < MAX_TEXTURE_SAMPLERS; j += 1)
             {
                 auto texture = pixelTextures[j];
-                if (!texture->isRenderTarget)
+                if (!texture || !texture->isRenderTarget)
                 {
                     continue;
                 }
@@ -2243,7 +2244,7 @@ namespace Renderer
             for (int32_t j = 0; j < MAX_VERTEXTEXTURE_SAMPLERS; j += 1)
             {
                 auto texture = vertexTextures[j];
-                if (!texture->isRenderTarget)
+                if (!texture || !texture->isRenderTarget)
                 {
                     continue;
                 }
@@ -2675,6 +2676,11 @@ namespace Renderer
                                             uint8_t isRenderTarget)
     {
         return nullptr;
+    }
+
+    void D3D11Renderer::ClearState()
+    {
+        context->ClearState();
     }
 
 

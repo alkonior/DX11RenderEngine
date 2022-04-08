@@ -40,6 +40,10 @@ private:
 	SSAOCosntBuffer localBuffer;
 	
 	Renderer::Texture* randVect;
+
+	
+	Renderer::Texture* buff;
+	Renderer::RenderTargetBinding  buffRT;
 	
 	void RenderIMGUI(GraphicsBase& gfx);
 };

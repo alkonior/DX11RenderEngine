@@ -117,15 +117,16 @@ void SSAORenderer::Init(void* shaderData, size_t dataSize) {
 	localBuffer.ReprojectionMode = 1;
 	localBuffer.NeighborhoodClampMode = 1;
 	*/
-	localBuffer.sigma = 1;
-	localBuffer.kernel = 1;
-	localBuffer.inencity = 1;
+	localBuffer.sigma = 3;
+	localBuffer.intensity = 1;
+	//localBuffer.kernel = 1;
+	//localBuffer.radius = 5;
 	localBuffer.gInvRenderTargetSize = float2(1.f/width,1.f/height);
 	
-	localBuffer.gOcclusionRadius   = 0.5;
-	localBuffer.gOcclusionFadeStart = 0.2;
-	localBuffer.gOcclusionFadeEnd   = 1.0;
-	localBuffer.gSurfaceEpsilon   = 0.05;
+	localBuffer.gOcclusionRadius    = 1.4;
+	localBuffer.gOcclusionFadeStart = 0.3;
+	localBuffer.gOcclusionFadeEnd   = 0.7;
+	localBuffer.gSurfaceEpsilon     = 0.05;
 	
 	constBuffer = renderer->CreateConstBuffer(sizeof(localBuffer));
 }
@@ -143,15 +144,16 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 
+	gfx.texturesManger.CreateUATarget(SURFACEFORMAT_SINGLE, width, height,buff, buffRT);
 	RenderIMGUI(gfx);
 	
 
 	size_t flags = SSAOZERO;
 	
-	RenderTargetBinding* target[] = {
-		&gfx.texturesManger.oclusionFieldRT,
-	};
-	renderer->SetRenderTargets(target, 1, nullptr, vp);
+	//RenderTargetBinding* target[] = {
+	//	&gfx.texturesManger.oclusionFieldRT,
+	//};
+	//renderer->SetRenderTargets(target, 1, nullptr, vp);
 	
 	renderer->SetConstBuffer(constBuffer, &localBuffer);
 	renderer->VerifyConstBuffer(constBuffer, SSAOData.slot);
@@ -160,36 +162,48 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 	
 	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelSampler(1, Samplers::linearClamp);
-	renderer->VerifyPixelSampler(2, Samplers::pointClamp);
+	renderer->VerifyPixelSampler(2, Samplers::linearClamp);
 	renderer->VerifyPixelSampler(3, Samplers::linearWrap);
 	
 	
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.normalsField);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
 	renderer->VerifyPixelTexture(2, randVect);
+	renderer->VerifyPixelTexture(5, nullptr);
+
+	renderer->VerifyUATexture(0, buff);
 	
-	renderer->ApplyPipelineState(factory->GetState(flags));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
+	renderer->ApplyPipelineState(factory->GetComputeState(flags, "main"));
+	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
+	renderer->Dispatch((width + SSAO_NUM_THREADS_X -1) / (SSAO_NUM_THREADS_X),
+			(height + SSAO_NUM_THREADS_Y -1) / (SSAO_NUM_THREADS_Y));
+
 
 	
-	//renderer->Dispatch((width + SSAO_NUM_THREADS_X -1) / (SSAO_NUM_THREADS_X),
-	////	(height + SSAO_NUM_THREADS_Y -1) / (SSAO_NUM_THREADS_Y));
-	//renderer->VerifyUATexture(0, nullptr);
-	//renderer->VerifyPixelTexture(0, nullptr);
-	//renderer->VerifyPixelTexture(1, nullptr);
-	//renderer->VerifyPixelTexture(2, nullptr);
-	//renderer->VerifyPixelTexture(3, nullptr);
-	//renderer->VerifyPixelTexture(4, nullptr);
-//
-	////target[0] = nullptr;
-	//renderer->SetRenderTargets(target, 3, nullptr, vp);
-	//renderer->VerifyPixelSampler(0, Samplers::pointClamp);
-	//renderer->VerifyPixelTexture(0, SSAOHistory);
-	//renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
-	//renderer->ApplyPipelineState(factory->GetState(SSAOCOPY));
-	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-//
-	//renderer->VerifyPixelTexture(1, nullptr);
+	
+	renderer->VerifyUATexture(0, nullptr);
+	renderer->VerifyPixelTexture(0, nullptr);
+
+	//for (int i = 0; i < localBuffer.kernel; i++)
+	//{
+		
+	renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField );
+	renderer->VerifyPixelTexture(0,buff );
+	renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
+	renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
+						(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
+	renderer->VerifyUATexture(0, nullptr);
+	renderer->VerifyPixelTexture(0, nullptr);
+		
+		//renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField);
+		//renderer->VerifyPixelTexture(0, buff);
+		//renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
+		//renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
+		//					(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
+		//renderer->VerifyUATexture(0, nullptr);
+		//renderer->VerifyPixelTexture(0, nullptr);
+	//}
+		
 	
 }
 
@@ -202,7 +216,11 @@ void SSAORenderer::RenderIMGUI(GraphicsBase& gfx)
 	ImGui::SliderFloat("gOcclusionFadeStar",&localBuffer.gOcclusionFadeStart,0,3);
 	ImGui::SliderFloat("gOcclusionFadeEnd ",&localBuffer.gOcclusionFadeEnd  ,0,3);
 	ImGui::SliderFloat("gSurfaceEpsilon   ",&localBuffer.gSurfaceEpsilon    ,0,3);
-
+	
+	ImGui::SliderFloat("intencity   ",&localBuffer.intensity    ,0,10);
+	ImGui::SliderFloat("sigma   ",&localBuffer.sigma   ,0.01,5);
+	//ImGui::SliderInt("kernel   ",&localBuffer.kernel   ,1,10);
+	//ImGui::SliderInt("radius   ",&localBuffer.radius   ,0,SSAOBLUR_NUM_THREADS);
 	ImGui::End();
 }
 

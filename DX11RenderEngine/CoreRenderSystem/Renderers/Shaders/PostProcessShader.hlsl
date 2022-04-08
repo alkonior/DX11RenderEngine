@@ -29,8 +29,8 @@ Texture2D bloomMask : register(t1);
 Texture2D lightmap : register(t2);
 Texture2D depthTex : register(t3);
 Texture2D alphaSurfaces : register(t4);
-Texture2D occlusion : register(t5);
-Texture2D normals : register(t6);
+Texture2D occlusion : register(t8);
+Texture2D normals : register(t9);
 
 
 SamplerState blureSampler : register(s0);
@@ -86,6 +86,7 @@ float4 psIn(PSIn input) : SV_Target
 
     float4 color = diffuseColor.Sample(blureSampler, texCoord);
     float4 light = lightmap.Sample(blureSampler, texCoord);
+    light *= occlusion.Sample(pointSampler, texCoord);
     light.rgb += float3(ppCosntBuffer.lightAdd,ppCosntBuffer.lightAdd,ppCosntBuffer.lightAdd);
     float4 bloom = bloomMask.Sample(blureSampler, texCoord);
     

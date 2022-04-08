@@ -12,7 +12,6 @@ enum  SSAORendererDefines : std::uint32_t {
 
 const Renderer::ShaderDefines SSAORendererDefines[] = {
 	Renderer::ShaderDefines("RED"),
-	Renderer::ShaderDefines("COPY"),
 	Renderer::ShaderDefines("BLUR"),
 };
 
