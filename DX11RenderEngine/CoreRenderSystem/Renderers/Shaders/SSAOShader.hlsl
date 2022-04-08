@@ -164,12 +164,13 @@ void main( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
 }
 
 #endif
+//#define BLUR
 #ifdef BLUR
 
 static const int gMaxBlurRadius = 5;
 
 
-Texture2D InputBuf           : register(t0);
+//Texture2D InputBuf           : register(t0);
 RWTexture2D<float> Result : register(u0);
 
 
@@ -272,8 +273,8 @@ void blur( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
     // Store 4 unblurred pixels in LDS
     //
     int destIdx = GTid.x + (GTid.y << 4);
-    Store2Pixels(destIdx+0, InputBuf[ThreadUL + uint2(0, 0)], InputBuf[ThreadUL + uint2(1, 0)]);
-    Store2Pixels(destIdx+8, InputBuf[ThreadUL + uint2(0, 1)], InputBuf[ThreadUL + uint2(1, 1)]);
+    Store2Pixels(destIdx+0, Result[ThreadUL + uint2(0, 0)], Result[ThreadUL + uint2(1, 0)]);
+    Store2Pixels(destIdx+8, Result[ThreadUL + uint2(0, 1)], Result[ThreadUL + uint2(1, 1)]);
 
     GroupMemoryBarrierWithGroupSync();
 

@@ -119,7 +119,7 @@ void SSAORenderer::Init(void* shaderData, size_t dataSize) {
 	*/
 	localBuffer.sigma = 3;
 	localBuffer.intensity = 1;
-	//localBuffer.kernel = 1;
+	localBuffer.kernel = 1;
 	//localBuffer.radius = 5;
 	localBuffer.gInvRenderTargetSize = float2(1.f/width,1.f/height);
 	
@@ -171,7 +171,7 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(2, randVect);
 	renderer->VerifyPixelTexture(5, nullptr);
 
-	renderer->VerifyUATexture(0, buff);
+	renderer->VerifyUATexture(0,  gfx.texturesManger.oclusionField);
 	
 	renderer->ApplyPipelineState(factory->GetComputeState(flags, "main"));
 	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
@@ -186,12 +186,16 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 
 	//for (int i = 0; i < localBuffer.kernel; i++)
 	//{
-		
+
 	renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField );
-	renderer->VerifyPixelTexture(0,buff );
+	//renderer->VerifyPixelTexture(0,buff );
 	renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
-	renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
-						(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
+	
+	for (int i =0; i<localBuffer.kernel; i++)
+	{
+		renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
+							(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
+	}
 	renderer->VerifyUATexture(0, nullptr);
 	renderer->VerifyPixelTexture(0, nullptr);
 		
@@ -219,7 +223,7 @@ void SSAORenderer::RenderIMGUI(GraphicsBase& gfx)
 	
 	ImGui::SliderFloat("intencity   ",&localBuffer.intensity    ,0,10);
 	ImGui::SliderFloat("sigma   ",&localBuffer.sigma   ,0.01,5);
-	//ImGui::SliderInt("kernel   ",&localBuffer.kernel   ,1,10);
+	ImGui::SliderInt("kernel   ",&localBuffer.kernel   ,1,10);
 	//ImGui::SliderInt("radius   ",&localBuffer.radius   ,0,SSAOBLUR_NUM_THREADS);
 	ImGui::End();
 }

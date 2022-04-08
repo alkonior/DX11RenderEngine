@@ -39,7 +39,7 @@ struct SSAOCosntBuffer
     float sigma;
     float intensity;
     //int radius;
-    //int  kernel;//++
+    int  kernel;//++
 };
 
 STRUCTURE(1, SSAOCosntBuffer, SSAOData)
