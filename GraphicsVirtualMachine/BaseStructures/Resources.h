@@ -13,6 +13,14 @@ struct BufferDesc {
     void*                initialData;
 };
 
+struct VertexBufferDesc : BufferDesc {
+//todo
+};
+
+struct IndexBufferDesc : BufferDesc {
+//todo
+};
+
 struct Texture1DDesc : BufferDesc {
     EDataFormat          Format;
     uint16_t             ArraySize;
@@ -30,7 +38,8 @@ struct Texture3DDesc : Texture2DDesc {
 };
 
 struct ResourceViewDesc {
-    uint16_t             Depth;
+    EDataFormat     Format;
+    //todo
 };
 
 }

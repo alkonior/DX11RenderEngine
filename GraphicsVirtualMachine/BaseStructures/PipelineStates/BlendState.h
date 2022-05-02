@@ -29,7 +29,7 @@ struct BlendDesc : BaseStateDesc
     bool                AlphaToCoverageEnable = false;
     bool                IndependentBlendEnable = false;
     BlendStateDesc      RenderTarget[8];
--
+    uint32_t            SampleMask;
 };
    
 }
