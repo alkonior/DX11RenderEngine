@@ -95,12 +95,16 @@
       <AdditionalIncludeDirectories>$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -386,6 +390,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\GraphicsBase.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -462,6 +467,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ModelsUtils\ModelData.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -538,6 +544,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRendererer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -614,6 +621,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\BeamRenderer\BeamRendererProvider.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -690,6 +698,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\PPRenderer\PPRenderer.cpp">
@@ -767,6 +776,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\FXAARenderer\FXAARenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -843,6 +853,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -924,6 +935,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.cpp">
@@ -1001,6 +1013,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
@@ -1083,6 +1096,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1159,6 +1173,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1235,6 +1250,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1311,6 +1327,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Renderers\UIRenderer\UIRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\UIRenderer\UIRendererFactory.cpp" />
@@ -1392,6 +1409,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\BlendStates.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1468,6 +1486,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\DSStates.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1544,6 +1563,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1620,6 +1640,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\Samplers.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1696,6 +1717,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\ResourceManagers\TexturesManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1772,6 +1794,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Utils\TextureData.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1848,6 +1871,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="CoreRenderSystem\Utils\TransformUtils.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1924,6 +1948,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="D3D11Renderer\D3D11Renderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -2000,6 +2025,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="GraphicsExceptions\DxgiInfoManager.cpp" />
     <ClCompile Include="GraphicsExceptions\GraphicsException.cpp" />
@@ -2120,6 +2146,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
@@ -2198,6 +2225,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="Utils\src\Geometry.cpp" />
     <ClCompile Include="Utils\src\halton.cpp">
@@ -2275,6 +2303,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;P:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="Utils\src\SimpleMath.cpp" />
     <ClCompile Include="Utils\src\VertexTypes.cpp" />
@@ -2455,6 +2484,9 @@
       <EnableDebuggingInformation>true</EnableDebuggingInformation>
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DX11Commands.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

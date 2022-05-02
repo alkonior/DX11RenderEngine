@@ -121,9 +121,9 @@ PSOut psIn(PSIn input) : SV_Target
 {
 	PSOut pso = (PSOut)0;
 	
-	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
-	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection);
-	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w)/2.0f);
+	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection)*0.5+0.5;
+	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection)*0.5+0.5;
+	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
 	
 	if (dot(input.normal, input.normal) > 0.00001)
 		pso.normal.xyz = input.normal;
