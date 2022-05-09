@@ -3,25 +3,27 @@
 
 namespace GVM {
 
-class IRenderDeviceInitParams {};
-class IViewport {};
-class IScissorRect {};
-class IBlendState {};
-class IDepthStencilState {};
-class IRasterizerState {};
-class ISamplerState {};
-class IPipelineState {};
-class IInputLayout {};
-class IResource {};
+struct IAbstract { virtual ~IAbstract() = 0 {}; };
+
+class IRenderDeviceInitParams : IAbstract {};
+class IViewport : IAbstract {};
+class IScissorRect : IAbstract {};
+class IBlendState : IAbstract {};
+class IDepthStencilState : IAbstract {};
+class IRasterizerState : IAbstract {};
+class ISamplerState : IAbstract {};
+class IPipelineState : IAbstract {};
+class IInputLayout : IAbstract {};
+class IResource : IAbstract {};
 class IVertexBuffer : IResource {};
 class IIndexBuffer : IResource {};
 class IConstBuffer : IResource {};
-class IResourceView {};
+class IResourceView : IAbstract {};
 class IVertexBufferView : IResourceView {};
 class IIndexBufferView : IResourceView {};
 class IRenderTarget : IResource {};
 class IRenderTargetView : IResourceView {};
-class IShader {};
+class IShader : IAbstract {};
 
 struct VertexBufferBinding {
     uint8_t buffersCount = 0;

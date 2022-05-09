@@ -1,29 +1,29 @@
 #pragma once
 #include <cstdint>
-#include "BaseDefines.h"
-#include "BaseStructures\GVMEnums.h"
+#include "PipelineSnapshot.h"
 
 namespace GVM {
 
 struct PipelineSnapshotCompressed {
-    pointer vs, ps, cs, gs, hs, ds;
+    ShaderDesc VS, PS, CS, GS, HS, DS;
 
-    byte DrawFlags;
-    uint DrawArgs[5];
+    uint32_t            DrawCallsNum;
 
-    EPrimitiveTopology primitiveType;
+    EPrimitiveTopology  primitiveType;
 
-    pointer rasterizerState;
-    pointer depthStencilState;
-    pointer vertexDeclaration;
+    RasterizerStateDesc             rasterizerState;
+    DepthStencilStateDesc           depthStencilState;
+    InputAssemblerDeclarationDesc   vertexDeclaration;
+    IResourceView*                  DepthBuffer;
 
-    byte resourceCount;
-    byte samplerCount;
-    byte viewportCount;
-    byte texturesCount;
-    byte constBuffersCount;
 
-    pointer DepthBuffer;
+    uint8_t             resourceCount;
+    uint8_t             samplerCount;
+    uint8_t             viewportCount;
+    uint8_t             texturesCount;
+    uint8_t             constBuffersCount;
+
+    IAbstract* Data;
     
 
 };

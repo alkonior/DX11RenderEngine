@@ -1,30 +1,29 @@
 #pragma once
 #include <vector>
-#include "BaseDefines.h"
 
-#include "BaseStructures\BaseStructures.h"
+#include "VirtualMachine\IRenderClasses.h"
+#include "BaseStructures.h"
 
 
 namespace GVM {
 
 struct PipelineSnapshot {
 
-    Shader *vs, ps, cs, gs, hs, ds;
+    IShader* VS, PS, CS, GS, HS, DS;
 
-    byte DrawFlags;
-    uint DrawArgs[5];
+    uint32_t DrawCallsNum;
 
     EPrimitiveTopology primitiveType;
 
-    RasterizerState* rasterizerState;
-    DepthStencilState* depthStencilState;
-    InputAssemblerDeclaration* vertexDeclaration;
+    IRasterizerState* rasterizerState;
+    IDepthStencilState* depthStencilState;
+    IInputLayout* vertexDeclaration;
 
     
-    byte constBuffersCount;
-    pointer DepthBuffer;
+    uint8_t constBuffersCount;
+    IResourceView* DepthBuffer;
     
-    pointer data;
+    
 
 };
 

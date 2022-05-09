@@ -14,8 +14,8 @@ struct RasterizerStateDesc : BaseStateDesc
     ECullMode       CullMode;
     bool            FrontCounterClockwise;
     int32_t         DepthBias;
-    float           DepthBiasClamp;
-    float           SlopeScaledDepthBias;
+    int16_t         DepthBiasClamp;
+    int16_t         SlopeScaledDepthBias;
     bool            DepthClipEnable;
     bool            ScissorEnable;
     bool            MultisampleEnable;

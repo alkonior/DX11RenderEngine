@@ -12,7 +12,7 @@ struct SamplerStateDesc {
     float                      MipLODBias;
     uint8_t                    MaxAnisotropy;
     EComparisonFunc            ComparisonFunc;
-    float                      BorderColor[4];
+    uint8_t                    BorderColor[4];
     float                      MinLOD;
     float                      MaxLOD;
 };

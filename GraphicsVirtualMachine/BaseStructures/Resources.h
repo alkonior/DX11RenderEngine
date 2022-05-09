@@ -22,7 +22,7 @@ struct IndexBufferDesc : BufferDesc {
 };
 
 struct Texture1DDesc : BufferDesc {
-    EDataFormat          Format;
+    EFormat          Format;
     uint16_t             ArraySize;
     uint16_t             MipLevels;
     SampleDesc           SampleDesc;
@@ -38,7 +38,7 @@ struct Texture3DDesc : Texture2DDesc {
 };
 
 struct ResourceViewDesc {
-    EDataFormat     Format;
+    EFormat     Format;
     //todo
 };
 

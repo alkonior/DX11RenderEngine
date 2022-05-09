@@ -2,163 +2,164 @@
 #include "BaseStructures.h"
 #include "IRenderClasses.h"
 namespace GVM {
+
 class GraphicsAPI {
 	
 public:
     
-	GraphicsAPI(const IRenderDeviceInitParams* initParams, bool debugMode = true) {}
+	GraphicsAPI(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
 	GraphicsAPI(const GraphicsAPI&) = delete;
 	GraphicsAPI(const GraphicsAPI&&) = delete;
-	virtual ~GraphicsAPI() = default;
+	~GraphicsAPI() = default;
 
 	/* Presentation */
 
-	virtual void Present() = 0;
+	void Present();
 
 	/* Drawing */
 
-	virtual void ClearRenderTarget(const IRenderTarget** renderTargets, int32_t numRenderTargets, FColor color) = 0;
-	virtual void Clear(float depth, int8_t stencil) = 0;
-	virtual void ResetBackbuffer(const IRenderDeviceInitParams* initParams) = 0;
+	void ClearRenderTarget(const IRenderTarget** renderTargets, int32_t numRenderTargets, FColor color);
+	void Clear(float depth, int8_t stencil);
+	void ResetBackbuffer(const IRenderDeviceInitParams* initParams);
 
 #pragma region DrawDispatch
 
-	virtual void DrawIndexedPrimitives(
+	void DrawIndexedPrimitives(
 		int32_t baseVertex,
 		int32_t minVertexIndex,
 		int32_t numVertices,
 		int32_t startIndex,
 		int32_t primitiveCount
-	) = 0;
+	);
 	
-	virtual void DrawInstancedPrimitives(
+	void DrawInstancedPrimitives(
 		int32_t baseVertex,
 		int32_t minVertexIndex,
 		int32_t numVertices,
 		int32_t startIndex,
 		int32_t primitiveCount,
 		int32_t instanceCount
-	) = 0;
+	);
 	
-	virtual void DrawPrimitives(
+	void DrawPrimitives(
 		int32_t vertexStart,
 		int32_t primitiveCount
-	) = 0;
+	);
 	
-	virtual void Dispatch(size_t x, size_t y, size_t z = 1) = 0;
+	void Dispatch(size_t x, size_t y, size_t z = 1);
 	
 #pragma endregion
 
 #pragma region CreateDestroyPipelineStates
-	virtual const IViewport*				CreateViewport(const ViewportDesc* viewportDesc) = 0;
-	virtual const IScissorRect*				CreateScissorRect(const Rect* scissor) = 0;
-	virtual const IBlendState*				CreateBlendState(const BlendDesc* blendStates) = 0;
-	virtual const IDepthStencilState*		CreateDepthStencilState(const DepthStencilStateDesc* depthStencilState) = 0;
-	virtual const IRasterizerState*			CreateRasterizerStat(const RasterizerStateDesc* rasterizerState) = 0;
-	virtual const ISamplerState*			CreateSampler(const SamplerStateDesc* sampler) = 0;
-	virtual IShader*						CreateShader(const ShaderDesc& shaderDesc, EShaderType type) = 0;
+	const IViewport*				CreateViewport(const ViewportDesc* viewportDesc);
+	const IScissorRect*				CreateScissorRect(const Rect* scissor);
+	const IBlendState*				CreateBlendState(const BlendDesc* blendStates);
+	const IDepthStencilState*		CreateDepthStencilState(const DepthStencilStateDesc* depthStencilState);
+	const IRasterizerState*			CreateRasterizerStat(const RasterizerStateDesc* rasterizerState);
+	const ISamplerState*			CreateSampler(const SamplerStateDesc* sampler);
+	const IShader*					CreateShader(const ShaderDesc& shaderDesc, EShaderType type);
 
-	virtual void AddDisposeViewport	(const IViewport* viewportDesc) = 0;
-	virtual void AddDisposeScissorRect(const IScissorRect* scissor) = 0;
-	virtual void AddDisposeBlendState(const IBlendState* blendStates) = 0;
-	virtual void AddDisposeDepthStencilState(const IDepthStencilState* depthStencilState) = 0;
-	virtual void AddDisposeRasterizerStat(const IRasterizerState* rasterizerState) = 0;
-	virtual void AddDisposeSampler(const ISamplerState*	sampler) = 0;
-	virtual void AddDisposeShader(IShader* shader) = 0;
+	void AddDisposeViewport	(const IViewport* viewportDesc);
+	void AddDisposeScissorRect(const IScissorRect* scissor);
+	void AddDisposeBlendState(const IBlendState* blendStates);
+	void AddDisposeDepthStencilState(const IDepthStencilState* depthStencilState);
+	void AddDisposeRasterizerStat(const IRasterizerState* rasterizerState);
+	void AddDisposeSampler(const ISamplerState*	sampler);
+	void AddDisposeShader(IShader* shader);
 #pragma endregion
 
 #pragma region SetupPipeline
-	virtual void SetViewports(const IViewport** viewport, uint8_t num) = 0;
-	virtual void SetScissorRect(const IScissorRect** scissors, uint8_t num) = 0;
-	virtual void SetBlendStates(const IBlendState* blendState, FColor blendFactor, uint32_t sampleMask) = 0;
-	virtual void SetDepthStencilState(const IDepthStencilState* depthStencilState) = 0;
-	virtual void SetRasterizerState(const IRasterizerState* rasterizerState) = 0;
-	virtual void SetSamplers(const ISamplerState** sampler, uint8_t num, EShaderType shader) = 0;
-	virtual void SetPipelineState(const IPipelineState pipelineState) = 0;
+	void SetViewports(const IViewport** viewport, uint8_t num);
+	void SetScissorRect(const IScissorRect** scissors, uint8_t num);
+	void SetBlendStates(const IBlendState* blendState, FColor blendFactor, uint32_t sampleMask);
+	void SetDepthStencilState(const IDepthStencilState* depthStencilState);
+	void SetRasterizerState(const IRasterizerState* rasterizerState);
+	void SetSamplers(const ISamplerState** sampler, uint8_t num, EShaderType shader);
+	void SetPipelineState(const IPipelineState pipelineState);
 
 
-	virtual void SetupVertexBuffer(const VertexBufferBinding& bindings) = 0;
-	virtual void SetupIndexBuffer(const IIndexBufferView* indices) = 0;
-	virtual void SetupMeshBuffers(const Mesh& bindings) = 0;
+	void SetupVertexBuffer(const VertexBufferBinding& bindings);
+	void SetupIndexBuffer(const IIndexBufferView* indices);
+	void SetupMeshBuffers(const Mesh& bindings);
 
 	
-	virtual void SetupTextures(const IResourceView* texture, uint8_t num, EShaderType shader) = 0;
-	virtual void SetupVertexBuffer(const IVertexBuffer* bindings) = 0;
-	virtual void SetupRenderTargets(const IRenderTarget** renderTargets, int32_t numRenderTargets, IResourceView* depthStencilBuffer, bool isCompute = false) = 0;
-	virtual void SetupShader(const IShader* shader, EShaderType type) = 0;
+	void SetupTextures(const IResourceView* texture, uint8_t num, EShaderType shader);
+	void SetupVertexBuffer(const IVertexBuffer* bindings);
+	void SetupRenderTargets(const IRenderTarget** renderTargets, int32_t numRenderTargets, IResourceView* depthStencilBuffer, bool isCompute = false);
+	void SetupShader(const IShader* shader, EShaderType type);
 
-	virtual void SetupConstBuffers(IConstBuffer** constBuffers, size_t num) = 0;
+	void SetupConstBuffers(IConstBuffer** constBuffers, size_t num);
 
-	virtual void ClearPipelineState() = 0;
+	void ClearPipelineState();
 
 #pragma endregion
 
 #pragma region CreateDestroyResizeResources
 	/* Resources */
 	
-	virtual IResource* CreateBuffer	  (const BufferDesc& description) = 0;
-	virtual IResource* CreateTexture1D(const Texture1DDesc& description) = 0;
-	virtual IResource* CreateTexture2D(const Texture2DDesc& description) = 0;
-	virtual IResource* CreateTexture3D(const Texture3DDesc& description) = 0;
+	IResource* CreateBuffer	  (const BufferDesc& description);
+	IResource* CreateTexture1D(const Texture1DDesc& description);
+	IResource* CreateTexture2D(const Texture2DDesc& description);
+	IResource* CreateTexture3D(const Texture3DDesc& description);
 	
-	virtual IResourceView* CreateResourceView(const IResource* resource, const ResourceViewDesc& description) = 0;
+	IResourceView* CreateResourceView(const IResource* resource, const ResourceViewDesc& description);
 	
-	virtual IVertexBuffer* CreateVertexBuffer(const VertexBufferDesc& description) = 0;
-	virtual IIndexBuffer* CreateIndexBuffer(const IndexBufferDesc& description) = 0;
+	IVertexBuffer* CreateVertexBuffer(const VertexBufferDesc& description);
+	IIndexBuffer* CreateIndexBuffer(const IndexBufferDesc& description);
 	
-	virtual IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description) = 0;
-	virtual IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description) = 0;
-	virtual IResource* ResizeTexture2D(const IResource* texture, const Texture2DDesc& description) = 0;
-	virtual IResource* ResizeTexture3D(const IResource* texture, const Texture3DDesc& description) = 0;
+	//IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description);
+	//IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description);
+	//IResource* ResizeTexture2D(const IResource* texture, const Texture2DDesc& description);
+	//IResource* ResizeTexture3D(const IResource* texture, const Texture3DDesc& description);
 	
 
-	virtual void AddDisposeResource(const IResource* texture) = 0;
-	//virtual void AddDisposeConstBuffer(const IConstBuffer* constBuffers) = 0;
-	//virtual void AddDisposeVertexBuffer(const IVertexBuffer* buffer) = 0;
-	//virtual void AddDisposeIndexBuffer(const IIndexBuffer* buffer) = 0;
+	void AddDisposeResource(const IResource* texture);
+	//void AddDisposeConstBuffer(const IConstBuffer* constBuffers);
+	//void AddDisposeVertexBuffer(const IVertexBuffer* buffer);
+	//void AddDisposeIndexBuffer(const IIndexBuffer* buffer);
 	
 #pragma endregion
 
 #pragma region SetResourcesData
 
-	virtual void SetResourceData(
+	void SetResourceData(
 		const IResource*	resource,
 		uint16_t			dstSubresource,
 		const UBox			rect,
 		const void*			pSrcData,
 		int32_t				srcRowPitch,
 		int32_t				srcDepthPitch
-	) = 0;
+	);
 	
-	virtual void SetVertexBufferData(
+	void SetVertexBufferData(
 		const IVertexBuffer*   vertexBuffer,
 		const void*			   pSrcData,
 		uint32_t			   dataLength,
 		int32_t				   srcRowPitch,
 		int32_t				   srcDepthPitch
-		) = 0;
+		);
 	
-	virtual void SetIndexBufferData(
+	void SetIndexBufferData(
 		const IIndexBuffer* buffer,
 		const void*			   pSrcData,
 		uint32_t			   dataLength,
 		int32_t				   srcRowPitch,
 		int32_t				   srcDepthPitch
-	) = 0;
+	);
 
-	virtual void SetConstBufferData(
+	void SetConstBufferData(
 		IConstBuffer* constBuffer,
-		void* data) = 0;
+		void* data);
 
 #pragma endregion
 
 
 
-	//virtual void Flush() = 0;
+	//void Flush();
 
-	virtual void BeginEvent(const char* name) = 0;
-	virtual void EndEvent() = 0;
-	virtual void SetMarker(const char* name) = 0;
+	void BeginEvent(const char* name);
+	void EndEvent();
+	void SetMarker(const char* name);
     
 };
 }

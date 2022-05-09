@@ -17,32 +17,37 @@ struct FColor {
 };
 
 struct UBox {
-    uint32_t left;
-    uint32_t top;
-    uint32_t front;
-    uint32_t right;
-    uint32_t bottom;
-    uint32_t back;
+    uint32_t Left;
+    uint32_t Top;
+    uint32_t Front;
+    uint32_t Right;
+    uint32_t Bottom;
+    uint32_t Back;
 };
 
 struct FBox {
-    float left;
-    float top;
-    float front;
-    float right;
-    float bottom;
-    float back;
+    float Left;
+    float Top;
+    float Front;
+    float Right;
+    float Bottom;
+    float Back;
 };
 
 struct Rect {
-    int64_t left;
-    int64_t top;
-    int64_t right;
-    int64_t bottom;
+    int64_t Left;
+    int64_t Top;
+    int64_t Right;
+    int64_t Bottom;
 };
 
 struct FRect {
     float Color[4];
+};
+
+struct FDrawCall {
+    EDrawCallType Type;
+    uint32_t Args[5];
 };
 
 }

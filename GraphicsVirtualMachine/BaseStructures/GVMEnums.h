@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <type_traits>
 namespace GVM {
+
 template<typename E>
 constexpr auto to_underlying(E e) noexcept
 {
@@ -112,16 +113,16 @@ enum class ECullMode : uint8_t {
 enum class EInputClassification {
     INPUT_PER_VERTEX_DATA,
     INPUT_PER_INSTANCE_DATA
+};//Can be deleted
+
+enum class EPresentInterval {
+    PRESENT_INTERVAL_DEFAULT,
+    PRESENT_INTERVAL_ONE,
+    PRESENT_INTERVAL_TWO,
+    PRESENT_INTERVAL_IMMEDIATE
 };
 
-enum PresentInterval {
-    PRESENTINTERVAL_DEFAULT,
-    PRESENTINTERVAL_ONE,
-    PRESENTINTERVAL_TWO,
-    PRESENTINTERVAL_IMMEDIATE
-};
-
-enum class EDataFormat : uint8_t {
+enum class EFormat : uint8_t {
     DXGI_FORMAT_UNKNOWN = 0,
     
     //4 chanel
@@ -284,5 +285,21 @@ enum class ETextureAddressMode : uint8_t {
     TEXTURE_ADDRESS_MIRROR_ONCE
 };
 
+enum class EDrawCallType : uint8_t {
+    DISPATCH,
+    DISPATCH_INDIRECT,
+    DRAW,
+    DRAW_AUTO,
+    DRAW_INDEXED,
+    DRAW_INDEXED_INSTANCED,
+    DRAW_INDEXED_INSTANCED_INDIRECT,
+    DRAW_INSTANCED,
+    DRAW_INSTANCED_INDIRECT,
+
+    SET_RESOURCE_DATS,
+    SET_VERTEX_BUFFER_DATA,
+    SET_INDEX_BUFFER_DATA,
+    SET_CONST_BUFFER_DATA,
+};
 
 }
