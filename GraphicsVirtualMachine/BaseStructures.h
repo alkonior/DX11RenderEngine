@@ -9,6 +9,11 @@
 #include "BaseStructures\PipelineStates\SamplerState.h"
 #include "BaseStructures\PipelineStates\DepthStencilState.h"
 #include "BaseStructures\PipelineStates\Viewport.h"
+#include "BaseStructures\PipelineStates\RenderTarget.h"
+#include "BaseStructures\IRenderClasses.h"
+#include "BaseStructures\ResourceViews\BaseViews.h"
+#include "BaseStructures\ResourceViews\ShaderResourceViewDesc.h"
+
 
 namespace GVM {
 

@@ -1,31 +1,94 @@
 #pragma once
-#include <vector>
-
-#include "VirtualMachine\IRenderClasses.h"
 #include "BaseStructures.h"
-
 
 namespace GVM {
 
+namespace Compressed {
+    struct PipelineSnapshot;
+}
+
 struct PipelineSnapshot {
 
-    IShader* VS, PS, CS, GS, HS, DS;
+    using CompressedType = Compressed::PipelineSnapshot;
+    IShader*                    VS, PS, CS, GS, HS, DS;
 
-    uint32_t DrawCallsNum;
+    uint32_t                    DrawCallsNum;
 
-    EPrimitiveTopology primitiveType;
+    EPrimitiveTopology          primitiveType;
 
-    IRasterizerState* rasterizerState;
-    IDepthStencilState* depthStencilState;
-    IInputLayout* vertexDeclaration;
+    RasterizerStateDesc         rasterizerState;
+    DepthStencilStateDesc       depthStencilState;
+    IInputLayout*               vertexDeclaration;
+    IDepthStencilView*          DepthBuffer;
+
+    Mesh                        mesh;
 
     
-    uint8_t constBuffersCount;
-    IResourceView* DepthBuffer;
-    
-    
+    uint8_t                     renderTargetsNum;
+    RenderTargetDesc            RenderTargets[8];
+        
+    uint8_t                     samplersNum;
+    SamplerStateDesc            Samplers[16];
+        
+    uint8_t                     viewportsNum;
+    ViewportDesc                Viewports[16];
+        
+        
+    uint8_t                     constBuffersNum;
+    IConstBuffer*               ConstBuffers[15];
+        
+    uint8_t                     texturesNum;
+    IResourceView*              Textures[128];
 
+    uint32_t GetSize();
+    void Compress(void* pointer);
+    
 };
+
+namespace Compressed {
+    
+    struct PipelineSnapshot {
+        IShader*                    VS, PS, CS, GS, HS, DS;
+
+        uint32_t                    DrawCallsNum;
+
+
+        //RasterizerStateDesc         rasterizerState;
+        uint64_t                    rasterizerState;   
+        // DepthStencilStateDesc       depthStencilState;
+        uint64_t                    depthStencilState;   
+        IInputLayout*               vertexDeclaration;
+        IDepthStencilView*          DepthBuffer;
+        IIndexBufferView*           indexBuffer;
+
+        EPrimitiveTopology          primitiveType;
+    
+        uint8_t                     renderTargetsNum;
+        //RenderTargetDesc            RenderTargets[8];
+        
+        uint8_t                     samplersNum;
+        //SamplerStateDesc            Samplers[16];
+        
+        uint8_t                     viewportsNum;
+        //ViewportDesc                Viewports[16];
+
+        
+        uint8_t vertexBuffersNum = 0;
+        //IVertexBufferView* vertexBuffers [32];
+        //uint32_t vertexStride [32];
+        //uint32_t vertexOffset [32];
+        
+        uint8_t                     constBuffersNum;
+        //IConstBuffer*               ConstBuffers[15];
+        
+        uint8_t                     texturesNum;
+        //IResourceView*              Textures[128];
+
+        uint8_t Data[0];
+    
+    };
+
+}
 
 
 }

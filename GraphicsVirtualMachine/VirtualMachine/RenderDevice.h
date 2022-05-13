@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "BaseStructures.h"
-#include "IRenderClasses.h"
 
 
 namespace GVM {
@@ -21,15 +20,16 @@ public:
 private:
     friend class VirtualMachine;
 
-    IRenderDevice(const IRenderDeviceInitParams* initParams, bool debugMode = true) {}
+    IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
+    /*
     virtual ~IRenderDevice() = default;
 
 
-    /* Presentation */
+    /+* Presentation *+/
 
     virtual void SwapBuffers() = 0;
 
-    /* Drawing */
+    /+* Drawing *+/
 
     virtual void ClearRenderTarget(const IRenderTarget** renderTargets, int32_t numRenderTargets, FColor color) = 0;
     virtual void Clear(float depth, int8_t stencil) = 0;
@@ -116,7 +116,7 @@ private:
     //) = 0;
 
 #pragma region CreateDestroyResizeResources
-    /* Resources */
+    /+* Resources *+/
 
     virtual IResource* CreateBuffer(const BufferDesc& description) = 0;
     virtual IResource* CreateTexture1D(const Texture1DDesc& description) = 0;
@@ -180,7 +180,7 @@ private:
     virtual void SetMarker(const char* name) = 0;
 
     virtual void ClearState() = 0;
-
+*/
 };
 
 

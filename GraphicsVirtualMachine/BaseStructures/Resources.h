@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "GVMEnums.h"
+#include "IRenderClasses.h"
+
 namespace GVM {
 
 struct SampleDesc {
@@ -8,6 +10,7 @@ struct SampleDesc {
 };
 
 struct BufferDesc {
+    IResource*           Resource;
     uint32_t             Width;
     uint32_t             BindFlags;
     void*                initialData;
@@ -18,6 +21,9 @@ struct VertexBufferDesc : BufferDesc {
 };
 
 struct IndexBufferDesc : BufferDesc {
+//todo
+};
+struct ConstBufferDesc : BufferDesc {
 //todo
 };
 
@@ -35,11 +41,6 @@ struct Texture2DDesc : Texture1DDesc {
 
 struct Texture3DDesc : Texture2DDesc {
     uint16_t             Depth;
-};
-
-struct ResourceViewDesc {
-    EFormat     Format;
-    //todo
 };
 
 }

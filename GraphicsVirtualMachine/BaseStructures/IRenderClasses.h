@@ -1,18 +1,11 @@
 ﻿#pragma once
+#include <cstdint>
 
 
 namespace GVM {
 
 struct IAbstract { virtual ~IAbstract() = 0 {}; };
 
-class IRenderDeviceInitParams : IAbstract {};
-class IViewport : IAbstract {};
-class IScissorRect : IAbstract {};
-class IBlendState : IAbstract {};
-class IDepthStencilState : IAbstract {};
-class IRasterizerState : IAbstract {};
-class ISamplerState : IAbstract {};
-class IPipelineState : IAbstract {};
 class IInputLayout : IAbstract {};
 class IResource : IAbstract {};
 class IVertexBuffer : IResource {};
@@ -22,10 +15,21 @@ class IResourceView : IAbstract {};
 class IVertexBufferView : IResourceView {};
 class IIndexBufferView : IResourceView {};
 class IRenderTarget : IResource {};
+class IDepthStencil : IResource {};
 class IRenderTargetView : IResourceView {};
+class IDepthStencilView : IResourceView {};
 class IShader : IAbstract {};
 
+namespace Compressed {
+    struct VertexBufferBinding {
+        IVertexBufferView* vertexBuffers [1];
+        uint32_t vertexStride [1];
+        uint32_t vertexOffset [1];
+    };
+}
+
 struct VertexBufferBinding {
+    using CompressedType = Compressed::VertexBufferBinding;
     uint8_t buffersCount = 0;
     IVertexBufferView* vertexBuffers [32];
     uint32_t vertexStride [32];

@@ -3,6 +3,12 @@
 
 namespace GVM {
 
+namespace Compressed {
+    struct DepthStencilStateDesc {
+        uint64_t data;
+    };
+}
+
 struct DepthStencilDesc {
     EStencilOp      StencilFailOp;
     EStencilOp      StencilDepthFailOp;
@@ -12,6 +18,7 @@ struct DepthStencilDesc {
 
 struct DepthStencilStateDesc : BaseStateDesc
 {
+    using CompressedType = Compressed::DepthStencilStateDesc;
     inline static uint8_t DepthStencilStateMask = 3;
     
     bool                DepthEnable;

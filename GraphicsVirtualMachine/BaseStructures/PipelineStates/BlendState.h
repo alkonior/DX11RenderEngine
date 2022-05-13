@@ -5,8 +5,16 @@
 namespace GVM
 {
 
+namespace Compressed {
+    struct BlendStateDesc {
+        uint64_t data;
+    };
+}
+
 struct BlendStateDesc : BaseStateDesc
 {
+    using CompressedType = Compressed::BlendStateDesc;
+    
     inline static uint8_t BlendStateMask = 1;
     bool             BlendEnable = false;
     bool             LogicOpEnable = false;
@@ -28,7 +36,6 @@ struct BlendDesc : BaseStateDesc
 {
     bool                AlphaToCoverageEnable = false;
     bool                IndependentBlendEnable = false;
-    BlendStateDesc      RenderTarget[8];
     uint32_t            SampleMask;
 };
    

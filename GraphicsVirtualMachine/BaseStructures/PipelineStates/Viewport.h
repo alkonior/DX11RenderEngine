@@ -3,6 +3,7 @@
 namespace GVM {
 
 struct ViewportDesc {
+    using CompressedType = ViewportDesc;
     float TopLeftX;
     float TopLeftY;
     float Width;

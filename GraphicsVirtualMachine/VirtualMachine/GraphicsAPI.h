@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "BaseStructures.h"
-#include "IRenderClasses.h"
 namespace GVM {
 
 class GraphicsAPI {
@@ -16,11 +15,15 @@ public:
 
 	void Present();
 
-	/* Drawing */
+#pragma region Clear
 
-	void ClearRenderTarget(const IRenderTarget** renderTargets, int32_t numRenderTargets, FColor color);
-	void Clear(float depth, int8_t stencil);
-	void ResetBackbuffer(const IRenderDeviceInitParams* initParams);
+	void ClearRenderTargets(const IRenderTargetView** renderTargets, int32_t numRenderTargets, FColor color);
+	void ClearRenderTarget(const IRenderTargetView* renderTarget, FColor color);
+	void Clear(const IDepthStencilView* septhStencil, float depth, int8_t stencil);
+	void ClearState();
+
+
+#pragma endregion
 
 #pragma region DrawDispatch
 
@@ -50,45 +53,33 @@ public:
 	
 #pragma endregion
 
-#pragma region CreateDestroyPipelineStates
-	const IViewport*				CreateViewport(const ViewportDesc* viewportDesc);
-	const IScissorRect*				CreateScissorRect(const Rect* scissor);
-	const IBlendState*				CreateBlendState(const BlendDesc* blendStates);
-	const IDepthStencilState*		CreateDepthStencilState(const DepthStencilStateDesc* depthStencilState);
-	const IRasterizerState*			CreateRasterizerStat(const RasterizerStateDesc* rasterizerState);
-	const ISamplerState*			CreateSampler(const SamplerStateDesc* sampler);
-	const IShader*					CreateShader(const ShaderDesc& shaderDesc, EShaderType type);
-
-	void AddDisposeViewport	(const IViewport* viewportDesc);
-	void AddDisposeScissorRect(const IScissorRect* scissor);
-	void AddDisposeBlendState(const IBlendState* blendStates);
-	void AddDisposeDepthStencilState(const IDepthStencilState* depthStencilState);
-	void AddDisposeRasterizerStat(const IRasterizerState* rasterizerState);
-	void AddDisposeSampler(const ISamplerState*	sampler);
-	void AddDisposeShader(IShader* shader);
-#pragma endregion
 
 #pragma region SetupPipeline
-	void SetViewports(const IViewport** viewport, uint8_t num);
-	void SetScissorRect(const IScissorRect** scissors, uint8_t num);
-	void SetBlendStates(const IBlendState* blendState, FColor blendFactor, uint32_t sampleMask);
-	void SetDepthStencilState(const IDepthStencilState* depthStencilState);
-	void SetRasterizerState(const IRasterizerState* rasterizerState);
-	void SetSamplers(const ISamplerState** sampler, uint8_t num, EShaderType shader);
-	void SetPipelineState(const IPipelineState pipelineState);
+	void SetViewports(const ViewportDesc viewport[], uint8_t num, uint8_t offset);
+	void SetViewport(const ViewportDesc& viewport, uint8_t slot);
+	
+	//void SetScissorRect(const ScissorRectDesc** scissors, uint8_t num);
+	//void SetScissorRect(const ScissorRect** scissors, uint8_t num);
+	void SetBlendStates(const BlendDesc& blendState, FColor blendFactor);
+	
+	void SetDepthStencilState(const DepthStencilDesc& depthStencilState);
+	void SetRasterizerState(const RasterizerStateDesc& rasterizerState);
+	
+	void SetSamplers(const SamplerStateDesc samplers[], uint8_t num, uint8_t offset);
+	void SetSampler(const SamplerStateDesc& sampler, uint8_t slot, EShaderType shader);
 
 
 	void SetupVertexBuffer(const VertexBufferBinding& bindings);
 	void SetupIndexBuffer(const IIndexBufferView* indices);
 	void SetupMeshBuffers(const Mesh& bindings);
-
+	void SetupTextures(const IResourceView** textures, uint8_t num, uint8_t offset);
 	
-	void SetupTextures(const IResourceView* texture, uint8_t num, EShaderType shader);
-	void SetupVertexBuffer(const IVertexBuffer* bindings);
-	void SetupRenderTargets(const IRenderTarget** renderTargets, int32_t numRenderTargets, IResourceView* depthStencilBuffer, bool isCompute = false);
-	void SetupShader(const IShader* shader, EShaderType type);
+	void SetupRenderTargets(const RenderTargetDesc* renderTargets, int32_t numRenderTargets, uint8_t offset, IDepthStencilView* depthStencilBuffer);
+	void SetupRenderTargets(const RenderTargetDesc renderTarget, int32_t slot, IDepthStencilView* depthStencilBuffer);
+	void SetupShader(const IShader* shader);
 
-	void SetupConstBuffers(IConstBuffer** constBuffers, size_t num);
+	void SetupConstBuffers(IConstBuffer* constBuffers[], uint8_t num, uint8_t offset);
+	void SetupConstBuffer(IConstBuffer* constBuffer, uint8_t slot);
 
 	void ClearPipelineState();
 
@@ -102,10 +93,12 @@ public:
 	IResource* CreateTexture2D(const Texture2DDesc& description);
 	IResource* CreateTexture3D(const Texture3DDesc& description);
 	
-	IResourceView* CreateResourceView(const IResource* resource, const ResourceViewDesc& description);
+	IResourceView* CreateResourceView(const ShaderResourceViewDesc& description);
+	IResourceView* CreateRtView(const RenderTargetViewDesc& description);
 	
 	IVertexBuffer* CreateVertexBuffer(const VertexBufferDesc& description);
 	IIndexBuffer* CreateIndexBuffer(const IndexBufferDesc& description);
+	IConstBuffer* CreateConstBuffer(const ConstBufferDesc& description);
 	
 	//IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description);
 	//IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description);
@@ -153,7 +146,8 @@ public:
 
 #pragma endregion
 
-
+	IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
+	IInputLayout* CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type);
 
 	//void Flush();
 

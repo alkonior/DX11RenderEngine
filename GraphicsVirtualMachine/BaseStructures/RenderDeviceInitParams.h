@@ -19,7 +19,7 @@ struct RenderDeviceInitParams {
 	int32_t			backBufferHeight;
 	int32_t			multiSampleCount;
 	PlatformHandle  deviceWindowHandle;
-	PresentInterval presentationInterval;
+	EPresentInterval presentationInterval;
 };
 
 

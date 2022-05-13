@@ -176,14 +176,12 @@ enum class EFormat : uint8_t {
     
     //1 chanel
     FORMAT_R32_TYPELESS,
-    FORMAT_D32_FLOAT,
     FORMAT_R32_FLOAT,
     FORMAT_R32_UINT,
     FORMAT_R32_SINT,
     
     FORMAT_R16_TYPELESS,
     FORMAT_R16_FLOAT,
-    FORMAT_D16_UNORM,
     FORMAT_R16_UNORM,
     FORMAT_R16_UINT,
     FORMAT_R16_SNORM,
@@ -195,8 +193,42 @@ enum class EFormat : uint8_t {
     FORMAT_R8_SNORM,
     FORMAT_R8_SINT,
     FORMAT_A8_UNORM,
+
+    
 };
 
+enum class EDepthFormat : uint8_t {
+
+    ORMAT_D32_FLOAT_S8X24_UINT,
+    FORMAT_D32_UNORM,
+    FORMAT_D24_UNORM_S8_UINT,
+    FORMAT_D16_UNORM,
+};
+
+enum class EDsvFlags : uint8_t {
+    DSV_FLAG_NONE,
+    DSV_FLAG_READ_ONLY_DEPTH,
+    DSV_FLAG_READ_ONLY_STENCIL 
+};
+
+enum class EResourceViewDimension {
+    DIMENSION_UNKNOWN = 0,
+    DIMENSION_TEXTURE1D,
+    DIMENSION_TEXTURE1D_ARRAY,
+    DIMENSION_TEXTURE2D,
+    DIMENSION_TEXTURE2D_ARRAY,
+    DIMENSION_TEXTURE3D,
+    DIMENSION_TEXTURECUBE,
+    DIMENSION_TEXTURECUBE_ARRAY,
+} ;
+enum class ERtViewDimension {
+    DIMENSION_UNKNOWN = 0,
+    DIMENSION_TEXTURE1D,
+    DIMENSION_TEXTURE1D_ARRAY,
+    DIMENSION_TEXTURE2D,
+    DIMENSION_TEXTURE2D_ARRAY,
+    DIMENSION_TEXTURE3D
+} ;
 
 enum class EPrimitiveTopology : uint8_t {
     PRIMITIVE_TOPOLOGY_UNDEFINED                   ,
@@ -238,7 +270,7 @@ enum class EResourceUsageFlag : uint32_t {
     RESOURCE_MISC_TILED,
 };
 
-enum class ESamplerFilter {
+enum class ESamplerFilter : uint8_t {
     FILTER_MIN_MAG_MIP_POINT,
     FILTER_MIN_MAG_POINT_MIP_LINEAR,
     FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT,

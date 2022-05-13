@@ -28,7 +28,7 @@ GVM::BlendStateDesc::BlendStateDesc(uint64_t descriptor): BaseStateDesc(0)
 uint64_t GVM::BlendStateDesc::ToUInt()
 {
     uint64_t result = State;
-    result = (result<<3)|BlendEnable;
+    result = (result<<1)|BlendEnable;
     result = (result<<1)|LogicOpEnable;
     
     result = (result<<5)|to_underlying(SrcBlend);

@@ -5,9 +5,15 @@
 
 namespace GVM {
 
+namespace Compressed {
+    struct RasterizerStateDesc {
+        uint64_t data;
+    };
+}
 
 struct RasterizerStateDesc : BaseStateDesc
 {
+    using CompressedType = Compressed::RasterizerStateDesc;
     inline static uint8_t RasterizerStateMask = 2;
     
     EFillMode       FillMode;
@@ -23,8 +29,8 @@ struct RasterizerStateDesc : BaseStateDesc
 
     RasterizerStateDesc();
     
-    //RasterizerState(uint64_t descriptor);
-    //uint64_t ToUInt();
+    RasterizerStateDesc(uint64_t descriptor);//todo
+    uint64_t ToUInt();
 };
 
 }

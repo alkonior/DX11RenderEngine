@@ -5,7 +5,8 @@
 namespace GVM {
 
 template<class T>
-typedef typename std::vector<T> VMStack;
+using VMStack =  std::vector<T>;
+
 typedef typename PipelineSnapshotCompressed PSC;
 
 class VirtualMachine {
