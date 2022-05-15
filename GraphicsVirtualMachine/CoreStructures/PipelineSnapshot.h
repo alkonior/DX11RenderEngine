@@ -10,7 +10,12 @@ namespace Compressed {
 struct PipelineSnapshot {
 
     using CompressedType = Compressed::PipelineSnapshot;
-    IShader*                    VS, PS, CS, GS, HS, DS;
+    IShader*                    VS;
+    IShader*                    PS;
+    IShader*                    CS;
+    IShader*                    GS;
+    IShader*                    HS;
+    IShader*                    DS;
 
     uint32_t                    DrawCallsNum;
 
@@ -48,8 +53,13 @@ struct PipelineSnapshot {
 namespace Compressed {
     
     struct PipelineSnapshot {
-        IShader*                    VS, PS, CS, GS, HS, DS;
-
+        IShader*                    VS;
+        IShader*                    PS;
+        IShader*                    CS;
+        IShader*                    GS;
+        IShader*                    HS;
+        IShader*                    DS;
+        
         uint32_t                    DrawCallsNum;
 
 

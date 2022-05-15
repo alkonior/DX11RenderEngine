@@ -4,6 +4,8 @@
 
 using namespace GVM;
 
+const DepthStencilStateDesc DepthStencilStateDesc::Default;
+
 DepthStencilStateDesc::DepthStencilStateDesc() : BaseStateDesc(DepthStencilStateMask) {}
 
 DepthStencilStateDesc::DepthStencilStateDesc(uint64_t descriptor) : BaseStateDesc(0) 

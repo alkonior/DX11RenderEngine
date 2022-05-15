@@ -1,4 +1,9 @@
 #include "PipelineSnapshot.h"
+using namespace GVM;
+
+
+const Mesh Mesh::VoidMesh;
+
 uint32_t GVM::PipelineSnapshot::GetSize() {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
@@ -24,6 +29,8 @@ void GVM::PipelineSnapshot::Compress(void* pointer) {
     cps->GS = GS;
     cps->HS = HS;
     cps->DS = DS;
+    
+    cps->DrawCallsNum = DrawCallsNum;
 
     cps->primitiveType = primitiveType;
     cps->rasterizerState = rasterizerState.ToUInt();
@@ -45,8 +52,12 @@ void GVM::PipelineSnapshot::Compress(void* pointer) {
 
 
     cps->renderTargetsNum = renderTargetsNum;
-    memcpy(pointerPosition, RenderTargets,
-        sizeof(RenderTargetDesc) * renderTargetsNum);
+    auto* renderTargetsPointer = (RenderTargetDesc::CompressedType*)pointerPosition;
+    for (int i = 0; i < renderTargetsNum; i++)
+    {
+        renderTargetsPointer[i].rtv = RenderTargets[i].rtv;
+        renderTargetsPointer[i].BlendState = RenderTargets[i].BlendState.ToUInt();
+    }
     pointerPosition +=  renderTargetsNum*sizeof(RenderTargetDesc::CompressedType);
 
     cps->viewportsNum = viewportsNum;

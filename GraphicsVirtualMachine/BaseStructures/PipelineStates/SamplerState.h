@@ -40,7 +40,7 @@ struct SamplerStateDesc {
     float                      MinLOD;
     float                      MaxLOD;
     
-    Compressed::SamplerState Compress();
+    Compressed::SamplerStateDesc Compress();
 };
 
 }

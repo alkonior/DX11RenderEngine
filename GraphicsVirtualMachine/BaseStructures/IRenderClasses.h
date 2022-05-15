@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
 
-
 namespace GVM {
 
 struct IAbstract { virtual ~IAbstract() = 0 {}; };
@@ -31,14 +30,15 @@ namespace Compressed {
 struct VertexBufferBinding {
     using CompressedType = Compressed::VertexBufferBinding;
     uint8_t buffersCount = 0;
-    IVertexBufferView* vertexBuffers [32];
-    uint32_t vertexStride [32];
-    uint32_t vertexOffset [32];
+    IVertexBufferView* vertexBuffers [32] = {};
+    uint32_t vertexStride [32] = {};
+    uint32_t vertexOffset [32] = {};
 };
 
 struct Mesh  {
+    static const Mesh VoidMesh;
     VertexBufferBinding vertexBuffer;
-    IIndexBufferView* indexBuffer;
+    IIndexBufferView* indexBuffer = nullptr;
 };
 
 }

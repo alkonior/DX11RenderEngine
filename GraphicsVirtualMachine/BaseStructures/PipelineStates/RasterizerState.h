@@ -14,18 +14,21 @@ namespace Compressed {
 struct RasterizerStateDesc : BaseStateDesc
 {
     using CompressedType = Compressed::RasterizerStateDesc;
+
+    static const RasterizerStateDesc Default;
+    
     inline static uint8_t RasterizerStateMask = 2;
     
-    EFillMode       FillMode;
-    ECullMode       CullMode;
-    bool            FrontCounterClockwise;
-    int32_t         DepthBias;
-    int16_t         DepthBiasClamp;
-    int16_t         SlopeScaledDepthBias;
-    bool            DepthClipEnable;
-    bool            ScissorEnable;
-    bool            MultisampleEnable;
-    bool            AntialiasedLineEnable;
+    EFillMode       FillMode = EFillMode::FILL_SOLID;
+    ECullMode       CullMode = ECullMode::CULL_BACK;
+    bool            FrontCounterClockwise = false;
+    int32_t         DepthBias = 0;
+    int16_t         DepthBiasClamp = 0;
+    int16_t         SlopeScaledDepthBias = 0.0;
+    bool            DepthClipEnable = true;
+    bool            ScissorEnable = false;
+    bool            MultisampleEnable = false;
+    bool            AntialiasedLineEnable = false;
 
     RasterizerStateDesc();
     

@@ -12,7 +12,23 @@ void GVM::GraphicsAPI::Present() {
 void GVM::GraphicsAPI::ClearRenderTargets(const IRenderTargetView** renderTargets, int32_t numRenderTargets, FColor color) {}
 void GVM::GraphicsAPI::ClearRenderTarget(const IRenderTargetView* renderTarget, FColor color) {}
 void GVM::GraphicsAPI::Clear(const IDepthStencilView* septhStencil, float depth, int8_t stencil) {}
-void GVM::GraphicsAPI::ClearState() {}
+void GVM::GraphicsAPI::ClearState() {
+    ps.VS = ps.PS = ps.CS = ps.GS = ps.HS = ps.DS = nullptr;
+    
+    ps.DrawCallsNum = 0;
+    ps.primitiveType = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNDEFINED;
+    ps.rasterizerState = RasterizerStateDesc::Default;
+    ps.depthStencilState  = DepthStencilStateDesc::Default;
+    ps.vertexDeclaration = nullptr;
+    ps.DepthBuffer = nullptr;
+    ps.mesh = Mesh::VoidMesh;
+
+    ps.renderTargetsNum = 0;
+    ps.samplersNum = 0;
+    ps.viewportsNum = 0;
+    ps.constBuffersNum = 0;
+    ps.texturesNum = 0;
+}
 
 
 

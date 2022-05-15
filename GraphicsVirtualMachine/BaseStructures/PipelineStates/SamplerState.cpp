@@ -1,8 +1,8 @@
 ﻿#include "SamplerState.h"
 
-GVM::Compressed::SamplerState GVM::SamplerStateDesc::Compress() {
+GVM::Compressed::SamplerStateDesc GVM::SamplerStateDesc::Compress() {
     
-    GVM::Compressed::SamplerState result;
+    CompressedType result;
 
     result.MaxLOD = MaxLOD;
     result.MinLOD = MinLOD;
@@ -23,4 +23,5 @@ GVM::Compressed::SamplerState GVM::SamplerStateDesc::Compress() {
     result.Compressed = (result.Compressed<<3)|to_underlying(ComparisonFunc);
     
     result.Compressed = (result.Compressed<<8)|MaxAnisotropy;
+    return result;
 }

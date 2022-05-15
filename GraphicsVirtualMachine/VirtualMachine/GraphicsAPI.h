@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include "BaseStructures.h"
+#include "CoreStructures\PipelineSnapshot.h"
 namespace GVM {
 
 class GraphicsAPI {
+	PipelineSnapshot ps;
+	bool wasPSUpdated;
 	
 public:
     
