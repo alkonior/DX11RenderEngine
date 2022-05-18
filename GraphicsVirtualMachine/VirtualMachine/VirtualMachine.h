@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include "RenderDevice.h"
-#include "CoreStructures\PipelineSnapshotCompressed.h"
+#include "ResourcesManager.h"
+#include "CoreStructures\PipelineSnapshot.h"
 
 namespace GVM {
 
 template<class T>
 using VMStack =  std::vector<T>;
 
-typedef typename PipelineSnapshotCompressed PSC;
+typedef typename Compressed::PipelineSnapshot PSC;
 
 class VirtualMachine {
     VMStack<uint32_t> intStack;
@@ -16,9 +17,17 @@ class VirtualMachine {
     VMStack<PSC*> pipelinesQueue;
 
 public:
+    ResourcesManager resourcesManager;
 
-    void PushDrawCall(EDrawCallType type, uint32_t args[5]);
-    void PushPSC(PSC* psc);
+    VirtualMachine(const RenderDeviceInitParams& initParams, bool debugMode = true);
+    VirtualMachine(const VirtualMachine&) = delete;
+    VirtualMachine(const VirtualMachine&&) = delete;
+    ~VirtualMachine() = default;
+
+
+    void PushPSC(PipelineSnapshot& pipelineSnapshot);
+    void PushDrawCall(DrawCall);
+    
     uint32_t PushData(void* data, uint32_t dataLength);
 
 

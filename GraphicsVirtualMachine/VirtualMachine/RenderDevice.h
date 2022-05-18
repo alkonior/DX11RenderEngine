@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "BaseStructures.h"
+#include "CoreStructures/GPUResource.h"
 
 
 namespace GVM {
@@ -21,6 +22,25 @@ private:
     friend class VirtualMachine;
 
     IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
+
+
+
+
+    GpuResource CreateBuffer(const BufferResourceDesc& desc);
+    GpuResource CreateTexture(const TextureResourceDesc& desc);
+    GpuResource CreateTexture1D(const Texture1DResourceDesc& desc);
+    GpuResource CreateTexture2D(const Texture2DResourceDesc& desc);
+    GpuResource CreateTexture3D(const Texture3DResourceDesc& desc);
+    GpuResource CreateTextureCube(const TextureCubeResourceDesc& desc);
+    GpuResource CreateVertexBuffer(const ShaderResourceViewDesc& desc);
+    GpuResource CreateConstBuffer(const ConstBufferDesc& desc);
+    GpuResource CreateIndexBuffer(const IndexBufferDesc& desc);
+
+    GpuResourceView CreateConstBufferView(const ConstBufferViewDesc& desc);
+    GpuResourceView CreateDepthStencilView(const DepthStencilViewDesc& desc);
+    GpuResourceView CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    GpuResourceView CreateShaderResourceView(const ShaderResourceViewDesc& desc);
+    
     /*
     virtual ~IRenderDevice() = default;
 

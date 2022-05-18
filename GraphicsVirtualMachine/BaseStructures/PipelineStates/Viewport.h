@@ -12,4 +12,10 @@ struct ViewportDesc {
     float MaxDepth;
 };
 
+namespace Compressed
+{
+    typedef typename GVM::ViewportDesc ViewportDesc;
+    
+}
+
 }

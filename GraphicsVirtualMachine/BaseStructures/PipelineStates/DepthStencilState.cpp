@@ -38,7 +38,7 @@ DepthStencilStateDesc::DepthStencilStateDesc(uint64_t descriptor) : BaseStateDes
     
 }
 
-uint64_t DepthStencilStateDesc::ToUInt()
+uint64_t DepthStencilStateDesc::ToUInt() const
 {
     
     uint64_t result = State;

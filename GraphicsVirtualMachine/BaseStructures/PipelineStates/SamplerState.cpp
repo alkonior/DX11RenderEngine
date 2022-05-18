@@ -1,6 +1,6 @@
 ﻿#include "SamplerState.h"
 
-GVM::Compressed::SamplerStateDesc GVM::SamplerStateDesc::Compress() {
+GVM::Compressed::SamplerStateDesc GVM::SamplerStateDesc::Compress() const {
     
     CompressedType result;
 

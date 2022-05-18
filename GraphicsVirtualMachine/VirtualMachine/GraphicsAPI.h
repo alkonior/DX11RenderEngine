@@ -1,18 +1,25 @@
 ﻿#pragma once
 #include "BaseStructures.h"
+#include "VirtualMachine.h"
 #include "CoreStructures\PipelineSnapshot.h"
 namespace GVM {
 
-class GraphicsAPI {
+class GraphicsApi {
+
+#pragma region Fields
+	
 	PipelineSnapshot ps;
-	bool wasPSUpdated;
+	bool wasPSUpdated = true;
+	VirtualMachine graphicsMachine;
+
+#pragma endregion 
 	
 public:
     
-	GraphicsAPI(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
-	GraphicsAPI(const GraphicsAPI&) = delete;
-	GraphicsAPI(const GraphicsAPI&&) = delete;
-	~GraphicsAPI() = default;
+	GraphicsApi(const RenderDeviceInitParams& initParams, bool debugMode = true);
+	GraphicsApi(const GraphicsApi&) = delete;
+	GraphicsApi(const GraphicsApi&&) = delete;
+	~GraphicsApi() = default;
 
 	/* Presentation */
 
@@ -58,43 +65,46 @@ public:
 
 
 #pragma region SetupPipeline
-	void SetViewports(const ViewportDesc viewport[], uint8_t num, uint8_t offset);
-	void SetViewport(const ViewportDesc& viewport, uint8_t slot);
+	void SetupViewports(const ViewportDesc viewport[], uint8_t num, uint8_t offset);
+	void SetupViewport(const ViewportDesc& viewport, uint8_t slot);
 	
 	//void SetScissorRect(const ScissorRectDesc** scissors, uint8_t num);
 	//void SetScissorRect(const ScissorRect** scissors, uint8_t num);
-	void SetBlendStates(const BlendDesc& blendState, FColor blendFactor);
+	void SetupCoreBlendState(const CoreBlendDesc& blendState);
 	
-	void SetDepthStencilState(const DepthStencilDesc& depthStencilState);
-	void SetRasterizerState(const RasterizerStateDesc& rasterizerState);
+	void SetupDepthStencilState(const DepthStencilStateDesc& depthStencilState);
+	void SetupRasterizerState(const RasterizerStateDesc& rasterizerState);
 	
-	void SetSamplers(const SamplerStateDesc samplers[], uint8_t num, uint8_t offset);
-	void SetSampler(const SamplerStateDesc& sampler, uint8_t slot, EShaderType shader);
+	void SetupSamplers(const SamplerStateDesc samplers[], uint8_t num, uint8_t offset);
+	void SetupSampler(const SamplerStateDesc& sampler, uint8_t slot);
 
 
 	void SetupVertexBuffer(const VertexBufferBinding& bindings);
 	void SetupIndexBuffer(const IIndexBufferView* indices);
 	void SetupMeshBuffers(const Mesh& bindings);
-	void SetupTextures(const IResourceView** textures, uint8_t num, uint8_t offset);
+	void SetupTextures(const IResourceView* textures[], uint8_t num, uint8_t offset);
 	
-	void SetupRenderTargets(const RenderTargetDesc* renderTargets, int32_t numRenderTargets, uint8_t offset, IDepthStencilView* depthStencilBuffer);
-	void SetupRenderTargets(const RenderTargetDesc renderTarget, int32_t slot, IDepthStencilView* depthStencilBuffer);
-	void SetupShader(const IShader* shader);
+	void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, IDepthStencilView* depthStencilBuffer);
+	void SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, IDepthStencilView* depthStencilBuffer);
+	void SetupDepthStencilBuffer(IDepthStencilView* depthStencilBuffer);
+	void SetupShader(const IShader* shader, EShaderType type);
 
 	void SetupConstBuffers(IConstBuffer* constBuffers[], uint8_t num, uint8_t offset);
 	void SetupConstBuffer(IConstBuffer* constBuffer, uint8_t slot);
+	void SetupInputLayout(IInputLayout* layout);
 
-	void ClearPipelineState();
 
 #pragma endregion
 
 #pragma region CreateDestroyResizeResources
 	/* Resources */
 	
-	IResource* CreateBuffer	  (const BufferDesc& description);
-	IResource* CreateTexture1D(const Texture1DDesc& description);
-	IResource* CreateTexture2D(const Texture2DDesc& description);
-	IResource* CreateTexture3D(const Texture3DDesc& description);
+	IResource* CreateBuffer(const BufferResourceDesc& description);
+	IResource* CreateTexture(const TextureResourceDesc& description);
+	IResource* CreateTexture1D(const Texture1DResourceDesc& description);
+	IResource* CreateTexture2D(const Texture2DResourceDesc& description);
+	IResource* CreateTexture3D(const Texture3DResourceDesc& description);
+	IResource* CreateTextureCube(const TextureCubeResourceDesc& description);
 	
 	IResourceView* CreateResourceView(const ShaderResourceViewDesc& description);
 	IResourceView* CreateRtView(const RenderTargetViewDesc& description);
@@ -102,6 +112,10 @@ public:
 	IVertexBuffer* CreateVertexBuffer(const VertexBufferDesc& description);
 	IIndexBuffer* CreateIndexBuffer(const IndexBufferDesc& description);
 	IConstBuffer* CreateConstBuffer(const ConstBufferDesc& description);
+	
+	IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& description);
+	IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& description);
+	IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& description);
 	
 	//IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description);
 	//IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description);

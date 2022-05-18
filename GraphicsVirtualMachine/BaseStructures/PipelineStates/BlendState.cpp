@@ -25,7 +25,7 @@ GVM::BlendStateDesc::BlendStateDesc(uint64_t descriptor): BaseStateDesc(0)
 
 }
 
-uint64_t GVM::BlendStateDesc::ToUInt()
+uint64_t GVM::BlendStateDesc::ToUInt() const
 {
     uint64_t result = State;
     result = (result<<1)|BlendEnable;

@@ -13,6 +13,7 @@ class IConstBuffer : IResource {};
 class IResourceView : IAbstract {};
 class IVertexBufferView : IResourceView {};
 class IIndexBufferView : IResourceView {};
+class IConstBufferView : IResourceView {};
 class IRenderTarget : IResource {};
 class IDepthStencil : IResource {};
 class IRenderTargetView : IResourceView {};
@@ -29,7 +30,7 @@ namespace Compressed {
 
 struct VertexBufferBinding {
     using CompressedType = Compressed::VertexBufferBinding;
-    uint8_t buffersCount = 0;
+    uint8_t buffersNum = 0;
     IVertexBufferView* vertexBuffers [32] = {};
     uint32_t vertexStride [32] = {};
     uint32_t vertexOffset [32] = {};

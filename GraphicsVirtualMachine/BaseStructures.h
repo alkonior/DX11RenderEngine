@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <array>
 #include "BaseStructures\VertexDeclaration.h"
 #include "BaseStructures\Resources.h"
 #include "BaseStructures\Shader.h"
@@ -13,6 +13,7 @@
 #include "BaseStructures\IRenderClasses.h"
 #include "BaseStructures\ResourceViews\BaseViews.h"
 #include "BaseStructures\ResourceViews\ShaderResourceViewDesc.h"
+#include "BaseStructures\ResourceViews\ResourceDesc.h"
 
 
 namespace GVM {
@@ -53,6 +54,20 @@ struct FRect {
 struct FDrawCall {
     EDrawCallType Type;
     uint32_t Args[5];
+};
+
+struct DrawCall
+{
+    DrawCall(EDrawCallType type, std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> list): type(type), args(list)
+    {}
+    EDrawCallType type;
+    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> args;
+
+    template<size_t index>
+    uint32_t get()
+    {
+        return std::tuple_element<index>(args);
+    };
 };
 
 }

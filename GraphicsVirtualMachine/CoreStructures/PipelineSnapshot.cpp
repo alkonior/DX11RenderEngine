@@ -4,7 +4,7 @@ using namespace GVM;
 
 const Mesh Mesh::VoidMesh;
 
-uint32_t GVM::PipelineSnapshot::GetSize() {
+uint32_t GVM::PipelineSnapshot::GetSize() const {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
     size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
@@ -13,15 +13,27 @@ uint32_t GVM::PipelineSnapshot::GetSize() {
 
     size += constBuffersNum * sizeof(IConstBuffer*);
     size += texturesNum * sizeof(IResourceView*);
-    size += mesh.vertexBuffer.buffersCount * sizeof(VertexBufferBinding::CompressedType);
+    size += mesh.vertexBuffer.buffersNum * sizeof(VertexBufferBinding::CompressedType);
     return size;
 }
 
-void GVM::PipelineSnapshot::Compress(void* pointer) {
 
-    using CPS = Compressed::PipelineSnapshot;
+uint32_t Compressed::PipelineSnapshot::GetSize() const
+{
+    uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
-    CPS* cps = (CPS*)pointer;
+    size += renderTargetsNum * sizeof(RenderTargetDesc);
+    size += samplersNum * sizeof(SamplerStateDesc);
+    size += viewportsNum * sizeof(ViewportDesc);
+
+    size += constBuffersNum * sizeof(IConstBuffer*);
+    size += texturesNum * sizeof(IResourceView*);
+    size += vertexBuffersNum * sizeof(VertexBufferBinding);
+    return size;
+}
+
+void GVM::PipelineSnapshot::Compress(Compressed::PipelineSnapshot* cps) const {
+
 
     cps->VS = VS;
     cps->PS = PS;
@@ -36,8 +48,9 @@ void GVM::PipelineSnapshot::Compress(void* pointer) {
     cps->rasterizerState = rasterizerState.ToUInt();
     cps->depthStencilState = depthStencilState.ToUInt();
     cps->vertexDeclaration = vertexDeclaration;
-    cps->DepthBuffer = DepthBuffer;
+    cps->DepthBuffer = DepthStencilBuffer;
     cps->indexBuffer = mesh.indexBuffer;
+    cps->blendDesc = blendDesc;
 
 
     cps->samplersNum = samplersNum;
@@ -75,14 +88,15 @@ void GVM::PipelineSnapshot::Compress(void* pointer) {
         sizeof(IResourceView*) * texturesNum);
     pointerPosition +=  sizeof(IConstBuffer*) * constBuffersNum;
 
-    cps->vertexBuffersNum = mesh.vertexBuffer.buffersCount;
+    cps->vertexBuffersNum = mesh.vertexBuffer.buffersNum;
     memcpy(pointerPosition, mesh.vertexBuffer.vertexBuffers,
-        sizeof(IVertexBuffer*) * mesh.vertexBuffer.buffersCount);
-    pointerPosition +=  sizeof(IVertexBuffer*) * mesh.vertexBuffer.buffersCount;
+        sizeof(IVertexBuffer*) * mesh.vertexBuffer.buffersNum);
+    pointerPosition +=  sizeof(IVertexBuffer*) * mesh.vertexBuffer.buffersNum;
     memcpy(pointerPosition, mesh.vertexBuffer.vertexStride,
-        sizeof(uint32_t) * mesh.vertexBuffer.buffersCount);
-    pointerPosition +=  sizeof(uint32_t) * mesh.vertexBuffer.buffersCount;
+        sizeof(uint32_t) * mesh.vertexBuffer.buffersNum);
+    pointerPosition +=  sizeof(uint32_t) * mesh.vertexBuffer.buffersNum;
     memcpy(pointerPosition, mesh.vertexBuffer.vertexOffset,
-        sizeof(uint32_t) * mesh.vertexBuffer.buffersCount);
+        sizeof(uint32_t) * mesh.vertexBuffer.buffersNum);
     
 }
+

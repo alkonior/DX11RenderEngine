@@ -33,7 +33,7 @@ struct RasterizerStateDesc : BaseStateDesc
     RasterizerStateDesc();
     
     RasterizerStateDesc(uint64_t descriptor);//todo
-    uint64_t ToUInt();
+    uint64_t ToUInt() const;
 };
 
 }

@@ -35,7 +35,7 @@ struct DepthStencilStateDesc : BaseStateDesc
     DepthStencilStateDesc();
     
     DepthStencilStateDesc(uint64_t descriptor);
-    uint64_t ToUInt();
+    uint64_t ToUInt() const;
 };
 
 }

@@ -33,7 +33,8 @@ enum class EBlendOperator : uint8_t {
 };
 
 enum class ELogicOperator {
-    LOGIC_OP_CLEAR = 0,
+    LOGIC_OP_UNDEFINED = 0,
+    LOGIC_OP_CLEAR,
     LOGIC_OP_SET,
     LOGIC_OP_COPY,
     LOGIC_OP_COPY_INVERTED,
@@ -246,6 +247,13 @@ enum class EPrimitiveTopology : uint8_t {
     PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST   ,
     PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST   ,
     PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST   ,
+};
+
+enum class EResourceDimension
+{
+    RESOURCE_DIMENSION_TEXTURE1D,
+    RESOURCE_DIMENSION_TEXTURE2D,
+    RESOURCE_DIMENSION_TEXTURE3D
 };
 
 enum class EBindFlags : uint32_t {

@@ -31,7 +31,7 @@ RasterizerStateDesc::RasterizerStateDesc(uint64_t descriptor) : BaseStateDesc(0)
     
 
 }
-uint64_t RasterizerStateDesc::ToUInt() {
+uint64_t RasterizerStateDesc::ToUInt() const {
     
     uint64_t result = State;
     
@@ -39,9 +39,9 @@ uint64_t RasterizerStateDesc::ToUInt() {
     result = (result<<2)|to_underlying(FillMode);
     
     result = (result<<1)|FrontCounterClockwise;
-    result = (result<<32)|to_underlying(DepthBias);
-    result = (result<<16)|to_underlying(DepthBiasClamp);
-    result = (result<<16)|to_underlying(SlopeScaledDepthBias);
+    result = (result<<32)|DepthBias;
+    result = (result<<16)|DepthBiasClamp;
+    result = (result<<16)|SlopeScaledDepthBias;
     
     result = (result<<1)|DepthClipEnable;
     result = (result<<1)|ScissorEnable;

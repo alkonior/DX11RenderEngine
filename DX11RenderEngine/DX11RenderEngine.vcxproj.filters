@@ -425,15 +425,6 @@
     <None Include="packages.config" />
     <None Include="..\..\..\baseq2\MotionBlurShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\MotionBlurShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\BloomShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\BSPShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\FXAAShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\ModelsShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\ParticlesShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\PostProcessShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\SkyShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\UIShader.hlsl" />
-    <None Include="CoreRenderSystem\Renderers\Shaders\TAAShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\SSAOShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
@@ -457,8 +448,6 @@
     <FxCompile Include="..\..\..\baseq2\SkyShader.hlsl">
       <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\BloomShader.hlsl" />
-    <FxCompile Include="..\..\..\baseq2\FXAAShader.hlsl" />
     <FxCompile Include="..\..\..\baseq2\PostProcessShader.hlsl" />
   </ItemGroup>
 </Project>

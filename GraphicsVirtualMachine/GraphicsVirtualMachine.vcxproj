@@ -160,8 +160,8 @@
     <ClCompile Include="BaseStructures\PipelineStates\SamplerState.cpp" />
     <ClCompile Include="BaseStructures\PipelineStates\Viewport.cpp" />
     <ClCompile Include="BaseStructures\RenderDeviceInitParams.cpp" />
-    <ClCompile Include="BaseStructures\Resources.cpp" />
     <ClCompile Include="BaseStructures\ResourceViews\BaseViews.cpp" />
+    <ClCompile Include="BaseStructures\ResourceViews\ResourceDesc.cpp" />
     <ClCompile Include="BaseStructures\ResourceViews\ShaderResourceViewDesc.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -200,7 +200,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -234,7 +233,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>P:\Quake-2\ref_dx11rg\DX11RenderEngine\GraphicsVirtualMachine\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="BaseStructures\VertexDeclaration.cpp">
@@ -275,7 +274,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -311,6 +309,7 @@
       <SDLCheck>true</SDLCheck>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
+    <ClCompile Include="CoreStructures\GPUResource.cpp" />
     <ClCompile Include="CoreStructures\PipelineSnapshot.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -349,7 +348,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -424,7 +422,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -498,7 +495,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -572,7 +568,6 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\Quake-2\Debug\GraphicsVirtualMachine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\GraphicsVirtualMachine.pch</PrecompiledHeaderOutputFile>
@@ -610,6 +605,7 @@
     </ClCompile>
     <ClCompile Include="BaseStructures\Shader.cpp" />
     <ClCompile Include="VirtualMachine\GraphicsAPI.cpp" />
+    <ClCompile Include="VirtualMachine\ResourcesManager.cpp" />
     <ClCompile Include="VirtualMachine\VirtualMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -625,14 +621,16 @@
     <ClInclude Include="BaseStructures\PipelineStates\Viewport.h" />
     <ClInclude Include="BaseStructures\RenderDeviceInitParams.h" />
     <ClInclude Include="BaseStructures\ResourceViews\BaseViews.h" />
+    <ClInclude Include="BaseStructures\ResourceViews\ResourceDesc.h" />
     <ClInclude Include="BaseStructures\ResourceViews\ShaderResourceViewDesc.h" />
     <ClInclude Include="BaseStructures\Shader.h" />
     <ClInclude Include="BaseStructures\GVMEnums.h" />
-    <ClInclude Include="BaseStructures\Resources.h" />
     <ClInclude Include="BaseStructures\VertexDeclaration.h" />
+    <ClInclude Include="CoreStructures\GPUResource.h" />
     <ClInclude Include="CoreStructures\PipelineSnapshot.h" />
     <ClInclude Include="VirtualMachine\GraphicsAPI.h" />
     <ClInclude Include="VirtualMachine\RenderDevice.h" />
+    <ClInclude Include="VirtualMachine\ResourcesManager.h" />
     <ClInclude Include="VirtualMachine\VirtualMachine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
