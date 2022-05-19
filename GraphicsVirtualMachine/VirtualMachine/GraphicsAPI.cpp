@@ -227,78 +227,87 @@ void GraphicsApi::SetupInputLayout(IInputLayout* layout)
     ps.vertexDeclaration = layout;
 }
 
-IResource* GraphicsApi::CreateBuffer(const BufferResourceDesc& description)
+const IResource* GraphicsApi::CreateBuffer(const BufferResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateBuffer(description);
 }
 
-IResource* GraphicsApi::CreateTexture(const TextureResourceDesc& description)
+const IResource* GraphicsApi::CreateTexture(const TextureResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateTexture(description);
 }
 
-IResource* GraphicsApi::CreateTexture1D(const Texture1DResourceDesc& description)
+const IResource* GraphicsApi::CreateTexture1D(const Texture1DResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateTexture1D(description);
 }
 
-IResource* GraphicsApi::CreateTexture2D(const Texture2DResourceDesc& description)
+const IResource* GraphicsApi::CreateTexture2D(const Texture2DResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateTexture2D(description);
 }
 
-IResource* GraphicsApi::CreateTexture3D(const Texture3DResourceDesc& description)
+const IResource* GraphicsApi::CreateTexture3D(const Texture3DResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateTexture3D(description);
 }
 
-IResource* GraphicsApi::CreateTextureCube(const TextureCubeResourceDesc& description)
+const IResource* GraphicsApi::CreateTextureCube(const TextureCubeResourceDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateTextureCube(description);
 }
 
-IResourceView* GraphicsApi::CreateResourceView(const ShaderResourceViewDesc& description)
+const IConstBuffer* GraphicsApi::CreateConstBuffer(const BufferResourceDesc& description)
+{
+}
+
+const IVertexBuffer* GraphicsApi::CreateVertexBuffer(const BufferResourceDesc& description)
+{
+    return graphicsMachine.resourcesManager.CreateVertexBuffer(description);
+}
+
+const IIndexBuffer* GraphicsApi::CreateIndexBuffer(const BufferResourceDesc& description)
+{
+    return graphicsMachine.resourcesManager.CreateIndexBuffer(description);
+}
+
+const IResourceView* GraphicsApi::CreateShaderResourceView(const ShaderResourceViewDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateShaderResourceView(description);
 }
 
-IResourceView* GraphicsApi::CreateRtView(const RenderTargetViewDesc& description)
+const IRenderTargetView* GraphicsApi::CreateRtView(const RenderTargetViewDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateRenderTargetView(description);
 }
 
-IVertexBuffer* GraphicsApi::CreateVertexBuffer(const VertexBufferDesc& description)
+const IVertexBufferView* GraphicsApi::CreateVertexBufferView(const VertexBufferViewDesc& description)
+{
+    return graphicsMachine.resourcesManager.CreateVertexBufferView(description);
+}
+
+const IIndexBufferView* GraphicsApi::CreateIndexBufferView(const IndexBufferViewDesc& description)
+{
+    return graphicsMachine.resourcesManager.CreateIndexBufferView(description);
+}
+
+const IConstBufferView* GraphicsApi::CreateConstBufferView(const ConstBufferViewDesc& description)
 {
     return graphicsMachine.resourcesManager.CreateConstBufferView(description);
 }
 
-IIndexBuffer* GraphicsApi::CreateIndexBuffer(const IndexBufferDesc& description)
+void GraphicsApi::AddDisposeResource(const IResource* resource)
 {
-    return graphicsMachine.resourcesManager.CreateRenderTargetView(description);
+    graphicsMachine.resourcesManager.AddDisposeResource(resource);
 }
 
-IConstBuffer* GraphicsApi::CreateConstBuffer(const ConstBufferDesc& description)
+void GraphicsApi::AddDisposeResourceView(const IResourceView* resourceView)
 {
-}
-
-IVertexBufferView* GraphicsApi::CreateVertexBufferView(const VertexBufferViewDesc& description)
-{
-}
-
-IIndexBufferView* GraphicsApi::CreateIndexBufferView(const IndexBufferViewDesc& description)
-{
-}
-
-IConstBufferView* GraphicsApi::CreateConstBufferView(const ConstBufferViewDesc& description)
-{
-}
-
-void GraphicsApi::AddDisposeResource(const IResource* texture)
-{
+    graphicsMachine.resourcesManager.AddDisposeResourceView(resourceView);
 }
 
 void GraphicsApi::SetResourceData(const IResource* resource, uint16_t dstSubresource, const UBox rect,
-    const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+                                  const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 }
 
@@ -316,10 +325,13 @@ void GraphicsApi::SetConstBufferData(IConstBuffer* constBuffer, void* data)
 {
 }
 
+
 IInputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
 {
+    return nullptr;
 }
 
 IInputLayout* GraphicsApi::CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type)
 {
+    return nullptr;
 }

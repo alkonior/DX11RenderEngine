@@ -23,23 +23,24 @@ private:
 
     IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
 
+   GpuResource CreateBuffer(const BufferResourceDesc& desc);
+   GpuResource CreateTexture(const TextureResourceDesc& desc);
+   GpuResource CreateTexture1D(const Texture1DResourceDesc& desc);
+   GpuResource CreateTexture2D(const Texture2DResourceDesc& desc);
+   GpuResource CreateTexture3D(const Texture3DResourceDesc& desc);
+   GpuResource CreateTextureCube(const TextureCubeResourceDesc& desc);
+   GpuResource CreateVertexBuffer(const BufferResourceDesc& desc);
+   GpuResource CreateConstBuffer(const BufferResourceDesc& desc);
+   GpuResource CreateIndexBuffer(const BufferResourceDesc& desc);
+
+    const IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc);
+    const IResourceView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
+    const IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    const IResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
+    const IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc);
+    const IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc);
 
 
-
-    GpuResource CreateBuffer(const BufferResourceDesc& desc);
-    GpuResource CreateTexture(const TextureResourceDesc& desc);
-    GpuResource CreateTexture1D(const Texture1DResourceDesc& desc);
-    GpuResource CreateTexture2D(const Texture2DResourceDesc& desc);
-    GpuResource CreateTexture3D(const Texture3DResourceDesc& desc);
-    GpuResource CreateTextureCube(const TextureCubeResourceDesc& desc);
-    GpuResource CreateVertexBuffer(const ShaderResourceViewDesc& desc);
-    GpuResource CreateConstBuffer(const ConstBufferDesc& desc);
-    GpuResource CreateIndexBuffer(const IndexBufferDesc& desc);
-
-    GpuResourceView CreateConstBufferView(const ConstBufferViewDesc& desc);
-    GpuResourceView CreateDepthStencilView(const DepthStencilViewDesc& desc);
-    GpuResourceView CreateRenderTargetView(const RenderTargetViewDesc& desc);
-    GpuResourceView CreateShaderResourceView(const ShaderResourceViewDesc& desc);
     
     /*
     virtual ~IRenderDevice() = default;

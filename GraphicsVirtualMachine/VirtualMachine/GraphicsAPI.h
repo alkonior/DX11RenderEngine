@@ -99,23 +99,23 @@ public:
 #pragma region CreateDestroyResizeResources
 	/* Resources */
 	
-	IResource* CreateBuffer(const BufferResourceDesc& description);
-	IResource* CreateTexture(const TextureResourceDesc& description);
-	IResource* CreateTexture1D(const Texture1DResourceDesc& description);
-	IResource* CreateTexture2D(const Texture2DResourceDesc& description);
-	IResource* CreateTexture3D(const Texture3DResourceDesc& description);
-	IResource* CreateTextureCube(const TextureCubeResourceDesc& description);
+	const IResource* CreateBuffer(const BufferResourceDesc& description);
+	const IResource* CreateTexture(const TextureResourceDesc& description);
+	const IResource* CreateTexture1D(const Texture1DResourceDesc& description);
+	const IResource* CreateTexture2D(const Texture2DResourceDesc& description);
+	const IResource* CreateTexture3D(const Texture3DResourceDesc& description);
+	const IResource* CreateTextureCube(const TextureCubeResourceDesc& description);
 	
-	IResourceView* CreateResourceView(const ShaderResourceViewDesc& description);
-	IResourceView* CreateRtView(const RenderTargetViewDesc& description);
+	const IResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& description);
+	const IRenderTargetView* CreateRtView(const RenderTargetViewDesc& description);
+ 
+	const IVertexBuffer* CreateVertexBuffer(const BufferResourceDesc& description);
+	const IIndexBuffer*  CreateIndexBuffer(const BufferResourceDesc& description);
+	const IConstBuffer*  CreateConstBuffer(const BufferResourceDesc& description);
 	
-	IVertexBuffer* CreateVertexBuffer(const VertexBufferDesc& description);
-	IIndexBuffer* CreateIndexBuffer(const IndexBufferDesc& description);
-	IConstBuffer* CreateConstBuffer(const ConstBufferDesc& description);
-	
-	IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& description);
-	IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& description);
-	IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& description);
+	const IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& description);
+	const IIndexBufferView*  CreateIndexBufferView(const IndexBufferViewDesc& description);
+	const IConstBufferView*  CreateConstBufferView(const ConstBufferViewDesc& description);
 	
 	//IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description);
 	//IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description);
@@ -123,7 +123,8 @@ public:
 	//IResource* ResizeTexture3D(const IResource* texture, const Texture3DDesc& description);
 	
 
-	void AddDisposeResource(const IResource* texture);
+	void AddDisposeResource(const IResource* resource);
+	void AddDisposeResourceView(const IResourceView* resourceView);
 	//void AddDisposeConstBuffer(const IConstBuffer* constBuffers);
 	//void AddDisposeVertexBuffer(const IVertexBuffer* buffer);
 	//void AddDisposeIndexBuffer(const IIndexBuffer* buffer);

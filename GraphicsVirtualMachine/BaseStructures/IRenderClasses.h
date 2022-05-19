@@ -3,14 +3,13 @@
 
 namespace GVM {
 
-struct IAbstract { virtual ~IAbstract() = 0 {}; };
 
-class IInputLayout : IAbstract {};
-class IResource : IAbstract {};
+class IInputLayout {};
+class IResource {};
 class IVertexBuffer : IResource {};
 class IIndexBuffer : IResource {};
 class IConstBuffer : IResource {};
-class IResourceView : IAbstract {};
+class IResourceView {};
 class IVertexBufferView : IResourceView {};
 class IIndexBufferView : IResourceView {};
 class IConstBufferView : IResourceView {};
@@ -18,7 +17,7 @@ class IRenderTarget : IResource {};
 class IDepthStencil : IResource {};
 class IRenderTargetView : IResourceView {};
 class IDepthStencilView : IResourceView {};
-class IShader : IAbstract {};
+class IShader {};
 
 namespace Compressed {
     struct VertexBufferBinding {

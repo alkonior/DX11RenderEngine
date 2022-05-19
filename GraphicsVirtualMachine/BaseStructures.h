@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <array>
 #include "BaseStructures\VertexDeclaration.h"
-#include "BaseStructures\Resources.h"
 #include "BaseStructures\Shader.h"
 #include "BaseStructures\RenderDeviceInitParams.h"
 #include "BaseStructures\PipelineStates\BlendState.h"
