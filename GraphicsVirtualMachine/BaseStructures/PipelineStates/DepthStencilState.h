@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseStateDesc.h"
+#include "BaseStructures/GVMEnums.h"
 
 namespace GVM {
 

@@ -4,24 +4,27 @@
 namespace GVM {
 
 
-class IInputLayout {};
-class IResource {};
-class IVertexBuffer : IResource {};
-class IIndexBuffer : IResource {};
-class IConstBuffer : IResource {};
-class IResourceView {};
-class IVertexBufferView : IResourceView {};
-class IIndexBufferView : IResourceView {};
-class IConstBufferView : IResourceView {};
-class IRenderTarget : IResource {};
-class IDepthStencil : IResource {};
-class IRenderTargetView : IResourceView {};
-class IDepthStencilView : IResourceView {};
-class IShader {};
+struct Resource {};
+struct ResourceView {};
+
+struct Shader {};
+struct InputLayout {};
+
+struct VertexBuffer : Resource {};
+struct IndexBuffer : Resource {};
+struct ConstBuffer : Resource {};
+
+struct VertexBufferView : ResourceView {};
+struct IndexBufferView : ResourceView {};
+struct ConstBufferView : ResourceView {};
+struct RenderTargetView : ResourceView {};
+struct UATargetView : ResourceView {};
+struct DepthStencilView : ResourceView {};
+struct ShaderResourceView : ResourceView {};
 
 namespace Compressed {
     struct VertexBufferBinding {
-        IVertexBufferView* vertexBuffers [1];
+        VertexBufferView* vertexBuffers [1];
         uint32_t vertexStride [1];
         uint32_t vertexOffset [1];
     };
@@ -30,7 +33,7 @@ namespace Compressed {
 struct VertexBufferBinding {
     using CompressedType = Compressed::VertexBufferBinding;
     uint8_t buffersNum = 0;
-    IVertexBufferView* vertexBuffers [32] = {};
+    VertexBufferView* vertexBuffers [32] = {};
     uint32_t vertexStride [32] = {};
     uint32_t vertexOffset [32] = {};
 };
@@ -38,7 +41,7 @@ struct VertexBufferBinding {
 struct Mesh  {
     static const Mesh VoidMesh;
     VertexBufferBinding vertexBuffer;
-    IIndexBufferView* indexBuffer = nullptr;
+    IndexBufferView* indexBuffer = nullptr;
 };
 
 }

@@ -5,6 +5,7 @@ namespace GVM {
 
 struct ShaderDesc {
     EShaderType type;
+    
     void* bytecode;
     uint32_t byteCodeSize;
 #ifdef _DEBUG

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "BaseStructures.h"
-#include "CoreStructures/GPUResource.h"
 
 
 namespace GVM {
@@ -19,26 +18,42 @@ public:
     IRenderDevice(const IRenderDevice&&) = delete;
 
 private:
+    
+    
+    class IResource {};
+    class IResourceView {};
+    
+    class IVertexBuffer : IResource {};
+    class IIndexBuffer : IResource {};
+    class IConstBuffer : IResource {};
+
+    class IVertexBufferView : IResourceView {};
+    class IIndexBufferView : IResourceView {};
+    class IConstBufferView : IResourceView {};
+    class IRenderTargetView : IResourceView {};
+    class IDepthStencilView : IResourceView {};
+    class IShaderResourceView : IResourceView {};
+    class IUATargetView : IResourceView {};
+
+    class IInputLayout {};
+    class IShader {};
+
     friend class VirtualMachine;
+    friend class ResourcesManager;
+    friend class GpuResource;
+    friend class GpuResourceView;
 
     IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
 
-   GpuResource CreateBuffer(const BufferResourceDesc& desc);
-   GpuResource CreateTexture(const TextureResourceDesc& desc);
-   GpuResource CreateTexture1D(const Texture1DResourceDesc& desc);
-   GpuResource CreateTexture2D(const Texture2DResourceDesc& desc);
-   GpuResource CreateTexture3D(const Texture3DResourceDesc& desc);
-   GpuResource CreateTextureCube(const TextureCubeResourceDesc& desc);
-   GpuResource CreateVertexBuffer(const BufferResourceDesc& desc);
-   GpuResource CreateConstBuffer(const BufferResourceDesc& desc);
-   GpuResource CreateIndexBuffer(const BufferResourceDesc& desc);
-
+    const IResource* CreateResource(const ResourceDesc& desc);
+    
     const IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc);
-    const IResourceView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
-    const IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
-    const IResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
     const IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc);
     const IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc);
+    const IDepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
+    const IShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
+    const IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    const IUATargetView* CreateUATargetView(const UATargetViewDesc& desc);
 
 
     

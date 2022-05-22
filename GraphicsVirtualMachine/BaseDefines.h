@@ -21,7 +21,7 @@ constexpr auto BiteMask(uint8_t shift, uint8_t length) noexcept
     return result<<(64 - shift - length);
 }
 
-auto GetBiteValue(const uint64_t& value, uint8_t& shift, uint8_t length) noexcept
+inline auto GetBiteValue(const uint64_t& value, uint8_t& shift, uint8_t length) noexcept
 {
     uint8_t result = ((value&BiteMask(shift, length))>>(64 - shift - length));
     shift += length;

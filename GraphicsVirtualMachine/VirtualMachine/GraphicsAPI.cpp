@@ -17,9 +17,18 @@ void GraphicsApi::Present() {
 }
 
 
-void GraphicsApi::ClearRenderTargets(const IRenderTargetView** renderTargets, int32_t numRenderTargets, FColor color) {}
-void GraphicsApi::ClearRenderTarget(const IRenderTargetView* renderTarget, FColor color) {}
-void GraphicsApi::Clear(const IDepthStencilView* septhStencil, float depth, int8_t stencil) {}
+void GraphicsApi::ClearRenderTargets(const RenderTargetView** renderTargets, int32_t numRenderTargets, FColor color)
+{
+    
+}
+void GraphicsApi::ClearRenderTarget(const RenderTargetView* renderTarget, FColor color)
+{
+    
+}
+void GraphicsApi::Clear(const DepthStencilView* septhStencil, float depth, int8_t stencil)
+{
+    
+}
 void GraphicsApi::ClearState()
 {
     //ps.VS = ps.PS = ps.CS = ps.GS = ps.HS = ps.DS = nullptr;
@@ -147,27 +156,27 @@ void GraphicsApi::SetupVertexBuffer(const VertexBufferBinding& bindings)
     wasPSUpdated = true;
     ps.mesh.vertexBuffer = bindings;
 }
-void GraphicsApi::SetupIndexBuffer(const IIndexBufferView* indices)
+void GraphicsApi::SetupIndexBuffer(const IndexBufferView* indices)
 {
     wasPSUpdated = true;
-    ps.mesh.indexBuffer = (IIndexBufferView*)indices;
+    ps.mesh.indexBuffer = (IndexBufferView*)indices;
 }
 void GraphicsApi::SetupMeshBuffers(const Mesh& bindings)
 {
     ps.mesh = bindings;
 }
-void GraphicsApi::SetupTextures(const IResourceView* textures[], uint8_t num, uint8_t offset)
+void GraphicsApi::SetupTextures(const ResourceView* textures[], uint8_t num, uint8_t offset)
 {
     wasPSUpdated = true;
     for (int i = 0; i < num; i++)
     {
-        ps.Textures[i+offset] = (IResourceView*)textures[i];
+        ps.Textures[i+offset] = (ResourceView*)textures[i];
     }
     ps.texturesNum =  std::max<uint8_t>(ps.texturesNum, offset+num);
     
 }
 void GraphicsApi::SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset,
-    IDepthStencilView* depthStencilBuffer)
+    DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.DepthStencilBuffer = depthStencilBuffer;
@@ -178,33 +187,33 @@ void GraphicsApi::SetupRenderTargets(const RenderTargetDesc renderTargets[], int
     }
     ps.renderTargetsNum =  std::max<uint8_t>(ps.renderTargetsNum, offset+num);
 }
-void GraphicsApi::SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, IDepthStencilView* depthStencilBuffer)
+void GraphicsApi::SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.RenderTargets[slot] = renderTarget;
     ps.renderTargetsNum =  std::max<uint8_t>(ps.renderTargetsNum, slot);
 }
 
-void GraphicsApi::SetupDepthStencilBuffer( IDepthStencilView* depthStencilBuffer)
+void GraphicsApi::SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.DepthStencilBuffer = depthStencilBuffer;
 }
 
-void GraphicsApi::SetupShader(const IShader* shader, EShaderType type)
+void GraphicsApi::SetupShader(const Shader* shader, EShaderType type)
 {
     wasPSUpdated = true;
     switch (type)
     {
-        case EShaderType::ComputeShader  : ps.CS = (IShader*)shader; break;
-        case EShaderType::DomainShader   : ps.DS = (IShader*)shader; break;
-        case EShaderType::GeometryShader : ps.GS = (IShader*)shader; break;
-        case EShaderType::HullShader     : ps.HS = (IShader*)shader; break;
-        case EShaderType::PixelShader    : ps.PS = (IShader*)shader; break;
-        case EShaderType::VertexShader   : ps.VS = (IShader*)shader; break;
+        case EShaderType::ComputeShader  : ps.CS = (Shader*)shader; break;
+        case EShaderType::DomainShader   : ps.DS = (Shader*)shader; break;
+        case EShaderType::GeometryShader : ps.GS = (Shader*)shader; break;
+        case EShaderType::HullShader     : ps.HS = (Shader*)shader; break;
+        case EShaderType::PixelShader    : ps.PS = (Shader*)shader; break;
+        case EShaderType::VertexShader   : ps.VS = (Shader*)shader; break;
     }
 }
-void GraphicsApi::SetupConstBuffers(IConstBuffer* constBuffers[], uint8_t num, uint8_t offset)
+void GraphicsApi::SetupConstBuffers(ConstBuffer* constBuffers[], uint8_t num, uint8_t offset)
 {
     wasPSUpdated = true;
     for (int i = 0; i<num; i++)
@@ -213,7 +222,7 @@ void GraphicsApi::SetupConstBuffers(IConstBuffer* constBuffers[], uint8_t num, u
     }
     ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, offset+num);
 }
-void GraphicsApi::SetupConstBuffer(IConstBuffer* constBuffer, uint8_t slot)
+void GraphicsApi::SetupConstBuffer(ConstBuffer* constBuffer, uint8_t slot)
 {
     wasPSUpdated = true;
     ps.ConstBuffers[slot] = constBuffer;
@@ -221,117 +230,118 @@ void GraphicsApi::SetupConstBuffer(IConstBuffer* constBuffer, uint8_t slot)
     
 }
 
-void GraphicsApi::SetupInputLayout(IInputLayout* layout)
+void GraphicsApi::SetupInputLayout(InputLayout* layout)
 {
     wasPSUpdated = true;
     ps.vertexDeclaration = layout;
 }
 
-const IResource* GraphicsApi::CreateBuffer(const BufferResourceDesc& description)
+const Resource* GraphicsApi::CreateBuffer(const BufferResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateBuffer(description);
+    return graphicsMachine.CreateBuffer(description);
 }
 
-const IResource* GraphicsApi::CreateTexture(const TextureResourceDesc& description)
+const Resource* GraphicsApi::CreateTexture(const ResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateTexture(description);
+    return graphicsMachine.CreateResource(description);
 }
 
-const IResource* GraphicsApi::CreateTexture1D(const Texture1DResourceDesc& description)
+const Resource* GraphicsApi::CreateTexture1D(const Texture1DResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateTexture1D(description);
+    return graphicsMachine.CreateTexture1D(description);
 }
 
-const IResource* GraphicsApi::CreateTexture2D(const Texture2DResourceDesc& description)
+const Resource* GraphicsApi::CreateTexture2D(const Texture2DResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateTexture2D(description);
+    return graphicsMachine.CreateTexture2D(description);
 }
 
-const IResource* GraphicsApi::CreateTexture3D(const Texture3DResourceDesc& description)
+const Resource* GraphicsApi::CreateTexture3D(const Texture3DResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateTexture3D(description);
+    return graphicsMachine.CreateTexture3D(description);
 }
 
-const IResource* GraphicsApi::CreateTextureCube(const TextureCubeResourceDesc& description)
+const Resource* GraphicsApi::CreateTextureCube(const TextureCubeResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateTextureCube(description);
+    return graphicsMachine.CreateTextureCube(description);
 }
 
-const IConstBuffer* GraphicsApi::CreateConstBuffer(const BufferResourceDesc& description)
+const ConstBuffer* GraphicsApi::CreateConstBuffer(const BufferResourceDesc& description)
 {
+    return graphicsMachine.CreateConstBuffer(description);
 }
 
-const IVertexBuffer* GraphicsApi::CreateVertexBuffer(const BufferResourceDesc& description)
+const VertexBuffer* GraphicsApi::CreateVertexBuffer(const BufferResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateVertexBuffer(description);
+    return graphicsMachine.CreateVertexBuffer(description);
 }
 
-const IIndexBuffer* GraphicsApi::CreateIndexBuffer(const BufferResourceDesc& description)
+const IndexBuffer* GraphicsApi::CreateIndexBuffer(const BufferResourceDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateIndexBuffer(description);
+    return graphicsMachine.CreateIndexBuffer(description);
 }
 
-const IResourceView* GraphicsApi::CreateShaderResourceView(const ShaderResourceViewDesc& description)
+const ShaderResourceView* GraphicsApi::CreateShaderResourceView(const ShaderResourceViewDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateShaderResourceView(description);
+    return graphicsMachine.CreateShaderResourceView(description);
 }
 
-const IRenderTargetView* GraphicsApi::CreateRtView(const RenderTargetViewDesc& description)
+const RenderTargetView* GraphicsApi::CreateRtView(const RenderTargetViewDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateRenderTargetView(description);
+    return graphicsMachine.CreateRenderTargetView(description);
 }
 
-const IVertexBufferView* GraphicsApi::CreateVertexBufferView(const VertexBufferViewDesc& description)
+const VertexBufferView* GraphicsApi::CreateVertexBufferView(const VertexBufferViewDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateVertexBufferView(description);
+    return graphicsMachine.CreateVertexBufferView(description);
 }
 
-const IIndexBufferView* GraphicsApi::CreateIndexBufferView(const IndexBufferViewDesc& description)
+const IndexBufferView* GraphicsApi::CreateIndexBufferView(const IndexBufferViewDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateIndexBufferView(description);
+    return graphicsMachine.CreateIndexBufferView(description);
 }
 
-const IConstBufferView* GraphicsApi::CreateConstBufferView(const ConstBufferViewDesc& description)
+const ConstBufferView* GraphicsApi::CreateConstBufferView(const ConstBufferViewDesc& description)
 {
-    return graphicsMachine.resourcesManager.CreateConstBufferView(description);
+    return graphicsMachine.CreateConstBufferView(description);
 }
 
-void GraphicsApi::AddDisposeResource(const IResource* resource)
+void GraphicsApi::AddDisposeResource(const Resource* resource)
 {
-    graphicsMachine.resourcesManager.AddDisposeResource(resource);
+    graphicsMachine.AddDisposeResource(resource);
 }
 
-void GraphicsApi::AddDisposeResourceView(const IResourceView* resourceView)
+void GraphicsApi::AddDisposeResourceView(const ResourceView* resourceView)
 {
-    graphicsMachine.resourcesManager.AddDisposeResourceView(resourceView);
+    graphicsMachine.AddDisposeResourceView(resourceView);
 }
 
-void GraphicsApi::SetResourceData(const IResource* resource, uint16_t dstSubresource, const UBox rect,
+void GraphicsApi::SetResourceData(const Resource* resource, uint16_t dstSubresource, const UBox rect,
                                   const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 }
 
-void GraphicsApi::SetVertexBufferData(const IVertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetVertexBufferData(const VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 }
 
-void GraphicsApi::SetIndexBufferData(const IIndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetIndexBufferData(const IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 }
 
-void GraphicsApi::SetConstBufferData(IConstBuffer* constBuffer, void* data)
+void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, void* data)
 {
 }
 
 
-IInputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
+InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
 {
     return nullptr;
 }
 
-IInputLayout* GraphicsApi::CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type)
+InputLayout* GraphicsApi::CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type)
 {
     return nullptr;
 }

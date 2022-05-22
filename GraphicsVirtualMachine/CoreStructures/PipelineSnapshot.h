@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseStructures.h"
-#include "VirtualMachine/ResourcesManager.h"
+#include "VirtualMachine/ResourceManager/ResourcesManager.h"
 
 namespace GVM {
 
@@ -11,12 +11,12 @@ namespace Compressed {
 struct PipelineSnapshot {
 
     using CompressedType = Compressed::PipelineSnapshot;
-    IShader*                    VS = nullptr;
-    IShader*                    PS = nullptr;
-    IShader*                    CS = nullptr;
-    IShader*                    GS = nullptr;
-    IShader*                    HS = nullptr;
-    IShader*                    DS = nullptr;
+    Shader*                    VS;
+    Shader*                    PS;
+    Shader*                    CS;
+    Shader*                    GS;
+    Shader*                    HS;
+    Shader*                    DS;
 
     uint32_t                    DrawCallsNum = 0;
 
@@ -24,8 +24,8 @@ struct PipelineSnapshot {
 
     RasterizerStateDesc         rasterizerState = RasterizerStateDesc::Default;
     DepthStencilStateDesc       depthStencilState = DepthStencilStateDesc::Default;
-    IInputLayout*               vertexDeclaration = nullptr;
-    IDepthStencilView*          DepthStencilBuffer = nullptr;
+    InputLayout*               vertexDeclaration = nullptr;
+    DepthStencilView*          DepthStencilBuffer = nullptr;
 
     Mesh                        mesh = Mesh::VoidMesh;
     
@@ -42,10 +42,10 @@ struct PipelineSnapshot {
         
         
     uint8_t                     constBuffersNum = 0;
-    IConstBuffer*               ConstBuffers[15] = {};
+    ConstBuffer*               ConstBuffers[15] = {};
         
     uint8_t                     texturesNum = 0;
-    IResourceView*              Textures[128] = {};
+    ResourceView*              Textures[128] = {};
 
     uint32_t GetSize() const;
     void Compress(Compressed::PipelineSnapshot* pointer, const ResourcesManager&) const;
@@ -55,12 +55,12 @@ struct PipelineSnapshot {
 namespace Compressed {
     
     struct PipelineSnapshot {
-        IShader*                    VS;
-        IShader*                    PS;
-        IShader*                    CS;
-        IShader*                    GS;
-        IShader*                    HS;
-        IShader*                    DS;
+        Shader*                    VS;
+        Shader*                    PS;
+        Shader*                    CS;
+        Shader*                    GS;
+        Shader*                    HS;
+        Shader*                    DS;
         
         uint32_t                    DrawCallsNum;
 
@@ -69,14 +69,14 @@ namespace Compressed {
         uint64_t                    rasterizerState;   
         // DepthStencilStateDesc       depthStencilState;
         uint64_t                    depthStencilState;   
-        IInputLayout*               vertexDeclaration;
-        IDepthStencilView*          DepthBuffer;
-        IIndexBufferView*           indexBuffer;
+        InputLayout*                vertexDeclaration;
+        IndexBufferView*            indexBuffer;
 
         EPrimitiveTopology          primitiveType;
         
         CoreBlendDesc               blendDesc;
     
+        DepthStencilView*           DepthBuffer;
         uint8_t                     renderTargetsNum;
         //RenderTargetDesc            RenderTargets[8];
         

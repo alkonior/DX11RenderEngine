@@ -27,9 +27,9 @@ public:
 
 #pragma region Clear
 
-	void ClearRenderTargets(const IRenderTargetView** renderTargets, int32_t numRenderTargets, FColor color);
-	void ClearRenderTarget(const IRenderTargetView* renderTarget, FColor color);
-	void Clear(const IDepthStencilView* septhStencil, float depth, int8_t stencil);
+	void ClearRenderTargets(const RenderTargetView** renderTargets, int32_t numRenderTargets, FColor color);
+	void ClearRenderTarget(const RenderTargetView* renderTarget, FColor color);
+	void Clear(const DepthStencilView* septhStencil, float depth, int8_t stencil);
 	void ClearState();
 
 
@@ -80,18 +80,18 @@ public:
 
 
 	void SetupVertexBuffer(const VertexBufferBinding& bindings);
-	void SetupIndexBuffer(const IIndexBufferView* indices);
+	void SetupIndexBuffer(const IndexBufferView* indices);
 	void SetupMeshBuffers(const Mesh& bindings);
-	void SetupTextures(const IResourceView* textures[], uint8_t num, uint8_t offset);
+	void SetupTextures(const ResourceView* textures[], uint8_t num, uint8_t offset);
 	
-	void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, IDepthStencilView* depthStencilBuffer);
-	void SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, IDepthStencilView* depthStencilBuffer);
-	void SetupDepthStencilBuffer(IDepthStencilView* depthStencilBuffer);
-	void SetupShader(const IShader* shader, EShaderType type);
+	void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);
+	void SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer);
+	void SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer);
+	void SetupShader(const Shader* shader, EShaderType type);
 
-	void SetupConstBuffers(IConstBuffer* constBuffers[], uint8_t num, uint8_t offset);
-	void SetupConstBuffer(IConstBuffer* constBuffer, uint8_t slot);
-	void SetupInputLayout(IInputLayout* layout);
+	void SetupConstBuffers(ConstBuffer* constBuffers[], uint8_t num, uint8_t offset);
+	void SetupConstBuffer(ConstBuffer* constBuffer, uint8_t slot);
+	void SetupInputLayout(InputLayout* layout);
 
 
 #pragma endregion
@@ -99,32 +99,32 @@ public:
 #pragma region CreateDestroyResizeResources
 	/* Resources */
 	
-	const IResource* CreateBuffer(const BufferResourceDesc& description);
-	const IResource* CreateTexture(const TextureResourceDesc& description);
-	const IResource* CreateTexture1D(const Texture1DResourceDesc& description);
-	const IResource* CreateTexture2D(const Texture2DResourceDesc& description);
-	const IResource* CreateTexture3D(const Texture3DResourceDesc& description);
-	const IResource* CreateTextureCube(const TextureCubeResourceDesc& description);
+	const Resource* CreateBuffer(const BufferResourceDesc& description);
+	const Resource* CreateTexture(const ResourceDesc& description);
+	const Resource* CreateTexture1D(const Texture1DResourceDesc& description);
+	const Resource* CreateTexture2D(const Texture2DResourceDesc& description);
+	const Resource* CreateTexture3D(const Texture3DResourceDesc& description);
+	const Resource* CreateTextureCube(const TextureCubeResourceDesc& description);
 	
-	const IResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& description);
-	const IRenderTargetView* CreateRtView(const RenderTargetViewDesc& description);
+	const ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& description);
+	const RenderTargetView* CreateRtView(const RenderTargetViewDesc& description);
  
-	const IVertexBuffer* CreateVertexBuffer(const BufferResourceDesc& description);
-	const IIndexBuffer*  CreateIndexBuffer(const BufferResourceDesc& description);
-	const IConstBuffer*  CreateConstBuffer(const BufferResourceDesc& description);
+	const VertexBuffer* CreateVertexBuffer(const BufferResourceDesc& description);
+	const IndexBuffer*  CreateIndexBuffer(const BufferResourceDesc& description);
+	const ConstBuffer*  CreateConstBuffer(const BufferResourceDesc& description);
 	
-	const IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& description);
-	const IIndexBufferView*  CreateIndexBufferView(const IndexBufferViewDesc& description);
-	const IConstBufferView*  CreateConstBufferView(const ConstBufferViewDesc& description);
+	const VertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& description);
+	const IndexBufferView*  CreateIndexBufferView(const IndexBufferViewDesc& description);
+	const ConstBufferView*  CreateConstBufferView(const ConstBufferViewDesc& description);
 	
-	//IResource* ResizeBuffer   (const IResource* texture, const BufferDesc& description);
-	//IResource* ResizeTexture1D(const IResource* texture, const Texture1DDesc& description);
-	//IResource* ResizeTexture2D(const IResource* texture, const Texture2DDesc& description);
-	//IResource* ResizeTexture3D(const IResource* texture, const Texture3DDesc& description);
+	//Resource* ResizeBuffer   (const Resource* texture, const BufferDesc& description);
+	//Resource* ResizeTexture1D(const Resource* texture, const Texture1DDesc& description);
+	//Resource* ResizeTexture2D(const Resource* texture, const Texture2DDesc& description);
+	//Resource* ResizeTexture3D(const Resource* texture, const Texture3DDesc& description);
 	
 
-	void AddDisposeResource(const IResource* resource);
-	void AddDisposeResourceView(const IResourceView* resourceView);
+	void AddDisposeResource(const Resource* resource);
+	void AddDisposeResourceView(const ResourceView* resourceView);
 	//void AddDisposeConstBuffer(const IConstBuffer* constBuffers);
 	//void AddDisposeVertexBuffer(const IVertexBuffer* buffer);
 	//void AddDisposeIndexBuffer(const IIndexBuffer* buffer);
@@ -134,7 +134,7 @@ public:
 #pragma region SetResourcesData
 
 	void SetResourceData(
-		const IResource*	resource,
+		const Resource*	resource,
 		uint16_t			dstSubresource,
 		const UBox			rect,
 		const void*			pSrcData,
@@ -143,7 +143,7 @@ public:
 	);
 	
 	void SetVertexBufferData(
-		const IVertexBuffer*   vertexBuffer,
+		const VertexBuffer*   vertexBuffer,
 		const void*			   pSrcData,
 		uint32_t			   dataLength,
 		int32_t				   srcRowPitch,
@@ -151,7 +151,7 @@ public:
 		);
 	
 	void SetIndexBufferData(
-		const IIndexBuffer* buffer,
+		const IndexBuffer* buffer,
 		const void*			   pSrcData,
 		uint32_t			   dataLength,
 		int32_t				   srcRowPitch,
@@ -159,13 +159,13 @@ public:
 	);
 
 	void SetConstBufferData(
-		IConstBuffer* constBuffer,
+		ConstBuffer* constBuffer,
 		void* data);
 
 #pragma endregion
 
-	IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
-	IInputLayout* CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type);
+	InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
+	InputLayout* CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type);
 
 	//void Flush();
 

@@ -24,9 +24,6 @@
     <ClCompile Include="CoreStructures\PipelineSnapshot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CoreStructures\PipelineSnapshotCompressed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BaseStructures\PipelineStates\BlendState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,12 +36,42 @@
     <ClCompile Include="BaseStructures\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BaseStructures\PipelineStates\RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\PipelineStates\SamplerState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\PipelineStates\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\RenderDeviceInitParams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\ResourceViews\BaseViews.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\ResourceViews\ResourceDesc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseStructures\ResourceViews\ShaderResourceViewDesc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualMachine\GraphicsAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualMachine\VirtualMachine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualMachine\ResourceManager\GPUResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualMachine\ResourceManager\ResourcesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseStructures\PipelineStates\BaseState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseStructures\PipelineStates\BlendState.h">
@@ -65,7 +92,52 @@
     <ClInclude Include="CoreStructures\PipelineSnapshot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CoreStructures\PipelineSnapshotCompressed.h">
+    <ClInclude Include="BaseStructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\IRenderClasses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\PipelineStates\BaseStateDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\PipelineStates\RenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\PipelineStates\SamplerState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\PipelineStates\Viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\RenderDeviceInitParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\ResourceViews\BaseViews.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\ResourceViews\ResourceDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\ResourceViews\ShaderResourceViewDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStructures\GVMEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMachine\GraphicsAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMachine\VirtualMachine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMachine\IRenderDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMachine\ResourceManager\GPUResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMachine\ResourceManager\ResourcesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

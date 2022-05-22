@@ -6,30 +6,29 @@ namespace GVM {
 
 
 struct DepthStencilViewDesc {
-    IResource*          resource;
-    EDepthFormat        format;
-    EDsvFlags           flag;
-    uint8_t             SubResource;
+    Resource*          Resource;
+    EDepthFormat       Format;
+    EDsvFlags          Flag;
 };
 
 struct VertexBufferViewDesc
 {
-    IVertexBuffer*     buffer;
-    uint32_t           size;
-    uint32_t           stride;;
+    VertexBuffer*     Buffer;
+    uint32_t          Size;
+    uint32_t          Stride;
 };
     
 struct IndexBufferViewDesc
 {
-    IIndexBuffer*      buffer;
-    EFormat            format;
-    uint32_t           size;
+    IndexBuffer*      Buffer;
+    EFormat           Format;
+    uint32_t          Size;
 };
     
 struct ConstBufferViewDesc
 {
-    IConstBuffer*      buffer;
-    uint32_t           size;
+    ConstBuffer*      Buffer;
+    uint32_t          Size;
 };
 
 }
