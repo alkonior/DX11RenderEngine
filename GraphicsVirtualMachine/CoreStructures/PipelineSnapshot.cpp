@@ -4,58 +4,63 @@ using namespace GVM;
 
 const Mesh Mesh::VoidMesh;
 
-uint32_t GVM::PipelineSnapshot::GetSize() const {
+uint32_t GVM::PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
     size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
     size += samplersNum * sizeof(SamplerStateDesc::CompressedType);
     size += viewportsNum * sizeof(ViewportDesc::CompressedType);
 
-    size += constBuffersNum * sizeof(ConstBuffer*);
-    size += texturesNum * sizeof(ResourceView*);
-    size += mesh.vertexBuffer.buffersNum * sizeof(VertexBufferBinding::CompressedType);
+    size += constBuffersNum * structuresSizes.IResourceViewSize;
+    size += texturesNum * structuresSizes.IResourceViewSize;
+    size += mesh.vertexBuffer.buffersNum * (sizeof(VertexBufferBinding::CompressedType) + structuresSizes.IResourceViewSize);
+    
+    size += 6 * structuresSizes.IShaderSize;
+    size += structuresSizes.IInputLayoutSize;
+    size += structuresSizes.IResourceViewSize;//IndexBuffer
+    
     return size;
 }
 
 
 uint32_t Compressed::PipelineSnapshot::GetSize() const
 {
-    uint32_t size = sizeof(Compressed::PipelineSnapshot);
-
-    size += renderTargetsNum * sizeof(RenderTargetDesc);
-    size += samplersNum * sizeof(SamplerStateDesc);
-    size += viewportsNum * sizeof(ViewportDesc);
-
-    size += constBuffersNum * sizeof(ConstBuffer*);
-    size += texturesNum * sizeof(ResourceView*);
-    size += vertexBuffersNum * sizeof(VertexBufferBinding);
-    return size;
+    return SnapshotByteSize;
 }
 
-void GVM::PipelineSnapshot::Compress(Compressed::PipelineSnapshot* cps, const ResourcesManager&) const {
+void GVM::PipelineSnapshot::Compress(CompressArgs& args) const {
 
 
-    cps->VS = VS;
-    cps->PS = PS;
-    cps->CS = CS;
-    cps->GS = GS;
-    cps->HS = HS;
-    cps->DS = DS;
     
-    cps->DrawCallsNum = DrawCallsNum;
+    args.cps->DrawCallsNum = DrawCallsNum;
+    args.cps->SnapshotByteSize = GetSize(args.structuresSizes);
+    
+    args.cps->primitiveType = primitiveType;
+    args.cps->rasterizerState = rasterizerState.ToUInt();
+    args.cps->depthStencilState = depthStencilState.ToUInt();
+    args.cps->DepthBuffer = DepthStencilBuffer;
+    args.cps->blendDesc = blendDesc;
 
-    cps->primitiveType = primitiveType;
-    cps->rasterizerState = rasterizerState.ToUInt();
-    cps->depthStencilState = depthStencilState.ToUInt();
-    cps->vertexDeclaration = vertexDeclaration;
-    cps->DepthBuffer = DepthStencilBuffer;
-    cps->indexBuffer = mesh.indexBuffer;
-    cps->blendDesc = blendDesc;
 
 
-    cps->samplersNum = samplersNum;
+    auto* pointerPosition = args.cps->Data;
+    
+    
+    ///args.cps->VS =
+    args.resourceManager.GetRealShader(VS)->Place(pointerPosition);
+    pointerPosition+=args.structuresSizes.IShaderSize;
+    
+    args.cps->PS = PS;
+    args.cps->CS = CS;
+    args.cps->GS = GS;
+    args.cps->HS = HS;
+    args.cps->DS = DS;
 
-    auto* pointerPosition = cps->Data;
+
+    args.cps->vertexDeclaration = vertexDeclaration;
+    args.cps->indexBuffer = mesh.indexBuffer;
+    
+    args.cps->samplersNum = samplersNum;
     auto* samplerPointer = (SamplerStateDesc::CompressedType*)pointerPosition;
     pointerPosition += (samplersNum * sizeof(SamplerStateDesc::CompressedType));
     for (int i = 0; i < samplersNum; i++)
@@ -64,7 +69,7 @@ void GVM::PipelineSnapshot::Compress(Compressed::PipelineSnapshot* cps, const Re
     }
 
 
-    cps->renderTargetsNum = renderTargetsNum;
+    args.cps->renderTargetsNum = renderTargetsNum;
     auto* renderTargetsPointer = (RenderTargetDesc::CompressedType*)pointerPosition;
     for (int i = 0; i < renderTargetsNum; i++)
     {
@@ -73,22 +78,22 @@ void GVM::PipelineSnapshot::Compress(Compressed::PipelineSnapshot* cps, const Re
     }
     pointerPosition +=  renderTargetsNum*sizeof(RenderTargetDesc::CompressedType);
 
-    cps->viewportsNum = viewportsNum;
+    args.cps->viewportsNum = viewportsNum;
     memcpy(pointerPosition, Viewports,
         sizeof(ViewportDesc) * viewportsNum);
     pointerPosition +=  sizeof(ViewportDesc) * viewportsNum;
     
-    cps->constBuffersNum = constBuffersNum;
+    args.cps->constBuffersNum = constBuffersNum;
     memcpy(pointerPosition, ConstBuffers,
         sizeof(ConstBuffer*) * constBuffersNum);
     pointerPosition +=  sizeof(ConstBuffer*) * constBuffersNum;
 
-    cps->texturesNum = texturesNum;
+    args.cps->texturesNum = texturesNum;
     memcpy(pointerPosition, Textures,
         sizeof(ResourceView*) * texturesNum);
     pointerPosition +=  sizeof(ConstBuffer*) * constBuffersNum;
 
-    cps->vertexBuffersNum = mesh.vertexBuffer.buffersNum;
+    args.cps->vertexBuffersNum = mesh.vertexBuffer.buffersNum;
     memcpy(pointerPosition, mesh.vertexBuffer.vertexBuffers,
         sizeof(VertexBuffer*) * mesh.vertexBuffer.buffersNum);
     pointerPosition +=  sizeof(VertexBuffer*) * mesh.vertexBuffer.buffersNum;

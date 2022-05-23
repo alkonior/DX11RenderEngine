@@ -319,20 +319,24 @@ void GraphicsApi::AddDisposeResourceView(const ResourceView* resourceView)
 void GraphicsApi::SetResourceData(const Resource* resource, uint16_t dstSubresource, const UBox rect,
                                   const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
+    
 }
 
 void GraphicsApi::SetVertexBufferData(const VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
+    
 }
 
 void GraphicsApi::SetIndexBufferData(const IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
+    
 }
 
 void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, void* data)
 {
+    
 }
 
 

@@ -4,6 +4,8 @@
 
 namespace GVM {
 
+    
+    
 namespace Compressed {
     struct PipelineSnapshot;
 }
@@ -47,21 +49,23 @@ struct PipelineSnapshot {
     uint8_t                     texturesNum = 0;
     ResourceView*              Textures[128] = {};
 
-    uint32_t GetSize() const;
-    void Compress(Compressed::PipelineSnapshot* pointer, const ResourcesManager&) const;
+    uint32_t GetSize(const IStructuresSize& structuresSizes) const;
+
+    struct CompressArgs
+    {
+        Compressed::PipelineSnapshot* cps;
+        ResourcesManager& resourceManager;
+        const IStructuresSize& structuresSizes;
+    };
+    void Compress(CompressArgs& args) const;
     
 };
 
 namespace Compressed {
     
     struct PipelineSnapshot {
-        Shader*                    VS;
-        Shader*                    PS;
-        Shader*                    CS;
-        Shader*                    GS;
-        Shader*                    HS;
-        Shader*                    DS;
         
+        uint32_t                    SnapshotByteSize;
         uint32_t                    DrawCallsNum;
 
 
@@ -69,8 +73,6 @@ namespace Compressed {
         uint64_t                    rasterizerState;   
         // DepthStencilStateDesc       depthStencilState;
         uint64_t                    depthStencilState;   
-        InputLayout*                vertexDeclaration;
-        IndexBufferView*            indexBuffer;
 
         EPrimitiveTopology          primitiveType;
         
@@ -101,6 +103,18 @@ namespace Compressed {
         uint32_t GetSize() const;
         
         uint8_t Data[0];
+
+
+        
+        //IShader*                    VS;
+        //IShader*                    PS;
+        //IShader*                    CS;
+        //IShader*                    GS;
+        //IShader*                    HS;
+        //IShader*                    DS;
+        
+        //IInputLayout*                vertexDeclaration;
+        //IIndexBufferView*            indexBuffer;
     
     };
 

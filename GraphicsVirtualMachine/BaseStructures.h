@@ -65,9 +65,18 @@ struct DrawCall
     template<size_t index>
     uint32_t get()
     {
-        return std::tuple_element<index>(args);
-    };
+        return std::tuple_element<index, decltype(args)>(args);
+    }
 };
 
+
+struct IStructuresSize
+{
+    uint32_t IResourceSize = 0;
+    uint32_t IResourceViewSize = 0;
+    uint32_t IShaderSize = 0;
+    uint32_t IInputLayoutSize = 0;
+};
+    
 }
 

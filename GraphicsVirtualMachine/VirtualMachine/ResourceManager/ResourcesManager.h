@@ -9,6 +9,7 @@ namespace GVM
 {
 
 class VirtualMachine;
+class PipelineSnapshot;
     
 class ResourcesManager
 {
@@ -33,6 +34,7 @@ class ResourcesManager
     static uint32_t CalculateResourceSize(const TextureCubeResourceDesc& desc);
 
     friend VirtualMachine;
+    friend PipelineSnapshot;
 
 
     ResourcesManager(IRenderDevice* device);
@@ -60,6 +62,11 @@ class ResourcesManager
     
     void AddDisposeResource(const Resource* resource);
     void AddDisposeResourceView(const ResourceView* resourceView);
+
+public:
+    IRenderDevice::IResource* GetRealResource(const Resource* resource);
+    IRenderDevice::IShader* GetRealShader(const Shader* shader);
+    IRenderDevice::IResourceView* GetRealResourceView(const ResourceView* resourceView);
     
     
 };

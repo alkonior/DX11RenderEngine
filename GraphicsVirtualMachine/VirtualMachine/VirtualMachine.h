@@ -75,5 +75,9 @@ namespace GVM
         void AddDisposeResourceView(const ResourceView* resourceView);
 
 #pragma endregion
+
+
+
+
     };
 }

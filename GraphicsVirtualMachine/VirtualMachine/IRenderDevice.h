@@ -18,14 +18,20 @@ public:
     IRenderDevice(const IRenderDevice&&) = delete;
 
 private:
+    struct IPlaceable
+    {
+    public:
+        virtual void Place(void* ptr) const = 0;
+    public:
+        virtual ~IPlaceable() = 0;
+    };
     
+    class IResource : public IPlaceable {};
+    class IResourceView : public IPlaceable {};
     
-    class IResource {};
-    class IResourceView {};
-    
-    class IVertexBuffer : IResource {};
-    class IIndexBuffer : IResource {};
-    class IConstBuffer : IResource {};
+    class IVertexBuffer : public IResource {};
+    class IIndexBuffer : public IResource {};
+    class IConstBuffer : public IResource {};
 
     class IVertexBufferView : IResourceView {};
     class IIndexBufferView : IResourceView {};
@@ -35,8 +41,8 @@ private:
     class IShaderResourceView : IResourceView {};
     class IUATargetView : IResourceView {};
 
-    class IInputLayout {};
-    class IShader {};
+    class IInputLayout : public IPlaceable {};
+    class IShader : public IPlaceable {};
 
     friend class VirtualMachine;
     friend class ResourcesManager;
