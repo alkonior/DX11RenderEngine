@@ -32,7 +32,7 @@ enum class EBlendOperator : uint8_t {
     BLEND_OP_MAX
 };
 
-enum class ELogicOperator {
+enum class ELogicOperator : uint8_t {
     LOGIC_OP_UNDEFINED = 0,
     LOGIC_OP_CLEAR,
     LOGIC_OP_SET,

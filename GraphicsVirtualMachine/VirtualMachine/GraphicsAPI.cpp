@@ -213,7 +213,7 @@ void GraphicsApi::SetupShader(const Shader* shader, EShaderType type)
         case EShaderType::VertexShader   : ps.VS = (Shader*)shader; break;
     }
 }
-void GraphicsApi::SetupConstBuffers(ConstBuffer* constBuffers[], uint8_t num, uint8_t offset)
+void GraphicsApi::SetupConstBuffers(ConstBufferView* constBuffers[], uint8_t num, uint8_t offset)
 {
     wasPSUpdated = true;
     for (int i = 0; i<num; i++)
@@ -222,7 +222,7 @@ void GraphicsApi::SetupConstBuffers(ConstBuffer* constBuffers[], uint8_t num, ui
     }
     ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, offset+num);
 }
-void GraphicsApi::SetupConstBuffer(ConstBuffer* constBuffer, uint8_t slot)
+void GraphicsApi::SetupConstBuffer(ConstBufferView* constBuffer, uint8_t slot)
 {
     wasPSUpdated = true;
     ps.ConstBuffers[slot] = constBuffer;
@@ -233,7 +233,7 @@ void GraphicsApi::SetupConstBuffer(ConstBuffer* constBuffer, uint8_t slot)
 void GraphicsApi::SetupInputLayout(InputLayout* layout)
 {
     wasPSUpdated = true;
-    ps.vertexDeclaration = layout;
+    ps.InputDeclaration = layout;
 }
 
 const Resource* GraphicsApi::CreateBuffer(const BufferResourceDesc& description)

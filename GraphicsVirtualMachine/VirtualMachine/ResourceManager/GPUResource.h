@@ -1,7 +1,6 @@
 #pragma once
 #include <set>
-#include "BaseStructures.h"
-#include "VirtualMachine/IRenderDevice.h"
+#include "../IRenderDevice.h"
 
 namespace GVM
 {
@@ -9,7 +8,7 @@ namespace GVM
 
 class GpuResourceView
 {
-    enum class EViewType
+    enum class EViewType : uint8_t
     {
         CB,
         DB,
@@ -71,8 +70,6 @@ public:
     GpuResource(Resource* id, const ResourceDesc& desc);
     
     ResourceDesc resourceDescription;
-
-    
     
 protected:
     

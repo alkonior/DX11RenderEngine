@@ -9,19 +9,19 @@ GVM::Compressed::SamplerStateDesc GVM::SamplerStateDesc::Compress() const {
     result.MipLODBias = MipLODBias;
 
 
-    uint32_t r = 255 * BorderColor[0];
-    uint32_t b = 255 * BorderColor[1];
-    uint32_t g = 255 * BorderColor[2];
-    uint32_t a = 255 * BorderColor[3];
+    result.BorderColor[0] = static_cast<uint8_t>(std::lroundf(255.f * BorderColor[0]));
+    result.BorderColor[1] = static_cast<uint8_t>(std::lroundf(255.f * BorderColor[1]));
+    result.BorderColor[2] = static_cast<uint8_t>(std::lroundf(255.f * BorderColor[2]));
+    result.BorderColor[3] = static_cast<uint8_t>(std::lroundf(255.f * BorderColor[3]));
     
-    result.ColorArray =  r  | (g << 8) | (b << 16) | (b << 24);
+    //result.ColorArray =  r  | (g << 8) | (b << 16) | (b << 24);
 
-    result.Compressed = (result.Compressed<<6)|to_underlying(Filter);
-    result.Compressed = (result.Compressed<<3)|to_underlying(AddressU);
-    result.Compressed = (result.Compressed<<3)|to_underlying(AddressV);
-    result.Compressed = (result.Compressed<<3)|to_underlying(AddressW);
-    result.Compressed = (result.Compressed<<3)|to_underlying(ComparisonFunc);
+    result.Fields.Filter = to_underlying(Filter);
+    result.Fields.AddressU = to_underlying(AddressU);
+    result.Fields.AddressV = to_underlying(AddressV);
+    result.Fields.AddressW = to_underlying(AddressW);
+    result.Fields.ComparisonFunc = to_underlying(ComparisonFunc);
     
-    result.Compressed = (result.Compressed<<8)|MaxAnisotropy;
+     result.Fields.MaxAnisotropy = MaxAnisotropy;
     return result;
 }

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cmath>
 #include "BaseStructures\GVMEnums.h"
 
 namespace GVM {
@@ -8,16 +9,23 @@ struct SamplerStateDesc;
 namespace Compressed {
     
 struct SamplerStateDesc {
+    struct SamplerStateFields
+    {
+        uint8_t        Filter          : 6;
+        uint8_t        AddressV        : 3;
+        uint8_t        AddressW        : 3;
+        uint8_t        MaxAnisotropy   ;
+        uint8_t        ComparisonFunc  : 4;
+        uint8_t        AddressU        : 3;
+    };
 
-    //ESamplerFilter             Filter;
-    //ETextureAddressMode        AddressU;
-    //ETextureAddressMode        AddressV;
-    //ETextureAddressMode        AddressW;
-    //EComparisonFunc            ComparisonFunc;
-    //uint8_t                    MaxAnisotropy;
-    uint32_t                   Compressed;
+    union
+    {
+        uint32_t               Data;
+        SamplerStateFields     Fields;
+    };
     
-    uint32_t                   ColorArray;
+    uint8_t                    BorderColor[4];
     float                      MipLODBias;
     float                      MinLOD;
     float                      MaxLOD;
@@ -36,7 +44,7 @@ struct SamplerStateDesc {
     float                      MipLODBias;
     uint8_t                    MaxAnisotropy;
     EComparisonFunc            ComparisonFunc;
-    uint8_t                    BorderColor[4];
+    float                      BorderColor[4];
     float                      MinLOD;
     float                      MaxLOD;
     

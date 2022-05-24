@@ -125,6 +125,3 @@ GpuResourceView::GpuResourceView(const GpuResourceView&& copy) noexcept
     }
 }
 
-GpuResource::GpuResource(Resource* id, const ResourceDesc& desc):
-id(id), resourceDescription(desc)
-{}

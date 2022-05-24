@@ -26,7 +26,7 @@ struct PipelineSnapshot {
 
     RasterizerStateDesc         rasterizerState = RasterizerStateDesc::Default;
     DepthStencilStateDesc       depthStencilState = DepthStencilStateDesc::Default;
-    InputLayout*               vertexDeclaration = nullptr;
+    InputLayout*               InputDeclaration = nullptr;
     DepthStencilView*          DepthStencilBuffer = nullptr;
 
     Mesh                        mesh = Mesh::VoidMesh;
@@ -44,10 +44,10 @@ struct PipelineSnapshot {
         
         
     uint8_t                     constBuffersNum = 0;
-    ConstBuffer*               ConstBuffers[15] = {};
+    ConstBufferView*                ConstBuffers[15] = {};
         
     uint8_t                     texturesNum = 0;
-    ResourceView*              Textures[128] = {};
+    ResourceView*               Textures[128] = {};
 
     uint32_t GetSize(const IStructuresSize& structuresSizes) const;
 
@@ -70,15 +70,14 @@ namespace Compressed {
 
 
         //RasterizerStateDesc         rasterizerState;
-        uint64_t                    rasterizerState;   
+        RasterizerStateDesc                    rasterizerState;   
         // DepthStencilStateDesc       depthStencilState;
-        uint64_t                    depthStencilState;   
+        DepthStencilStateDesc                    depthStencilState;   
 
         EPrimitiveTopology          primitiveType;
         
         CoreBlendDesc               blendDesc;
     
-        DepthStencilView*           DepthBuffer;
         uint8_t                     renderTargetsNum;
         //RenderTargetDesc            RenderTargets[8];
         
@@ -104,7 +103,6 @@ namespace Compressed {
         
         uint8_t Data[0];
 
-
         
         //IShader*                    VS;
         //IShader*                    PS;
@@ -114,6 +112,7 @@ namespace Compressed {
         //IShader*                    DS;
         
         //IInputLayout*                vertexDeclaration;
+        //IDepthStencilView*           DepthBuffer;
         //IIndexBufferView*            indexBuffer;
     
     };

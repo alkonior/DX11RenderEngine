@@ -4,8 +4,11 @@
 
 namespace GVM {
 
+struct DepthStencilStateDesc;
+    
 namespace Compressed {
     struct DepthStencilStateDesc {
+        DepthStencilStateDesc(GVM::DepthStencilStateDesc desc);
         uint64_t data;
     };
 }

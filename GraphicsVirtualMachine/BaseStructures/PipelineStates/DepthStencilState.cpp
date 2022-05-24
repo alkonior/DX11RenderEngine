@@ -6,6 +6,11 @@ using namespace GVM;
 
 const DepthStencilStateDesc DepthStencilStateDesc::Default;
 
+Compressed::DepthStencilStateDesc::DepthStencilStateDesc(GVM::DepthStencilStateDesc desc)
+{
+    data = desc.ToUInt();
+}
+
 DepthStencilStateDesc::DepthStencilStateDesc() : BaseStateDesc(DepthStencilStateMask) {}
 
 DepthStencilStateDesc::DepthStencilStateDesc(uint64_t descriptor) : BaseStateDesc(0) 

@@ -5,16 +5,44 @@
 
 
 namespace GVM {
-
+struct RasterizerStateDesc;
+    
 namespace Compressed {
     struct RasterizerStateDesc {
-        uint64_t data;
+        
+        RasterizerStateDesc(uint64_t data);
+        RasterizerStateDesc(GVM::RasterizerStateDesc desc);
+        
+        RasterizerStateDesc(const RasterizerStateDesc& desc);
+        RasterizerStateDesc(RasterizerStateDesc&& desc) noexcept;
+        RasterizerStateDesc& operator=(const RasterizerStateDesc& desc);
+        RasterizerStateDesc& operator=(RasterizerStateDesc&& desc) noexcept;
+        ~RasterizerStateDesc() = default;
+
+        struct RasterizerStateFields
+        {
+            
+            EFillMode       FillMode = EFillMode::FILL_SOLID;
+            ECullMode       CullMode = ECullMode::CULL_BACK;
+            bool            FrontCounterClockwise = false;
+            bool            DepthClipEnable = true;
+            bool            ScissorEnable = false;
+            bool            MultisampleEnable = false;
+            bool            AntialiasedLineEnable = false;
+            
+        };
+        
+        union
+        {
+            uint64_t data;
+            RasterizerStateFields Fields;
+        };
     };
 }
 
 struct RasterizerStateDesc : BaseStateDesc
 {
-    using CompressedType = Compressed::RasterizerStateDesc;
+    using CompressedType = RasterizerStateDesc;
 
     static const RasterizerStateDesc Default;
     
@@ -23,9 +51,6 @@ struct RasterizerStateDesc : BaseStateDesc
     EFillMode       FillMode = EFillMode::FILL_SOLID;
     ECullMode       CullMode = ECullMode::CULL_BACK;
     bool            FrontCounterClockwise = false;
-    int32_t         DepthBias = 0;
-    int16_t         DepthBiasClamp = 0;
-    int16_t         SlopeScaledDepthBias = 0.0;
     bool            DepthClipEnable = true;
     bool            ScissorEnable = false;
     bool            MultisampleEnable = false;
@@ -34,7 +59,7 @@ struct RasterizerStateDesc : BaseStateDesc
     RasterizerStateDesc();
     
     RasterizerStateDesc(uint64_t descriptor);//todo
-    uint64_t ToUInt() const;
+    CompressedType Compress() const;
 };
 
 }

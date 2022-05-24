@@ -5,10 +5,41 @@
 
 namespace GVM
 {
+struct  BlendStateDesc;
 
 namespace Compressed {
     struct BlendStateDesc {
-        uint64_t data;
+        
+        BlendStateDesc(uint64_t data);
+        BlendStateDesc(GVM::BlendStateDesc desc);
+        
+        BlendStateDesc(const BlendStateDesc& desc);
+        BlendStateDesc(BlendStateDesc&& desc) noexcept;
+        BlendStateDesc& operator=(const BlendStateDesc& desc);
+        BlendStateDesc& operator=(BlendStateDesc&& desc) noexcept;
+        ~BlendStateDesc() = default;
+        
+        struct BlendStateFields
+        {
+            uint8_t   BlendStateMask        : 2 = 0;
+            uint8_t   BlendEnable           : 1 = 0;
+            uint8_t   LogicOpEnable         : 1 = 0;
+            uint8_t   SrcBlend              : 5 = 0;
+            uint8_t   DestBlend             : 5 = 0;
+            uint8_t   SrcBlendAlpha         : 5 = 0;
+            uint8_t   DestBlendAlpha        : 5 = 0;
+            uint8_t   BlendOp               : 2 = 0;
+            uint8_t   BlendOpAlpha          : 2 = 0;
+            uint8_t   LogicOp               : 2 = 0;
+            uint8_t   RenderTargetWriteMask : 2 = 0;
+        };
+        
+        union 
+        {
+            uint64_t data = 0;
+            BlendStateFields Fields;
+        };
+
     };
 }
 
@@ -30,7 +61,7 @@ struct BlendStateDesc : BaseStateDesc
 
     BlendStateDesc();
     BlendStateDesc(uint64_t descriptor);
-    uint64_t ToUInt() const;
+   // Compressed::BlendStateDesc ToUInt() const;
 };
 
 struct CoreBlendDesc

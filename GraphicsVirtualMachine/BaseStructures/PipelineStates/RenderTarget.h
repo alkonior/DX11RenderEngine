@@ -5,8 +5,7 @@
 namespace GVM {
 namespace Compressed {
     struct RenderTargetDesc {
-        uint64_t BlendState;
-        RenderTargetView* rtv;
+        Compressed::BlendStateDesc BlendState;
     };
 }
 

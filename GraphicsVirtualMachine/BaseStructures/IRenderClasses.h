@@ -24,7 +24,7 @@ struct ShaderResourceView : ResourceView {};
 
 namespace Compressed {
     struct VertexBufferBinding {
-        VertexBufferView* vertexBuffers [1];
+        //VertexBufferView* vertexBuffers [1];
         uint32_t vertexStride [1];
         uint32_t vertexOffset [1];
     };

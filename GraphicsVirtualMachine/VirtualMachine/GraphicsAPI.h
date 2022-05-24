@@ -89,8 +89,8 @@ public:
 	void SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer);
 	void SetupShader(const Shader* shader, EShaderType type);
 
-	void SetupConstBuffers(ConstBuffer* constBuffers[], uint8_t num, uint8_t offset);
-	void SetupConstBuffer(ConstBuffer* constBuffer, uint8_t slot);
+	void SetupConstBuffers(ConstBufferView* constBuffers[], uint8_t num, uint8_t offset);
+	void SetupConstBuffer(ConstBufferView* constBuffer, uint8_t slot);
 	void SetupInputLayout(InputLayout* layout);
 
 

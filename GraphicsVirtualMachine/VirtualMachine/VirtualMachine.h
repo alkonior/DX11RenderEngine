@@ -40,6 +40,7 @@ namespace GVM
         ResourcesManager resourcesManager;
 
         uint32_t PushData(void* data, uint32_t dataLength);
+        
     public:
         VirtualMachine(const RenderDeviceInitParams& initParams, bool debugMode = true);
         VirtualMachine(const VirtualMachine&) = delete;

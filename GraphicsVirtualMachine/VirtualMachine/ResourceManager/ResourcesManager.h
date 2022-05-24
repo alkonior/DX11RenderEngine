@@ -1,7 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include <type_traits>
-#include "BaseStructures.h"
 #include "GPUResource.h"
 
 
@@ -67,6 +66,7 @@ public:
     IRenderDevice::IResource* GetRealResource(const Resource* resource);
     IRenderDevice::IShader* GetRealShader(const Shader* shader);
     IRenderDevice::IResourceView* GetRealResourceView(const ResourceView* resourceView);
+    IRenderDevice::IInputLayout* GetRealInputLayout(const InputLayout* resourceView);
     
     
 };

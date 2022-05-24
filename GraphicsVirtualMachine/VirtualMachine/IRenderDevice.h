@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "BaseStructures.h"
+#include "../BaseStructures.h"
 
 
 namespace GVM {
