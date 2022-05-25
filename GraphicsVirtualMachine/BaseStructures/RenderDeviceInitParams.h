@@ -3,6 +3,11 @@
 
 namespace GVM {
 
+enum class EDeviceToUse
+{
+	DX11,
+};
+
 struct PlatformHandle {
 #if defined(GVM_LINUX)
 	xcb_connection_t*                   connection;
@@ -15,10 +20,11 @@ struct PlatformHandle {
 
 
 struct RenderDeviceInitParams {
-	int32_t			backBufferWidth;
-	int32_t			backBufferHeight;
-	int32_t			multiSampleCount;
-	PlatformHandle  deviceWindowHandle;
+	EDeviceToUse     device;
+	int32_t			 backBufferWidth;
+	int32_t			 backBufferHeight;
+	int32_t			 multiSampleCount;
+	PlatformHandle   deviceWindowHandle;
 	EPresentInterval presentationInterval;
 };
 

@@ -605,6 +605,11 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="BaseStructures\Shader.cpp" />
+    <ClCompile Include="RenderDeviceDX11\BaseClasses\InputLayoutDX11.cpp" />
+    <ClCompile Include="RenderDeviceDX11\BaseClasses\ResourceDX11.cpp" />
+    <ClCompile Include="RenderDeviceDX11\BaseClasses\ResourceViewDX11.cpp" />
+    <ClCompile Include="RenderDeviceDX11\BaseClasses\ShaderDX11.cpp" />
+    <ClCompile Include="RenderDeviceDX11\RenderDeviceDX11.cpp" />
     <ClCompile Include="VirtualMachine\GraphicsAPI.cpp" />
     <ClCompile Include="VirtualMachine\ResourceManager\GPUResource.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -777,6 +782,11 @@
     <ClInclude Include="BaseStructures\GVMEnums.h" />
     <ClInclude Include="BaseStructures\VertexDeclaration.h" />
     <ClInclude Include="CoreStructures\PipelineSnapshot.h" />
+    <ClInclude Include="RenderDeviceDX11\BaseClasses\InputLayoutDX11.h" />
+    <ClInclude Include="RenderDeviceDX11\BaseClasses\ResourceDX11.h" />
+    <ClInclude Include="RenderDeviceDX11\BaseClasses\ResourceViewDX11.h" />
+    <ClInclude Include="RenderDeviceDX11\BaseClasses\ShaderDX11.h" />
+    <ClInclude Include="RenderDeviceDX11\RenderDeviceDX11.h" />
     <ClInclude Include="VirtualMachine\GraphicsAPI.h" />
     <ClInclude Include="VirtualMachine\IRenderDevice.h" />
     <ClInclude Include="VirtualMachine\ResourceManager\GPUResource.h" />
@@ -787,7 +797,7 @@
     <ClCompile Include="VirtualMachine\VirtualMachineResourceManaging.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BaseStructures\DX11IRenderDevice\BaseStructures" />
+    <ClInclude Include="RenderDeviceDX11\BaseDX11Classes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -37,7 +37,8 @@ class ResourcesManager
 
 
     ResourcesManager(IRenderDevice* device);
-    
+
+#pragma region Resources
     GpuResource& CreateResource         (const ResourceDesc& desc);
     GpuResource& CreateBuffer           (const BufferResourceDesc& desc);
     GpuResource& CreateTexture1D        (const Texture1DResourceDesc& desc);
@@ -55,7 +56,9 @@ class ResourcesManager
     GpuResourceView& CreateShaderResourceView(const ShaderResourceViewDesc& desc);
     GpuResourceView& CreateRenderTargetView(const RenderTargetViewDesc& desc);
     GpuResourceView& CreateUATargetView(const UATargetViewDesc& desc);
+#pragma endregion
 
+    
 
     //void UpdateResources();
     

@@ -6,6 +6,47 @@ using namespace GVM;
 
 const RasterizerStateDesc RasterizerStateDesc::Default;
 
+Compressed::RasterizerStateDesc::RasterizerStateDesc(uint64_t data):data(data)
+{
+#ifdef _DEBUG
+    assert(Fields.RasterizerMask == GVM::RasterizerStateDesc::RasterizerStateMask);
+#endif
+}
+
+Compressed::RasterizerStateDesc::RasterizerStateDesc(GVM::RasterizerStateDesc desc)
+{
+      Fields.RasterizerMask = desc.State;
+    
+      Fields.FillMode  = to_underlying(desc.FillMode);
+      Fields.CullMode  = to_underlying(desc.FillMode);
+      
+      Fields.FrontCounterClockwise = desc.FrontCounterClockwise;
+      
+      Fields.DepthClipEnable        = desc.DepthClipEnable;
+      Fields.ScissorEnable          = desc.ScissorEnable;
+      Fields.MultisampleEnable      = desc.MultisampleEnable;
+      Fields.AntialiasedLineEnable  = desc.AntialiasedLineEnable;
+}
+
+Compressed::RasterizerStateDesc::RasterizerStateDesc(const RasterizerStateDesc& desc) :data(desc.data)
+{}
+
+Compressed::RasterizerStateDesc::RasterizerStateDesc(RasterizerStateDesc&& desc) noexcept :data(desc.data)
+{
+}
+
+Compressed::RasterizerStateDesc& Compressed::RasterizerStateDesc::operator=(const RasterizerStateDesc& desc)
+{
+    this->data = desc.data;
+    return *this;
+}
+
+Compressed::RasterizerStateDesc& Compressed::RasterizerStateDesc::operator=(RasterizerStateDesc&& desc) noexcept
+{
+    this->data = desc.data;
+    return *this;
+}
+
 inline RasterizerStateDesc::RasterizerStateDesc() : BaseStateDesc(RasterizerStateMask) {}
 
 RasterizerStateDesc::RasterizerStateDesc(uint64_t descriptor) : BaseStateDesc(0) {

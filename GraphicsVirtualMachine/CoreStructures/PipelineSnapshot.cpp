@@ -29,7 +29,7 @@ uint32_t Compressed::PipelineSnapshot::GetSize() const
     return SnapshotByteSize;
 }
 
-void GVM::PipelineSnapshot::Compress(CompressArgs& args) const {
+void GVM::PipelineSnapshot::Compress(const CompressArgs& args) const {
 
 
     

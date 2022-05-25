@@ -6,7 +6,7 @@ namespace GVM
     template <class T>
     using VMStack = std::vector<T>;
 
-    typedef typename Compressed::PipelineSnapshot PSC;
+    typedef typename PipelineSnapshot::CompressedType PSC;
 
     class VirtualMachine
     {
@@ -31,7 +31,7 @@ namespace GVM
             SET_INDEX_BUFFER_DATA,
             SET_CONST_BUFFER_DATA,
         };
-
+        IStructuresSize iStructSizes;
 
         VMStack<uint32_t> intStack;
         VMStack<EMachineCommands> commandStack;

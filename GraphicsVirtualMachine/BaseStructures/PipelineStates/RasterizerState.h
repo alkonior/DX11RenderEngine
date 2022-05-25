@@ -21,20 +21,20 @@ namespace Compressed {
 
         struct RasterizerStateFields
         {
-            
-            EFillMode       FillMode = EFillMode::FILL_SOLID;
-            ECullMode       CullMode = ECullMode::CULL_BACK;
-            bool            FrontCounterClockwise = false;
-            bool            DepthClipEnable = true;
-            bool            ScissorEnable = false;
-            bool            MultisampleEnable = false;
-            bool            AntialiasedLineEnable = false;
+            uint8_t       RasterizerMask        : 3 = 0;
+            uint8_t       FillMode              : 1 = 0;
+            uint8_t       CullMode              : 2 = 0;
+            uint8_t       FrontCounterClockwise : 1 = 0;
+            uint8_t       DepthClipEnable       : 1 = 0;
+            uint8_t       ScissorEnable         : 1 = 0;
+            uint8_t       MultisampleEnable     : 1 = 0;
+            uint8_t       AntialiasedLineEnable : 1 = 0;
             
         };
         
         union
         {
-            uint64_t data;
+            uint64_t data = 0;
             RasterizerStateFields Fields;
         };
     };

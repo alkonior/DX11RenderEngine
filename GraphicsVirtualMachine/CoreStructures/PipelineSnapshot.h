@@ -13,13 +13,13 @@ namespace Compressed {
 struct PipelineSnapshot {
 
     using CompressedType = Compressed::PipelineSnapshot;
-    Shader*                    VS;
-    Shader*                    PS;
-    Shader*                    CS;
-    Shader*                    GS;
-    Shader*                    HS;
-    Shader*                    DS;
-
+    Shader*                    VS = nullptr;
+    Shader*                    PS = nullptr;
+    Shader*                    CS = nullptr;
+    Shader*                    GS = nullptr;
+    Shader*                    HS = nullptr;
+    Shader*                    DS = nullptr;
+    
     uint32_t                    DrawCallsNum = 0;
 
     EPrimitiveTopology          primitiveType = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNDEFINED;
@@ -53,11 +53,11 @@ struct PipelineSnapshot {
 
     struct CompressArgs
     {
-        Compressed::PipelineSnapshot* cps;
+        CompressedType* cps;
         ResourcesManager& resourceManager;
         const IStructuresSize& structuresSizes;
     };
-    void Compress(CompressArgs& args) const;
+    void Compress(const CompressArgs& args) const;
     
 };
 
@@ -70,9 +70,9 @@ namespace Compressed {
 
 
         //RasterizerStateDesc         rasterizerState;
-        RasterizerStateDesc                    rasterizerState;   
+        RasterizerStateDesc         rasterizerState;   
         // DepthStencilStateDesc       depthStencilState;
-        DepthStencilStateDesc                    depthStencilState;   
+        DepthStencilStateDesc       depthStencilState;   
 
         EPrimitiveTopology          primitiveType;
         
