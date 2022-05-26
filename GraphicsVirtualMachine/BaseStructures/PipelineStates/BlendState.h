@@ -21,17 +21,17 @@ namespace Compressed {
         
         struct BlendStateFields
         {
-            uint8_t   BlendStateMask        : 2 = 0;
-            uint8_t   BlendEnable           : 1 = 0;
-            uint8_t   LogicOpEnable         : 1 = 0;
-            uint8_t   SrcBlend              : 5 = 0;
-            uint8_t   DestBlend             : 5 = 0;
-            uint8_t   SrcBlendAlpha         : 5 = 0;
-            uint8_t   DestBlendAlpha        : 5 = 0;
-            uint8_t   BlendOp               : 2 = 0;
-            uint8_t   BlendOpAlpha          : 2 = 0;
-            uint8_t   LogicOp               : 2 = 0;
-            uint8_t   RenderTargetWriteMask : 2 = 0;
+            uint8_t   BlendStateMask        : 2;
+            uint8_t   BlendEnable           : 1;
+            uint8_t   LogicOpEnable         : 1;
+            uint8_t   SrcBlend              : 5;
+            uint8_t   DestBlend             : 5;
+            uint8_t   SrcBlendAlpha         : 5;
+            uint8_t   DestBlendAlpha        : 5;
+            uint8_t   BlendOp               : 2;
+            uint8_t   BlendOpAlpha          : 2;
+            uint8_t   LogicOp               : 2;
+            uint8_t   RenderTargetWriteMask : 2;
         };
         
         union 

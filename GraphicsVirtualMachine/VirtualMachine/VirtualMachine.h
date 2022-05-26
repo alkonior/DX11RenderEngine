@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "CoreStructures\PipelineSnapshot.h"
+#include "../CoreStructures/PipelineSnapshot.h"
 
 namespace GVM
 {
@@ -58,23 +58,23 @@ public:
 
 #pragma region Resources
 
-    const Resource* CreateResource(const ResourceDesc& desc);
-    const Resource* CreateBuffer(const BufferResourceDesc& desc);
-    const Resource* CreateTexture1D(const Texture1DResourceDesc& desc);
-    const Resource* CreateTexture2D(const Texture2DResourceDesc& desc);
-    const Resource* CreateTexture3D(const Texture3DResourceDesc& desc);
-    const Resource* CreateTextureCube(const TextureCubeResourceDesc& desc);
-    const VertexBuffer* CreateVertexBuffer(const BufferResourceDesc& desc);
-    const ConstBuffer* CreateConstBuffer(const BufferResourceDesc& desc);
-    const IndexBuffer* CreateIndexBuffer(const BufferResourceDesc& desc);
+    Resource* CreateResource(const ResourceDesc& desc);
+    Resource* CreateBuffer(const BufferResourceDesc& desc);
+    Resource* CreateTexture1D(const Texture1DResourceDesc& desc);
+    Resource* CreateTexture2D(const Texture2DResourceDesc& desc);
+    Resource* CreateTexture3D(const Texture3DResourceDesc& desc);
+    Resource* CreateTextureCube(const TextureCubeResourceDesc& desc);
+    VertexBuffer* CreateVertexBuffer(const BufferResourceDesc& desc);
+    ConstBuffer* CreateConstBuffer(const BufferResourceDesc& desc);
+    IndexBuffer* CreateIndexBuffer(const BufferResourceDesc& desc);
 
-    const ConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc);
-    const VertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc);
-    const IndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc);
-    const DepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
-    const ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
-    const RenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
-    const UATargetView* CreateUATargetView(const UATargetViewDesc& desc);
+    ConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc);
+    VertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc);
+    IndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc);
+    DepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
+    ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
+    RenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    UATargetView* CreateUATargetView(const UATargetViewDesc& desc);
 
     void AddDisposeResource(const Resource* resource);
     void AddDisposeResourceView(const ResourceView* resourceView);

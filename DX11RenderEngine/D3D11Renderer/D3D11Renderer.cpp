@@ -202,6 +202,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
             /* Clear! */
             GFX_THROW_INFO_ONLY(context->ClearRenderTargetView(renderTargetViews[i].Get(), clearColor));
         }
+        testApi->ClearRenderTargets((renderTargetViewsTest.data()),numRenderTargets, clearColor);
     }
 
     /* Clear depth/stencil? */
@@ -223,6 +224,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
             depth,
             (uint8_t)stencil
         ));
+        testApi->Clear(depthStencilBufferTest, depth, stencil);
     }
 }
 
@@ -284,6 +286,7 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
             IndexType[indexElementSize / 16 - 1],
             0
         );
+        testApi->SetupIndexBuffer((GVM::IndexBufferView*)d3dIndices->handleViewTest);
     }
 }
 
@@ -362,6 +365,14 @@ void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexSt
 
 GVM::ViewportDesc ToGVM(const Viewport& viewport)
 {
+    GVM::ViewportDesc result;
+    result.Height = viewport.h;
+    result.Width = viewport.w;
+    result.TopLeftX = viewport.x;
+    result.TopLeftY = viewport.y;
+    result.MinDepth = viewport.minDepth;
+    result.MaxDepth = viewport.maxDepth;
+    return result;
 }
 
 void D3D11Renderer::SetViewport(const Viewport& viewport, uint32_t slot)
@@ -379,6 +390,7 @@ void D3D11Renderer::SetViewport(const Viewport& viewport, uint32_t slot)
 
     maxViewportSlot = std::max<int>(maxViewportSlot, slot);
     GFX_THROW_INFO_ONLY(context->RSSetViewports(maxViewportSlot + 1, this->viewport));
+    testApi->SetupViewport(ToGVM(viewport), slot);
 }
 
 void D3D11Renderer::SetScissorRect(Rect scissor)

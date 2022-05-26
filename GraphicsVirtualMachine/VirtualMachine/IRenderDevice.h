@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../BaseStructures.h"
+#include "../BaseStructures/RenderDeviceInitParams.h"
 
 
 namespace GVM {

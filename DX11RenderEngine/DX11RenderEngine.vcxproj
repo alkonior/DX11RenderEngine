@@ -93,7 +93,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;$(ProjectDir)..\..\DX11RenderEngine\dxerr\;$(ProjectDir)..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
@@ -139,7 +139,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)DX11RenderEngine\Shaders;$(SolutionDir)DX11RenderEngine\Utils\include;$(SolutionDir)DX11RenderEngine;$(SolutionDir)dxerr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

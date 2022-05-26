@@ -1,6 +1,6 @@
 #pragma once
-#include "BaseStructures.h"
-#include "VirtualMachine/ResourceManager/ResourcesManager.h"
+#include "../BaseStructures.h"
+#include "../VirtualMachine/ResourceManager/ResourcesManager.h"
 
 namespace GVM {
 

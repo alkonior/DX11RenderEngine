@@ -1,8 +1,6 @@
 ﻿#pragma once
-#include <array>
 #include "BaseStructures\VertexDeclaration.h"
 #include "BaseStructures\Shader.h"
-#include "BaseStructures\RenderDeviceInitParams.h"
 #include "BaseStructures\PipelineStates\BlendState.h"
 #include "BaseStructures\PipelineStates\RasterizerState.h"
 #include "BaseStructures\PipelineStates\SamplerState.h"
@@ -18,6 +16,9 @@
 namespace GVM {
 
 struct FColor {
+    FColor();
+    FColor(float Colors[4]):Color{Colors[0],Colors[1],Colors[2],Colors[3]}{}
+    
     float Color[4];
 };
 

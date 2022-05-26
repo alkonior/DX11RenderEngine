@@ -10,7 +10,7 @@
 
 
 #define GVM_MSW
-#include "VirtualMachine/GraphicsAPI.h"
+#include "../GraphicsVirtualMachine/VirtualMachine/GraphicsAPI.h"
 
 #include <unordered_map>
 
@@ -94,8 +94,10 @@ private:
 	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
 	wrl::ComPtr<ID3D11UnorderedAccessView> swapchainUAView;
 	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
+	std::vector<GVM::RenderTargetView*> renderTargetViewsTest;
 	
 	D3D11Renderbuffer* depthStencilBuffer;
+	GVM::DepthStencilView* depthStencilBufferTest;
 
 
 	std::mutex ctxLock;

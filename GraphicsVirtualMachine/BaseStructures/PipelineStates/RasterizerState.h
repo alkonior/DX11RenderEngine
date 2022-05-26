@@ -21,14 +21,14 @@ namespace Compressed {
 
         struct RasterizerStateFields
         {
-            uint8_t       RasterizerMask        : 3 = 0;
-            uint8_t       FillMode              : 1 = 0;
-            uint8_t       CullMode              : 2 = 0;
-            uint8_t       FrontCounterClockwise : 1 = 0;
-            uint8_t       DepthClipEnable       : 1 = 0;
-            uint8_t       ScissorEnable         : 1 = 0;
-            uint8_t       MultisampleEnable     : 1 = 0;
-            uint8_t       AntialiasedLineEnable : 1 = 0;
+            uint8_t       RasterizerMask        : 3;
+            uint8_t       FillMode              : 1;
+            uint8_t       CullMode              : 2;
+            uint8_t       FrontCounterClockwise : 1;
+            uint8_t       DepthClipEnable       : 1;
+            uint8_t       ScissorEnable         : 1;
+            uint8_t       MultisampleEnable     : 1;
+            uint8_t       AntialiasedLineEnable : 1;
             
         };
         
