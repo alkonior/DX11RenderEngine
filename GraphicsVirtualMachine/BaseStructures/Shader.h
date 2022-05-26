@@ -4,12 +4,12 @@
 namespace GVM {
 
 struct ShaderDesc {
-    EShaderType type;
+    EShaderType type = EShaderType::UNKNOWN;
     
-    void* bytecode;
-    uint32_t byteCodeSize;
+    void* bytecode = nullptr;
+    uint32_t byteCodeSize = 0;
 #ifdef _DEBUG
-    const char* name;
+    const char* name = "";
 #endif
 };
 

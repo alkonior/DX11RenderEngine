@@ -16,12 +16,13 @@ constexpr E to_enum(uint8_t e) noexcept
 }
 
 enum class EShaderType : uint8_t  {
-    VertexShader,
-    PixelShader,
-    GeometryShader,
-    HullShader,
-    ComputeShader,
-    DomainShader,
+    UNKNOWN,
+    VERTEX_SHADER,
+    PIXEL_SHADER,
+    GEOMETRY_SHADER,
+    HULL_SHADER,
+    COMPUTE_SHADER,
+    DOMAIN_SHADER,
 };
 
 enum class EBlendOperator : uint8_t {

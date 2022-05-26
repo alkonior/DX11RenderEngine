@@ -1,6 +1,6 @@
 #pragma once
 #include "VirtualMachine/IRenderDevice.h"
-
+namespace GVM {
 class ResourceViewDX11 : public GVM::IRenderDevice::IResourceView
 {
 public:
@@ -8,3 +8,4 @@ public:
     ~ResourceViewDX11() override;
     uint8_t data[6] = {6,5,4,3,2,1};
 };
+}

@@ -9,7 +9,7 @@ struct VertexDeclarationDesc {
     inline static constexpr uint32_t APPEND_ALIGNED_ELEMENT = ( 0xffffffff );
     
     const char*                SemanticName;
-    EFormat                Format;
+    EFormat                    Format;
     uint8_t                    InputSlot;
     uint8_t                    SemanticIndex = 0;
     uint32_t                   AlignedByteOffset = APPEND_ALIGNED_ELEMENT;

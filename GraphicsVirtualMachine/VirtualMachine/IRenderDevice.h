@@ -35,13 +35,13 @@ public:
     
 protected:
 
-    class IVertexBufferView : IResourceView {};
-    class IIndexBufferView : IResourceView {};
-    class IConstBufferView : IResourceView {};
-    class IRenderTargetView : IResourceView {};
-    class IDepthStencilView : IResourceView {};
-    class IShaderResourceView : IResourceView {};
-    class IUATargetView : IResourceView {};
+    class IVertexBufferView : public IResourceView {};
+    class IIndexBufferView : public IResourceView {};
+    class IConstBufferView : public IResourceView {};
+    class IRenderTargetView : public  IResourceView {};
+    class IDepthStencilView : public IResourceView {};
+    class IShaderResourceView : public IResourceView {};
+    class IUATargetView : public IResourceView {};
 
 
     friend class VirtualMachine;
@@ -52,19 +52,22 @@ protected:
     IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
 
 
-    virtual const IStructuresSize GetClassesSize() = 0;
+    virtual IStructuresSize GetClassesSize() = 0;
     
-    virtual const IResource* CreateResource(const ResourceDesc& desc) = 0;
+    virtual IResource* CreateResource(const ResourceDesc& desc) = 0;
     
-    virtual const IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc) = 0;
-    virtual const IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc) = 0;
-    virtual const IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc) = 0;
-    virtual const IDepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc) = 0;
-    virtual const IShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc) = 0;
-    virtual const IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc) = 0;
-    virtual const IUATargetView* CreateUATargetView(const UATargetViewDesc& desc) = 0;
+    virtual IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc) = 0;
+    virtual IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc) = 0;
+    virtual IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc) = 0;
+    virtual IDepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc) = 0;
+    virtual IShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc) = 0;
+    virtual IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc) = 0;
+    virtual IUATargetView* CreateUATargetView(const UATargetViewDesc& desc) = 0;
 
 
+    
+    virtual IShader* CreateShader(const ShaderDesc& desc) = 0;
+    virtual IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc) = 0;
     
     /*
     virtual ~IRenderDevice() = default;

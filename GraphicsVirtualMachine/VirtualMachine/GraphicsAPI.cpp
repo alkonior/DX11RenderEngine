@@ -3,32 +3,18 @@
 using namespace GVM;
 
 GraphicsApi::GraphicsApi(const RenderDeviceInitParams& initParams, bool debugMode):
-graphicsMachine(initParams, debugMode)
-{
-    
-    
-}
+    graphicsMachine(initParams, debugMode)
+{ }
 
-void GraphicsApi::Present() {
-
-
-
-    
-}
+void GraphicsApi::Present() { }
 
 
 void GraphicsApi::ClearRenderTargets(const RenderTargetView** renderTargets, int32_t numRenderTargets, FColor color)
-{
-    
-}
+{ }
 void GraphicsApi::ClearRenderTarget(const RenderTargetView* renderTarget, FColor color)
-{
-    
-}
+{ }
 void GraphicsApi::Clear(const DepthStencilView* septhStencil, float depth, int8_t stencil)
-{
-    
-}
+{ }
 void GraphicsApi::ClearState()
 {
     //ps.VS = ps.PS = ps.CS = ps.GS = ps.HS = ps.DS = nullptr;
@@ -53,7 +39,7 @@ void GraphicsApi::ClearState()
     //ps.texturesNum = 0;
     //ps.Textures = {};
     ps = PipelineSnapshot();
-    
+
     wasPSUpdated = true;
 }
 
@@ -67,7 +53,7 @@ void GraphicsApi::DrawIndexedPrimitives(int32_t baseVertex, int32_t minVertexInd
         graphicsMachine.PushPSC(ps);
         wasPSUpdated = false;
     }
-    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED, {baseVertex,minVertexIndex,numVertices,startIndex,primitiveCount}});
+    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED,{baseVertex,minVertexIndex,numVertices,startIndex,primitiveCount}});
 }
 
 void GraphicsApi::DrawInstancedPrimitives(int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount)
@@ -77,7 +63,7 @@ void GraphicsApi::DrawInstancedPrimitives(int32_t baseVertex, int32_t minVertexI
         graphicsMachine.PushPSC(ps);
         wasPSUpdated = false;
     }
-    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW_INSTANCED, {baseVertex,minVertexIndex,numVertices,startIndex,primitiveCount}});
+    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW_INSTANCED,{baseVertex,minVertexIndex,numVertices,startIndex,primitiveCount}});
 }
 
 void GraphicsApi::DrawPrimitives(int32_t vertexStart, int32_t primitiveCount)
@@ -87,7 +73,7 @@ void GraphicsApi::DrawPrimitives(int32_t vertexStart, int32_t primitiveCount)
         graphicsMachine.PushPSC(ps);
         wasPSUpdated = false;
     }
-    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW, {vertexStart, primitiveCount,0,0,0}});
+    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DRAW,{vertexStart,primitiveCount,0,0,0}});
 }
 
 void GraphicsApi::Dispatch(size_t x, size_t y, size_t z)
@@ -97,7 +83,7 @@ void GraphicsApi::Dispatch(size_t x, size_t y, size_t z)
         graphicsMachine.PushPSC(ps);
         wasPSUpdated = false;
     }
-    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DISPATCH, {x,y,z,0,0}});
+    graphicsMachine.PushDrawCall(DrawCall{EDrawCallType::DISPATCH,{x,y,z,0,0}});
 }
 
 
@@ -110,9 +96,9 @@ void GraphicsApi::SetupViewports(const ViewportDesc viewport[], uint8_t num, uin
     wasPSUpdated = true;
     for (int i = 0; i < num; i++)
     {
-        ps.Viewports[offset+i] = viewport[i];
+        ps.Viewports[offset + i] = viewport[i];
     }
-    ps.viewportsNum = std::max<uint8_t>(ps.viewportsNum, offset+num);
+    ps.viewportsNum = std::max<uint8_t>(ps.viewportsNum, offset + num);
 }
 void GraphicsApi::SetupViewport(const ViewportDesc& viewport, uint8_t slot)
 {
@@ -140,9 +126,9 @@ void GraphicsApi::SetupSamplers(const SamplerStateDesc samplers[], uint8_t num, 
     wasPSUpdated = true;
     for (int i = 0; i < num; i++)
     {
-        ps.Samplers[offset+i] = samplers[i];
+        ps.Samplers[offset + i] = samplers[i];
     }
-    ps.samplersNum = std::max<uint8_t>(ps.samplersNum, offset+num);
+    ps.samplersNum = std::max<uint8_t>(ps.samplersNum, offset + num);
 }
 
 void GraphicsApi::SetupSampler(const SamplerStateDesc& sampler, uint8_t slot)
@@ -170,28 +156,27 @@ void GraphicsApi::SetupTextures(const ResourceView* textures[], uint8_t num, uin
     wasPSUpdated = true;
     for (int i = 0; i < num; i++)
     {
-        ps.Textures[i+offset] = (ResourceView*)textures[i];
+        ps.Textures[i + offset] = (ResourceView*)textures[i];
     }
-    ps.texturesNum =  std::max<uint8_t>(ps.texturesNum, offset+num);
-    
+    ps.texturesNum = std::max<uint8_t>(ps.texturesNum, offset + num);
 }
 void GraphicsApi::SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset,
     DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.DepthStencilBuffer = depthStencilBuffer;
-    
+
     for (int i = 0; i < num; i++)
     {
-        ps.RenderTargets[i+offset] = renderTargets[i];
+        ps.RenderTargets[i + offset] = renderTargets[i];
     }
-    ps.renderTargetsNum =  std::max<uint8_t>(ps.renderTargetsNum, offset+num);
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, offset + num);
 }
 void GraphicsApi::SetupRenderTarget(const RenderTargetDesc renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.RenderTargets[slot] = renderTarget;
-    ps.renderTargetsNum =  std::max<uint8_t>(ps.renderTargetsNum, slot);
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
 }
 
 void GraphicsApi::SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer)
@@ -205,29 +190,35 @@ void GraphicsApi::SetupShader(const Shader* shader, EShaderType type)
     wasPSUpdated = true;
     switch (type)
     {
-        case EShaderType::ComputeShader  : ps.CS = (Shader*)shader; break;
-        case EShaderType::DomainShader   : ps.DS = (Shader*)shader; break;
-        case EShaderType::GeometryShader : ps.GS = (Shader*)shader; break;
-        case EShaderType::HullShader     : ps.HS = (Shader*)shader; break;
-        case EShaderType::PixelShader    : ps.PS = (Shader*)shader; break;
-        case EShaderType::VertexShader   : ps.VS = (Shader*)shader; break;
+    case EShaderType::COMPUTE_SHADER: ps.CS = (Shader*)shader;
+        break;
+    case EShaderType::DOMAIN_SHADER: ps.DS = (Shader*)shader;
+        break;
+    case EShaderType::GEOMETRY_SHADER: ps.GS = (Shader*)shader;
+        break;
+    case EShaderType::HULL_SHADER: ps.HS = (Shader*)shader;
+        break;
+    case EShaderType::PIXEL_SHADER: ps.PS = (Shader*)shader;
+        break;
+    case EShaderType::VERTEX_SHADER: ps.VS = (Shader*)shader;
+        break;
+    default: ;
     }
 }
 void GraphicsApi::SetupConstBuffers(ConstBufferView* constBuffers[], uint8_t num, uint8_t offset)
 {
     wasPSUpdated = true;
-    for (int i = 0; i<num; i++)
+    for (int i = 0; i < num; i++)
     {
-        ps.ConstBuffers[offset+i] = constBuffers[i];
+        ps.ConstBuffers[offset + i] = constBuffers[i];
     }
-    ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, offset+num);
+    ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, offset + num);
 }
 void GraphicsApi::SetupConstBuffer(ConstBufferView* constBuffer, uint8_t slot)
 {
     wasPSUpdated = true;
     ps.ConstBuffers[slot] = constBuffer;
     ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, slot);
-    
 }
 
 void GraphicsApi::SetupInputLayout(InputLayout* layout)
@@ -317,35 +308,36 @@ void GraphicsApi::AddDisposeResourceView(const ResourceView* resourceView)
 }
 
 void GraphicsApi::SetResourceData(const Resource* resource, uint16_t dstSubresource, const UBox rect,
-                                  const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
-{
-    
-}
+    const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+{ }
 
 void GraphicsApi::SetVertexBufferData(const VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
-{
-    
-}
+{ }
 
 void GraphicsApi::SetIndexBufferData(const IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
-{
-    
-}
+{ }
 
 void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, void* data)
-{
-    
-}
+{ }
 
 
 InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
 {
-    return nullptr;
+    return graphicsMachine.CreateInputLayout(desc);
 }
 
-InputLayout* GraphicsApi::CreateShader(const InputAssemblerDeclarationDesc& desc, EShaderType type)
+Shader* GraphicsApi::CreateShader(const ShaderDesc& desc)
 {
-    return nullptr;
+    return graphicsMachine.CreateShader(desc);
 }
+
+void GraphicsApi::BeginEvent(const char* name)
+{}
+
+void GraphicsApi::EndEvent()
+{}
+
+void GraphicsApi::SetMarker(const char* name)
+{}

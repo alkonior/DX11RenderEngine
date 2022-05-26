@@ -7,7 +7,13 @@
 #include "D3D11Buffer.h"
 #include "../GraphicsExceptions/DxgiInfoManager.h"
 
+
+
+#define GVM_MSW
+#include "VirtualMachine/GraphicsAPI.h"
+
 #include <unordered_map>
+
 
 namespace Renderer{
 
@@ -18,6 +24,7 @@ public:
 	wrl::ComPtr<ID3D11Device> device;
 	wrl::ComPtr<ID3D11DeviceContext> context;
 	wrl::ComPtr<IDXGISwapChain> swapchain;
+	GVM::GraphicsApi* testApi;
 
 private:
 	wrl::ComPtr<ID3DUserDefinedAnnotation> perf;

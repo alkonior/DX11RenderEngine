@@ -611,6 +611,7 @@
     <ClCompile Include="RenderDeviceDX11\BaseClasses\ShaderDX11.cpp" />
     <ClCompile Include="RenderDeviceDX11\RenderDeviceDX11.cpp" />
     <ClCompile Include="VirtualMachine\GraphicsAPI.cpp" />
+    <ClCompile Include="VirtualMachine\ResourceManager\GPUIputLayout.cpp" />
     <ClCompile Include="VirtualMachine\ResourceManager\GPUResource.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -686,6 +687,7 @@
       <AdditionalIncludeDirectories>P:\Quake-2\ref_dx11rg\DX11RenderEngine\GraphicsVirtualMachine\;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="VirtualMachine\ResourceManager\GPUShader.cpp" />
     <ClCompile Include="VirtualMachine\ResourceManager\ResourcesManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -789,7 +791,9 @@
     <ClInclude Include="RenderDeviceDX11\RenderDeviceDX11.h" />
     <ClInclude Include="VirtualMachine\GraphicsAPI.h" />
     <ClInclude Include="VirtualMachine\IRenderDevice.h" />
+    <ClInclude Include="VirtualMachine\ResourceManager\GPUInputLayout.h" />
     <ClInclude Include="VirtualMachine\ResourceManager\GPUResource.h" />
+    <ClInclude Include="VirtualMachine\ResourceManager\GPUShader.h" />
     <ClInclude Include="VirtualMachine\ResourceManager\ResourcesManager.h" />
     <ClInclude Include="VirtualMachine\VirtualMachine.h" />
   </ItemGroup>

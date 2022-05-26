@@ -92,7 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;$(ProjectDir)..\..\DX11RenderEngine\dxerr\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(ProjectDir)..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;$(ProjectDir)..\..\DX11RenderEngine\dxerr\;$(ProjectDir)..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>

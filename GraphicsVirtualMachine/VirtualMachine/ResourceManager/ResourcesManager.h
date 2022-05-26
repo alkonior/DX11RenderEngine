@@ -1,18 +1,19 @@
 #pragma once
 #include <unordered_map>
 #include <type_traits>
+
+#include "GPUInputLayout.h"
 #include "GPUResource.h"
+#include "GPUShader.h"
 
 
-namespace GVM
-{
+namespace GVM {
 
 class VirtualMachine;
 class PipelineSnapshot;
-    
-class ResourcesManager
-{
-    
+
+class ResourcesManager {
+
     uintptr_t freeIndex = 0;
     std::unordered_map<uint32_t, GpuResource> Resources = {};
     std::unordered_map<uint32_t, GpuResourceView> ResourceViews = {};
@@ -36,18 +37,18 @@ class ResourcesManager
     friend PipelineSnapshot;
 
 
-    ResourcesManager(IRenderDevice* device);
+    ResourcesManager() = default;
 
 #pragma region Resources
-    GpuResource& CreateResource         (const ResourceDesc& desc);
-    GpuResource& CreateBuffer           (const BufferResourceDesc& desc);
-    GpuResource& CreateTexture1D        (const Texture1DResourceDesc& desc);
-    GpuResource& CreateTexture2D        (const Texture2DResourceDesc& desc);
-    GpuResource& CreateTexture3D        (const Texture3DResourceDesc& desc);
-    GpuResource& CreateTextureCube      (const TextureCubeResourceDesc& desc);
-    GpuResource& CreateVertexBuffer (const BufferResourceDesc& desc);
-    GpuResource& CreateConstBuffer   (const BufferResourceDesc& desc);
-    GpuResource& CreateIndexBuffer   (const BufferResourceDesc& desc);
+    GpuResource& CreateResource(const ResourceDesc& desc);
+    GpuResource& CreateBuffer(const BufferResourceDesc& desc);
+    GpuResource& CreateTexture1D(const Texture1DResourceDesc& desc);
+    GpuResource& CreateTexture2D(const Texture2DResourceDesc& desc);
+    GpuResource& CreateTexture3D(const Texture3DResourceDesc& desc);
+    GpuResource& CreateTextureCube(const TextureCubeResourceDesc& desc);
+    GpuResource& CreateVertexBuffer(const BufferResourceDesc& desc);
+    GpuResource& CreateConstBuffer(const BufferResourceDesc& desc);
+    GpuResource& CreateIndexBuffer(const BufferResourceDesc& desc);
 
     GpuResourceView& CreateConstBufferView(const ConstBufferViewDesc& desc);
     GpuResourceView& CreateVertexBufferView(const VertexBufferViewDesc& desc);
@@ -58,20 +59,31 @@ class ResourcesManager
     GpuResourceView& CreateUATargetView(const UATargetViewDesc& desc);
 #pragma endregion
 
-    
+
+
+#pragma region Shaders
+
+    std::vector<GPUShader> SavedShaders;
+    std::vector<GPUInputLayout> SavedInputLayouts;
+
+    GPUShader& CreateShader(const ShaderDesc& desc);
+    GPUInputLayout& CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
+
+#pragma endregion
 
     //void UpdateResources();
-    
+
     void AddDisposeResource(const Resource* resource);
     void AddDisposeResourceView(const ResourceView* resourceView);
 
 public:
     IRenderDevice::IResource* GetRealResource(const Resource* resource);
-    IRenderDevice::IShader* GetRealShader(const Shader* shader);
     IRenderDevice::IResourceView* GetRealResourceView(const ResourceView* resourceView);
-    IRenderDevice::IInputLayout* GetRealInputLayout(const InputLayout* resourceView);
-    
-    
+
+
+    IRenderDevice::IShader* GetRealShader(const Shader* shader);
+    IRenderDevice::IInputLayout* GetRealInputLayout(const InputLayout* inputLayout);
+
 };
-    
+
 }
