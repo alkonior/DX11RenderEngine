@@ -18,14 +18,14 @@ class IRenderDevice {
 public:
     IRenderDevice(const IRenderDevice&) = delete;
     IRenderDevice(const IRenderDevice&&) = delete;
-    virtual ~IRenderDevice() = 0;
+    virtual ~IRenderDevice() = 0 {};
 
     
     struct IPlaceable
     {
     public:
         virtual void Place(void* ptr) const = 0;
-        virtual ~IPlaceable() = 0;
+        virtual ~IPlaceable() = 0 {};
     };
 
     
