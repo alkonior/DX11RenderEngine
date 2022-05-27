@@ -111,6 +111,17 @@ void GraphicsApi::SetupCoreBlendState(const CoreBlendDesc& blendState)
     wasPSUpdated = true;
     ps.blendDesc = blendState;
 }
+void GraphicsApi::SetupBlendState(const BlendStateDesc& blendState, int slot)
+{
+    ps.RenderTargets[slot].BlendState = blendState;
+}
+void GraphicsApi::SetupCoreBlendFactor(const float blendFactor[4])
+{
+    ps.blendDesc.BlendFactor[0] = blendFactor[0];
+    ps.blendDesc.BlendFactor[1] = blendFactor[1];
+    ps.blendDesc.BlendFactor[2] = blendFactor[2];
+    ps.blendDesc.BlendFactor[3] = blendFactor[3];
+}
 void GraphicsApi::SetupDepthStencilState(const DepthStencilStateDesc& depthStencilState)
 {
     wasPSUpdated = true;
@@ -160,6 +171,14 @@ void GraphicsApi::SetupTextures(ResourceView* textures[], uint8_t num, uint8_t o
     }
     ps.texturesNum = std::max<uint8_t>(ps.texturesNum, offset + num);
 }
+
+void GraphicsApi::SetupTexture(ResourceView* texture, uint8_t slot)
+{
+    wasPSUpdated = true;
+    ps.Textures[slot] = (ResourceView*)texture;
+    ps.texturesNum = std::max<uint8_t>(ps.texturesNum, slot);
+}
+
 void GraphicsApi::SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset,
     DepthStencilView* depthStencilBuffer)
 {
@@ -176,6 +195,25 @@ void GraphicsApi::SetupRenderTarget(const RenderTargetDesc& renderTarget, int32_
 {
     wasPSUpdated = true;
     ps.RenderTargets[slot] = renderTarget;
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
+}
+void GraphicsApi::SetupRenderTargets(RenderTargetView* renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer)
+{
+    
+    wasPSUpdated = true;
+    ps.DepthStencilBuffer = depthStencilBuffer;
+
+    for (int i = 0; i < num; i++)
+    {
+        ps.RenderTargets[i + offset].rtv = renderTargets[i];
+    }
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, offset + num);
+}
+void GraphicsApi::SetupRenderTarget(RenderTargetView* renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer)
+{
+    
+    wasPSUpdated = true;
+    ps.RenderTargets[slot].rtv = renderTarget;
     ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
 }
 

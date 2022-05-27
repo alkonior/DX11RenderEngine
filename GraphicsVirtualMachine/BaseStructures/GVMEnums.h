@@ -26,6 +26,7 @@ enum class EShaderType : uint8_t  {
 };
 
 enum class EBlendOperator : uint8_t {
+    BLEND_UNKNOWN,
     BLEND_OP_ADD,
     BLEND_OP_SUBTRACT,
     BLEND_OP_REV_SUBTRACT,
@@ -54,6 +55,7 @@ enum class ELogicOperator : uint8_t {
 };
 
 enum class EBlendType : uint8_t {
+    BLEND_UNKNOWN,
     BLEND_ZERO,
     BLEND_ONE,
     BLEND_SRC_COLOR,
@@ -63,14 +65,10 @@ enum class EBlendType : uint8_t {
     BLEND_DEST_ALPHA,
     BLEND_INV_DEST_ALPHA,
     BLEND_DEST_COLOR,
-    BLEND_INV_DEST_COLOR0,
-    BLEND_SRC_ALPHA_SAT1,
-    BLEND_BLEND_FACTOR4,
-    BLEND_INV_BLEND_FACTOR5,
-    BLEND_SRC1_COLOR6,
-    BLEND_INV_SRC1_COLOR7,
-    BLEND_SRC1_ALPHA8,
-    BLEND_INV_SRC1_ALPHA9,
+    BLEND_INV_DEST_COLOR,
+    BLEND_BLEND_FACTOR,
+    BLEND_INV_BLEND_FACTOR,
+    BLEND_SRC_ALPHA_SAT,
 };
 
 
@@ -80,6 +78,7 @@ enum class EDepthWriteMask : uint8_t {
 };
 
 enum class EComparisonFunc : uint8_t {
+    COMPARISON_UNKNOWN,
     COMPARISON_NEVER,
     COMPARISON_LESS,
     COMPARISON_EQUAL,

@@ -52,7 +52,7 @@ private:
 	/* Blend State */
 	wrl::ComPtr<ID3D11BlendState> blendState;
 	Color blendFactor;
-	int32_t multiSampleMask;
+	uint32_t multiSampleMask;
 
 	/* Depth Stencil State */
 	wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;

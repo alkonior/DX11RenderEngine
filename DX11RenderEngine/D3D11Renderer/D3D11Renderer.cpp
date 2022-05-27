@@ -412,6 +412,7 @@ void D3D11Renderer::SetScissorRect(Rect scissor)
         scissorRect = scissor;
         GFX_THROW_INFO_ONLY(context->RSSetScissorRects(1, &rect));
     }
+    //testApi->SetupScissorRect(ToGVM(scissor)); todo
 }
 
 void D3D11Renderer::GetBlendFactor(Color& blendFactor)
@@ -435,6 +436,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor)
             factor,
             multiSampleMask
         ));
+        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -459,12 +461,85 @@ void D3D11Renderer::SetMultiSampleMask(int32_t mask)
             factor,
             multiSampleMask
         ));
+        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0],factor[1],factor[2],factor[3]}});
     }
+}
+/*
+enum Blend {
+    BLEND_ONE,
+    BLEND_ZERO,
+    BLEND_SOURCECOLOR,
+    BLEND_INVERSESOURCECOLOR,
+    BLEND_SOURCEALPHA,
+    BLEND_INVERSESOURCEALPHA,
+    BLEND_DESTINATIONCOLOR,
+    BLEND_INVERSEDESTINATIONCOLOR,
+    BLEND_DESTINATIONALPHA,
+    BLEND_INVERSEDESTINATIONALPHA,
+    BLEND_BLENDFACTOR,
+    BLEND_INVERSEBLENDFACTOR,
+    BLEND_SOURCEALPHASATURATION
+}
+ */
+
+GVM::EBlendType ToGVM(Blend blend)
+{
+    switch (blend)
+    {
+        case BLEND_ONE: return GVM::EBlendType::BLEND_ONE;
+        case BLEND_ZERO: return GVM::EBlendType::BLEND_ZERO;
+        case BLEND_SOURCECOLOR: return GVM::EBlendType::BLEND_SRC_COLOR;
+        case BLEND_INVERSESOURCECOLOR: return GVM::EBlendType::BLEND_INV_SRC_COLOR;
+        case BLEND_SOURCEALPHA: return GVM::EBlendType::BLEND_SRC_ALPHA;
+        case BLEND_INVERSESOURCEALPHA: return GVM::EBlendType::BLEND_INV_SRC_ALPHA;
+        case BLEND_DESTINATIONCOLOR: return GVM::EBlendType::BLEND_DEST_COLOR;
+        case BLEND_INVERSEDESTINATIONCOLOR: return GVM::EBlendType::BLEND_INV_DEST_COLOR;
+        case BLEND_DESTINATIONALPHA: return GVM::EBlendType::BLEND_DEST_ALPHA;
+        case BLEND_INVERSEDESTINATIONALPHA: return GVM::EBlendType::BLEND_INV_DEST_ALPHA;
+        case BLEND_BLENDFACTOR: return GVM::EBlendType::BLEND_BLEND_FACTOR;
+        case BLEND_INVERSEBLENDFACTOR: return GVM::EBlendType::BLEND_INV_BLEND_FACTOR;
+        case BLEND_SOURCEALPHASATURATION: return GVM::EBlendType::BLEND_SRC_ALPHA_SAT;
+        default: return GVM::EBlendType::BLEND_UNKNOWN;
+    }
+}
+
+GVM::EBlendOperator ToGVM(BlendFunction blend)
+{
+    switch (blend)
+    { 
+        case BLENDFUNCTION_ADD: return GVM::EBlendOperator::BLEND_OP_ADD;
+        case BLENDFUNCTION_SUBTRACT: return GVM::EBlendOperator::BLEND_OP_SUBTRACT;
+        case BLENDFUNCTION_REVERSESUBTRACT: return GVM::EBlendOperator::BLEND_OP_REV_SUBTRACT;
+        case BLENDFUNCTION_MAX: return GVM::EBlendOperator::BLEND_OP_MAX;
+        case BLENDFUNCTION_MIN: return GVM::EBlendOperator::BLEND_OP_MIN;
+        default: return GVM::EBlendOperator::BLEND_UNKNOWN;
+    }
+}
+
+GVM::BlendStateDesc ToGVM(const BlendState& blendState)
+{
+    GVM::BlendStateDesc result;
+    result.BlendEnable = blendState.enabled;
+    result.BlendOp = ToGVM(blendState.colorBlendFunction);
+    result.DestBlend = ToGVM(blendState.colorDestinationBlend);
+    result.SrcBlend = ToGVM(blendState.colorSourceBlend);
+    result.BlendOpAlpha = ToGVM(blendState.alphaBlendFunction);
+    result.DestBlendAlpha = ToGVM(blendState.alphaDestinationBlend);
+    result.LogicOpEnable = false;
+    result.RenderTargetWriteMask = blendState.colorWriteEnable;
+    return result;
 }
 
 void D3D11Renderer::SetBlendState(const BlendState& blendState)
 {
     float factor[4];
+
+    auto gvmBS = ToGVM(blendState);
+    testApi->SetupBlendState(gvmBS, 0);
+    testApi->SetupBlendState(gvmBS, 1);
+    testApi->SetupBlendState(gvmBS, 2);
+    testApi->SetupBlendState(gvmBS, 3);
+    
     auto bs = FetchBlendState(blendState);
     //if (renderer->blendState != bs ||
     //	!D3D11_INTERNAL_BlendEquals(&renderer->blendFactor, &blendState->blendFactor) ||
@@ -485,10 +560,39 @@ void D3D11Renderer::SetBlendState(const BlendState& blendState)
     }
 }
 
+GVM::EComparisonFunc ToGVM(CompareFunction func)
+{
+    switch (func)
+    {
+    case COMPAREFUNCTION_ALWAYS: return GVM::EComparisonFunc::COMPARISON_ALWAYS;
+    case COMPAREFUNCTION_NEVER: return GVM::EComparisonFunc::COMPARISON_NEVER;
+    case COMPAREFUNCTION_LESS: return GVM::EComparisonFunc::COMPARISON_LESS;
+    case COMPAREFUNCTION_LESSEQUAL: return GVM::EComparisonFunc::COMPARISON_LESS_EQUAL;
+    case COMPAREFUNCTION_EQUAL: return GVM::EComparisonFunc::COMPARISON_EQUAL;
+    case COMPAREFUNCTION_GREATEREQUAL: return GVM::EComparisonFunc::COMPARISON_GREATER_EQUAL;
+    case COMPAREFUNCTION_GREATER: return GVM::EComparisonFunc::COMPARISON_GREATER;
+    case COMPAREFUNCTION_NOTEQUAL: return GVM::EComparisonFunc::COMPARISON_NOT_EQUAL;
+    default: return GVM::EComparisonFunc::COMPARISON_UNKNOWN;
+    }
+}
+
+GVM::DepthStencilStateDesc ToGVM(const DepthStencilState& dsState)
+{
+    GVM::DepthStencilStateDesc result;
+    result.DepthEnable = dsState.depthBufferEnable;
+    result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
+
+//todo
+    return result;
+    
+}
+
+
 void D3D11Renderer::SetDepthStencilState(const DepthStencilState& depthStencilState)
 {
     auto ds = FetchDepthStencilState(depthStencilState);
 
+    testApi->SetupDepthStencilState(ToGVM(depthStencilState));
     //if (renderer->depthStencilState != ds ||
     //	renderer->stencilRef != depthStencilState->referenceStencil) 
     {
@@ -502,10 +606,39 @@ void D3D11Renderer::SetDepthStencilState(const DepthStencilState& depthStencilSt
     }
 }
 
+GVM::RasterizerStateDesc ToGVM(const RasterizerState& rasterizerState)
+{
+    GVM::RasterizerStateDesc result;
+
+    result.ScissorEnable = rasterizerState.scissorTestEnable;
+    switch (rasterizerState.cullMode)
+    {
+    case CULLMODE_NONE:
+        {
+            result.CullMode= GVM::ECullMode::CULL_NONE;
+            break;
+        }
+    case CULLMODE_CULLCLOCKWISEFACE:
+        {
+            result.CullMode = GVM::ECullMode::CULL_FRONT;
+            break;
+        }
+    case CULLMODE_CULLCOUNTERCLOCKWISEFACE:
+        {
+            result.CullMode = GVM::ECullMode::CULL_BACK;
+            break;
+        }
+    }
+
+    //todo
+    return result;
+}
+
 void D3D11Renderer::ApplyRasterizerState(const RasterizerState& rasterizerState)
 {
     auto rs = FetchRasterizerState(rasterizerState);
 
+    testApi->SetupRasterizerState(ToGVM(rasterizerState));
     //if (this->rasterizerState != rs) 
     {
         this->rasterizerState = rs;
@@ -534,6 +667,7 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
                 index,
                 1,
                 views));
+            testApi->SetupTexture(d3dTexture->shView, index);
             return;
         }
 
@@ -556,6 +690,7 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
                         1,
                         D3D11Texture::NullTexture.shaderView.GetAddressOf()
                     ));
+                    testApi->SetupTexture(nullptr, index);
                 }
             }
             return;
@@ -574,6 +709,7 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
                 index,
                 1,
                 d3dTexture->shaderView.GetAddressOf()));
+            testApi->SetupTexture(d3dTexture->shView, index);
         }
     }
 }
@@ -600,7 +736,57 @@ void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)
             1,
             view,
             iiiii));
+        //testApi->SetupTexture(d3dTexture->uaView, index); todo
     }
+}
+
+GVM::ESamplerFilter eSamplerFilters[] ={
+    GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MIN_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MIN_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_ANISOTROPIC,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_POINT_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_LINEAR_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_COMPARISON_MIN_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_COMPARISON_ANISOTROPIC,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_POINT_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_LINEAR_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MINIMUM_MIN_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MINIMUM_ANISOTROPIC,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_POINT_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_LINEAR_MAG_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_MAG_LINEAR_MIP_POINT,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_MIN_MAG_MIP_LINEAR,
+    GVM::ESamplerFilter::FILTER_MAXIMUM_ANISOTROPIC
+};
+
+GVM::SamplerStateDesc ToGVM(const SamplerState& sampler)
+{
+    GVM::SamplerStateDesc result;
+
+    result.Filter = eSamplerFilters[sampler.filter];
+    result.MinLOD = sampler.minMipLevel;
+
+    return result;
 }
 
 void D3D11Renderer::VerifyPixelSampler(int32_t index, const SamplerState& sampler)
@@ -623,6 +809,7 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const SamplerState& sample
                 index,
                 1,
                 d3dSamplerState.GetAddressOf()));
+            testApi->SetupSampler(ToGVM(sampler), index);
         }
     }
 }
@@ -652,6 +839,7 @@ void D3D11Renderer::VerifyVertexTexture(int32_t index, const Texture* texture)
                         index,
                         1,
                         vertexSamplers[index].GetAddressOf()));
+                    testApi->SetupTexture(d3dTexture->shView, index);
                 }
             }
             return;
@@ -666,6 +854,7 @@ void D3D11Renderer::VerifyVertexTexture(int32_t index, const Texture* texture)
                 index,
                 1,
                 d3dTexture->shaderView.GetAddressOf()));
+            testApi->SetupTexture(d3dTexture->shView, index);
         }
     }
 }
@@ -686,6 +875,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const SamplerState& sampl
                 index,
                 1,
                 d3dSamplerState.GetAddressOf()));
+            testApi->SetupSampler(ToGVM(sampler), index);
         }
     }
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "IRenderer/Utils.h"
+#include "../GraphicsVirtualMachine/BaseStructures.h"
+
 namespace Renderer {
 
 struct D3D11Texture : public Texture {
@@ -10,8 +12,11 @@ struct D3D11Texture : public Texture {
 
 	/* D3D Handles */
 	wrl::ComPtr<ID3D11Texture2D> handle; /* ID3D11Texture2D or ID3D11Texture3D */
+	GVM::Resource* resource;
 	wrl::ComPtr<ID3D11ShaderResourceView> shaderView = nullptr;
+	GVM::ShaderResourceView* shView;
 	wrl::ComPtr<ID3D11UnorderedAccessView> uaView = nullptr;
+	GVM::UATargetView* uaTestView;
 
 	/* Basic Info */
 	int32_t levelCount = 0;
@@ -23,6 +28,7 @@ struct D3D11Texture : public Texture {
 	size_t height = 0;
 	size_t cubeSize = 0;
 	wrl::ComPtr <ID3D11RenderTargetView> rtView;
+	GVM::RenderTargetView* rtTestView;
 
 
 	wrl::ComPtr<ID3D11Texture2D> staging; /* ID3D11Texture2D or ID3D11Texture3D */

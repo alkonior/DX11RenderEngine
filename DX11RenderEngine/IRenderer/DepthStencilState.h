@@ -36,14 +36,17 @@ struct DepthStencilState {
 	int32_t stencilMask;
 	int32_t stencilWriteMask;
 	uint8_t twoSidedStencilMode;
+	
 	StencilOperation stencilFail;
 	StencilOperation stencilDepthBufferFail;
 	StencilOperation stencilPass;
 	CompareFunction stencilFunction;
+	
 	StencilOperation ccwStencilFail;
 	StencilOperation ccwStencilDepthBufferFail;
 	StencilOperation ccwStencilPass;
 	CompareFunction ccwStencilFunction;
+	
 	int32_t referenceStencil;
 };
 

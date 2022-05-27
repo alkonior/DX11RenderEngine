@@ -27,7 +27,7 @@ namespace Compressed {
             uint8_t       FrontCounterClockwise : 1;
             uint8_t       DepthClipEnable       : 1;
             uint8_t       ScissorEnable         : 1;
-            uint8_t       MultisampleEnable     : 1;
+            //uint8_t       MultisampleEnable     : 1;
             uint8_t       AntialiasedLineEnable : 1;
             
         };
@@ -53,8 +53,8 @@ struct RasterizerStateDesc : BaseStateDesc
     bool            FrontCounterClockwise = false;
     bool            DepthClipEnable = true;
     bool            ScissorEnable = false;
-    bool            MultisampleEnable = false;
-    bool            AntialiasedLineEnable = false;
+    //bool            MultisampleEnable = false;
+    //bool            AntialiasedLineEnable = false;
 
     RasterizerStateDesc();
     

@@ -69,6 +69,8 @@ public:
     //void SetScissorRect(const ScissorRectDesc** scissors, uint8_t num);
     //void SetScissorRect(const ScissorRect** scissors, uint8_t num);
     void SetupCoreBlendState(const CoreBlendDesc& blendState);
+    void SetupBlendState(const BlendStateDesc& blendState, int slot);
+    void SetupCoreBlendFactor(const float blendFactor[4]);
 
     void SetupDepthStencilState(const DepthStencilStateDesc& depthStencilState);
     void SetupRasterizerState(const RasterizerStateDesc& rasterizerState);
@@ -85,6 +87,9 @@ public:
 
     void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);
     void SetupRenderTarget(const RenderTargetDesc& renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer);
+    void SetupRenderTargets(RenderTargetView* renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);
+    void SetupRenderTarget(RenderTargetView* renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer);
+    
     void SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer);
     void SetupShader(Shader* shader, EShaderType type);
 

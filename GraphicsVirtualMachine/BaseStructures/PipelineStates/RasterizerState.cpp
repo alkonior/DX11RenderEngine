@@ -24,8 +24,8 @@ Compressed::RasterizerStateDesc::RasterizerStateDesc(GVM::RasterizerStateDesc de
       
       Fields.DepthClipEnable        = desc.DepthClipEnable;
       Fields.ScissorEnable          = desc.ScissorEnable;
-      Fields.MultisampleEnable      = desc.MultisampleEnable;
-      Fields.AntialiasedLineEnable  = desc.AntialiasedLineEnable;
+      //Fields.MultisampleEnable      = desc.MultisampleEnable;
+      //Fields.AntialiasedLineEnable  = desc.AntialiasedLineEnable;
 }
 
 Compressed::RasterizerStateDesc::RasterizerStateDesc(const RasterizerStateDesc& desc) :data(desc.data)
