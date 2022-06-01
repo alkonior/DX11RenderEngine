@@ -29,4 +29,6 @@ void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
 }
 
 void VirtualMachine::PushDrawCall(DrawCall drawCall)
-{}
+{
+    
+}

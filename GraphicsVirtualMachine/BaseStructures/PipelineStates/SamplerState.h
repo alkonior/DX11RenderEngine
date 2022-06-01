@@ -37,16 +37,16 @@ struct SamplerStateDesc {
 struct SamplerStateDesc {
     using CompressedType = Compressed::SamplerStateDesc;
     
-    ESamplerFilter             Filter;
-    ETextureAddressMode        AddressU;
-    ETextureAddressMode        AddressV;
-    ETextureAddressMode        AddressW;
-    float                      MipLODBias;
-    uint8_t                    MaxAnisotropy;
-    EComparisonFunc            ComparisonFunc;
-    float                      BorderColor[4];
-    float                      MinLOD;
-    float                      MaxLOD;
+    ESamplerFilter             Filter = ESamplerFilter::FILTER_UNKNOWN;
+    ETextureAddressMode        AddressU = ETextureAddressMode::TEXTURE_ADDRESS_UNKNOWN;
+    ETextureAddressMode        AddressV = ETextureAddressMode::TEXTURE_ADDRESS_UNKNOWN;
+    ETextureAddressMode        AddressW = ETextureAddressMode::TEXTURE_ADDRESS_UNKNOWN;
+    float                      MipLODBias = 0;
+    uint8_t                    MaxAnisotropy = 0;
+    EComparisonFunc            ComparisonFunc = EComparisonFunc::COMPARISON_UNKNOWN;
+    float                      BorderColor[4] = {};
+    float                      MinLOD = 0;
+    float                      MaxLOD = 0;
     
     Compressed::SamplerStateDesc Compress() const;
 };

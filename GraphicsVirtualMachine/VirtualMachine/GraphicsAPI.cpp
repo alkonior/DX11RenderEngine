@@ -179,8 +179,13 @@ void GraphicsApi::SetupTexture(ResourceView* texture, uint8_t slot)
     ps.texturesNum = std::max<uint8_t>(ps.texturesNum, slot);
 }
 
+void GraphicsApi::SetupNumRenderTargets(int32_t num)
+{
+    ps.renderTargetsNum = num;
+}
+
 void GraphicsApi::SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset,
-    DepthStencilView* depthStencilBuffer)
+                                     DepthStencilView* depthStencilBuffer)
 {
     wasPSUpdated = true;
     ps.DepthStencilBuffer = depthStencilBuffer;
@@ -211,7 +216,6 @@ void GraphicsApi::SetupRenderTargets(RenderTargetView* renderTargets[], int32_t 
 }
 void GraphicsApi::SetupRenderTarget(RenderTargetView* renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer)
 {
-    
     wasPSUpdated = true;
     ps.RenderTargets[slot].rtv = renderTarget;
     ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
@@ -318,6 +322,11 @@ void GraphicsApi::SetupInputLayout(InputLayout* layout)
  RenderTargetView* GraphicsApi::CreateRtView(const RenderTargetViewDesc& description)
 {
     return graphicsMachine.CreateRenderTargetView(description);
+}
+
+UATargetView* GraphicsApi::CreateUaView(const UATargetViewDesc& description)
+{
+    return graphicsMachine.CreateUATargetView(description);
 }
 
  VertexBufferView* GraphicsApi::CreateVertexBufferView(const VertexBufferViewDesc& description)

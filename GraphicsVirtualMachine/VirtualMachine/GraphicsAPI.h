@@ -85,6 +85,7 @@ public:
     void SetupTextures(ResourceView* textures[], uint8_t num, uint8_t offset);
     void SetupTexture(ResourceView* texture, uint8_t slot);
 
+    void SetupNumRenderTargets(int32_t num);
     void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);
     void SetupRenderTarget(const RenderTargetDesc& renderTarget, int32_t slot, DepthStencilView* depthStencilBuffer);
     void SetupRenderTargets(RenderTargetView* renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);
@@ -112,6 +113,7 @@ public:
 
     ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& description);
     RenderTargetView* CreateRtView(const RenderTargetViewDesc& description);
+    UATargetView* CreateUaView(const UATargetViewDesc& description);
 
     VertexBuffer* CreateVertexBuffer(const BufferResourceDesc& description);
     IndexBuffer* CreateIndexBuffer(const BufferResourceDesc& description);

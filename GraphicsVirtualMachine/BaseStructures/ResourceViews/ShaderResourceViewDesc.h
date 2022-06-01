@@ -58,6 +58,7 @@ struct TexcubeArrayDesc {
 
 struct RenderTargetViewDesc {
     Resource*               Resource;
+    bool                    MakeDefault = false;
     EFormat                 Format;
     ERTViewDimension        Dimension;
     union{
@@ -74,8 +75,9 @@ struct UATargetViewDesc : RenderTargetViewDesc
 
 struct ShaderResourceViewDesc {
     Resource*              Resource;
-    EFormat                 Format;
-    EShaderViewDimension  Dimension;
+    bool                   MakeDefault = false;
+    EFormat                Format;
+    EShaderViewDimension   Dimension;
     union{
         Tex1DDesc           T1Desc;
         Tex1DArrayDesc      T1ADesc;
