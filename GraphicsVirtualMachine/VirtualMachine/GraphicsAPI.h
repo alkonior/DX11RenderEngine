@@ -142,31 +142,40 @@ public:
     void SetResourceData(
         Resource* resource,
         uint16_t dstSubresource,
-        const UBox rect,
+        const UBox& rect,
         const void* pSrcData,
-        int32_t srcRowPitch,
-        int32_t srcDepthPitch
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
     );
 
     void SetVertexBufferData(
         VertexBuffer* vertexBuffer,
         const void* pSrcData,
         uint32_t dataLength,
-        int32_t srcRowPitch,
-        int32_t srcDepthPitch
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
     );
 
     void SetIndexBufferData(
         IndexBuffer* buffer,
         const void* pSrcData,
         uint32_t dataLength,
-        int32_t srcRowPitch,
-        int32_t srcDepthPitch
-    );
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    );//todo offset
 
+    template<class T>
     void SetConstBufferData(
         ConstBuffer* constBuffer,
-        void* data);
+        T* data)
+    {
+        graphicsMachine.SetConstBufferData(constBuffer, data);
+    }
+    
+    void SetConstBufferData(
+        ConstBuffer* constBuffer,
+        const void* data,
+        uint32_t dataSize);
 
 #pragma endregion
 

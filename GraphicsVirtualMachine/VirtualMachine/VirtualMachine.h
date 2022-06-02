@@ -12,6 +12,10 @@ class VirtualMachine
 {
     enum class EMachineCommands : uint8_t
     {
+        UNKNOWN,
+
+        SETUP_PIPELINE,
+        
         DISPATCH,
         DISPATCH_INDIRECT,
         DRAW,
@@ -26,11 +30,9 @@ class VirtualMachine
         UPDATE_RESOURCE,
         SET_RESOURCE_DATA,
         COPY_RESOURCE_DATA,
-        
-        SET_VERTEX_BUFFER_DATA,
-        SET_INDEX_BUFFER_DATA,
-        SET_CONST_BUFFER_DATA,
     };
+    
+    constexpr static EMachineCommands ToCommand(EDrawCallType drawCall);
     IStructuresSize iStructSizes;
 
     VMStack<uint32_t> intStack;
@@ -42,6 +44,8 @@ class VirtualMachine
 
     //uint32_t PushData(void* data, uint32_t dataLength);
 
+    void PushCommand(EMachineCommands command);
+    void PushData(const void* data, uint32_t dataSize);
 
     IRenderDevice* RenderDevice;
 public:
@@ -53,7 +57,7 @@ public:
 
 
     void PushPSC(PipelineSnapshot& pipelineSnapshot);
-    void PushDrawCall(DrawCall drawCall);
+    void PushDrawCall(const DrawCall& drawCall);
 
 
 #pragma region Resources
@@ -81,8 +85,6 @@ public:
 
 #pragma endregion
 
-
-
 #pragma region Shaders
 
     //std::vector<IRenderDevice::IShader*> SavedShaders;
@@ -91,7 +93,59 @@ public:
     Shader* CreateShader(const ShaderDesc& desc);
     InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
 
-#pragma endregion 
+#pragma endregion
+
+#pragma region SetResourcesData
+
+    struct ResourceUpdateData
+    {
+        uint16_t dstSubresource = 0;
+        int32_t srcRowPitch = 0;
+        int32_t srcDepthPitch = 0;
+    };
+    
+    void SetResourceData(
+        Resource* resource,
+        uint16_t dstSubresource,
+        const UBox& rect,
+        const void* pSrcData,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    );
+
+    void SetVertexBufferData(
+        VertexBuffer* vertexBuffer,
+        const void* pSrcData,
+        uint32_t dataLength,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    );
+
+    void SetIndexBufferData(
+        IndexBuffer* buffer,
+        const void* pSrcData,
+        uint32_t dataLength,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    );
+
+    template<class T>
+    void SetConstBufferData(
+        ConstBuffer* constBuffer,
+        T* data)
+    {
+        UBox rect {0,0,0,sizeof(T),1,1};
+        SetResourceData(constBuffer, 0, rect, data,0,0);
+    }
+
+    void SetConstBufferData(
+           ConstBuffer* constBuffer,
+           const void* data,
+           uint32_t dataSize);
+
+#pragma endregion
 
 };
+
+
 }

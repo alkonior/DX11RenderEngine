@@ -202,7 +202,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
             /* Clear! */
             GFX_THROW_INFO_ONLY(context->ClearRenderTargetView(renderTargetViews[i].Get(), clearColor));
         }
-        testApi->ClearRenderTargets((renderTargetViewsTest.data()),numRenderTargets, clearColor);
+        testApi->ClearRenderTargets((renderTargetViewsTest.data()), numRenderTargets, clearColor);
     }
 
     /* Clear depth/stencil? */
@@ -436,7 +436,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0],factor[1],factor[2],factor[3]}});
+        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0], factor[1], factor[2], factor[3]}});
     }
 }
 
@@ -461,7 +461,7 @@ void D3D11Renderer::SetMultiSampleMask(int32_t mask)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0],factor[1],factor[2],factor[3]}});
+        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0], factor[1], factor[2], factor[3]}});
     }
 }
 
@@ -469,33 +469,33 @@ constexpr GVM::EBlendType ToGVM(Blend blend)
 {
     switch (blend)
     {
-        case BLEND_ONE: return GVM::EBlendType::BLEND_ONE;
-        case BLEND_ZERO: return GVM::EBlendType::BLEND_ZERO;
-        case BLEND_SOURCECOLOR: return GVM::EBlendType::BLEND_SRC_COLOR;
-        case BLEND_INVERSESOURCECOLOR: return GVM::EBlendType::BLEND_INV_SRC_COLOR;
-        case BLEND_SOURCEALPHA: return GVM::EBlendType::BLEND_SRC_ALPHA;
-        case BLEND_INVERSESOURCEALPHA: return GVM::EBlendType::BLEND_INV_SRC_ALPHA;
-        case BLEND_DESTINATIONCOLOR: return GVM::EBlendType::BLEND_DEST_COLOR;
-        case BLEND_INVERSEDESTINATIONCOLOR: return GVM::EBlendType::BLEND_INV_DEST_COLOR;
-        case BLEND_DESTINATIONALPHA: return GVM::EBlendType::BLEND_DEST_ALPHA;
-        case BLEND_INVERSEDESTINATIONALPHA: return GVM::EBlendType::BLEND_INV_DEST_ALPHA;
-        case BLEND_BLENDFACTOR: return GVM::EBlendType::BLEND_BLEND_FACTOR;
-        case BLEND_INVERSEBLENDFACTOR: return GVM::EBlendType::BLEND_INV_BLEND_FACTOR;
-        case BLEND_SOURCEALPHASATURATION: return GVM::EBlendType::BLEND_SRC_ALPHA_SAT;
-        default: return GVM::EBlendType::BLEND_UNKNOWN;
+    case BLEND_ONE: return GVM::EBlendType::BLEND_ONE;
+    case BLEND_ZERO: return GVM::EBlendType::BLEND_ZERO;
+    case BLEND_SOURCECOLOR: return GVM::EBlendType::BLEND_SRC_COLOR;
+    case BLEND_INVERSESOURCECOLOR: return GVM::EBlendType::BLEND_INV_SRC_COLOR;
+    case BLEND_SOURCEALPHA: return GVM::EBlendType::BLEND_SRC_ALPHA;
+    case BLEND_INVERSESOURCEALPHA: return GVM::EBlendType::BLEND_INV_SRC_ALPHA;
+    case BLEND_DESTINATIONCOLOR: return GVM::EBlendType::BLEND_DEST_COLOR;
+    case BLEND_INVERSEDESTINATIONCOLOR: return GVM::EBlendType::BLEND_INV_DEST_COLOR;
+    case BLEND_DESTINATIONALPHA: return GVM::EBlendType::BLEND_DEST_ALPHA;
+    case BLEND_INVERSEDESTINATIONALPHA: return GVM::EBlendType::BLEND_INV_DEST_ALPHA;
+    case BLEND_BLENDFACTOR: return GVM::EBlendType::BLEND_BLEND_FACTOR;
+    case BLEND_INVERSEBLENDFACTOR: return GVM::EBlendType::BLEND_INV_BLEND_FACTOR;
+    case BLEND_SOURCEALPHASATURATION: return GVM::EBlendType::BLEND_SRC_ALPHA_SAT;
+    default: return GVM::EBlendType::BLEND_UNKNOWN;
     }
 }
 
 constexpr GVM::EBlendOperator ToGVM(BlendFunction blend)
 {
     switch (blend)
-    { 
-        case BLENDFUNCTION_ADD: return GVM::EBlendOperator::BLEND_OP_ADD;
-        case BLENDFUNCTION_SUBTRACT: return GVM::EBlendOperator::BLEND_OP_SUBTRACT;
-        case BLENDFUNCTION_REVERSESUBTRACT: return GVM::EBlendOperator::BLEND_OP_REV_SUBTRACT;
-        case BLENDFUNCTION_MAX: return GVM::EBlendOperator::BLEND_OP_MAX;
-        case BLENDFUNCTION_MIN: return GVM::EBlendOperator::BLEND_OP_MIN;
-        default: return GVM::EBlendOperator::BLEND_UNKNOWN;
+    {
+    case BLENDFUNCTION_ADD: return GVM::EBlendOperator::BLEND_OP_ADD;
+    case BLENDFUNCTION_SUBTRACT: return GVM::EBlendOperator::BLEND_OP_SUBTRACT;
+    case BLENDFUNCTION_REVERSESUBTRACT: return GVM::EBlendOperator::BLEND_OP_REV_SUBTRACT;
+    case BLENDFUNCTION_MAX: return GVM::EBlendOperator::BLEND_OP_MAX;
+    case BLENDFUNCTION_MIN: return GVM::EBlendOperator::BLEND_OP_MIN;
+    default: return GVM::EBlendOperator::BLEND_UNKNOWN;
     }
 }
 
@@ -522,7 +522,7 @@ void D3D11Renderer::SetBlendState(const BlendState& blendState)
     testApi->SetupBlendState(gvmBS, 1);
     testApi->SetupBlendState(gvmBS, 2);
     testApi->SetupBlendState(gvmBS, 3);
-    
+
     auto bs = FetchBlendState(blendState);
     //if (renderer->blendState != bs ||
     //	!D3D11_INTERNAL_BlendEquals(&renderer->blendFactor, &blendState->blendFactor) ||
@@ -565,9 +565,8 @@ GVM::DepthStencilStateDesc ToGVM(const DepthStencilState& dsState)
     result.DepthEnable = dsState.depthBufferEnable;
     result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
 
-//todo
+    //todo
     return result;
-    
 }
 
 
@@ -593,9 +592,9 @@ constexpr GVM::ECullMode ToGVM(CullMode mode)
 {
     switch (mode)
     {
-    case CULLMODE_NONE : return GVM::ECullMode::CULL_NONE;
-    case CULLMODE_CULLCLOCKWISEFACE : return GVM::ECullMode::CULL_BACK;
-    case CULLMODE_CULLCOUNTERCLOCKWISEFACE : return GVM::ECullMode::CULL_FRONT; 
+    case CULLMODE_NONE: return GVM::ECullMode::CULL_NONE;
+    case CULLMODE_CULLCLOCKWISEFACE: return GVM::ECullMode::CULL_BACK;
+    case CULLMODE_CULLCOUNTERCLOCKWISEFACE: return GVM::ECullMode::CULL_FRONT;
     }
     return GVM::ECullMode::CULL_UNKNOWN;
 };
@@ -606,7 +605,7 @@ constexpr GVM::EFillMode ToGVM(FillMode mode)
     switch (mode)
     {
     case FILLMODE_SOLID: return GVM::EFillMode::FILL_SOLID;
-    case FILLMODE_WIREFRAME: return GVM::EFillMode::FILL_WIREFRAME; 
+    case FILLMODE_WIREFRAME: return GVM::EFillMode::FILL_WIREFRAME;
     }
     return GVM::EFillMode::FILL_UNKNOWN;
 }
@@ -618,7 +617,7 @@ GVM::RasterizerStateDesc ToGVM(const RasterizerState& rasterizerState)
     result.ScissorEnable = rasterizerState.scissorTestEnable;
     result.CullMode = ToGVM(rasterizerState.cullMode);
     result.FillMode = ToGVM(rasterizerState.fillMode);
-    
+
     return result;
 }
 
@@ -733,15 +732,15 @@ constexpr GVM::ESamplerFilter ToGVM(TextureFilter filter)
 {
     switch (filter)
     {
-    case TEXTUREFILTER_LINEAR:                        return GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_LINEAR;
-    case TEXTUREFILTER_POINT:                         return GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_POINT;
-    case TEXTUREFILTER_ANISOTROPIC:                   return GVM::ESamplerFilter::FILTER_ANISOTROPIC;
-    case TEXTUREFILTER_LINEAR_MIPPOINT:               return GVM::ESamplerFilter::FILTER_MIN_MAG_LINEAR_MIP_POINT;
-    case TEXTUREFILTER_POINT_MIPLINEAR:               return GVM::ESamplerFilter::FILTER_MIN_MAG_POINT_MIP_LINEAR;
-    case TEXTUREFILTER_MINLINEAR_MAGPOINT_MIPLINEAR:  return GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
-    case TEXTUREFILTER_MINLINEAR_MAGPOINT_MIPPOINT:   return GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_MIP_POINT;
-    case TEXTUREFILTER_MINPOINT_MAGLINEAR_MIPLINEAR:  return GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_MIP_LINEAR;
-    case TEXTUREFILTER_MINPOINT_MAGLINEAR_MIPPOINT:   return GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
+    case TEXTUREFILTER_LINEAR: return GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_LINEAR;
+    case TEXTUREFILTER_POINT: return GVM::ESamplerFilter::FILTER_MIN_MAG_MIP_POINT;
+    case TEXTUREFILTER_ANISOTROPIC: return GVM::ESamplerFilter::FILTER_ANISOTROPIC;
+    case TEXTUREFILTER_LINEAR_MIPPOINT: return GVM::ESamplerFilter::FILTER_MIN_MAG_LINEAR_MIP_POINT;
+    case TEXTUREFILTER_POINT_MIPLINEAR: return GVM::ESamplerFilter::FILTER_MIN_MAG_POINT_MIP_LINEAR;
+    case TEXTUREFILTER_MINLINEAR_MAGPOINT_MIPLINEAR: return GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+    case TEXTUREFILTER_MINLINEAR_MAGPOINT_MIPPOINT: return GVM::ESamplerFilter::FILTER_MIN_LINEAR_MAG_MIP_POINT;
+    case TEXTUREFILTER_MINPOINT_MAGLINEAR_MIPLINEAR: return GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_MIP_LINEAR;
+    case TEXTUREFILTER_MINPOINT_MAGLINEAR_MIPPOINT: return GVM::ESamplerFilter::FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
     }
     return GVM::ESamplerFilter::FILTER_UNKNOWN;
 }
@@ -751,8 +750,8 @@ constexpr GVM::ETextureAddressMode ToGVM(TextureAddressMode mode)
     switch (mode)
     {
     case TEXTUREADDRESSMODE_WRAP: return GVM::ETextureAddressMode::TEXTURE_ADDRESS_WRAP;
-    case TEXTUREADDRESSMODE_CLAMP : return GVM::ETextureAddressMode::TEXTURE_ADDRESS_CLAMP;
-    case TEXTUREADDRESSMODE_MIRROR : return GVM::ETextureAddressMode::TEXTURE_ADDRESS_MIRROR;
+    case TEXTUREADDRESSMODE_CLAMP: return GVM::ETextureAddressMode::TEXTURE_ADDRESS_CLAMP;
+    case TEXTUREADDRESSMODE_MIRROR: return GVM::ETextureAddressMode::TEXTURE_ADDRESS_MIRROR;
     }
     return GVM::ETextureAddressMode::TEXTURE_ADDRESS_UNKNOWN;
 }
@@ -895,7 +894,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 views,
                 NULL
             );
-            testApi->SetupRenderTarget(nullptr,0, nullptr);
+            testApi->SetupRenderTarget(nullptr, 0, nullptr);
         }
         else
         {
@@ -904,7 +903,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 views,
                 this->depthStencilBuffer->depth.dsView.Get()
             );
-            testApi->SetupRenderTarget(nullptr,0, this->depthStencilBuffer->depth.nDsView);
+            testApi->SetupRenderTarget(nullptr, 0, this->depthStencilBuffer->depth.nDsView);
         }
         this->SetViewport(viewport, 0);
         testApi->SetupViewport(ToGVM(viewport), 0);
@@ -983,7 +982,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             views,
             NULL
         ));
-        testApi->SetupRenderTargets(nviews, numRenderTargets, 0,nullptr);
+        testApi->SetupRenderTargets(nviews, numRenderTargets, 0, nullptr);
     }
     else
     {
@@ -992,7 +991,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             views,
             this->depthStencilBuffer->depth.dsView.Get()
         ));
-        testApi->SetupRenderTargets(nviews, numRenderTargets, 0,this->depthStencilBuffer->depth.nDsView);
+        testApi->SetupRenderTargets(nviews, numRenderTargets, 0, this->depthStencilBuffer->depth.nDsView);
     }
     //RestoreTargetTextures();
 
@@ -1072,32 +1071,32 @@ constexpr GVM::EFormat ToGVM(SurfaceFormat format)
 {
     switch (format)
     {
-    case SURFACEFORMAT_COLOR:               return GVM::EFormat::FORMAT_R8G8B8A8_UNORM;
-    case SURFACEFORMAT_BGR565:              return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_BGRA5551:            return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_BGRA4444:            return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_DXT1:                return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_DXT3:                return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_DXT5:                return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_NORMALIZEDBYTE2:     return GVM::EFormat::FORMAT_R8G8_SNORM;
-    case SURFACEFORMAT_NORMALIZEDBYTE4:     return GVM::EFormat::FORMAT_R8G8B8A8_SNORM;
-    case SURFACEFORMAT_RGBA1010102:         return GVM::EFormat::FORMAT_R10G10B10A2_UNORM;
-    case SURFACEFORMAT_RG32:                return GVM::EFormat::FORMAT_R16G16_UNORM;
-    case SURFACEFORMAT_RGBA64:              return GVM::EFormat::FORMAT_R16G16B16A16_UNORM;
-    case SURFACEFORMAT_ALPHA8:              return GVM::EFormat::FORMAT_A8_UNORM;
-    case SURFACEFORMAT_SINGLE:              return GVM::EFormat::FORMAT_R32_FLOAT;
-    case SURFACEFORMAT_VECTOR2:             return GVM::EFormat::FORMAT_R32G32_FLOAT;
-    case SURFACEFORMAT_UINT:                return GVM::EFormat::FORMAT_R32_UINT;
-    case SURFACEFORMAT_VECTOR4:             return GVM::EFormat::FORMAT_R32G32B32A32_FLOAT;
-    case SURFACEFORMAT_HALFSINGLE:          return GVM::EFormat::FORMAT_R16_FLOAT;
-    case SURFACEFORMAT_HALFVECTOR2:         return GVM::EFormat::FORMAT_R16G16_FLOAT;
-    case SURFACEFORMAT_HALFVECTOR4:         return GVM::EFormat::FORMAT_R16G16B16A16_FLOAT;
-    case SURFACEFORMAT_HDRBLENDABLE:        return GVM::EFormat::FORMAT_R16G16B16A16_FLOAT;
-    case SURFACEFORMAT_COLORBGRA_EXT:       return GVM::EFormat::FORMAT_B8G8R8A8_UNORM;
-    case SURFACEFORMAT_COLORSRGB_EXT:       return GVM::EFormat::FORMAT_R8G8B8A8_UNORM_SRGB;
-    case SURFACEFORMAT_DXT5SRGB_EXT:        return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_BC7_EXT:             return GVM::EFormat::FORMAT_UNKNOWN;//todo
-    case SURFACEFORMAT_BC7SRGB_EXT:         return GVM::EFormat::FORMAT_UNKNOWN;//todo
+    case SURFACEFORMAT_COLOR: return GVM::EFormat::FORMAT_R8G8B8A8_UNORM;
+    case SURFACEFORMAT_BGR565: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_BGRA5551: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_BGRA4444: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_DXT1: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_DXT3: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_DXT5: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_NORMALIZEDBYTE2: return GVM::EFormat::FORMAT_R8G8_SNORM;
+    case SURFACEFORMAT_NORMALIZEDBYTE4: return GVM::EFormat::FORMAT_R8G8B8A8_SNORM;
+    case SURFACEFORMAT_RGBA1010102: return GVM::EFormat::FORMAT_R10G10B10A2_UNORM;
+    case SURFACEFORMAT_RG32: return GVM::EFormat::FORMAT_R16G16_UNORM;
+    case SURFACEFORMAT_RGBA64: return GVM::EFormat::FORMAT_R16G16B16A16_UNORM;
+    case SURFACEFORMAT_ALPHA8: return GVM::EFormat::FORMAT_A8_UNORM;
+    case SURFACEFORMAT_SINGLE: return GVM::EFormat::FORMAT_R32_FLOAT;
+    case SURFACEFORMAT_VECTOR2: return GVM::EFormat::FORMAT_R32G32_FLOAT;
+    case SURFACEFORMAT_UINT: return GVM::EFormat::FORMAT_R32_UINT;
+    case SURFACEFORMAT_VECTOR4: return GVM::EFormat::FORMAT_R32G32B32A32_FLOAT;
+    case SURFACEFORMAT_HALFSINGLE: return GVM::EFormat::FORMAT_R16_FLOAT;
+    case SURFACEFORMAT_HALFVECTOR2: return GVM::EFormat::FORMAT_R16G16_FLOAT;
+    case SURFACEFORMAT_HALFVECTOR4: return GVM::EFormat::FORMAT_R16G16B16A16_FLOAT;
+    case SURFACEFORMAT_HDRBLENDABLE: return GVM::EFormat::FORMAT_R16G16B16A16_FLOAT;
+    case SURFACEFORMAT_COLORBGRA_EXT: return GVM::EFormat::FORMAT_B8G8R8A8_UNORM;
+    case SURFACEFORMAT_COLORSRGB_EXT: return GVM::EFormat::FORMAT_R8G8B8A8_UNORM_SRGB;
+    case SURFACEFORMAT_DXT5SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_BC7_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_BC7SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
     }
 }
 
@@ -1122,7 +1121,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
     desc.MiscFlags = 0;
 
     GVM::Texture2DResourceDesc resourceDesc;
-    
+
     resourceDesc.Width = width;
     resourceDesc.Height = height;
     resourceDesc.Format = ToGVM(format);
@@ -1141,7 +1140,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
         NULL,
         &result->handle
     ));
-    
+
     result->resource = testApi->CreateTexture2D(resourceDesc);
 
     /* Initialize D3D11Texture */
@@ -1151,7 +1150,6 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
     result->height = height;
     result->format = format;
 
-    
 
     /* Create the shader resource view */
     GFX_THROW_INFO(device->CreateShaderResourceView(
@@ -1173,7 +1171,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
             &rtViewDesc,
             &result->rtView
         ));
-        
+
         result->rtTestView = testApi->CreateRtView({result->resource, true});
     }
 
@@ -1200,13 +1198,13 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
     desc.MiscFlags = 0;
 
     GVM::Texture2DResourceDesc resourceDesc;
-    
+
     resourceDesc.Width = width;
     resourceDesc.Height = height;
     resourceDesc.Format = ToGVM(format);
     resourceDesc.Array = 1;
     resourceDesc.initialData = nullptr;
-    
+
     result->resource = testApi->CreateTexture2D(resourceDesc);
 
 
@@ -1256,7 +1254,6 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
     ));
     result->uaTestView = testApi->CreateUaView({result->resource, true});
 
-
     return result;
 }
 
@@ -1284,6 +1281,17 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+
+    GVM::TextureCubeResourceDesc resourceDesc;
+
+    resourceDesc.Width = size;
+    resourceDesc.Height = size;
+    resourceDesc.Format = ToGVM(format);
+    resourceDesc.Array = 1;
+    resourceDesc.initialData = nullptr;
+
+    result->resource = testApi->CreateTextureCube(resourceDesc);
 
     if (isRenderTarget)
     {
@@ -1314,6 +1322,8 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
     srvDesc.TextureCube.MipLevels = levelCount;
     srvDesc.TextureCube.MostDetailedMip = 0;
+
+    result->shView = testApi->CreateShaderResourceView({result->resource, true});
 
     res = device->CreateShaderResourceView(
         result->handle.Get(),
@@ -1367,6 +1377,18 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     dstBox.bottom = y + h;
     dstBox.back = 1;
 
+
+    testApi->SetResourceData(d3dTexture->resource,
+                             cubeMapFace,
+                             GVM::UBox{
+                                 dstBox.left,
+                                 dstBox.top,
+                                 dstBox.front,
+                                 dstBox.right,
+                                 dstBox.bottom,
+                                 dstBox.back
+                             }, data);
+
     //SDL_LockMutex(renderer->ctxLock);
     context->UpdateSubresource(
         d3dTexture->handle.Get(),
@@ -1411,6 +1433,7 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture)
     /* Release the shader resource view and texture */
     //tex->shaderView->Release();
     //tex->handle->Release();
+    testApi->AddDisposeResource(tex->resource);
     delete tex;
 }
 
@@ -1444,6 +1467,17 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
         w * 4,
         0
     ));
+
+    testApi->SetResourceData(d3dTexture->resource,
+                             level,
+                             GVM::UBox{
+                                 dstBox.left,
+                                 dstBox.top,
+                                 dstBox.front,
+                                 dstBox.right,
+                                 dstBox.bottom,
+                                 dstBox.back
+                             }, data);
 }
 
 
@@ -1718,6 +1752,10 @@ Buffer* D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32
     desc.MiscFlags = 0;
     desc.StructureByteStride = 0;
 
+    GVM::BufferResourceDesc tdesc;
+    tdesc.Size - sizeInBytes;
+    result->handleTest = testApi->CreateBuffer(tdesc);
+
     /* Make the buffer */
     GFX_THROW_INFO(device->CreateBuffer(
         &desc,
@@ -1754,6 +1792,7 @@ void D3D11Renderer::AddDisposeVertexBuffer(Buffer* buffer)
     //	}
     //}
 
+    testApi->AddDisposeResource(d3dBuffer->handleTest);
     d3dBuffer->handle = nullptr;
     delete d3dBuffer;
 }
@@ -1805,6 +1844,7 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
             dataLen
         ));
     }
+    testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data,dataLen);
 }
 
 void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data,
@@ -1892,6 +1932,11 @@ Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_
     desc.MiscFlags = 0;
     desc.StructureByteStride = 0;
 
+    
+    GVM::BufferResourceDesc tdesc;
+    tdesc.Size - sizeInBytes;
+    result->handleTest = testApi->CreateBuffer(tdesc);
+
     /* Make the buffer */
     device->CreateBuffer(
         &desc,
@@ -1919,7 +1964,7 @@ void D3D11Renderer::AddDisposeIndexBuffer(Buffer* buffer)
             0
         );
     }
-
+testApi->AddDisposeResource(d3dBuffer->handleTest);
     d3dBuffer->handle = nullptr;
     delete d3dBuffer;
 }
@@ -1974,6 +2019,7 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
             dataLength
         ));
     }
+    testApi->SetIndexBufferData((GVM::IndexBuffer*)d3dBuffer->handleTest,data,dataLength);
 }
 
 void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength)

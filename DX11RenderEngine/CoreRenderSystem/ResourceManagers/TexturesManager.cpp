@@ -100,7 +100,7 @@ void TexturesManager::CreateRenderTarget(Renderer::SurfaceFormat format, size_t 
 
 	renderTargets[&texture] = texture;
 	Viewport defVP = {
-		0,0,width,height,0.0,1.0
+		0,0,(int32_t)width,(int32_t)height,0.0,1.0
 	};
 
 

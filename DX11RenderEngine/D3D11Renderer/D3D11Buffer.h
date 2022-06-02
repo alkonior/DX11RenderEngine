@@ -10,7 +10,8 @@ struct D3D11Buffer : Buffer
 {
 	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
 	GVM::Resource* handleTest = nullptr;
-	GVM::ResourceView* handleViewTest = nullptr;
+	GVM::ResourceView* vertexViewTest = nullptr;
+	GVM::ResourceView* indexViewTest = nullptr;
 	uint8_t dynamic = 0;
 	int32_t size = 0;
 };

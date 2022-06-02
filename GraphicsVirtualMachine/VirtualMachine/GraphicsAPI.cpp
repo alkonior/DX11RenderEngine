@@ -344,31 +344,42 @@ UATargetView* GraphicsApi::CreateUaView(const UATargetViewDesc& description)
     return graphicsMachine.CreateConstBufferView(description);
 }
 
-void GraphicsApi::AddDisposeResource( Resource* resource)
+void GraphicsApi::AddDisposeResource(Resource* resource)
 {
     graphicsMachine.AddDisposeResource(resource);
 }
 
-void GraphicsApi::AddDisposeResourceView( ResourceView* resourceView)
+void GraphicsApi::AddDisposeResourceView(ResourceView* resourceView)
 {
     graphicsMachine.AddDisposeResourceView(resourceView);
 }
 
-void GraphicsApi::SetResourceData( Resource* resource, uint16_t dstSubresource, const UBox rect,
+void GraphicsApi::SetResourceData(Resource* resource, uint16_t dstSubresource, const UBox& rect,
     const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
-{ }
+{
+    graphicsMachine.SetResourceData(resource,dstSubresource, rect,
+    pSrcData, srcRowPitch, srcDepthPitch);
+}
 
-void GraphicsApi::SetVertexBufferData( VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
-{ }
+{ 
+    graphicsMachine.SetVertexBufferData(vertexBuffer, pSrcData, dataLength
+    , srcRowPitch, srcDepthPitch);
+}
 
-void GraphicsApi::SetIndexBufferData( IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
     int32_t srcRowPitch, int32_t srcDepthPitch)
-{ }
+{
+    graphicsMachine.SetIndexBufferData(buffer, pSrcData, dataLength
+      , srcRowPitch, srcDepthPitch);
+}
 
-void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, void* data)
-{ }
 
+void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize)
+{
+    graphicsMachine.SetConstBufferData(constBuffer, data);
+}
 
 InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
 {
