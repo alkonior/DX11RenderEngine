@@ -378,7 +378,7 @@ void GraphicsApi::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, 
 
 void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize)
 {
-    graphicsMachine.SetConstBufferData(constBuffer, data);
+    graphicsMachine.SetConstBufferData(constBuffer, data, dataSize);
 }
 
 InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)

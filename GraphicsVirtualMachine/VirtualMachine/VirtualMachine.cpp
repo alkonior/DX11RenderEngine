@@ -11,7 +11,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
 
 void VirtualMachine::PushData(const void* data, uint32_t dataSize)
 {
-    uint32_t position= dataStack.size();
+    uint32_t position = dataStack.size();
     dataStack.resize(position+dataSize);
     memcpy_s(dataStack.data()+position,dataSize,data,dataSize);
 }
@@ -39,7 +39,7 @@ void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
     pipelinesQueue.resize(position + pipelineSnapshot.GetSize(iStructSizes));
     pipelineSnapshot.Compress(
         PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager, iStructSizes));
-    
+    PushCommand(EMachineCommands::SETUP_PIPELINE);
 }
 constexpr VirtualMachine::EMachineCommands VirtualMachine::ToCommand(EDrawCallType drawCall)
 {

@@ -22,7 +22,7 @@ public:
     EViewType type = EViewType::UNKNOWN;
     bool isRequiredUpdate = true;
 
-    GpuResourceView() = default;
+    GpuResourceView(){};
     GpuResourceView(ResourceView* id, const ConstBufferViewDesc& desc);
     GpuResourceView(ResourceView* id, const DepthStencilViewDesc& desc);
     GpuResourceView(ResourceView* id, const RenderTargetViewDesc& desc);

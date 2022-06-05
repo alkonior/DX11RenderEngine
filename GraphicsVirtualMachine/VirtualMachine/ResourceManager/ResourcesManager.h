@@ -75,10 +75,14 @@ class ResourcesManager {
 
     void AddDisposeResource(const Resource* resource);
     void AddDisposeResourceView(const ResourceView* resourceView);
+    
+    GpuResource& GetResource(const Resource* resource);
+    GpuResourceView& GetResourceView(const ResourceView* resourceView);
 
 public:
     IRenderDevice::IResource* GetRealResource(const Resource* resource);
     IRenderDevice::IResourceView* GetRealResourceView(const ResourceView* resourceView);
+    
 
 
     IRenderDevice::IShader* GetRealShader(const Shader* shader);

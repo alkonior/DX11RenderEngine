@@ -234,6 +234,12 @@ static DXGI_FORMAT IndexType[] =
     DXGI_FORMAT_R32_UINT /* IndexElementSize.ThirtyTwoBits */
 };
 
+static GVM::EFormat GVMIndexType[] =
+{
+    GVM::EFormat::FORMAT_R16_UINT, /* IndexElementSize.SixteenBits */
+    GVM::EFormat::FORMAT_R32_UINT /* IndexElementSize.ThirtyTwoBits */
+};
+
 static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[] =
 {
     D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, /* PrimitiveType.TriangleList */
@@ -286,7 +292,11 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
             IndexType[indexElementSize / 16 - 1],
             0
         );
-        testApi->SetupIndexBuffer((GVM::IndexBufferView*)d3dIndices->handleViewTest);
+        if (!d3dIndices->indexViewTest)
+        {
+            d3dIndices->indexViewTest = testApi->CreateIndexBufferView({(GVM::IndexBuffer*)d3dIndices->handleTest,GVMIndexType[indexElementSize / 16 - 1] ,(uint32_t)d3dIndices->size});
+        }
+        testApi->SetupIndexBuffer((GVM::IndexBufferView*)d3dIndices->indexViewTest);
     }
 }
 
@@ -499,7 +509,7 @@ constexpr GVM::EBlendOperator ToGVM(BlendFunction blend)
     }
 }
 
-constexpr GVM::BlendStateDesc ToGVM(const BlendState& blendState)
+GVM::BlendStateDesc ToGVM(const BlendState& blendState)
 {
     GVM::BlendStateDesc result;
     result.BlendEnable = blendState.enabled;
@@ -1291,7 +1301,6 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     resourceDesc.Array = 1;
     resourceDesc.initialData = nullptr;
 
-    result->resource = testApi->CreateTextureCube(resourceDesc);
 
     if (isRenderTarget)
     {
@@ -1317,6 +1326,8 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     result->cubeSize = size;
     result->format = format;
 
+    result->resource = testApi->CreateTextureCube(resourceDesc);
+    
     /* Create the shader resource view */
     srvDesc.Format = desc.Format;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
@@ -2624,6 +2635,7 @@ void D3D11Renderer::RestoreTargetTextures()
 
 void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBuffer)
 {
+    GVM::VertexBufferBinding vb;
     if (vertexBuffer.buffersCount == 1)
     {
         //std::lock_guard<std::mutex> guard(ctxLock);
@@ -2635,13 +2647,22 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
                 context->IASetVertexBuffers(0u, 1u, buff->handle.GetAddressOf(), vertexBuffer.vertexStride,
                     vertexBuffer.vertexOffset));
         }
+        vb.buffersNum = 1;
+        vb.vertexBuffers[0] = buff->vertexViewTest;
+        vb.vertexStride[0] = vertexBuffer.vertexStride[0];
+        vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
     }
     else
     {
         static std::vector<ID3D11Buffer*> buffers(16);
+            vb.buffersNum = vertexBuffer.buffersCount;
         for (size_t i = 0; i < vertexBuffer.buffersCount; i++)
         {
+            auto* buff =((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i]); 
             buffers[i] = ((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i])->handle.Get();
+            vb.vertexBuffers[0] = buff->vertexViewTest;
+            vb.vertexStride[0] = vertexBuffer.vertexStride[0];
+            vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
         }
         this->vertexBuffer = buffers[0];
         //std::lock_guard<std::mutex> guard(ctxLock);
@@ -2649,6 +2670,7 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
             context->IASetVertexBuffers(0u, (UINT)vertexBuffer.buffersCount, buffers.data(), vertexBuffer.
                 vertexStride, vertexBuffer.vertexOffset));
     }
+    testApi->SetupVertexBuffer(vb);
 }
 
 
@@ -2677,7 +2699,13 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
                 shaderData.flags, shaderData.flags << 8u, &pPSData, &psErrorBlob));
         GFX_THROW_INFO(
             device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
-                pComputeShader));
+                pPixelShader));
+        GVM::ShaderDesc desc;
+        desc.type = GVM::EShaderType::PIXEL_SHADER;
+        desc.name = shaderData.name;
+        desc.bytecode = pPSData->GetBufferPointer();
+        desc.byteCodeSize = pPSData->GetBufferSize();
+        result->testShader = testApi->CreateShader(desc);
         compiled = true;
     }
     catch (HrException exe)
@@ -2699,6 +2727,14 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
 #else
         GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
         GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
+
+    GVM::ShaderDesc desc;
+    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    //desc.name = shaderData.name;
+    desc.bytecode = pPSData->GetBufferPointer();
+    desc.byteCodeSize = pPSData->GetBufferSize();
+    result->testShader = testApi->CreateShader(desc);
+
 #endif
     return result;
 }
@@ -2728,6 +2764,13 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
         GFX_THROW_INFO(
             device->CreateComputeShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
                 pComputeShader));
+        
+        GVM::ShaderDesc desc;
+        desc.type = GVM::EShaderType::COMPUTE_SHADER;
+        desc.name = shaderData.name;
+        desc.bytecode = pPSData->GetBufferPointer();
+        desc.byteCodeSize = pPSData->GetBufferSize();
+        result->testShader = testApi->CreateShader(desc);
     }
     catch (HrException exe)
     {
@@ -2786,6 +2829,14 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
         GFX_THROW_INFO(
             device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
                 pGeometryShader));
+
+        
+        GVM::ShaderDesc desc;
+        desc.type = GVM::EShaderType::GEOMETRY_SHADER;
+        desc.name = shaderData.name;
+        desc.bytecode = pPSData->GetBufferPointer();
+        desc.byteCodeSize = pPSData->GetBufferSize();
+        result->testShader = testApi->CreateShader(desc);
     }
     catch (HrException exe)
     {
@@ -2856,6 +2907,17 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
             pVSData->GetBufferPointer(),
             pVSData->GetBufferSize(),
             &result->pInputLayout));
+
+        
+        GVM::ShaderDesc desc;
+        desc.type = GVM::EShaderType::VERTEX_SHADER;
+        desc.name = shaderData.name;
+        desc.bytecode = pVSData->GetBufferPointer();
+        desc.byteCodeSize = pVSData->GetBufferSize();
+        result->testShader = testApi->CreateShader(desc);
+
+
+        //todo InputLayout
     }
     catch (HrException exe)
     {
@@ -2915,7 +2977,8 @@ void D3D11Renderer::ApplyPixelShader(PixelShader* pixelShader)
     if (!pixelShader)
         return;
     D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
-    GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
+    GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pPixelShader.Get(), nullptr, 0u));
+    testApi->SetupShader(shader->testShader,GVM::EShaderType::PIXEL_SHADER);
 }
 
 void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
@@ -2925,6 +2988,8 @@ void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
     D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
     GFX_THROW_INFO_ONLY(context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u));
     GFX_THROW_INFO_ONLY(context->IASetInputLayout(shader->pInputLayout.Get()));
+    testApi->SetupShader(shader->testShader,GVM::EShaderType::VERTEX_SHADER);
+    testApi->SetupInputLayout(shader->testIL);
 }
 
 ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
@@ -2942,6 +3007,13 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
     cbd.StructureByteStride = 0u;
     GFX_THROW_INFO(device->CreateBuffer(&cbd, NULL, &result->handle));
 
+    GVM::BufferResourceDesc rDesc;
+    rDesc.initialData = nullptr;
+    rDesc.Size = (UINT)((size / 16 + (size % 16 != 0)) * 16);
+
+    result->buffer = testApi->CreateConstBuffer(rDesc);
+    result->bufferView = testApi->CreateConstBufferView({result->buffer, (UINT)((size / 16 + (size % 16 != 0)) * 16)});
+    
     result->size = size;
 
     return result;
@@ -2955,6 +3027,8 @@ void D3D11Renderer::VerifyConstBuffer(ConstBuffer* constBuffer, size_t slot)
     GFX_THROW_INFO_ONLY(context->PSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
     GFX_THROW_INFO_ONLY(context->GSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
     GFX_THROW_INFO_ONLY(context->CSSetConstantBuffers(slot, 1, buff->handle.GetAddressOf()));
+
+    testApi->SetupConstBuffer(buff->bufferView, slot);
 }
 
 void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data)
@@ -2966,6 +3040,7 @@ void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data)
     GFX_THROW_INFO_ONLY(context->UpdateSubresource(
         buffer->handle.Get(), 0, 0,
         data, 0, 0));
+    testApi->SetConstBufferData(buffer->buffer,data,buffer->size);
 
     //GFX_THROW_INFO_ONLY(context->Map(
     //      buffer->handle.Get(),
@@ -3058,10 +3133,12 @@ void D3D11Renderer::ApplyGeometryShader(GeometryShader* geometryShader)
     {
         D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
         GFX_THROW_INFO_ONLY(context->GSSetShader(shader->pGeometryShader.Get(), nullptr, 0u));
+        testApi->SetupShader(shader->testShader,GVM::EShaderType::GEOMETRY_SHADER);
     }
     else
     {
         GFX_THROW_INFO_ONLY(context->GSSetShader(NULL, nullptr, 0u));
+        testApi->SetupShader(nullptr,GVM::EShaderType::COMPUTE_SHADER);
     }
 }
 
@@ -3071,10 +3148,12 @@ void D3D11Renderer::ApplyComputeShader(ComputeShader* computeShader)
     {
         D3D11ComputeShader* shader = (D3D11ComputeShader*)computeShader;
         GFX_THROW_INFO_ONLY(context->CSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
+        testApi->SetupShader(shader->testShader,GVM::EShaderType::COMPUTE_SHADER);
     }
     else
     {
         GFX_THROW_INFO_ONLY(context->CSSetShader(NULL, nullptr, 0u));
+        testApi->SetupShader(nullptr,GVM::EShaderType::COMPUTE_SHADER);
     }
 }
 

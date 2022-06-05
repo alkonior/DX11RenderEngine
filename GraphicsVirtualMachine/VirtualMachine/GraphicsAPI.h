@@ -163,14 +163,7 @@ public:
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );//todo offset
-
-    template<class T>
-    void SetConstBufferData(
-        ConstBuffer* constBuffer,
-        T* data)
-    {
-        graphicsMachine.SetConstBufferData(constBuffer, data);
-    }
+    
     
     void SetConstBufferData(
         ConstBuffer* constBuffer,

@@ -46,6 +46,15 @@ class VirtualMachine
 
     void PushCommand(EMachineCommands command);
     void PushData(const void* data, uint32_t dataSize);
+    
+    template<class T>
+    void PushData(const T* data)
+    {
+        const uint32_t dataSize = sizeof(*data);
+        uint32_t position= dataStack.size();
+        dataStack.resize(position+dataSize);
+        memcpy_s(dataStack.data()+position,dataSize,data,dataSize);
+    };
 
     IRenderDevice* RenderDevice;
 public:
@@ -128,15 +137,7 @@ public:
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );
-
-    template<class T>
-    void SetConstBufferData(
-        ConstBuffer* constBuffer,
-        T* data)
-    {
-        UBox rect {0,0,0,sizeof(T),1,1};
-        SetResourceData(constBuffer, 0, rect, data,0,0);
-    }
+    
 
     void SetConstBufferData(
            ConstBuffer* constBuffer,

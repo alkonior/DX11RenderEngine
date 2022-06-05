@@ -7,79 +7,153 @@ using namespace GVM;
 Resource* VirtualMachine::CreateResource(const ResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateResource(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+        
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 Resource* VirtualMachine::CreateBuffer(const BufferResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateBuffer(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 Resource* VirtualMachine::CreateTexture1D(const Texture1DResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateTexture1D(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 Resource* VirtualMachine::CreateTexture2D(const Texture2DResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateTexture2D(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 Resource* VirtualMachine::CreateTexture3D(const Texture3DResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateTexture3D(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 Resource* VirtualMachine::CreateTextureCube(const TextureCubeResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateTextureCube(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return resource.id;
 }
 
 VertexBuffer* VirtualMachine::CreateVertexBuffer(const BufferResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateVertexBuffer(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return reinterpret_cast<VertexBuffer*>(resource.id);
 }
 
 ConstBuffer* VirtualMachine::CreateConstBuffer(const BufferResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateConstBuffer(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+    
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return reinterpret_cast<ConstBuffer*>(resource.id);
 }
 
 IndexBuffer* VirtualMachine::CreateIndexBuffer(const BufferResourceDesc& desc)
 {
     auto& resource = resourcesManager.CreateIndexBuffer(desc);
-    resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
+    //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
+   
+    if(resource.resource != nullptr)
+        PushCommand(EMachineCommands::CREATE_RESOURCE);
+    else
+        PushCommand(EMachineCommands::UPDATE_RESOURCE);
+    
+    PushData(&resource, sizeof(GpuResource));
+    
     return reinterpret_cast<IndexBuffer*>(resource.id);
 }
 
 ConstBufferView* VirtualMachine::CreateConstBufferView(const ConstBufferViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateConstBufferView(desc);
-    resourceView.view = RenderDevice->CreateConstBufferView(resourceView.cbViewDescription);
+    //resourceView.view = RenderDevice->CreateConstBufferView(resourceView.cbViewDescription);
     //todo Command
     return reinterpret_cast<ConstBufferView*>(resourceView.id);
 }
