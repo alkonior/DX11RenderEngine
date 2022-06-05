@@ -320,6 +320,7 @@ enum class EResourceDimension
     RESOURCE_DIMENSION_TEXTURE2D,
     RESOURCE_DIMENSION_TEXTURE3D,
 };
+
     
 enum class EShaderViewDimension {
     DIMENSION_UNKNOWN = 0,
@@ -330,6 +331,15 @@ enum class EShaderViewDimension {
     DIMENSION_TEXTURE3D,
     DIMENSION_TEXTURECUBE ,
     DIMENSION_TEXTURECUBE_ARRAY,
+};
+    
+constexpr EShaderViewDimension ResourceDimToViewDim[]=
+{
+    EShaderViewDimension::DIMENSION_UNKNOWN,  //RESOURCE_DIMENSION_UNKNOWN,
+    EShaderViewDimension::DIMENSION_UNKNOWN,  //RESOURCE_DIMENSION_BUFFER,
+    EShaderViewDimension::DIMENSION_TEXTURE1D,//RESOURCE_DIMENSION_TEXTURE1D,
+    EShaderViewDimension::DIMENSION_TEXTURE1D,//RESOURCE_DIMENSION_TEXTURE2D,
+    EShaderViewDimension::DIMENSION_TEXTURE3D //RESOURCE_DIMENSION_TEXTURE3D,
 };
     
 enum class ERTViewDimension {

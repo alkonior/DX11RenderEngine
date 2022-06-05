@@ -18,48 +18,48 @@ struct ResourceDesc
 
  struct BufferResourceDesc
  {
-     uint32_t        Size;
-     void*           initialData;
+     uint32_t        Size = 0;
+     void*           initialData = nullptr;
  };
     
     
 struct Texture1DResourceDesc
 {
-    uint32_t                 Width;
-    uint16_t                 Array;
+    uint32_t                 Width = 0;
+    uint16_t                 Array = 0;
     //uint16_t                 MipLevels;
-    EFormat                  Format;
-    void*                    initialData;
+    EFormat                  Format= EFormat::FORMAT_UNKNOWN;
+    void*                    initialData= nullptr;
 };
     
 struct Texture2DResourceDesc
 {
-    uint32_t                 Width;
-    uint32_t                 Height;
-    uint16_t                 Array;
+    uint32_t                 Width = 0;
+    uint32_t                 Height = 0;
+    uint16_t                 Array = 0;
     //uint16_t                 MipLevels;
-    EFormat                  Format;
-    void*                    initialData;
+    EFormat                  Format= EFormat::FORMAT_UNKNOWN;
+    void*                    initialData= nullptr;
 };
     
 struct TextureCubeResourceDesc
 {
-    uint32_t                 Width;
-    uint32_t                 Height;
-    uint16_t                 Array;
+    uint32_t                 Width = 0;
+    uint32_t                 Height = 0;
+    uint16_t                 Array = 0;
     //uint16_t                 MipLevels;
-    EFormat                  Format;
+    EFormat                  Format= EFormat::FORMAT_UNKNOWN;
     void*                    initialData;
 };
     
 struct Texture3DResourceDesc
 {
-    uint32_t                 Width;
-    uint32_t                 Height;
-    uint16_t                 Depth;
+    uint32_t                 Width = 0;
+    uint32_t                 Height = 0;
+    uint16_t                 Depth = 0;
     //uint16_t                 MipLevels;
-    EFormat                  Format;
-    void*                    initialData;
+    EFormat                  Format = EFormat::FORMAT_UNKNOWN;
+    void*                    initialData = nullptr;
 };
 
 }

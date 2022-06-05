@@ -369,12 +369,15 @@ GpuResourceView& ResourcesManager::CreateShaderResourceView(const ShaderResource
 #endif
 
     auto& resource = Resources.at(resId);
-
+    auto savedDesc = desc; 
+    
+    
 #ifdef _DEBUG
-    assert(desc.Dimension != EShaderViewDimension::DIMENSION_UNKNOWN);
-    assert(desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
-    assert(FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
+    
+    assert(desc.MakeDefault || desc.Dimension != EShaderViewDimension::DIMENSION_UNKNOWN);
+    assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
+    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
 
@@ -417,10 +420,10 @@ GpuResourceView& ResourcesManager::CreateRenderTargetView(const RenderTargetView
     auto& resource = Resources.at(resId);
 
 #ifdef _DEBUG
-    assert(desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
-    assert(desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
-    assert(FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
+    assert(desc.MakeDefault || desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
+    assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
+    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
 
@@ -453,10 +456,10 @@ GpuResourceView& ResourcesManager::CreateUATargetView(const UATargetViewDesc& de
     auto& resource = Resources.at(resId);
 
 #ifdef _DEBUG
-    assert(desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
-    assert(desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
-    assert(FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
+    assert(desc.MakeDefault || desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
+    assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
+    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
 

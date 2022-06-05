@@ -139,7 +139,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
     renderTargetViews.resize(MAX_RENDERTARGET_BINDINGS);
 
-    /* Initialize SetStringMarker support, if available */ //TODO
+    /* Initialize SetStringMarker support, if available */ 
     //if (featureLevel == D3D_FEATURE_LEVEL_11_1) {
     //	context->QueryInterface(&annotation);
     //
@@ -422,6 +422,7 @@ void D3D11Renderer::SetScissorRect(Rect scissor)
         scissorRect = scissor;
         GFX_THROW_INFO_ONLY(context->RSSetScissorRects(1, &rect));
     }
+    
     //testApi->SetupScissorRect(ToGVM(scissor)); todo
 }
 
@@ -1082,12 +1083,12 @@ constexpr GVM::EFormat ToGVM(SurfaceFormat format)
     switch (format)
     {
     case SURFACEFORMAT_COLOR: return GVM::EFormat::FORMAT_R8G8B8A8_UNORM;
-    case SURFACEFORMAT_BGR565: return GVM::EFormat::FORMAT_UNKNOWN; //todo
-    case SURFACEFORMAT_BGRA5551: return GVM::EFormat::FORMAT_UNKNOWN; //todo
-    case SURFACEFORMAT_BGRA4444: return GVM::EFormat::FORMAT_UNKNOWN; //todo
-    case SURFACEFORMAT_DXT1: return GVM::EFormat::FORMAT_UNKNOWN; //todo
-    case SURFACEFORMAT_DXT3: return GVM::EFormat::FORMAT_UNKNOWN; //todo
-    case SURFACEFORMAT_DXT5: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_BGR565: return GVM::EFormat::FORMAT_UNKNOWN;     //todo
+    case SURFACEFORMAT_BGRA5551: return GVM::EFormat::FORMAT_UNKNOWN;   //todo
+    case SURFACEFORMAT_BGRA4444: return GVM::EFormat::FORMAT_UNKNOWN;   //todo
+    case SURFACEFORMAT_DXT1: return GVM::EFormat::FORMAT_UNKNOWN;       //todo
+    case SURFACEFORMAT_DXT3: return GVM::EFormat::FORMAT_UNKNOWN;       //todo
+    case SURFACEFORMAT_DXT5: return GVM::EFormat::FORMAT_UNKNOWN;       //todo
     case SURFACEFORMAT_NORMALIZEDBYTE2: return GVM::EFormat::FORMAT_R8G8_SNORM;
     case SURFACEFORMAT_NORMALIZEDBYTE4: return GVM::EFormat::FORMAT_R8G8B8A8_SNORM;
     case SURFACEFORMAT_RGBA1010102: return GVM::EFormat::FORMAT_R10G10B10A2_UNORM;
@@ -1335,6 +1336,8 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     srvDesc.TextureCube.MostDetailedMip = 0;
 
     result->shView = testApi->CreateShaderResourceView({result->resource, true});
+
+    //todo fix it
 
     res = device->CreateShaderResourceView(
         result->handle.Get(),
@@ -1764,7 +1767,7 @@ Buffer* D3D11Renderer::GenVertexBuffer(uint8_t dynamic, BufferUsage usage, int32
     desc.StructureByteStride = 0;
 
     GVM::BufferResourceDesc tdesc;
-    tdesc.Size - sizeInBytes;
+    tdesc.Size = sizeInBytes;
     result->handleTest = testApi->CreateBuffer(tdesc);
 
     /* Make the buffer */
@@ -1945,7 +1948,7 @@ Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_
 
     
     GVM::BufferResourceDesc tdesc;
-    tdesc.Size - sizeInBytes;
+    tdesc.Size = sizeInBytes;
     result->handleTest = testApi->CreateBuffer(tdesc);
 
     /* Make the buffer */

@@ -9,7 +9,7 @@ Resource* VirtualMachine::CreateResource(const ResourceDesc& desc)
     auto& resource = resourcesManager.CreateResource(desc);
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -25,7 +25,7 @@ Resource* VirtualMachine::CreateBuffer(const BufferResourceDesc& desc)
     //todo Command
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -41,7 +41,7 @@ Resource* VirtualMachine::CreateTexture1D(const Texture1DResourceDesc& desc)
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -57,7 +57,7 @@ Resource* VirtualMachine::CreateTexture2D(const Texture2DResourceDesc& desc)
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -74,7 +74,7 @@ Resource* VirtualMachine::CreateTexture3D(const Texture3DResourceDesc& desc)
     //todo Command
     
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -91,7 +91,7 @@ Resource* VirtualMachine::CreateTextureCube(const TextureCubeResourceDesc& desc)
     //todo Command
     
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -108,7 +108,7 @@ VertexBuffer* VirtualMachine::CreateVertexBuffer(const BufferResourceDesc& desc)
     //todo Command
     
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -124,7 +124,7 @@ ConstBuffer* VirtualMachine::CreateConstBuffer(const BufferResourceDesc& desc)
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
     
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
@@ -140,7 +140,7 @@ IndexBuffer* VirtualMachine::CreateIndexBuffer(const BufferResourceDesc& desc)
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
    
-    if(resource.resource != nullptr)
+    if(resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
