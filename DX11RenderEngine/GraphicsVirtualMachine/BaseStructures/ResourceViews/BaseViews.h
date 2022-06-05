@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "BaseStructures\GVMEnums.h"
-#include "BaseStructures\IRenderClasses.h"
+#include "../../BaseStructures\GVMEnums.h"
+#include "../../BaseStructures\IRenderClasses.h"
 
 namespace GVM {
 

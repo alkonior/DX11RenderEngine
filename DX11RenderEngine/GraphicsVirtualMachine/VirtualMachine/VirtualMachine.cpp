@@ -1,6 +1,6 @@
 ﻿#include "VirtualMachine.h"
 
-#include "RenderDeviceDX11/RenderDeviceDX11.h"
+#include "../RenderDeviceDX11/RenderDeviceDX11.h"
 
 using namespace GVM;
 

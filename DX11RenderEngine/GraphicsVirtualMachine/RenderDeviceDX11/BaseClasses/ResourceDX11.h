@@ -1,5 +1,5 @@
 #pragma once
-#include "VirtualMachine/IRenderDevice.h"
+#include "../../VirtualMachine\IRenderDevice.h"
 
 namespace GVM {
 class ResourceDX11 : public GVM::IRenderDevice::IResource {

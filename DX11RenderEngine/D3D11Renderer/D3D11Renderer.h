@@ -10,7 +10,7 @@
 
 
 #define GVM_MSW
-#include "../GraphicsVirtualMachine/VirtualMachine/GraphicsAPI.h"
+#include "GraphicsVirtualMachine/VirtualMachine/GraphicsAPI.h"
 
 #include <unordered_map>
 

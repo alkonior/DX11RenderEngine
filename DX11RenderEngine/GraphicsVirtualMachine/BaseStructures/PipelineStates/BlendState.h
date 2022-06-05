@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "BaseStateDesc.h"
-#include "BaseStructures/GVMEnums.h"
+#include "../../BaseStructures\GVMEnums.h"
 
 namespace GVM
 {

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <cmath>
-#include "BaseStructures\GVMEnums.h"
+#include "../../BaseStructures\GVMEnums.h"
 
 namespace GVM {
 

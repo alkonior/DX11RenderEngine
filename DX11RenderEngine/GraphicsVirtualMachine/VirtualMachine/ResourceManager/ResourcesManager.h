@@ -14,7 +14,7 @@ class PipelineSnapshot;
 
 class ResourcesManager {
 
-    uintptr_t freeIndex = 0;
+    uintptr_t freeIndex = 1;
     std::unordered_map<uint32_t, GpuResource> Resources = {};
     std::unordered_map<uint32_t, GpuResourceView> ResourceViews = {};
 

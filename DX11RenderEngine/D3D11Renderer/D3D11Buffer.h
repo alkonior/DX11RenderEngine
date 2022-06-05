@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "IRenderer/Utils.h"
-#include "../../GraphicsVirtualMachine/BaseStructures.h"
+#include "GraphicsVirtualMachine/BaseStructures.h"
 
 namespace Renderer {
 

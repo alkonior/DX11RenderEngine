@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "BlendState.h"
-#include "BaseStructures\IRenderClasses.h"
+#include "../../BaseStructures\IRenderClasses.h"
 
 namespace GVM {
 namespace Compressed {

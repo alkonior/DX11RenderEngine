@@ -1,5 +1,5 @@
 #pragma once
-#include "VirtualMachine/IRenderDevice.h"
+#include "../VirtualMachine/IRenderDevice.h"
 #include "BaseDX11Classes.h"
 
 namespace GVM {

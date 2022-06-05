@@ -1,6 +1,6 @@
 #include "RasterizerState.h"
 #include <cassert>
-#include "BaseDefines.h"
+#include "../../BaseDefines.h"
 
 using namespace GVM;
 
