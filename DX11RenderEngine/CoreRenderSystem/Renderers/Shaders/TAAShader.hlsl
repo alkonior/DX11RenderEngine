@@ -24,8 +24,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h"
 
 // Whether to use real 16-bit floats
 // Use only with DXIL with SM6.2 and "-enable-16bit-types" as a compiler option

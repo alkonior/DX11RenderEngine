@@ -1,6 +1,6 @@
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/MotionBlurRenderer\MotionBlurConstBuffer.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/MotionBlurRenderer\MotionBlurConstBuffer.h"
 
 struct VSIn
 {
@@ -44,7 +44,7 @@ struct PSOut {
     float4 light   : SV_Target1;
 };
 
-PSOut psIn(PSIn input) : SV_Target{
+PSOut psIn(PSIn input) : SV_Target {
     PSOut pso = (PSOut)0;
     float2 texCoord = input.uv;
 

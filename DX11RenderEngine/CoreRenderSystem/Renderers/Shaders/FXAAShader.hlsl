@@ -1,6 +1,6 @@
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/FXAARenderer/FXAARendererConstBuffer.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/FXAARenderer/FXAARendererConstBuffer.h"
 
 struct VSIn
 {
@@ -32,7 +32,7 @@ PSIn vsIn(VSIn input)
 #define FXAA_QUALITY__PRESET 12
 #define FXAA_GREEN_AS_LUMA 0
 
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/FXAARenderer/Fxaa3_11.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/FXAARenderer/Fxaa3_11.h"
 
 Texture2D diffuseColor : register(t0);
 SamplerState basicSampler : register(s0);

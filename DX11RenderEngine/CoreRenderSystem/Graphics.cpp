@@ -68,6 +68,7 @@ void Graphics::BeginFrame() {
 bool Graphics::RenderFrame() {
 	managerIMGUI.BeginFrame(*this);
 
+	renderer->ClearState();
 	
 	managerTAA.UpdateHaltonSequence();
 	taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
@@ -118,6 +119,8 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
 
+	renderer->ClearState();
+	
 	pRenderer.BeginEvent("UI draw.");
 	GFX_CATCH_RENDER(managerUI.Render(););
 	pRenderer.EndEvent();

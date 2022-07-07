@@ -174,7 +174,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Bezier.h" />
     <ClInclude Include="CoreRenderSystem\CoreShaderInclude.h" />
     <ClInclude Include="CoreRenderSystem\Graphics.h" />
     <ClInclude Include="CoreRenderSystem\GraphicsBase.h" />
@@ -409,6 +408,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -442,6 +442,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -484,6 +485,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -517,6 +519,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -559,6 +562,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -592,6 +596,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -634,6 +639,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -667,6 +673,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -709,6 +716,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -742,6 +750,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -785,6 +794,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -818,6 +828,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -860,6 +871,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -893,6 +905,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -935,6 +948,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -968,6 +982,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <ExcludedFromBuild>true</ExcludedFromBuild>
@@ -1016,6 +1031,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1049,6 +1065,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1057,7 +1074,7 @@
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\QuadRenderer.cpp" />
-    <EditorConfigFiles Include="CoreRenderSystem\Renderers\Shaders\PixelPacking_Velocity.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\PixelPacking_Velocity.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\SSAOShader.hlsl" />
     <ClCompile Include="CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -1097,6 +1114,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1130,6 +1148,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1172,6 +1191,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1205,6 +1225,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1247,6 +1268,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1280,6 +1302,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1322,6 +1345,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1355,6 +1379,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1402,6 +1427,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1435,6 +1461,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1477,6 +1504,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1510,6 +1538,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1552,6 +1581,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1585,6 +1615,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1627,6 +1658,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1660,6 +1692,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1702,6 +1735,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1735,6 +1769,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1777,6 +1812,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1810,6 +1846,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1852,6 +1889,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1885,6 +1923,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -1927,6 +1966,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -1960,6 +2000,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -2002,6 +2043,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -2035,6 +2077,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -2121,6 +2164,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -2154,6 +2198,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -2198,6 +2243,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -2231,6 +2277,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -2274,6 +2321,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ObjectFileName>Debug\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>$(SolutionDir)Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
@@ -2307,6 +2355,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\IRenderer\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;$(SolutionDir)ref_dx11rg\DX11RenderEngine\dxerr;$(SolutionDir)ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
@@ -2318,6 +2367,17 @@
     <None Include="CoreRenderSystem\Renderers\Shaders\MotionBlurShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\TAAShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\FXAAShader.cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
     <None Include="packages.config" />
     <None Include="Utils\include\SimpleMath.inl" />
   </ItemGroup>
@@ -2325,14 +2385,17 @@
     <ResourceCompile Include="DX11RenderEngine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dxerr\dxerr.vcxproj">
-      <Project>{f23e0f3e-9006-4510-828e-3b9ec4271041}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraphicsVirtualMachine\GraphicsVirtualMachine.vcxproj">
-      <Project>{f4ef5d9d-f126-487f-bfcd-d452bd05fdfc}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <FxCompile Include="..\..\..\baseq2\BloomShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\..\..\baseq2\PostProcessShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2346,6 +2409,17 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\..\..\baseq2\FXAAShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\..\..\baseq2\ParticlesShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2371,9 +2445,100 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="CoreRenderSystem\Renderers\Shaders\BloomShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\BloomShader.cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\BSPShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>psIn</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ShaderType>Pixel</ShaderType>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\FXAAShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\FXAAShader.cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\ModelsShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\ParticlesShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\PostProcessShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\SkyShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="CoreRenderSystem\Renderers\Shaders\UIShader.hlsl">
+      <ObjectFileOutput>$(SolutionDir)Debug\%(Filename).cso</ObjectFileOutput>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <EntryPointName>main</EntryPointName>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <DisableOptimizations>true</DisableOptimizations>
+      <EnableDebuggingInformation>true</EnableDebuggingInformation>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DX11Commands.md" />
+    <ProjectReference Include="..\dxerr\dxerr.vcxproj">
+      <Project>{f23e0f3e-9006-4510-828e-3b9ec4271041}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
