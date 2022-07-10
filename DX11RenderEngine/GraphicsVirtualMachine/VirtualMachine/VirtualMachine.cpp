@@ -41,6 +41,7 @@ void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
         PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager, iStructSizes));
     PushCommand(EMachineCommands::SETUP_PIPELINE);
 }
+
 constexpr VirtualMachine::EMachineCommands VirtualMachine::ToCommand(EDrawCallType drawCall)
 {
     switch (drawCall)

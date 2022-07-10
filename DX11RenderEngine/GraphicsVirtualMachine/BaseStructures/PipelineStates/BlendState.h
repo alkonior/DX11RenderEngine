@@ -56,7 +56,7 @@ struct BlendStateDesc : BaseStateDesc
     EBlendType       DestBlendAlpha        = EBlendType::BLEND_ZERO;
     EBlendOperator   BlendOp               = EBlendOperator::BLEND_OP_ADD;
     EBlendOperator   BlendOpAlpha          = EBlendOperator::BLEND_OP_ADD;
-    ELogicOperator   LogicOp               = ELogicOperator::LOGIC_OP_UNDEFINED;
+    ELogicOperator   LogicOp               = ELogicOperator::LOGIC_OP_UNKNOWN;
     uint8_t          RenderTargetWriteMask = 0xff;
 
     BlendStateDesc();

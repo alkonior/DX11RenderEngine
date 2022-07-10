@@ -15,6 +15,7 @@ void GraphicsApi::ClearRenderTarget(RenderTargetView* renderTarget, FColor color
 { }
 void GraphicsApi::Clear(DepthStencilView* septhStencil, float depth, int8_t stencil)
 { }
+
 void GraphicsApi::ClearState()
 {
     //ps.VS = ps.PS = ps.CS = ps.GS = ps.HS = ps.DS = nullptr;

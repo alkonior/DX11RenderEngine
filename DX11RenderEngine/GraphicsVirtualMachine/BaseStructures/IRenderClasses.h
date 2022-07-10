@@ -25,21 +25,21 @@ struct ShaderResourceView : ResourceView {};
 namespace Compressed {
     struct VertexBufferBinding {
         //VertexBufferView* vertexBuffers [1];
-        uint32_t vertexStride [1];
-        uint32_t vertexOffset [1];
+      //  uint32_t vertexStride [1];
+      //  uint32_t vertexOffset [1];
     };
 }
 
 struct VertexBufferBinding {
-    using CompressedType = Compressed::VertexBufferBinding;
+    //using CompressedType = Compressed::VertexBufferBinding;
     uint8_t buffersNum = 0;
     VertexBufferView* vertexBuffers [32] = {};
-    uint32_t vertexStride [32] = {};
-    uint32_t vertexOffset [32] = {};
+    //uint32_t vertexStride [32] = {};
+    //uint32_t vertexOffset [32] = {};
 };
 
 struct Mesh  {
-    static const Mesh VoidMesh;
+    //static const Mesh VoidMesh;
     VertexBufferBinding vertexBuffer;
     IndexBufferView* indexBuffer = nullptr;
 };

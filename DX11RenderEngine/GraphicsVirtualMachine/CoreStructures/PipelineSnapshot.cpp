@@ -2,23 +2,37 @@
 using namespace GVM;
 
 
-const Mesh Mesh::VoidMesh;
-
 uint32_t GVM::PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
-    size += renderTargetsNum * (sizeof(RenderTargetDesc::CompressedType)+structuresSizes.IResourceViewSize);
+    size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
+    
+    //size += renderTargetsNum * structuresSizes.IResourceViewSize;
+    size += renderTargetsNum * sizeof(void*);
+    
     size += samplersNum * sizeof(SamplerStateDesc::CompressedType);
     size += viewportsNum * sizeof(ViewportDesc::CompressedType);
 
-    size += constBuffersNum * structuresSizes.IResourceViewSize;
-    size += texturesNum * structuresSizes.IResourceViewSize;
-    size += mesh.vertexBuffer.buffersNum * (sizeof(VertexBufferBinding::CompressedType) + structuresSizes.IResourceViewSize);
+    //size += constBuffersNum * structuresSizes.IResourceViewSize;
+    //size += texturesNum * structuresSizes.IResourceViewSize;
     
-    size += 6 * structuresSizes.IShaderSize;
-    size += structuresSizes.IInputLayoutSize;
-    size += structuresSizes.IResourceViewSize;//IndexBuffer
-    size += structuresSizes.IResourceViewSize;//DepthBuffer
+    size += constBuffersNum * sizeof(void*);
+    size += texturesNum * sizeof(void*);
+    
+    //size += mesh.vertexBuffer.buffersNum * (structuresSizes.IResourceViewSize);
+    
+    //size += 6 * structuresSizes.IShaderSize;
+    //size += structuresSizes.IInputLayoutSize;
+    //size += structuresSizes.IResourceViewSize;//IndexBuffer
+    //size += structuresSizes.IResourceViewSize;//DepthBuffer
+    
+    
+    size += mesh.vertexBuffer.buffersNum * (sizeof(void*));
+    
+    size += 6 * sizeof(void*);
+    size += sizeof(void*);//InputLayoutSize
+    size += sizeof(void*);//IndexBuffer
+    size += sizeof(void*);//DepthBuffer
     
     return size;
 }

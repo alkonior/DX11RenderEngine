@@ -79,7 +79,7 @@ namespace Compressed {
         CoreBlendDesc               blendDesc;
     
         uint8_t                     renderTargetsNum;
-        //RenderTargetDesc            RenderTargets[8];
+        RenderTargetDesc*           RenderTargets;
         
         uint8_t                     samplersNum;
         //SamplerStateDesc            Samplers[16];
@@ -104,16 +104,16 @@ namespace Compressed {
         uint8_t Data[0];
 
         
-        //IShader*                    VS;
-        //IShader*                    PS;
-        //IShader*                    CS;
-        //IShader*                    GS;
-        //IShader*                    HS;
-        //IShader*                    DS;
+        Shader*                    VS;
+        Shader*                    PS;
+        Shader*                    CS;
+        Shader*                    GS;
+        Shader*                    HS;
+        Shader*                    DS;
         
-        //IInputLayout*                vertexDeclaration;
-        //IDepthStencilView*           DepthBuffer;
-        //IIndexBufferView*            indexBuffer;
+        InputLayout*                vertexDeclaration;
+        DepthStencilView*           DepthBuffer;
+        IndexBufferView*            indexBuffer;
     
     };
 

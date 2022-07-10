@@ -8,8 +8,31 @@ struct DepthStencilStateDesc;
     
 namespace Compressed {
     struct DepthStencilStateDesc {
+        DepthStencilStateDesc() = default;
         DepthStencilStateDesc(GVM::DepthStencilStateDesc desc);
-        uint64_t data;
+        
+        struct  DepthStencilStateFields{
+            uint8_t State                      : 3;
+            uint8_t DepthEnable                : 1;
+            uint8_t StencilEnable              : 1;
+            uint8_t DepthWriteMask             : 1;
+            uint8_t DepthFunc                  : 4;
+            uint8_t StencilReadMask            : 8;
+            uint8_t StencilWriteMask           : 8;
+            uint8_t FrontStencilFunc           : 2;
+            uint8_t FrontStencilFailOp         : 2;
+            uint8_t FrontStencilPassOp         : 2;
+            uint8_t FrontStencilDepthFailOp    : 2;
+            uint8_t BackStencilFunc            : 2;
+            uint8_t BackStencilFailOp          : 2;
+            uint8_t BackStencilPassOp          : 2;
+            uint8_t BackStencilDepthFailOp     : 2;
+        };
+        
+        union {
+            uint64_t data = 0;
+            DepthStencilStateFields Fields;
+        };
     };
 }
 
@@ -38,8 +61,8 @@ struct DepthStencilStateDesc : BaseStateDesc
 
     DepthStencilStateDesc();
     
-    DepthStencilStateDesc(uint64_t descriptor);
-    uint64_t ToUInt() const;
+    DepthStencilStateDesc(CompressedType descriptor);
+    CompressedType Compress() const;
 };
 
 }

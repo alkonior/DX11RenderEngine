@@ -10,13 +10,13 @@ constexpr auto to_underlying(E e) noexcept
 }
 
 template<typename E>
-constexpr E to_enum(uint8_t e) noexcept
+constexpr auto to_enum(uint32_t e) noexcept
 {
     return static_cast<E>(e);
 }
 
 enum class EShaderType : uint8_t  {
-    UNKNOWN,
+    SHADER_UNKNOWN = 0,
     VERTEX_SHADER,
     PIXEL_SHADER,
     GEOMETRY_SHADER,
@@ -26,7 +26,7 @@ enum class EShaderType : uint8_t  {
 };
 
 enum class EBlendOperator : uint8_t {
-    BLEND_UNKNOWN,
+    BLEND_UNKNOWN = 0,
     BLEND_OP_ADD,
     BLEND_OP_SUBTRACT,
     BLEND_OP_REV_SUBTRACT,
@@ -35,7 +35,7 @@ enum class EBlendOperator : uint8_t {
 };
 
 enum class ELogicOperator : uint8_t {
-    LOGIC_OP_UNDEFINED = 0,
+    LOGIC_OP_UNKNOWN = 0,
     LOGIC_OP_CLEAR,
     LOGIC_OP_SET,
     LOGIC_OP_COPY,
@@ -90,6 +90,7 @@ enum class EComparisonFunc : uint8_t {
 };
 
 enum class EStencilOp : uint8_t {
+    STENCIL_OP_UNKNOWN,
     STENCIL_OP_KEEP,
     STENCIL_OP_ZERO,
     STENCIL_OP_REPLACE,
@@ -277,10 +278,9 @@ constexpr uint32_t FormatByteSize[] = {
     1 /*FORMAT_A8_UNORM,*/
 };
 
-    
 
 enum class EDepthFormat : uint8_t {
-
+    FORMAT_UNKNOWN = 0,
     FORMAT_D32_FLOAT_S8X24_UINT,
     FORMAT_D32_UNORM,
     FORMAT_D24_UNORM_S8_UINT,
@@ -295,7 +295,7 @@ enum class EDsvFlags : uint8_t {
 
     
 enum class EPrimitiveTopology : uint8_t {
-    PRIMITIVE_TOPOLOGY_UNDEFINED                   ,
+    PRIMITIVE_TOPOLOGY_UNKNOWN                   ,
     PRIMITIVE_TOPOLOGY_POINTLIST                   ,
     PRIMITIVE_TOPOLOGY_LINELIST                    ,
     PRIMITIVE_TOPOLOGY_LINESTRIP                   ,
