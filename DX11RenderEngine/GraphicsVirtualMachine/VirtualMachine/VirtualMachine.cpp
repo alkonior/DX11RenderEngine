@@ -33,6 +33,14 @@ resourcesManager()
     }
 }
 
+void VirtualMachine::Present()
+{
+    pipelinesQueue.clear();
+    commandStack.clear();
+    dataStack.clear();
+}
+
+
 void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
 {
     auto position = pipelinesQueue.size();

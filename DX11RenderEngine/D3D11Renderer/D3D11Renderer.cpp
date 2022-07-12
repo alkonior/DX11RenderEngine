@@ -311,7 +311,9 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
         topology = primitiveType;
         context->IASetPrimitiveTopology(
             D3D_Primitive[primitiveType]
+            D3D_Primitive[primitiveType]
         );
+        testApi->
     }
     /* Draw! */
     context->DrawIndexed(
@@ -666,7 +668,7 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
                 index,
                 1,
                 views));
-            testApi->SetupTexture(d3dTexture->shView, index);
+            testApi->SetupTexture(nullptr, index);
             return;
         }
 

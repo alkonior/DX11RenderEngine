@@ -64,6 +64,7 @@ public:
     VirtualMachine(const VirtualMachine&&) = delete;
     ~VirtualMachine() = default;
 
+    void Present();
 
     void PushPSC(PipelineSnapshot& pipelineSnapshot);
     void PushDrawCall(const DrawCall& drawCall);

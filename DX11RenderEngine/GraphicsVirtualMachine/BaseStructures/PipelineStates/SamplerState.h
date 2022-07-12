@@ -34,6 +34,7 @@ struct SamplerStateDesc {
 };
     
 }
+
 struct SamplerStateDesc {
     using CompressedType = Compressed::SamplerStateDesc;
     
@@ -47,7 +48,8 @@ struct SamplerStateDesc {
     float                      BorderColor[4] = {};
     float                      MinLOD = 0;
     float                      MaxLOD = 0;
-
+    
+    SamplerStateDesc() = default;
     SamplerStateDesc(const CompressedType& desc);
 };
 

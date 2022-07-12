@@ -8,7 +8,7 @@ uint32_t PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const
     size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
     
     //size += renderTargetsNum * structuresSizes.IResourceViewSize;
-    size += renderTargetsNum * sizeof(void*);
+    //size += renderTargetsNum * sizeof(uintptr_t);
     
     size += samplersNum * sizeof(SamplerStateDesc::CompressedType);
     size += viewportsNum * sizeof(ViewportDesc::CompressedType);
@@ -16,8 +16,8 @@ uint32_t PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const
     //size += constBuffersNum * structuresSizes.IResourceViewSize;
     //size += texturesNum * structuresSizes.IResourceViewSize;
     
-    size += constBuffersNum * sizeof(void*);
-    size += texturesNum * sizeof(void*);
+    size += constBuffersNum * sizeof(uintptr_t);
+    size += texturesNum * sizeof(uintptr_t);
     
     //size += mesh.vertexBuffer.buffersNum * (structuresSizes.IResourceViewSize);
     
@@ -27,12 +27,12 @@ uint32_t PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const
     //size += structuresSizes.IResourceViewSize;//DepthBuffer
     
     
-    size += mesh.vertexBuffer.buffersNum * (sizeof(void*));
+    size += mesh.vertexBuffer.buffersNum * (sizeof(uintptr_t));
     
-    size += 6 * sizeof(void*);
-    size += sizeof(void*);//InputLayoutSize
-    size += sizeof(void*);//IndexBuffer
-    size += sizeof(void*);//DepthBuffer
+    //size += 6 * sizeof(void*);
+    //size += sizeof(void*);//InputLayoutSize
+    //size += sizeof(void*);//IndexBuffer
+    //size += sizeof(void*);//DepthBuffer
     
     return size;
 }
@@ -75,7 +75,7 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     cps->samplersNum = samplersNum;
     for (int i =0; i < samplersNum; i++)
     {
-        cps->Samplers[i] = Samplers[i].Compress();
+        cps->Samplers[i] = Samplers[i];
         //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
     }
     pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
@@ -87,8 +87,27 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
         cps->Viewports[i] = Viewports[i];
         //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
     }
-    pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
+    pointerPosition+=sizeof(Compressed::ViewportDesc)*viewportsNum;
+    
+    cps->ConstBuffers = (ConstBufferView**)pointerPosition;
+    cps->constBuffersNum = constBuffersNum;
+    for (int i =0; i < constBuffersNum; i++)
+    {
+        cps->ConstBuffers[i] = ConstBuffers[i];
+        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
+    }
+    pointerPosition+=sizeof(uintptr_t)*constBuffersNum;
+    
+    cps->Textures = (ResourceView**)pointerPosition;
+    cps->texturesNum = texturesNum;
+    for (int i =0; i < texturesNum; i++)
+    {
+        cps->Textures[i] = Textures[i];
+        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
+    }
+    //pointerPosition+=sizeof(uintptr_t)*constBuffersNum;
 
+    /*
     args.resourceManager.GetRealInputLayout(InputDeclaration)->Place(pointerPosition);
     pointerPosition+=sizeof(uintptr_t);
     
@@ -100,7 +119,6 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
 
     
     
-    /*
     auto* pointerPosition = args.cps->Data;
     
     

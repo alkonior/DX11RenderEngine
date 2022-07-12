@@ -6,7 +6,10 @@ GraphicsApi::GraphicsApi(const RenderDeviceInitParams& initParams, bool debugMod
     graphicsMachine(initParams, debugMode)
 { }
 
-void GraphicsApi::Present() { }
+void GraphicsApi::Present()
+{
+    graphicsMachine.Present();
+}
 
 
 void GraphicsApi::ClearRenderTargets(RenderTargetView* renderTargets[], int32_t numRenderTargets, FColor color)

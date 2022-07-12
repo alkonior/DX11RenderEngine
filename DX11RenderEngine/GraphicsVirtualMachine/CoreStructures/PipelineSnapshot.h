@@ -110,8 +110,8 @@ namespace Compressed {
         RenderTargetDesc*           RenderTargets = {};
         SamplerStateDesc*           Samplers = {};
         ViewportDesc*               Viewports = {};
-        ConstBufferView*            ConstBuffers = {};
-        ResourceView*               Textures = {};
+        ConstBufferView**           ConstBuffers = {};
+        ResourceView**              Textures = {};
         
         uint8_t Data[];
 

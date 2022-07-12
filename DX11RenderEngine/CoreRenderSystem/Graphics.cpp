@@ -76,47 +76,47 @@ bool Graphics::RenderFrame() {
 	
 	bool success = true;
 	pRenderer.BeginEvent("BSP draw.");
-	GFX_CATCH_RENDER(managerUP.Render(*this););
+	//GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("BloomMask draw.");
-	GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
+	//GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Static motion blur draw.");
-	GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
+	//GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Models draw.");
-	GFX_CATCH_RENDER(managerModels.Render(*this););
+	//GFX_CATCH_RENDER(managerModels.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Dynamic motion blur draw.");
-	GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+	//GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("SSAO draw.");
-	GFX_CATCH_RENDER(managerSSAO.Render(*this););
+	//GFX_CATCH_RENDER(managerSSAO.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Sky draw.");
-	GFX_CATCH_RENDER(managerSkybox.Render(*this););
+	//GFX_CATCH_RENDER(managerSkybox.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Particles draw.");
-	GFX_CATCH_RENDER(managerParticles.Render(*this););
+	//GFX_CATCH_RENDER(managerParticles.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Bloom pass.");
-	GFX_CATCH_RENDER(managerBloom.Render(*this););
+	//GFX_CATCH_RENDER(managerBloom.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("End BSP draw.");
-	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("TAA-pass.");
-	GFX_CATCH_RENDER(managerTAA.Render(*this););
+	//GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
 
 	renderer->ClearState();
