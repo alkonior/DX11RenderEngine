@@ -2,7 +2,7 @@
 using namespace GVM;
 
 
-uint32_t GVM::PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const {
+uint32_t PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
     size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
@@ -38,25 +38,69 @@ uint32_t GVM::PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) 
 }
 
 
-uint32_t Compressed::PipelineSnapshot::GetSize() const
-{
-    return SnapshotByteSize;
-}
+void PipelineSnapshot::Compress(const CompressArgs& args) const {
+    //using namespace Compressed;
+    auto* cps = args.cps;
+    
+    cps->SnapshotByteSize = GetSize(args.structuresSizes);
+    
+    
+    cps->VS = VS;
+    cps->PS = PS;
+    cps->CS = CS;
+    cps->GS = GS;
+    cps->HS = HS;
+    cps->DS = DS;
 
-void GVM::PipelineSnapshot::Compress(const CompressArgs& args) const {
+    cps->DrawCallsNum = DrawCallsNum;
+    
+    cps->primitiveType = primitiveType;
+    cps->rasterizerState = rasterizerState;
+    cps->depthStencilState = depthStencilState;
+    
+    cps->blendDesc = blendDesc;
 
+    auto* pointerPosition = cps->Data;
+    //pointerPosition+=sizeof(uintptr_t);
+
+    cps->RenderTargets = (Compressed::RenderTargetDesc*)pointerPosition;
+    cps->renderTargetsNum = renderTargetsNum;
+    for (int i =0; i < renderTargetsNum; i++)
+    {
+        cps->RenderTargets[i]= RenderTargets[i];
+    }
+    pointerPosition+=sizeof(Compressed::RenderTargetDesc)*renderTargetsNum;
+    
+    cps->Samplers = (Compressed::SamplerStateDesc*)pointerPosition;
+    cps->samplersNum = samplersNum;
+    for (int i =0; i < samplersNum; i++)
+    {
+        cps->Samplers[i] = Samplers[i].Compress();
+        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
+    }
+    pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
+    
+    cps->Viewports = (Compressed::ViewportDesc*)pointerPosition;
+    cps->viewportsNum = viewportsNum;
+    for (int i =0; i < viewportsNum; i++)
+    {
+        cps->Viewports[i] = Viewports[i];
+        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
+    }
+    pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
+
+    args.resourceManager.GetRealInputLayout(InputDeclaration)->Place(pointerPosition);
+    pointerPosition+=sizeof(uintptr_t);
+    
+    args.resourceManager.GetRealResourceView(DepthStencilBuffer)->Place(pointerPosition);
+    pointerPosition+=sizeof(uintptr_t);
+    
+    args.resourceManager.GetRealResourceView(mesh.indexBuffer)->Place(pointerPosition);
+    pointerPosition+=sizeof(uintptr_t);
 
     
-    args.cps->DrawCallsNum = DrawCallsNum;
-    args.cps->SnapshotByteSize = GetSize(args.structuresSizes);
     
-    args.cps->primitiveType = primitiveType;
-    args.cps->rasterizerState = rasterizerState;
-    args.cps->depthStencilState = depthStencilState;
-    args.cps->blendDesc = blendDesc;
-
-
-
+    /*
     auto* pointerPosition = args.cps->Data;
     
     
@@ -141,6 +185,6 @@ void GVM::PipelineSnapshot::Compress(const CompressArgs& args) const {
         pointerPosition += args.structuresSizes.IResourceViewSize;
     }
 
-    
+    */
 }
 

@@ -2651,9 +2651,14 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
                     vertexBuffer.vertexOffset));
         }
         vb.buffersNum = 1;
+        if (!buff->vertexViewTest)
+            buff->vertexViewTest = testApi->CreateVertexBufferView({
+                buff->vertexTest, uint32_t(buff->size),
+                uint32_t(vertexBuffer.vertexStride[0]),
+                vertexBuffer.vertexOffset[0]});
         vb.vertexBuffers[0] = buff->vertexViewTest;
-        vb.vertexStride[0] = vertexBuffer.vertexStride[0];
-        vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
+        //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
+        //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
     }
     else
     {
@@ -2663,9 +2668,15 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
         {
             auto* buff =((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i]); 
             buffers[i] = ((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i])->handle.Get();
+            
+            if (!buff->vertexViewTest)
+                buff->vertexViewTest = testApi->CreateVertexBufferView({
+                    buff->vertexTest, uint32_t(buff->size),
+                    uint32_t(vertexBuffer.vertexStride[i]),
+                    vertexBuffer.vertexOffset[i]});
             vb.vertexBuffers[0] = buff->vertexViewTest;
-            vb.vertexStride[0] = vertexBuffer.vertexStride[0];
-            vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
+            //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
+            //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
         }
         this->vertexBuffer = buffers[0];
         //std::lock_guard<std::mutex> guard(ctxLock);

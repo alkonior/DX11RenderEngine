@@ -21,7 +21,7 @@ namespace Compressed {
         
         struct BlendStateFields
         {
-            uint8_t   BlendStateMask        : 2;
+            uint8_t   State        : 2;
             uint8_t   BlendEnable           : 1;
             uint8_t   LogicOpEnable         : 1;
             uint8_t   SrcBlend              : 5;
@@ -61,7 +61,9 @@ struct BlendStateDesc : BaseStateDesc
 
     BlendStateDesc();
     BlendStateDesc(uint64_t descriptor);
-   // Compressed::BlendStateDesc ToUInt() const;
+    BlendStateDesc(CompressedType descriptor);
+    
+    CompressedType Compress() const;
 };
 
 struct CoreBlendDesc

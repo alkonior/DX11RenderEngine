@@ -489,7 +489,7 @@ GPUShader& ResourcesManager::CreateShader(const ShaderDesc& desc)
     assert(desc.bytecode);
 #ifdef _DEBUG
     assert(desc.byteCodeSize);
-    assert(desc.type != EShaderType::UNKNOWN);
+    assert(desc.type != EShaderType::SHADER_UNKNOWN);
 #endif
 
 

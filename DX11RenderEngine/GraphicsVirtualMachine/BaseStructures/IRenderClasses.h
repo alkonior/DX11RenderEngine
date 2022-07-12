@@ -34,8 +34,21 @@ struct VertexBufferBinding {
     //using CompressedType = Compressed::VertexBufferBinding;
     uint8_t buffersNum = 0;
     VertexBufferView* vertexBuffers [32] = {};
-    //uint32_t vertexStride [32] = {};
-    //uint32_t vertexOffset [32] = {};
+};
+
+namespace Compressed {
+struct RenderTargetDesc {
+    RenderTargetView* rtv = nullptr;
+    BlendStateDesc BlendState;
+    
+};
+}
+
+struct RenderTargetDesc {
+    using CompressedType = Compressed::RenderTargetDesc;
+    RenderTargetView* rtv = nullptr;
+    BlendStateDesc BlendState;
+    operator CompressedType() const { return {rtv,BlendState}; }
 };
 
 struct Mesh  {

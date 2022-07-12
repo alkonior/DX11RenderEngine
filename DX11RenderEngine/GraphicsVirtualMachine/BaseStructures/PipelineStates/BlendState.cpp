@@ -7,7 +7,7 @@ using namespace GVM;
 Compressed::BlendStateDesc::BlendStateDesc(uint64_t data): data(data)
 {
 #ifdef _DEBUG
-    assert(Fields.BlendStateMask == GVM::BlendStateDesc::BlendStateMask);
+    assert(Fields.State == GVM::BlendStateDesc::BlendStateMask);
 #endif
 }
 
@@ -32,7 +32,7 @@ Compressed::BlendStateDesc& Compressed::BlendStateDesc::operator=(BlendStateDesc
 
 Compressed::BlendStateDesc::BlendStateDesc(GVM::BlendStateDesc desc)
 {
-     Fields.BlendStateMask        = desc.State;//3
+     Fields.State        = desc.State;//3
      Fields.BlendEnable           = desc.BlendEnable;
      Fields.LogicOpEnable         = desc.LogicOpEnable;
     
@@ -48,26 +48,47 @@ Compressed::BlendStateDesc::BlendStateDesc(GVM::BlendStateDesc desc)
 }
 
 BlendStateDesc::BlendStateDesc() : BaseStateDesc(BlendStateMask) {}
-BlendStateDesc::BlendStateDesc(uint64_t descriptor): BaseStateDesc(0)
+BlendStateDesc::BlendStateDesc(uint64_t descriptor): BlendStateDesc(CompressedType(descriptor))
 {
-    uint8_t shift = 0;
+   // uint8_t shift = 0;
+//
+   // State = GetBiteValue(descriptor, shift, 3);
+   // assert(State == BlendStateMask);
+   // 
+   // BlendEnable = GetBiteValue(descriptor, shift, 1);
+   // LogicOpEnable = GetBiteValue(descriptor, shift, 1);
+   // 
+   // SrcBlend       = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
+   // DestBlend      = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
+   // SrcBlendAlpha  = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
+   // DestBlendAlpha = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
+   // 
+   // BlendOp        = to_enum<EBlendOperator>(GetBiteValue(descriptor, shift, 3));
+   // BlendOpAlpha   = to_enum<EBlendOperator>(GetBiteValue(descriptor, shift, 3));
+   // LogicOp        = to_enum<ELogicOperator>(GetBiteValue(descriptor, shift, 3));
+   // RenderTargetWriteMask  = GetBiteValue(descriptor, shift, 8);
+}
 
-    State = GetBiteValue(descriptor, shift, 3);
+BlendStateDesc::BlendStateDesc(CompressedType descriptor): BaseStateDesc(0)
+{
+    State = descriptor.Fields.State;
+#ifdef _DEBUG
     assert(State == BlendStateMask);
+#endif
     
-    BlendEnable = GetBiteValue(descriptor, shift, 1);
-    LogicOpEnable = GetBiteValue(descriptor, shift, 1);
+    BlendEnable = descriptor.Fields.BlendEnable;
+    LogicOpEnable = descriptor.Fields.LogicOp;
     
-    SrcBlend       = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
-    DestBlend      = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
-    SrcBlendAlpha  = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
-    DestBlendAlpha = to_enum<EBlendType>(GetBiteValue(descriptor, shift, 5));
+    SrcBlend       = to_enum<EBlendType>(descriptor.Fields.SrcBlend);
+    DestBlend      = to_enum<EBlendType>(descriptor.Fields.DestBlend);
+    SrcBlendAlpha  = to_enum<EBlendType>(descriptor.Fields.SrcBlendAlpha);
+    DestBlendAlpha = to_enum<EBlendType>(descriptor.Fields.DestBlendAlpha);
     
-    BlendOp        = to_enum<EBlendOperator>(GetBiteValue(descriptor, shift, 3));
-    BlendOpAlpha   = to_enum<EBlendOperator>(GetBiteValue(descriptor, shift, 3));
-    LogicOp        = to_enum<ELogicOperator>(GetBiteValue(descriptor, shift, 3));
-    RenderTargetWriteMask  = GetBiteValue(descriptor, shift, 8);
-
+    BlendOp        = to_enum<EBlendOperator>(descriptor.Fields.BlendOp);
+    BlendOpAlpha   = to_enum<EBlendOperator>(descriptor.Fields.BlendOpAlpha);
+    LogicOp        = to_enum<ELogicOperator>(descriptor.Fields.LogicOp);
+    RenderTargetWriteMask  = descriptor.Fields.RenderTargetWriteMask;
+    
 }
 //
 // uint64_t BlendStateDesc::ToUInt() const

@@ -21,7 +21,7 @@ namespace Compressed {
 
         struct RasterizerStateFields
         {
-            uint8_t       RasterizerMask        : 3;
+            uint8_t       State        : 3;
             uint8_t       FillMode              : 1;
             uint8_t       CullMode              : 2;
             uint8_t       FrontCounterClockwise : 1;
@@ -42,7 +42,7 @@ namespace Compressed {
 
 struct RasterizerStateDesc : BaseStateDesc
 {
-    using CompressedType = RasterizerStateDesc;
+    using CompressedType = Compressed::RasterizerStateDesc;
 
     static const RasterizerStateDesc Default;
     
@@ -58,7 +58,8 @@ struct RasterizerStateDesc : BaseStateDesc
 
     RasterizerStateDesc();
     
-    RasterizerStateDesc(uint64_t descriptor);//todo
+    RasterizerStateDesc(uint64_t descriptor);
+    RasterizerStateDesc(CompressedType descriptor);
     CompressedType Compress() const;
 };
 

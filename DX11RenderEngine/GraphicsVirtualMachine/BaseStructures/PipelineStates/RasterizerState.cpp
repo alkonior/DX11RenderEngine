@@ -9,13 +9,13 @@ const RasterizerStateDesc RasterizerStateDesc::Default;
 Compressed::RasterizerStateDesc::RasterizerStateDesc(uint64_t data):data(data)
 {
 #ifdef _DEBUG
-    assert(Fields.RasterizerMask == GVM::RasterizerStateDesc::RasterizerStateMask);
+    assert(Fields.State == GVM::RasterizerStateDesc::RasterizerStateMask);
 #endif
 }
 
 Compressed::RasterizerStateDesc::RasterizerStateDesc(GVM::RasterizerStateDesc desc)
 {
-      Fields.RasterizerMask = desc.State;
+      Fields.State = desc.State;
     
       Fields.FillMode  = to_underlying(desc.FillMode);
       Fields.CullMode  = to_underlying(desc.FillMode);
@@ -28,12 +28,8 @@ Compressed::RasterizerStateDesc::RasterizerStateDesc(GVM::RasterizerStateDesc de
       //Fields.AntialiasedLineEnable  = desc.AntialiasedLineEnable;
 }
 
-Compressed::RasterizerStateDesc::RasterizerStateDesc(const RasterizerStateDesc& desc) :data(desc.data)
-{}
-
-Compressed::RasterizerStateDesc::RasterizerStateDesc(RasterizerStateDesc&& desc) noexcept :data(desc.data)
-{
-}
+Compressed::RasterizerStateDesc::RasterizerStateDesc(const RasterizerStateDesc& desc) :data(desc.data){}
+Compressed::RasterizerStateDesc::RasterizerStateDesc(RasterizerStateDesc&& desc) noexcept :data(desc.data){}
 
 Compressed::RasterizerStateDesc& Compressed::RasterizerStateDesc::operator=(const RasterizerStateDesc& desc)
 {
@@ -47,36 +43,41 @@ Compressed::RasterizerStateDesc& Compressed::RasterizerStateDesc::operator=(Rast
     return *this;
 }
 
-inline RasterizerStateDesc::RasterizerStateDesc() : BaseStateDesc(RasterizerStateMask) {}
+inline RasterizerStateDesc::RasterizerStateDesc(): BaseStateDesc(RasterizerStateMask) {}
 
-RasterizerStateDesc::RasterizerStateDesc(uint64_t descriptor) : BaseStateDesc(0) {
-    
-   // uint8_t shift = 0;
-//
-   // State = GetBiteValue(descriptor, shift, 3);
-   // assert(State == RasterizerStateMask);
-   // 
-   // FillMode = to_enum<EFillMode>(GetBiteValue(descriptor, shift, 1));
-   // CullMode = to_enum<ECullMode>(GetBiteValue(descriptor, shift, 2));
-   // 
-   // FrontCounterClockwise  = GetBiteValue(descriptor, shift, 1);
-   // 
-   // DepthBias = GetBiteValue(descriptor, shift, 32);
-   // DepthBiasClamp = GetBiteValue(descriptor, shift, 16);
-   // SlopeScaledDepthBias = GetBiteValue(descriptor, shift, 16);
-   // 
-   // DepthClipEnable = GetBiteValue(descriptor, shift, 1);
-   // ScissorEnable = GetBiteValue(descriptor, shift, 1);
-   // MultisampleEnable = GetBiteValue(descriptor, shift, 1);
-   // AntialiasedLineEnable = GetBiteValue(descriptor, shift, 1);
-    
+RasterizerStateDesc::RasterizerStateDesc(uint64_t descriptor): RasterizerStateDesc(CompressedType(descriptor)) {}
 
+RasterizerStateDesc::RasterizerStateDesc(CompressedType descriptor): BaseStateDesc(0)
+{
+    
+    State = descriptor.Fields.State;
+
+#ifdef _DEBUG
+    assert(State == RasterizerStateMask);
+#endif
+    
+    assert(State == RasterizerStateMask);
+    
+    FillMode = to_enum<EFillMode>(descriptor.Fields.FillMode);
+    CullMode = to_enum<ECullMode>(descriptor.Fields.CullMode);
+    
+    FrontCounterClockwise  =  descriptor.Fields.FrontCounterClockwise;
+    
+    //DepthBias = GetBiteValue(descriptor, shift, 32);
+    //DepthBiasClamp = GetBiteValue(descriptor, shift, 16);
+    //SlopeScaledDepthBias = GetBiteValue(descriptor, shift, 16);
+    
+    DepthClipEnable = descriptor.Fields.DepthClipEnable;
+    ScissorEnable = descriptor.Fields.ScissorEnable;
+    //MultisampleEnable = GetBiteValue(descriptor, shift, 1);
+    //AntialiasedLineEnable = GetBiteValue(descriptor, shift, 1);
 }
 
 RasterizerStateDesc::CompressedType RasterizerStateDesc::Compress() const
 {
     return *this;
 }
+
 //
 // uint64_t RasterizerStateDesc::ToUInt() const {
 //     

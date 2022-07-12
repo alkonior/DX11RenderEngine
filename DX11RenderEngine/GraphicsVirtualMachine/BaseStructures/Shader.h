@@ -4,7 +4,7 @@
 namespace GVM {
 
 struct ShaderDesc {
-    EShaderType type = EShaderType::UNKNOWN;
+    EShaderType type = EShaderType::SHADER_UNKNOWN;
     
     void* bytecode = nullptr;
     uint32_t byteCodeSize = 0;

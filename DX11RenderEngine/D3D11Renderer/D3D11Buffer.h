@@ -9,7 +9,11 @@ namespace Renderer {
 struct D3D11Buffer : Buffer
 {
 	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
-	GVM::Resource* handleTest = nullptr;
+	union {
+		GVM::Resource* handleTest = nullptr;
+		GVM::VertexBuffer* vertexTest;
+		GVM::IndexBuffer* indexTest;
+	};
 	GVM::VertexBufferView* vertexViewTest = nullptr;
 	GVM::ResourceView* indexViewTest = nullptr;
 	uint8_t dynamic = 0;

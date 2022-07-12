@@ -16,6 +16,7 @@ struct VertexBufferViewDesc
     VertexBuffer*     Buffer;
     uint32_t          Size;
     uint32_t          Stride;
+    uint32_t          Offset;
 };
     
 struct IndexBufferViewDesc

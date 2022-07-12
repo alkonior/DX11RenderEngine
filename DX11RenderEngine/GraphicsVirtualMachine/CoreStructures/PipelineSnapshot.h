@@ -13,23 +13,23 @@ namespace Compressed {
 struct PipelineSnapshot {
 
     using CompressedType = Compressed::PipelineSnapshot;
-    Shader*                    VS = nullptr;
-    Shader*                    PS = nullptr;
-    Shader*                    CS = nullptr;
-    Shader*                    GS = nullptr;
-    Shader*                    HS = nullptr;
-    Shader*                    DS = nullptr;
+    Shader*                     VS = nullptr;
+    Shader*                     PS = nullptr;
+    Shader*                     CS = nullptr;
+    Shader*                     GS = nullptr;
+    Shader*                     HS = nullptr;
+    Shader*                     DS = nullptr;
     
     uint32_t                    DrawCallsNum = 0;
 
-    EPrimitiveTopology          primitiveType = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNDEFINED;
+    EPrimitiveTopology          primitiveType = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNKNOWN;
 
     RasterizerStateDesc         rasterizerState = RasterizerStateDesc::Default;
     DepthStencilStateDesc       depthStencilState = DepthStencilStateDesc::Default;
-    InputLayout*               InputDeclaration = nullptr;
-    DepthStencilView*          DepthStencilBuffer = nullptr;
+    InputLayout*                InputDeclaration = nullptr;
+    DepthStencilView*           DepthStencilBuffer = nullptr;
 
-    Mesh                        mesh = Mesh::VoidMesh;
+    Mesh                        mesh = {};
     
     CoreBlendDesc               blendDesc = CoreBlendDesc();
     
@@ -44,7 +44,7 @@ struct PipelineSnapshot {
         
         
     uint8_t                     constBuffersNum = 0;
-    ConstBufferView*                ConstBuffers[15] = {};
+    ConstBufferView*            ConstBuffers[15] = {};
         
     uint8_t                     texturesNum = 0;
     ResourceView*               Textures[128] = {};
@@ -69,9 +69,7 @@ namespace Compressed {
         uint32_t                    DrawCallsNum;
 
 
-        //RasterizerStateDesc         rasterizerState;
         RasterizerStateDesc         rasterizerState;   
-        // DepthStencilStateDesc       depthStencilState;
         DepthStencilStateDesc       depthStencilState;   
 
         EPrimitiveTopology          primitiveType;
@@ -79,7 +77,7 @@ namespace Compressed {
         CoreBlendDesc               blendDesc;
     
         uint8_t                     renderTargetsNum;
-        RenderTargetDesc*           RenderTargets;
+        //RenderTargetDesc*           RenderTargets;
         
         uint8_t                     samplersNum;
         //SamplerStateDesc            Samplers[16];
@@ -88,10 +86,8 @@ namespace Compressed {
         //ViewportDesc                Viewports[16];
 
         
-        uint8_t vertexBuffersNum = 0;
+        uint8_t                     vertexBuffersNum = 0;
         //IVertexBufferView* vertexBuffers [32];
-        //uint32_t vertexStride [32];
-        //uint32_t vertexOffset [32];
         
         uint8_t                     constBuffersNum;
         //IConstBuffer*               ConstBuffers[15];
@@ -99,21 +95,28 @@ namespace Compressed {
         uint8_t                     texturesNum;
         //IResourceView*              Textures[128];
 
-        uint32_t GetSize() const;
-        
-        uint8_t Data[0];
 
-        
-        Shader*                    VS;
-        Shader*                    PS;
-        Shader*                    CS;
-        Shader*                    GS;
-        Shader*                    HS;
-        Shader*                    DS;
+        Shader*                     VS;
+        Shader*                     PS;
+        Shader*                     CS;
+        Shader*                     GS;
+        Shader*                     HS;
+        Shader*                     DS;
         
         InputLayout*                vertexDeclaration;
         DepthStencilView*           DepthBuffer;
         IndexBufferView*            indexBuffer;
+
+        RenderTargetDesc*           RenderTargets = {};
+        SamplerStateDesc*           Samplers = {};
+        ViewportDesc*               Viewports = {};
+        ConstBufferView*            ConstBuffers = {};
+        ResourceView*               Textures = {};
+        
+        uint8_t Data[];
+
+        
+        
     
     };
 

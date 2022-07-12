@@ -316,7 +316,6 @@
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\BlendState.h" />
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\DepthStencilState.h" />
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\RasterizerState.h" />
-    <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\RenderTarget.h" />
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\SamplerState.h" />
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\Viewport.h" />
     <ClInclude Include="GraphicsVirtualMachine\BaseStructures\RenderDeviceInitParams.h" />
@@ -344,7 +343,6 @@
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\BlendState.cpp" />
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\DepthStencilState.cpp" />
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\RasterizerState.cpp" />
-    <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\RenderTarget.cpp" />
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\SamplerState.cpp" />
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\PipelineStates\Viewport.cpp" />
     <ClCompile Include="GraphicsVirtualMachine\BaseStructures\RenderDeviceInitParams.cpp" />

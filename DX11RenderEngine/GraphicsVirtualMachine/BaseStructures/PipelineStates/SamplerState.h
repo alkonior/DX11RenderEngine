@@ -21,16 +21,16 @@ struct SamplerStateDesc {
 
     union
     {
-        uint32_t               Data;
+        uint32_t               Data = 0;
         SamplerStateFields     Fields;
     };
     
-    uint8_t                    BorderColor[4];
+    uint8_t                    BorderColor[4] = {0,0,0,0};
     float                      MipLODBias;
     float                      MinLOD;
     float                      MaxLOD;
 
-    SamplerStateDesc Decompress();
+    SamplerStateDesc (const GVM::SamplerStateDesc& );
 };
     
 }
@@ -47,8 +47,8 @@ struct SamplerStateDesc {
     float                      BorderColor[4] = {};
     float                      MinLOD = 0;
     float                      MaxLOD = 0;
-    
-    Compressed::SamplerStateDesc Compress() const;
+
+    SamplerStateDesc(const CompressedType& desc);
 };
 
 }
