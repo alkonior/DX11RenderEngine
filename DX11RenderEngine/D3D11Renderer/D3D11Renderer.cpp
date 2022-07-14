@@ -249,6 +249,19 @@ static D3D_PRIMITIVE_TOPOLOGY D3D_Primitive[] =
     D3D_PRIMITIVE_TOPOLOGY_POINTLIST /* PrimitiveType.PointListEXT */
 };
 
+GVM::EPrimitiveTopology ToGVM(PrimitiveType type)
+{
+    switch (type)
+    {
+    case PRIMITIVETYPE_LINELIST : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINELIST;
+    case PRIMITIVETYPE_POINTLIST_EXT : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_POINTLIST;
+    case PRIMITIVETYPE_LINESTRIP : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINESTRIP;
+    case PRIMITIVETYPE_TRIANGLELIST : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    case PRIMITIVETYPE_TRIANGLESTRIP : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+    }
+    return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNKNOWN;
+};
+
 constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
 {
     DXGI_FORMAT_R8G8B8A8_UNORM, /* SurfaceFormat.Color */
@@ -311,9 +324,8 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
         topology = primitiveType;
         context->IASetPrimitiveTopology(
             D3D_Primitive[primitiveType]
-            D3D_Primitive[primitiveType]
         );
-        testApi->
+        testApi->SetupPrimitiveTopology(ToGVM(primitiveType));
     }
     /* Draw! */
     context->DrawIndexed(

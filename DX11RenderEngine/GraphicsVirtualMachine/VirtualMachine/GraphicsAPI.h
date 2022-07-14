@@ -77,7 +77,8 @@ public:
 
     void SetupSamplers(const SamplerStateDesc samplers[], uint8_t num, uint8_t offset);
     void SetupSampler(const SamplerStateDesc& sampler, uint8_t slot);
-
+    
+    void SetupPrimitiveTopology(const EPrimitiveTopology topology);
 
     void SetupVertexBuffer(const VertexBufferBinding& bindings);
     void SetupIndexBuffer(IndexBufferView* indices);

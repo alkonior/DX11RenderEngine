@@ -152,6 +152,11 @@ void GraphicsApi::SetupSampler(const SamplerStateDesc& sampler, uint8_t slot)
     ps.Samplers[slot] = sampler;
     ps.samplersNum = std::max<uint8_t>(ps.samplersNum, slot);
 }
+void GraphicsApi::SetupPrimitiveTopology(const EPrimitiveTopology topology)
+{
+    wasPSUpdated = true;
+    ps.primitiveTopology = topology;
+}
 void GraphicsApi::SetupVertexBuffer(const VertexBufferBinding& bindings)
 {
     wasPSUpdated = true;

@@ -54,7 +54,7 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
 
     cps->DrawCallsNum = DrawCallsNum;
     
-    cps->primitiveType = primitiveType;
+    cps->primitiveTopology = primitiveTopology;
     cps->rasterizerState = rasterizerState;
     cps->depthStencilState = depthStencilState;
     

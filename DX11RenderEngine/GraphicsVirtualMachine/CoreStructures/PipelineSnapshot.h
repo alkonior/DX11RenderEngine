@@ -22,7 +22,7 @@ struct PipelineSnapshot {
     
     uint32_t                    DrawCallsNum = 0;
 
-    EPrimitiveTopology          primitiveType = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNKNOWN;
+    EPrimitiveTopology          primitiveTopology = EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNKNOWN;
 
     RasterizerStateDesc         rasterizerState = RasterizerStateDesc::Default;
     DepthStencilStateDesc       depthStencilState = DepthStencilStateDesc::Default;
@@ -72,7 +72,7 @@ namespace Compressed {
         RasterizerStateDesc         rasterizerState;   
         DepthStencilStateDesc       depthStencilState;   
 
-        EPrimitiveTopology          primitiveType;
+        EPrimitiveTopology          primitiveTopology;
         
         CoreBlendDesc               blendDesc;
     
