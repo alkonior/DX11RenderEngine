@@ -39,7 +39,7 @@ class VirtualMachine
     VMStack<uint32_t> intStack;
     VMStack<EMachineCommands> commandQueue;
     VMStack<uint8_t> dataQueue;
-    VMStack<uint8_t> drawCallsQueue;
+    VMStack<DrawCall> drawCallsQueue;
     VMStack<uint8_t> pipelinesQueue;
     ResourcesManager resourcesManager;
     PSC* LastSnapshot = nullptr;
@@ -86,6 +86,15 @@ class VirtualMachine
         uint32_t position = queueShift;
         memcpy_s(dataQueue.data()+queueShift,dataSize,data,dataSize);
         queueShift+=dataSize;
+    }
+    
+    void* PullPointer()
+    {
+        constexpr uint32_t dataSize = sizeof(uintptr_t);
+
+        void* result = *((void**)(dataQueue.data()+queueShift));
+        queueShift+=dataSize;
+        return result;
     }
 
 #pragma endregion

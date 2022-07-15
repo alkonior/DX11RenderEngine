@@ -35,6 +35,23 @@ resourcesManager()
 
 void VirtualMachine::Present()
 {
+    for (auto& command : commandQueue)
+    {
+        switch (command)
+        {
+        case EMachineCommands::CREATE_RESOURCE:{
+                auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                resource.resource = RenderDevice->CreateResource(resource);
+                break;
+            }
+        case EMachineCommands::UPDATE_RESOURCE:{
+                auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                RenderDevice->DestroyResource(resource.resource);
+                resource.resource = RenderDevice->CreateResource(resource);
+                break;
+            }
+        }
+    }
     pipelinesQueue.clear();
     commandQueue.clear();
     dataQueue.clear();
@@ -70,5 +87,5 @@ constexpr VirtualMachine::EMachineCommands VirtualMachine::ToCommand(EDrawCallTy
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
 {
     PushCommand(ToCommand(drawCall.type));
-    PushData(&drawCall.args, sizeof(drawCall.args));
+    drawCallsQueue.push_back(drawCall);
 }

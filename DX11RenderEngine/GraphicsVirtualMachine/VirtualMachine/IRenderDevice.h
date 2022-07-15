@@ -56,6 +56,7 @@ protected:
     virtual IStructuresSize GetClassesSize() = 0;
     
     virtual IResource* CreateResource(const GpuResource& desc) = 0;
+    virtual void DestroyResource(IResource* resource) = 0;
     virtual IResourceView* CreateResourceView(const GpuResourceView& desc) = 0;
 
 

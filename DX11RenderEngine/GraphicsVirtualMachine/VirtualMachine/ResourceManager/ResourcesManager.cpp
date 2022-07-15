@@ -536,3 +536,7 @@ void ResourcesManager::AddDisposeResource(const Resource* resource)
 
 void ResourcesManager::AddDisposeResourceView(const ResourceView* resourceView)
 {}
+GpuResource& ResourcesManager::GetResource(const Resource* resource)
+{
+    return Resources[reinterpret_cast<uint32_t>(resource)];
+}

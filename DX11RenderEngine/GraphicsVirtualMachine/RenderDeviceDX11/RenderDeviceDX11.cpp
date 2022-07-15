@@ -250,41 +250,55 @@ UINT ToD3D11ResourceBinDings(uint32_t bindings)
 
 IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& ResourceDesc)
 {
-    ID3D11Texture2D* result;
+    switch (ResourceDesc.resourceDescription.Dimension)
+    {
+    case EResourceDimension::RESOURCE_DIMENSION_TEXTURE2D:
+        {
+            ID3D11Texture2D* result;
 
-    D3D11_TEXTURE2D_DESC dx11desc;
+            D3D11_TEXTURE2D_DESC dx11desc;
 
-    auto& desc = ResourceDesc.resourceDescription;
+            auto& desc = ResourceDesc.resourceDescription;
 
-    /* Initialize descriptor */
-    dx11desc.Width = desc.Width;
-    dx11desc.Height = desc.Height;
-    dx11desc.MipLevels = 1;
-    dx11desc.ArraySize = desc.DepthOrArraySize;
-    dx11desc.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
-    dx11desc.SampleDesc.Count = 1;
-    dx11desc.SampleDesc.Quality = 0;
-    dx11desc.Usage = D3D11_USAGE_DEFAULT;
-    dx11desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
-    dx11desc.CPUAccessFlags = 0;
-    dx11desc.MiscFlags = 0;
+            /* Initialize descriptor */
+            dx11desc.Width = desc.Width;
+            dx11desc.Height = desc.Height;
+            dx11desc.MipLevels = 1;
+            dx11desc.ArraySize = desc.DepthOrArraySize;
+            dx11desc.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
+            dx11desc.SampleDesc.Count = 1;
+            dx11desc.SampleDesc.Quality = 0;
+            dx11desc.Usage = D3D11_USAGE_DEFAULT;
+            dx11desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
+            dx11desc.CPUAccessFlags = 0;
+            dx11desc.MiscFlags = 0;
 
-    //   ResourceDesc.resourceBindings;
-    //if (isRenderTarget)
-    // {
-    //    desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-    //   desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-    // }
+            //   ResourceDesc.resourceBindings;
+            //if (isRenderTarget)
+            // {
+            //    desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+            //   desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+            // }
 
-    /* Create the texture */
-    GFX_THROW_INFO(device->CreateTexture2D(
-        &dx11desc,
-        NULL,
-        &result
-    ));
+            /* Create the texture */
+            GFX_THROW_INFO(device->CreateTexture2D(
+                &dx11desc,
+                NULL,
+                &result
+            ));
 
-    return reinterpret_cast<IRenderDevice::IResource*>(result);
+            return reinterpret_cast<IRenderDevice::IResource*>(result);
+        }
+    }
+    return nullptr;
 }
+
+void RenderDeviceDX11::DestroyResource(IResource* resource)
+{
+    ID3D11Texture2D* d3d11resource = reinterpret_cast<ID3D11Texture2D*>(resource);
+    d3d11resource->Release();
+}
+
 IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuResourceView& desc)
 {
     switch (desc.type)

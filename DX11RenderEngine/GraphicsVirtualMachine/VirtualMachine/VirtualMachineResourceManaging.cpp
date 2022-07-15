@@ -234,13 +234,13 @@ InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDe
 void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource, const UBox& rect,
     const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    PushCommand(EMachineCommands::SET_RESOURCE_DATA);
+    //PushCommand(EMachineCommands::SET_RESOURCE_DATA);
 
-    ResourceUpdateData rud = {dstSubresource,srcRowPitch,srcRowPitch};
-    PushData(&rud, sizeof(rud));
-    
-    uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top);
-    PushData(pSrcData, dataSize);
+    //ResourceUpdateData rud = {dstSubresource,srcRowPitch,srcRowPitch};
+    //PushData(&rud, sizeof(rud));
+    //
+    //uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top);
+    //PushData(pSrcData, dataSize);
 }
 
 void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,

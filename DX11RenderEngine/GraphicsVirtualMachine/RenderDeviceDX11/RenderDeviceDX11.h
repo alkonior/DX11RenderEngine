@@ -113,6 +113,7 @@ protected:
     IStructuresSize GetClassesSize() override;
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
+    void DestroyResource(IResource* resource) override;
     IResourceView* CreateResourceView(const GpuResourceView& desc) override;
 
     IShader* CreateShader(const ShaderDesc& desc) override;
