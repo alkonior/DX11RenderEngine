@@ -2,13 +2,14 @@
 
 using namespace Renderer;
 
-PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t height) {
+PresentationParameters GraphicsBase::GenParams(HWND hWnd1, HWND hWnd2, size_t width, size_t height) {
 	PresentationParameters pp;
 
 	pp.isFullScreen = false;
 	pp.backBufferWidth = width;
 	pp.backBufferHeight = height;
-	pp.deviceWindowHandle = hWnd;
+	pp.deviceWindowHandle1 = hWnd1;
+	pp.deviceWindowHandle2 = hWnd2;
 	pp.multiSampleCount = 0;
 	pp.depthStencilFormat = DepthFormat::DEPTHFORMAT_D32;
 	pp.presentationInterval = PresentInterval::PRESENTINTERVAL_IMMEDIATE;
@@ -16,8 +17,8 @@ PresentationParameters GraphicsBase::GenParams(HWND hWnd, size_t width, size_t h
 	return pp;
 }
 
-GraphicsBase::GraphicsBase(HWND hWnd, size_t width, size_t height)
-	:width(width), height(height), pRenderer(GenParams(hWnd, width, height), 1){
+GraphicsBase::GraphicsBase(InitStruct init)
+	:width(init.width), height(init.height), pRenderer(GenParams(init.hWnd1, init.hWnd2, init.width, init.height), 1){
 
 	pLocalConstants = renderer->CreateConstBuffer(sizeof(viewConstants));
 	renderer->VerifyConstBuffer(pLocalConstants, mainConstants.slot);

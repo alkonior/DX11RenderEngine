@@ -19,6 +19,8 @@ struct VertexDeclarationDesc {
 
 struct InputAssemblerDeclarationDesc {
     std::vector<VertexDeclarationDesc> InputElementDescs;
+    
+    void PushBack(const VertexDeclarationDesc& value) {InputElementDescs.push_back(value);};
 };
 
 }

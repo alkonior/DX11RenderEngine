@@ -2,9 +2,9 @@
 #include "pch.h"
 #include "RenderEngine.h"
 
-void RenderDevice::InitDevice(HWND hWnd, size_t width, size_t height) {
+void RenderDevice::InitDevice(InitStruct init) {
 	if (gfx != nullptr) DestroyDevice();
-	gfx = new Graphics(hWnd, width, height);
+	gfx = new Graphics(init);
 	gfx->skyFlags = SKYNOTHING;
 	//gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
 

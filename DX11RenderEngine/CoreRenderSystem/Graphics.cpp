@@ -16,15 +16,15 @@
 
 using namespace Renderer;
 
-Graphics::Graphics(HWND hWnd, size_t width, size_t height)
-	:GraphicsBase(hWnd, width, height)
+Graphics::Graphics(InitStruct init)
+	:GraphicsBase(init)
 {
 	ImGui::CreateContext();
 	
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 	
-	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplWin32_Init(init.hWnd1);
 	ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());
 	
 	//managerImGUI.Init();

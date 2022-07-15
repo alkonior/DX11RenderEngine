@@ -9,7 +9,8 @@ struct RenderDevice {
 
 	/* Init */
 
-	void InitDevice(HWND hWnd, size_t width, size_t height);
+	
+	void InitDevice(InitStruct);
 
 	/* Quit */
 

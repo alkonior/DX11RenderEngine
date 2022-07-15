@@ -6,14 +6,14 @@ using namespace GVM;
 
 void VirtualMachine::PushCommand(EMachineCommands command)
 {
-    commandStack.push_back(command);
+    commandQueue.push_back(command);
 }
 
 void VirtualMachine::PushData(const void* data, uint32_t dataSize)
 {
-    uint32_t position = dataStack.size();
-    dataStack.resize(position+dataSize);
-    memcpy_s(dataStack.data()+position,dataSize,data,dataSize);
+    uint32_t position = dataQueue.size();
+    dataQueue.resize(position+dataSize);
+    memcpy_s(dataQueue.data()+position,dataSize,data,dataSize);
 }
 
 VirtualMachine::VirtualMachine(const RenderDeviceInitParams& initParams, bool debugMode):
@@ -36,8 +36,8 @@ resourcesManager()
 void VirtualMachine::Present()
 {
     pipelinesQueue.clear();
-    commandStack.clear();
-    dataStack.clear();
+    commandQueue.clear();
+    dataQueue.clear();
 }
 
 

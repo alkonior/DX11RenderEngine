@@ -75,7 +75,8 @@ enum PrimitiveType {
 	PRIMITIVETYPE_TRIANGLESTRIP,
 	PRIMITIVETYPE_LINELIST,
 	PRIMITIVETYPE_LINESTRIP,
-	PRIMITIVETYPE_POINTLIST_EXT
+	PRIMITIVETYPE_POINTLIST_EXT,
+	PRIMITIVETYPE_UNKNOWN
 };
 
 enum DepthFormat {
@@ -119,7 +120,8 @@ struct PresentationParameters {
 	int32_t backBufferWidth;
 	int32_t backBufferHeight;
 	int32_t multiSampleCount;
-	void* deviceWindowHandle;
+	void* deviceWindowHandle1;
+	void* deviceWindowHandle2;
 	uint8_t isFullScreen;
 	DepthFormat depthStencilFormat;
 	PresentInterval presentationInterval;

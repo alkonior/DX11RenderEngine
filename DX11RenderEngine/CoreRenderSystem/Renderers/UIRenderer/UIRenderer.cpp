@@ -83,7 +83,7 @@ void UIRenderer::Render() {
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
 	uint64_t lastFlag = -1;
-	renderer->ApplyPipelineState(factory->GetState(0));
+	//renderer->ApplyPipelineState(factory->GetState(0));
 
 	renderer->ApplyVertexBufferBinding(vertexBuffer);
 	renderer->ApplyIndexBufferBinding(indexBuffer, 16);

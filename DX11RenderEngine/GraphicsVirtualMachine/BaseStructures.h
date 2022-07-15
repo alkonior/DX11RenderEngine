@@ -15,10 +15,12 @@
 namespace GVM {
 
 struct FColor {
-    FColor();
+    FColor() = default;
     FColor(float Colors[4]):Color{Colors[0],Colors[1],Colors[2],Colors[3]}{}
+    FColor(float r,float g,float b,float a):Color{r,g,b,a}{}
+   // FColor(uint8_t r,uint8_t g,uint8_t b,uint8_t a):Color{r*1.f/255,g*1.f/255,b*1.f/255,a*1.f/255}{}
     
-    float Color[4];
+    float Color[4] = {0,0,0,0};
 };
 
 struct UBox {

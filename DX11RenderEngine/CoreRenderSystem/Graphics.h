@@ -26,7 +26,7 @@ namespace sm = DirectX::SimpleMath;
 class Graphics:public GraphicsBase{
 public:
 
-	Graphics(HWND hWnd, size_t width, size_t height);
+	Graphics(InitStruct);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;

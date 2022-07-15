@@ -19,12 +19,18 @@ struct RenderData{
 	matrix projection;
 };
 
+struct  InitStruct {
+	HWND hWnd1;
+	HWND hWnd2;
+	size_t width; size_t height;
+};
+
 class GraphicsBase {
 
-static Renderer::PresentationParameters GenParams(HWND hWnd, size_t width, size_t height);
+static Renderer::PresentationParameters GenParams(HWND hWnd1, HWND hWnd2, size_t width, size_t height);
 GDIPlusManager gpmt;
 public:
-	GraphicsBase(HWND hWnd, size_t width, size_t height);
+	GraphicsBase(InitStruct);
 
 	Renderer::D3D11Renderer pRenderer;
 

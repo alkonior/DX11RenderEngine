@@ -14,7 +14,7 @@ Resource* VirtualMachine::CreateResource(const ResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
         
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -30,7 +30,7 @@ Resource* VirtualMachine::CreateBuffer(const BufferResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -46,7 +46,7 @@ Resource* VirtualMachine::CreateTexture1D(const Texture1DResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -62,7 +62,7 @@ Resource* VirtualMachine::CreateTexture2D(const Texture2DResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -79,7 +79,7 @@ Resource* VirtualMachine::CreateTexture3D(const Texture3DResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -96,7 +96,7 @@ Resource* VirtualMachine::CreateTextureCube(const TextureCubeResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return resource.id;
 }
@@ -113,7 +113,7 @@ VertexBuffer* VirtualMachine::CreateVertexBuffer(const BufferResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return reinterpret_cast<VertexBuffer*>(resource.id);
 }
@@ -129,7 +129,7 @@ ConstBuffer* VirtualMachine::CreateConstBuffer(const BufferResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return reinterpret_cast<ConstBuffer*>(resource.id);
 }
@@ -145,7 +145,7 @@ IndexBuffer* VirtualMachine::CreateIndexBuffer(const BufferResourceDesc& desc)
     else
         PushCommand(EMachineCommands::UPDATE_RESOURCE);
     
-    PushData(&resource, sizeof(GpuResource));
+    PushData((void*)resource.id);
     
     return reinterpret_cast<IndexBuffer*>(resource.id);
 }
@@ -161,7 +161,7 @@ ConstBufferView* VirtualMachine::CreateConstBufferView(const ConstBufferViewDesc
 VertexBufferView* VirtualMachine::CreateVertexBufferView(const VertexBufferViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateVertexBufferView(desc);
-    resourceView.view = RenderDevice->CreateConstBufferView(resourceView.cbViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<VertexBufferView*>(resourceView.id);
 }
@@ -169,7 +169,7 @@ VertexBufferView* VirtualMachine::CreateVertexBufferView(const VertexBufferViewD
 IndexBufferView* VirtualMachine::CreateIndexBufferView(const IndexBufferViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateIndexBufferView(desc);
-    resourceView.view = RenderDevice->CreateIndexBufferView(resourceView.ibViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<IndexBufferView*>(resourceView.id);
 }
@@ -177,7 +177,7 @@ IndexBufferView* VirtualMachine::CreateIndexBufferView(const IndexBufferViewDesc
 DepthStencilView* VirtualMachine::CreateDepthStencilView(const DepthStencilViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateDepthStencilView(desc);
-    resourceView.view = RenderDevice->CreateDepthStencilView(resourceView.dbViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<DepthStencilView*>(resourceView.id);
 }
@@ -185,7 +185,7 @@ DepthStencilView* VirtualMachine::CreateDepthStencilView(const DepthStencilViewD
 ShaderResourceView* VirtualMachine::CreateShaderResourceView(const ShaderResourceViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateShaderResourceView(desc);
-    resourceView.view = RenderDevice->CreateShaderResourceView(resourceView.srViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<ShaderResourceView*>(resourceView.id);
 }
@@ -193,7 +193,7 @@ ShaderResourceView* VirtualMachine::CreateShaderResourceView(const ShaderResourc
 RenderTargetView* VirtualMachine::CreateRenderTargetView(const RenderTargetViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateRenderTargetView(desc);
-    resourceView.view = RenderDevice->CreateRenderTargetView(resourceView.rtViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<RenderTargetView*>(resourceView.id);
 }
@@ -201,7 +201,7 @@ RenderTargetView* VirtualMachine::CreateRenderTargetView(const RenderTargetViewD
 UATargetView* VirtualMachine::CreateUATargetView(const UATargetViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateUATargetView(desc);
-    resourceView.view = RenderDevice->CreateUATargetView(resourceView.uaViewDescription);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
     //todo Command
     return reinterpret_cast<UATargetView*>(resourceView.id);
 }
@@ -220,6 +220,7 @@ Shader* VirtualMachine::CreateShader(const ShaderDesc& desc)
 {
     auto& shader = resourcesManager.CreateShader(desc);
     shader.shader = RenderDevice->CreateShader(shader.description);
+    //PushData(shader.id);
     return reinterpret_cast<Shader*>(shader.id);
 }
 

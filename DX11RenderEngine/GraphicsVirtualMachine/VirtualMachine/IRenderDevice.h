@@ -55,15 +55,8 @@ protected:
 
     virtual IStructuresSize GetClassesSize() = 0;
     
-    virtual IResource* CreateResource(const ResourceDesc& desc) = 0;
-    
-    virtual IConstBufferView* CreateConstBufferView(const ConstBufferViewDesc& desc) = 0;
-    virtual IVertexBufferView* CreateVertexBufferView(const VertexBufferViewDesc& desc) = 0;
-    virtual IIndexBufferView* CreateIndexBufferView(const IndexBufferViewDesc& desc) = 0;
-    virtual IDepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc) = 0;
-    virtual IShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc) = 0;
-    virtual IRenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc) = 0;
-    virtual IUATargetView* CreateUATargetView(const UATargetViewDesc& desc) = 0;
+    virtual IResource* CreateResource(const GpuResource& desc) = 0;
+    virtual IResourceView* CreateResourceView(const GpuResourceView& desc) = 0;
 
 
     

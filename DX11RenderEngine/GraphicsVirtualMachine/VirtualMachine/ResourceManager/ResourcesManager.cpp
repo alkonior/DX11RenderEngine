@@ -486,17 +486,17 @@ GPUShader& ResourcesManager::CreateShader(const ShaderDesc& desc)
     int shaderIndex = SavedShaders.size();
     ShaderDesc savedDesc = desc;
 
-    assert(desc.bytecode);
 #ifdef _DEBUG
+    assert(desc.bytecode);
     assert(desc.byteCodeSize);
     assert(desc.type != EShaderType::SHADER_UNKNOWN);
 #endif
 
 
-    savedData.resize(savedData.size() + desc.byteCodeSize, 0);
-    memcpy(savedData.data() + dataSize, savedDesc.bytecode, desc.byteCodeSize);
-    savedDesc.bytecode = savedData.data() + dataSize;
-    dataSize += desc.byteCodeSize;
+    //savedData.resize(savedData.size() + desc.byteCodeSize, 0);
+    //memcpy(savedData.data() + dataSize, savedDesc.bytecode, desc.byteCodeSize);
+    savedDesc.bytecode = desc.bytecode;
+    //dataSize += desc.byteCodeSize;
 
     SavedShaders.push_back(GPUShader(savedDesc, shaderIndex));
 
@@ -506,7 +506,6 @@ GPUShader& ResourcesManager::CreateShader(const ShaderDesc& desc)
 GPUInputLayout& ResourcesManager::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
 {
     int index = SavedInputLayouts.size();
-
     SavedInputLayouts.push_back(GPUInputLayout(desc, index));
     return SavedInputLayouts[index];
 }

@@ -6,6 +6,8 @@ namespace GVM {
 
 
 class GpuResourceView {
+public:
+    
     enum class EViewType : uint8_t {
         UNKNOWN,
         CB,
@@ -16,7 +18,7 @@ class GpuResourceView {
         VB,
         IB,
     };
-public:
+    
     ResourceView* id = nullptr;
     IRenderDevice::IResourceView* view = nullptr;
     EViewType type = EViewType::UNKNOWN;

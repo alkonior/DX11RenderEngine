@@ -27,6 +27,7 @@ class VirtualMachine
         DRAW_INSTANCED_INDIRECT,
 
         CREATE_RESOURCE,
+        CREATE_SHADER,
         UPDATE_RESOURCE,
         SET_RESOURCE_DATA,
         COPY_RESOURCE_DATA,
@@ -36,8 +37,9 @@ class VirtualMachine
     IStructuresSize iStructSizes;
 
     VMStack<uint32_t> intStack;
-    VMStack<EMachineCommands> commandStack;
-    VMStack<uint8_t> dataStack;
+    VMStack<EMachineCommands> commandQueue;
+    VMStack<uint8_t> dataQueue;
+    VMStack<uint8_t> drawCallsQueue;
     VMStack<uint8_t> pipelinesQueue;
     ResourcesManager resourcesManager;
     PSC* LastSnapshot = nullptr;
@@ -45,16 +47,49 @@ class VirtualMachine
     //uint32_t PushData(void* data, uint32_t dataLength);
 
     void PushCommand(EMachineCommands command);
+
+#pragma region Data
     void PushData(const void* data, uint32_t dataSize);
     
     template<class T>
-    void PushData(const T* data)
+    void PushData(T data)
     {
-        const uint32_t dataSize = sizeof(*data);
-        uint32_t position= dataStack.size();
-        dataStack.resize(position+dataSize);
-        memcpy_s(dataStack.data()+position,dataSize,data,dataSize);
-    };
+        constexpr uint32_t dataSize = sizeof(T);
+        uint32_t position = dataQueue.size();
+        dataQueue.resize(position+dataSize);
+        memcpy_s(dataQueue.data()+position,dataSize,&data,dataSize);
+    }
+    
+    template<class T>
+    void PushData(T* data)
+    {
+        constexpr uint32_t dataSize = sizeof(*data);
+        uint32_t position = dataQueue.size();
+        dataQueue.resize(position+dataSize);
+        memcpy_s(dataQueue.data()+position,dataSize,data,dataSize);
+    }
+    
+    void PushData(void* data)
+    {
+        constexpr uint32_t dataSize = sizeof(uintptr_t);
+        uint32_t position = dataQueue.size();
+        dataQueue.resize(position+dataSize);
+        *((void**)(dataQueue.data()+position)) = data;
+    }
+    
+    uint32_t queueShift = 0;
+    
+    template<class T>
+    void PullData(T* data)
+    {
+        constexpr uint32_t dataSize = sizeof(*data);
+        uint32_t position = queueShift;
+        memcpy_s(dataQueue.data()+queueShift,dataSize,data,dataSize);
+        queueShift+=dataSize;
+    }
+
+#pragma endregion
+    
 
     IRenderDevice* RenderDevice;
 public:

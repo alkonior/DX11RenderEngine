@@ -58,7 +58,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
         GVM::EDeviceToUse::DX11,
         presentationParameters.backBufferWidth,
         presentationParameters.backBufferHeight,
-        {(HWND)presentationParameters.deviceWindowHandle},
+        {(HWND)presentationParameters.deviceWindowHandle2},
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
 
@@ -105,7 +105,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     //swapchainDesc.BufferDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
     swapchainDesc.Flags = 0;
-    swapchainDesc.OutputWindow = (HWND)presentationParameters.deviceWindowHandle;
+    swapchainDesc.OutputWindow = (HWND)presentationParameters.deviceWindowHandle1;
 
     /* Create the swap chain! */
     //GFX_THROW_INFO(factory->CreateSwapChain(
@@ -2129,8 +2129,6 @@ void D3D11Renderer::SetPresentationInterval(PresentInterval presentInterval)
 
 void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters)
 {
-    D3D11_TEXTURE2D_DESC depthStencilDesc;
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
     D3D11_RENDER_TARGET_VIEW_DESC swapchainViewDesc;
     wrl::ComPtr<ID3D11Texture2D> swapchainTexture;
 
@@ -2171,7 +2169,7 @@ void D3D11Renderer::ResetBackbuffer(const PresentationParameters& presentationPa
 void D3D11Renderer::ResizeSwapChain(const PresentationParameters& pp)
 {
     int w, h;
-    GetDrawableSize((HWND)pp.deviceWindowHandle, &w, &h);
+    GetDrawableSize((HWND)pp.deviceWindowHandle1, &w, &h);
     GFX_THROW_INFO(swapchain->ResizeBuffers(
         0, /* keep # of buffers the same */
         w,
@@ -2895,6 +2893,33 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
     return result;
 }
 
+GVM::EFormat ToGVM(const DXGI_FORMAT& format)
+{
+    const std::unordered_map<DXGI_FORMAT, GVM::EFormat> formatMap = {
+    {DXGI_FORMAT_R32_FLOAT, GVM::EFormat::FORMAT_R32_FLOAT},
+    {DXGI_FORMAT_R32G32_FLOAT, GVM::EFormat::FORMAT_R32G32_FLOAT},
+    };
+    return formatMap.at(format);
+}
+
+GVM::InputAssemblerDeclarationDesc ToGVM(const D3D11_INPUT_ELEMENT_DESC* inputLayout, uint32_t inputLayoutSize)
+{
+    GVM::InputAssemblerDeclarationDesc result;
+    for (int i=0; i<inputLayoutSize; i++)
+    {
+        result.PushBack({
+            inputLayout[i].SemanticName,
+            ToGVM(inputLayout[i].Format),
+            uint8_t(inputLayout[i].InputSlot),
+            uint8_t(inputLayout[i].SemanticIndex),
+            inputLayout[i].AlignedByteOffset,
+            GVM::EInputClassification::INPUT_PER_VERTEX_DATA,
+            0
+        });
+    }
+    return result;
+}
+
 VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, void* inputLayout,
                                                  size_t inputLayoutSize)
 {
@@ -2943,6 +2968,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         desc.bytecode = pVSData->GetBufferPointer();
         desc.byteCodeSize = pVSData->GetBufferSize();
         result->testShader = testApi->CreateShader(desc);
+        result->testIL = testApi->CreateInputLayout(ToGVM(d3dInputLayout, inputLayoutSize));
 
 
         //todo InputLayout
@@ -3016,8 +3042,8 @@ void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
     D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
     GFX_THROW_INFO_ONLY(context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u));
     GFX_THROW_INFO_ONLY(context->IASetInputLayout(shader->pInputLayout.Get()));
-    testApi->SetupShader(shader->testShader,GVM::EShaderType::VERTEX_SHADER);
     testApi->SetupInputLayout(shader->testIL);
+    testApi->SetupShader(shader->testShader,GVM::EShaderType::VERTEX_SHADER);
 }
 
 ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
@@ -3122,9 +3148,23 @@ Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t l
     return nullptr;
 }
 
+#define SET_VECTOR_NULL(vector) for(auto& elem : vector){ elem = nullptr; }
+
 void D3D11Renderer::ClearState()
 {
     context->ClearState();
+    blendState = nullptr;
+    rasterizerState = nullptr;
+    depthStencilBuffer = nullptr;
+    SET_VECTOR_NULL(vertexTextures); 
+    SET_VECTOR_NULL(pixelSamplers); 
+    SET_VECTOR_NULL(pixelTextures); 
+    SET_VECTOR_NULL(renderTargetViews);
+    indexBuffer = nullptr;
+    vertexBuffer = nullptr;
+    inputLayout = nullptr;
+    topology = PRIMITIVETYPE_UNKNOWN;
+    depthStencilBuffer = nullptr;
 }
 
 
