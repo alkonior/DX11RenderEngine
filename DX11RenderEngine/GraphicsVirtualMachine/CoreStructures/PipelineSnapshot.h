@@ -10,6 +10,7 @@ namespace Compressed {
     struct PipelineSnapshot;
 }
 
+
 struct PipelineSnapshot {
 
     using CompressedType = Compressed::PipelineSnapshot;

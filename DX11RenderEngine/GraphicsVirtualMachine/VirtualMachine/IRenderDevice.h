@@ -62,7 +62,7 @@ protected:
 
     
     virtual IShader* CreateShader(const ShaderDesc& desc) = 0;
-    virtual IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc) = 0;
+    virtual IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) = 0;
     
     /*
     virtual ~IRenderDevice() = default;

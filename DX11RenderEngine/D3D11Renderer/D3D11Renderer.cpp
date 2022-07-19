@@ -1676,6 +1676,32 @@ static DXGI_FORMAT D3D11DepthSVFormat[] =
     DXGI_FORMAT_R32_FLOAT /* DepthFormat.Depth24Stencil8 */
 };
 
+
+GVM::EDepthFormat ToGVM(DepthFormat format)
+{
+    switch (format)
+    {
+    case DEPTHFORMAT_D16: return GVM::EDepthFormat::FORMAT_D16_UNORM;
+    case DEPTHFORMAT_D24:
+    case DEPTHFORMAT_D24S8: return GVM::EDepthFormat::FORMAT_D24_UNORM_S8_UINT;
+    case DEPTHFORMAT_D32: return GVM::EDepthFormat::FORMAT_D32_UNORM;
+    default: return GVM::EDepthFormat::FORMAT_UNKNOWN;
+    }
+}
+
+
+GVM::EFormat ToGVM(GVM::EDepthFormat format)
+{
+    switch (format)
+    {
+    case GVM::EDepthFormat::FORMAT_D16_UNORM: return GVM::EFormat::FORMAT_R16_TYPELESS;
+    case GVM::EDepthFormat::FORMAT_D24:
+    case GVM::EDepthFormat::FORMAT_D24_UNORM_S8_UINT: return GVM::EFormat::FORMAT_R32_TYPELESS;
+    case GVM::EDepthFormat::FORMAT_D32_UNORM: return GVM::EFormat::FORMAT_R32_TYPELESS;
+    default: return GVM::EFormat::FORMAT_UNKNOWN;
+    }
+}
+
 Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format,
                                                          int32_t multiSampleCount)
 {
@@ -1702,11 +1728,23 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
 
+    
+    GVM::Texture2DResourceDesc resourceDesc;
+
+    resourceDesc.Width = width;
+    resourceDesc.Height = height;
+    resourceDesc.Format = ToGVM(ToGVM(format));
+    resourceDesc.Array = 1;
+    resourceDesc.initialData = nullptr;
+    
+
     GFX_THROW_INFO(device->CreateTexture2D(
         &desc,
         NULL,
         &result->handle
     ));
+    
+    result->resource = testApi->CreateTexture2D(resourceDesc);
 
     texture->isRenderTarget = true;
     D3D11_SHADER_RESOURCE_VIEW_DESC rvDesc;
@@ -1714,6 +1752,9 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     rvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     rvDesc.Texture2D.MipLevels = 1;
     rvDesc.Texture2D.MostDetailedMip = 0;
+
+    GVM::ShaderResourceView
+
 
     GFX_THROW_INFO(device->CreateShaderResourceView(
         result->handle.Get(),
@@ -1735,6 +1776,16 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
         &dsDesc,
         &result->depth.dsView
     ));
+
+    
+    GVM::DepthStencilViewDesc view_desc;
+    view_desc.Resource = result->resource;
+    view_desc.Flag = GVM::EDsvFlags::DSV_FLAG_READ_ONLY_DEPTH;
+    view_desc.Format = ToGVM(format);
+    view_desc.Resource = result->resource;
+    
+
+    result->depth.nDsView = testApi->CreateDepthStencilsView(view_desc);
 
     return result;
 }
@@ -2968,7 +3019,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         desc.bytecode = pVSData->GetBufferPointer();
         desc.byteCodeSize = pVSData->GetBufferSize();
         result->testShader = testApi->CreateShader(desc);
-        result->testIL = testApi->CreateInputLayout(ToGVM(d3dInputLayout, inputLayoutSize));
+        result->testIL = testApi->CreateInputLayout(ToGVM(d3dInputLayout, inputLayoutSize), desc);
 
 
         //todo InputLayout

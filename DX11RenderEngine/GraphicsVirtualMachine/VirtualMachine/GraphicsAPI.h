@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "VirtualMachine.h"
+#include "VirtualMachine/VirtualMachine.h"
 #include "../CoreStructures\PipelineSnapshot.h"
 namespace GVM {
 
@@ -114,6 +114,7 @@ public:
 
     ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& description);
     RenderTargetView* CreateRtView(const RenderTargetViewDesc& description);
+    DepthStencilView* CreateDepthStencilsView(const DepthStencilViewDesc& description);
     UATargetView* CreateUaView(const UATargetViewDesc& description);
 
     VertexBuffer* CreateVertexBuffer(const BufferResourceDesc& description);
@@ -173,7 +174,7 @@ public:
 
 #pragma endregion
 
-    InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
+    InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader);
     Shader* CreateShader(const ShaderDesc& desc);
 
     //void Flush();

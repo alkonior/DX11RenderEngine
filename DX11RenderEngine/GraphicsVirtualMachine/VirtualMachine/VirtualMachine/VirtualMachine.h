@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../CoreStructures/PipelineSnapshot.h"
+#include "../../CoreStructures/PipelineSnapshot.h"
 
 namespace GVM
 {
@@ -27,6 +27,7 @@ class VirtualMachine
         DRAW_INSTANCED_INDIRECT,
 
         CREATE_RESOURCE,
+        CREATE_RESOURCE_VIEW,
         CREATE_SHADER,
         UPDATE_RESOURCE,
         SET_RESOURCE_DATA,
@@ -132,6 +133,7 @@ public:
     DepthStencilView* CreateDepthStencilView(const DepthStencilViewDesc& desc);
     ShaderResourceView* CreateShaderResourceView(const ShaderResourceViewDesc& desc);
     RenderTargetView* CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    DepthStencilView* CreateDepthStencilsView(const DepthStencilViewDesc& description);
     UATargetView* CreateUATargetView(const UATargetViewDesc& desc);
 
     void AddDisposeResource(const Resource* resource);
@@ -145,7 +147,7 @@ public:
     //std::vector<IRenderDevice::IInputLayout*> SavedInputLayouts;
 
     Shader* CreateShader(const ShaderDesc& desc);
-    InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc);
+    InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader);
 
 #pragma endregion
 

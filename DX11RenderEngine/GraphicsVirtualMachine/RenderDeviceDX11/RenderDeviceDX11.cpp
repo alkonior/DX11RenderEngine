@@ -1,5 +1,8 @@
 #include "RenderDeviceDX11.h"
 
+#include "BuffersViews/ConstBufferViewD3D11.h"
+#include "BuffersViews/IndexBufferViewD3D11.h"
+#include "BuffersViews/VertexBufferViewD3D11.h"
 #include "GraphicsExceptions/GraphicsException.h"
 #include "GraphicsVirtualMachine/VirtualMachine/ResourceManager/GPUResource.h"
 
@@ -108,20 +111,20 @@ RenderDeviceDX11::RenderDeviceDX11(const RenderDeviceInitParams& initParams, boo
     {
     case EPresentInterval::PRESENT_INTERVAL_ONE:
     case EPresentInterval::PRESENT_INTERVAL_DEFAULT:
-        {
-            syncInterval = 1;
-            break;
-        }
+    {
+        syncInterval = 1;
+        break;
+    }
     case EPresentInterval::PRESENT_INTERVAL_TWO:
-        {
-            syncInterval = 2;
-            break;
-        }
+    {
+        syncInterval = 2;
+        break;
+    }
     case EPresentInterval::PRESENT_INTERVAL_IMMEDIATE:
-        {
-            syncInterval = 0;
-            break;
-        }
+    {
+        syncInterval = 0;
+        break;
+    }
     }
 
 
@@ -253,49 +256,80 @@ IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& Re
     switch (ResourceDesc.resourceDescription.Dimension)
     {
     case EResourceDimension::RESOURCE_DIMENSION_TEXTURE2D:
-        {
-            ID3D11Texture2D* result;
+    {
+        ID3D11Texture2D* result;
 
-            D3D11_TEXTURE2D_DESC dx11desc;
+        D3D11_TEXTURE2D_DESC dx11desc;
 
-            auto& desc = ResourceDesc.resourceDescription;
+        auto& desc = ResourceDesc.resourceDescription;
 
-            /* Initialize descriptor */
-            dx11desc.Width = desc.Width;
-            dx11desc.Height = desc.Height;
-            dx11desc.MipLevels = 1;
-            dx11desc.ArraySize = desc.DepthOrArraySize;
-            dx11desc.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
-            dx11desc.SampleDesc.Count = 1;
-            dx11desc.SampleDesc.Quality = 0;
-            dx11desc.Usage = D3D11_USAGE_DEFAULT;
-            dx11desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
-            dx11desc.CPUAccessFlags = 0;
-            dx11desc.MiscFlags = 0;
+        /* Initialize descriptor */
+        dx11desc.Width = desc.Width;
+        dx11desc.Height = desc.Height;
+        dx11desc.MipLevels = 1;
+        dx11desc.ArraySize = desc.DepthOrArraySize;
+        dx11desc.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
+        dx11desc.SampleDesc.Count = 1;
+        dx11desc.SampleDesc.Quality = 0;
+        dx11desc.Usage = D3D11_USAGE_DEFAULT;
+        dx11desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
+        dx11desc.CPUAccessFlags = 0;
+        dx11desc.MiscFlags = 0;
 
-            //   ResourceDesc.resourceBindings;
-            //if (isRenderTarget)
-            // {
-            //    desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-            //   desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-            // }
+        //   ResourceDesc.resourceBindings;
+        //if (isRenderTarget)
+        // {
+        //    desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+        //   desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+        // }
 
-            /* Create the texture */
-            GFX_THROW_INFO(device->CreateTexture2D(
-                &dx11desc,
-                NULL,
-                &result
-            ));
+        /* Create the texture */
+        GFX_THROW_INFO(device->CreateTexture2D(
+            &dx11desc,
+            NULL,
+            &result
+        ));
 
-            return reinterpret_cast<IRenderDevice::IResource*>(result);
-        }
+        return reinterpret_cast<IRenderDevice::IResource*>(result);
+    }
+    case EResourceDimension::RESOURCE_DIMENSION_BUFFER:
+    {
+        ID3D11Buffer* result;
+
+        D3D11_BUFFER_DESC dx11desc;
+
+        auto& desc = ResourceDesc.resourceDescription;
+
+        /* Initialize descriptor */
+        dx11desc.ByteWidth = desc.Width;
+        dx11desc.Usage = D3D11_USAGE_DEFAULT;
+        dx11desc.BindFlags = ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
+        dx11desc.CPUAccessFlags = 0;
+        dx11desc.MiscFlags = 0;
+
+        //   ResourceDesc.resourceBindings;
+        //if (isRenderTarget)
+        // {
+        //    desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+        //   desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+        // }
+
+        /* Create the texture */
+        GFX_THROW_INFO(device->CreateBuffer(
+            &dx11desc,
+            NULL,
+            &result
+        ));
+
+        return reinterpret_cast<IRenderDevice::IResource*>(result);
+    }
     }
     return nullptr;
 }
 
 void RenderDeviceDX11::DestroyResource(IResource* resource)
 {
-    ID3D11Texture2D* d3d11resource = reinterpret_cast<ID3D11Texture2D*>(resource);
+    IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
     d3d11resource->Release();
 }
 
@@ -304,40 +338,43 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
     switch (desc.type)
     {
     case GpuResourceView::EViewType::CB:
-        {
-            return nullptr;
-            break;
-        }
-    case GpuResourceView::EViewType::DB:
-        {
-            return nullptr;
-            break;
-        }
-    case GpuResourceView::EViewType::IB:
-        {
-            return nullptr;
-            break;
-        }
-    case GpuResourceView::EViewType::RT:
-        {
-            return nullptr;
-            break;
-        }
+    {
+        ConstBufferViewD3D11* result = new ConstBufferViewD3D11(desc.cbViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        return reinterpret_cast<IResourceView*>(result);
+        break;
+    }
     case GpuResourceView::EViewType::VB:
-        {
-            return nullptr;
-            break;
-        }
+    {
+        VertexBufferViewD3D11* result = new VertexBufferViewD3D11(desc.vbViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        return reinterpret_cast<IResourceView*>(result);
+        break;
+    }
+    case GpuResourceView::EViewType::IB:
+    {
+        IndexBufferViewD3D11* result = new IndexBufferViewD3D11(desc.ibViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        return reinterpret_cast<IResourceView*>(result);
+        break;
+    }
+    case GpuResourceView::EViewType::DB:
+    {
+        return nullptr;
+        break;
+    }
+    case GpuResourceView::EViewType::RT:
+    {
+        return nullptr;
+        break;
+    }
     case GpuResourceView::EViewType::SR:
-        {
-            return nullptr;
-            break;
-        }
+    {
+        return nullptr;
+        break;
+    }
     case GpuResourceView::EViewType::UA:
-        {
-            return nullptr;
-            break;
-        }
+    {
+        return nullptr;
+        break;
+    }
     }
     return nullptr;
 }
@@ -349,59 +386,85 @@ IRenderDevice::IShader* RenderDeviceDX11::CreateShader(const ShaderDesc& desc)
     switch (desc.type)
     {
     case EShaderType::HULL_SHADER:
-        {
-            ID3D11HullShader* hs;
-            device->CreateHullShader(desc.bytecode, desc.byteCodeSize, nullptr, &hs);
-            result = hs;
-            break;
-        }
-    case EShaderType::PIXEL_SHADER:
-        {
-            ID3D11PixelShader* ps;
-            device->CreatePixelShader(desc.bytecode, desc.byteCodeSize, nullptr, &ps);
-            result = ps;
-            break;
-        }
-    case EShaderType::DOMAIN_SHADER:
-        {
-            ID3D11DomainShader* ds;
-            device->CreateDomainShader(desc.bytecode, desc.byteCodeSize, nullptr, &ds);
-            result = ds;
-            break;
-        }
-    case EShaderType::VERTEX_SHADER:
-        {
-            ID3D11VertexShader* vs;
-            device->CreateVertexShader(desc.bytecode, desc.byteCodeSize, nullptr, &vs);
-            result = vs;
-            break;
-        }
-    case EShaderType::COMPUTE_SHADER:
-        {
-            ID3D11ComputeShader* cs;
-            device->CreateComputeShader(desc.bytecode, desc.byteCodeSize, nullptr, &cs);
-            result = cs;
-            break;
-        }
-    case EShaderType::GEOMETRY_SHADER:
-        {
-            ID3D11GeometryShader* gs;
-            device->CreateGeometryShader(desc.bytecode, desc.byteCodeSize, nullptr, &gs);
-            result = gs;
-            break;
-        }
-    default:
-        {
+    {
+        ID3D11HullShader* hs;
+        device->CreateHullShader(desc.bytecode, desc.byteCodeSize, nullptr, &hs);
+        result = hs;
         break;
-        }
-        ;
+    }
+    case EShaderType::PIXEL_SHADER:
+    {
+        ID3D11PixelShader* ps;
+        device->CreatePixelShader(desc.bytecode, desc.byteCodeSize, nullptr, &ps);
+        result = ps;
+        break;
+    }
+    case EShaderType::DOMAIN_SHADER:
+    {
+        ID3D11DomainShader* ds;
+        device->CreateDomainShader(desc.bytecode, desc.byteCodeSize, nullptr, &ds);
+        result = ds;
+        break;
+    }
+    case EShaderType::VERTEX_SHADER:
+    {
+        ID3D11VertexShader* vs;
+        device->CreateVertexShader(desc.bytecode, desc.byteCodeSize, nullptr, &vs);
+        result = vs;
+        break;
+    }
+    case EShaderType::COMPUTE_SHADER:
+    {
+        ID3D11ComputeShader* cs;
+        device->CreateComputeShader(desc.bytecode, desc.byteCodeSize, nullptr, &cs);
+        result = cs;
+        break;
+    }
+    case EShaderType::GEOMETRY_SHADER:
+    {
+        ID3D11GeometryShader* gs;
+        device->CreateGeometryShader(desc.bytecode, desc.byteCodeSize, nullptr, &gs);
+        result = gs;
+        break;
+    }
+    default:
+    {
+        break;
+    };
     }
     // GFX_THROW_INFO(
     //           );
     return reinterpret_cast<IRenderDevice::IShader*>(result);
 }
 
-IRenderDevice::IInputLayout* RenderDeviceDX11::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
+std::vector<D3D11_INPUT_ELEMENT_DESC> ToD3D11(const InputAssemblerDeclarationDesc& desc)
 {
-    return &inputLayout;
+    std::vector<D3D11_INPUT_ELEMENT_DESC> result (desc.InputElementDescs.size());
+    for (int i= 0; i< desc.InputElementDescs.size(); i++)
+    {
+        result[i].Format = ToD3D_TextureFormat[to_underlying(desc.InputElementDescs[i].Format)];
+        result[i].InputSlot = desc.InputElementDescs[i].InputSlot;
+        result[i].SemanticIndex = desc.InputElementDescs[i].SemanticIndex;
+        result[i].SemanticName = desc.InputElementDescs[i].SemanticName;
+        result[i].AlignedByteOffset = desc.InputElementDescs[i].AlignedByteOffset;
+        result[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION(to_underlying(desc.InputElementDescs[i].InputSlotClass));
+        result[i].InstanceDataStepRate =  desc.InputElementDescs[i].InstanceDataStepRate;
+    }
+    return result;
+    
+}
+
+IRenderDevice::IInputLayout* RenderDeviceDX11::CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader)
+{
+    auto d3d11InputDesc = ToD3D11(desc);
+    ID3D11InputLayout* inputLayout;
+    
+    device->CreateInputLayout(
+        d3d11InputDesc.data(),
+        d3d11InputDesc.size(),
+        Shader.bytecode,
+        Shader.byteCodeSize,
+        &inputLayout);
+    
+    return reinterpret_cast<IRenderDevice::IInputLayout*>(inputLayout);
 }

@@ -332,6 +332,10 @@ void GraphicsApi::SetupInputLayout(InputLayout* layout)
 {
     return graphicsMachine.CreateRenderTargetView(description);
 }
+DepthStencilView* GraphicsApi::CreateDepthStencilsView(const DepthStencilViewDesc& description)
+{
+    return graphicsMachine.CreateDepthStencilsView(description);
+}
 
 UATargetView* GraphicsApi::CreateUaView(const UATargetViewDesc& description)
 {
@@ -390,9 +394,9 @@ void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, const void* data,
     graphicsMachine.SetConstBufferData(constBuffer, data, dataSize);
 }
 
-InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
+InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader)
 {
-    return graphicsMachine.CreateInputLayout(desc);
+    return graphicsMachine.CreateInputLayout(desc, Shader);
 }
 
 Shader* GraphicsApi::CreateShader(const ShaderDesc& desc)

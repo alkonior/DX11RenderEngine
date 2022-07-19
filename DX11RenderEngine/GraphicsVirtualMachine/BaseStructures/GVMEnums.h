@@ -199,6 +199,11 @@ enum class EFormat : uint8_t {
     FORMAT_R8_SINT,
     FORMAT_A8_UNORM,
     
+    FORMAT_D32_FLOAT_S8X24_UINT,
+    FORMAT_D32_UNORM,
+    FORMAT_D24_UNORM_S8_UINT,
+    FORMAT_D16_UNORM,
+    
 };
 
     
@@ -275,16 +280,22 @@ constexpr uint32_t FormatByteSize[] = {
     1, /*FORMAT_R8_UINT,*/
     1, /*FORMAT_R8_SNORM,*/
     1, /*FORMAT_R8_SINT,*/
-    1 /*FORMAT_A8_UNORM,*/
+    1, /*FORMAT_A8_UNORM,*/
+
+    8, /*FORMAT_D32_FLOAT_S8X24_UINT,,*/
+    4, /*FORMAT_D32_UNORM,,*/
+    4, /*FORMAT_D24_UNORM_S8_UINT,,*/
+    2, /*FORMAT_D16_UNORM,,*/
 };
 
 
 enum class EDepthFormat : uint8_t {
     FORMAT_UNKNOWN = 0,
-    FORMAT_D32_FLOAT_S8X24_UINT,
-    FORMAT_D32_UNORM,
+    FORMAT_D24,
     FORMAT_D24_UNORM_S8_UINT,
     FORMAT_D16_UNORM,
+    FORMAT_D32_UNORM,
+    FORMAT_D32_FLOAT_S8X24_UINT,
 };
 
 enum class EDsvFlags : uint8_t {

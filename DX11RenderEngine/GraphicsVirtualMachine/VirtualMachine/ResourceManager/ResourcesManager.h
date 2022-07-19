@@ -10,7 +10,7 @@
 namespace GVM {
 
 class VirtualMachine;
-class PipelineSnapshot;
+struct PipelineSnapshot;
 
 class ResourcesManager {
 
@@ -56,6 +56,7 @@ class ResourcesManager {
     GpuResourceView& CreateDepthStencilView(const DepthStencilViewDesc& desc);
     GpuResourceView& CreateShaderResourceView(const ShaderResourceViewDesc& desc);
     GpuResourceView& CreateRenderTargetView(const RenderTargetViewDesc& desc);
+    GpuResourceView& CreateDepthStencilsView(const DepthStencilViewDesc& description);
     GpuResourceView& CreateUATargetView(const UATargetViewDesc& desc);
 #pragma endregion
 

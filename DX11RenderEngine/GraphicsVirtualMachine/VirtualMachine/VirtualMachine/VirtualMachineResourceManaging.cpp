@@ -154,7 +154,10 @@ ConstBufferView* VirtualMachine::CreateConstBufferView(const ConstBufferViewDesc
 {
     auto& resourceView = resourcesManager.CreateConstBufferView(desc);
     //resourceView.view = RenderDevice->CreateConstBufferView(resourceView.cbViewDescription);
-    //todo Command
+  
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<ConstBufferView*>(resourceView.id);
 }
 
@@ -162,7 +165,10 @@ VertexBufferView* VirtualMachine::CreateVertexBufferView(const VertexBufferViewD
 {
     auto& resourceView = resourcesManager.CreateVertexBufferView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<VertexBufferView*>(resourceView.id);
 }
 
@@ -170,7 +176,10 @@ IndexBufferView* VirtualMachine::CreateIndexBufferView(const IndexBufferViewDesc
 {
     auto& resourceView = resourcesManager.CreateIndexBufferView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+    
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<IndexBufferView*>(resourceView.id);
 }
 
@@ -178,7 +187,10 @@ DepthStencilView* VirtualMachine::CreateDepthStencilView(const DepthStencilViewD
 {
     auto& resourceView = resourcesManager.CreateDepthStencilView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+    
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<DepthStencilView*>(resourceView.id);
 }
 
@@ -186,7 +198,10 @@ ShaderResourceView* VirtualMachine::CreateShaderResourceView(const ShaderResourc
 {
     auto& resourceView = resourcesManager.CreateShaderResourceView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+    
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<ShaderResourceView*>(resourceView.id);
 }
 
@@ -194,7 +209,20 @@ RenderTargetView* VirtualMachine::CreateRenderTargetView(const RenderTargetViewD
 {
     auto& resourceView = resourcesManager.CreateRenderTargetView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+   
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
+    return reinterpret_cast<RenderTargetView*>(resourceView.id);
+}
+DepthStencilView* VirtualMachine::CreateDepthStencilsView(const DepthStencilViewDesc& description)
+{
+    auto& resourceView = resourcesManager.CreateDepthStencilsView(description);
+    resourceView.view = RenderDevice->CreateResourceView(resourceView);
+   
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<RenderTargetView*>(resourceView.id);
 }
 
@@ -202,7 +230,10 @@ UATargetView* VirtualMachine::CreateUATargetView(const UATargetViewDesc& desc)
 {
     auto& resourceView = resourcesManager.CreateUATargetView(desc);
     resourceView.view = RenderDevice->CreateResourceView(resourceView);
-    //todo Command
+    
+    PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
+    PushData((void*)resourceView.id);
+    
     return reinterpret_cast<UATargetView*>(resourceView.id);
 }
 
@@ -224,10 +255,10 @@ Shader* VirtualMachine::CreateShader(const ShaderDesc& desc)
     return reinterpret_cast<Shader*>(shader.id);
 }
 
-InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDesc& desc)
+InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader)
 {
     auto& inputLayout = resourcesManager.CreateInputLayout(desc);
-    inputLayout.inputLayout = RenderDevice->CreateInputLayout(inputLayout.description);
+    inputLayout.inputLayout = RenderDevice->CreateInputLayout(inputLayout.description, Shader);
     return reinterpret_cast<InputLayout*>(inputLayout.id);
 }
 
