@@ -20,19 +20,19 @@ public:
     };
     
     ResourceView* id = nullptr;
-    IRenderDevice::IResource* resource = nullptr;
     IRenderDevice::IResourceView* view = nullptr;
+    Resource* resource = nullptr;
     EViewType type = EViewType::UNKNOWN;
     bool isRequiredUpdate = true;
 
     GpuResourceView(){};
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const ConstBufferViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const DepthStencilViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const RenderTargetViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const UATargetViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const ShaderResourceViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const VertexBufferViewDesc& desc);
-    GpuResourceView(ResourceView* id, const GpuResource& resource, const IndexBufferViewDesc& desc);
+    GpuResourceView(ResourceView* id, const ConstBufferViewDesc& desc);
+    GpuResourceView(ResourceView* id, const DepthStencilViewDesc& desc);
+    GpuResourceView(ResourceView* id, const RenderTargetViewDesc& desc);
+    GpuResourceView(ResourceView* id, const UATargetViewDesc& desc);
+    GpuResourceView(ResourceView* id, const ShaderResourceViewDesc& desc);
+    GpuResourceView(ResourceView* id, const VertexBufferViewDesc& desc);
+    GpuResourceView(ResourceView* id, const IndexBufferViewDesc& desc);
 
     GpuResourceView(const GpuResourceView& copy) noexcept;
     GpuResourceView(const GpuResourceView&& copy) noexcept;

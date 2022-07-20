@@ -1676,7 +1676,6 @@ static DXGI_FORMAT D3D11DepthSVFormat[] =
     DXGI_FORMAT_R32_FLOAT /* DepthFormat.Depth24Stencil8 */
 };
 
-
 GVM::EDepthFormat ToGVM(DepthFormat format)
 {
     switch (format)
@@ -1698,6 +1697,18 @@ GVM::EFormat ToGVM(GVM::EDepthFormat format)
     case GVM::EDepthFormat::FORMAT_D24:
     case GVM::EDepthFormat::FORMAT_D24_UNORM_S8_UINT: return GVM::EFormat::FORMAT_R32_TYPELESS;
     case GVM::EDepthFormat::FORMAT_D32_UNORM: return GVM::EFormat::FORMAT_R32_TYPELESS;
+    default: return GVM::EFormat::FORMAT_UNKNOWN;
+    }
+}
+
+GVM::EFormat ToGVMSh(DepthFormat format)
+{
+    switch (format)
+    {
+    case DEPTHFORMAT_D16: return GVM::EFormat::FORMAT_R16_UNORM;
+    case DEPTHFORMAT_D24:
+    case DEPTHFORMAT_D24S8:
+    case DEPTHFORMAT_D32: return GVM::EFormat::FORMAT_R32_FLOAT;
     default: return GVM::EFormat::FORMAT_UNKNOWN;
     }
 }
@@ -1753,7 +1764,14 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     rvDesc.Texture2D.MipLevels = 1;
     rvDesc.Texture2D.MostDetailedMip = 0;
 
-    GVM::ShaderResourceView
+    GVM::ShaderResourceViewDesc shDesc;
+    shDesc.Dimension = GVM::EShaderViewDimension::DIMENSION_TEXTURE2D;
+    shDesc.Format = ToGVMSh(format);
+    shDesc.Resource = result->resource;
+    shDesc.T2Desc.PlaneSlice = 0;
+    shDesc.T2Desc.ResourceMinLODClamp = 0;
+    result->depth.nShView = testApi->CreateShaderResourceView(shDesc);
+    
 
 
     GFX_THROW_INFO(device->CreateShaderResourceView(
@@ -2716,7 +2734,7 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
         vb.buffersNum = 1;
         if (!buff->vertexViewTest)
             buff->vertexViewTest = testApi->CreateVertexBufferView({
-                buff->vertexTest, uint32_t(buff->size),
+                buff->vertexTest,
                 uint32_t(vertexBuffer.vertexStride[0]),
                 vertexBuffer.vertexOffset[0]});
         vb.vertexBuffers[0] = buff->vertexViewTest;
@@ -2734,7 +2752,7 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
             
             if (!buff->vertexViewTest)
                 buff->vertexViewTest = testApi->CreateVertexBufferView({
-                    buff->vertexTest, uint32_t(buff->size),
+                    buff->vertexTest,
                     uint32_t(vertexBuffer.vertexStride[i]),
                     vertexBuffer.vertexOffset[i]});
             vb.vertexBuffers[0] = buff->vertexViewTest;

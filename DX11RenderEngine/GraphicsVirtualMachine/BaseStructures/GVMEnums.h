@@ -298,6 +298,17 @@ enum class EDepthFormat : uint8_t {
     FORMAT_D32_FLOAT_S8X24_UINT,
 };
 
+
+constexpr EFormat DepthFormatToFormat[] ={
+ EFormat::FORMAT_UNKNOWN,
+ EFormat::FORMAT_D24_UNORM_S8_UINT,
+ EFormat::FORMAT_D24_UNORM_S8_UINT,
+ EFormat::FORMAT_D16_UNORM,
+ EFormat::FORMAT_D32_UNORM,
+ EFormat::FORMAT_D32_FLOAT_S8X24_UINT,
+};
+
+
 enum class EDsvFlags : uint8_t {
     DSV_FLAG_NONE,
     DSV_FLAG_READ_ONLY_DEPTH,

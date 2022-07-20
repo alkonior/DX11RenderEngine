@@ -114,7 +114,7 @@ protected:
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
     void DestroyResource(IResource* resource) override;
-    IResourceView* CreateResourceView(const GpuResourceView& desc) override;
+    IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
 
     IShader* CreateShader(const ShaderDesc& desc) override;
     IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;

@@ -30,7 +30,7 @@ void VirtualMachine::Present()
         case EMachineCommands::CREATE_RESOURCE_VIEW:
         {
             auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
-            resourceView.view = RenderDevice->CreateResourceView(resourceView);
+            resourceView.view = RenderDevice->CreateResourceView(resourceView, resourcesManager.GetResource(resourceView.resource));
             break;
         }
             

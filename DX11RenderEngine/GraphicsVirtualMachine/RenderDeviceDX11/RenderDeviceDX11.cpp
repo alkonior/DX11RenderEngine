@@ -230,6 +230,15 @@ constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
     DXGI_FORMAT_A8_UNORM,
 };
 
+constexpr DXGI_FORMAT ToD3D_DepthFormat[] = {
+    DXGI_FORMAT_UNKNOWN,
+    DXGI_FORMAT_D24_UNORM_S8_UINT,
+    DXGI_FORMAT_D24_UNORM_S8_UINT,
+    DXGI_FORMAT_D16_UNORM,
+    DXGI_FORMAT_D32_FLOAT,
+    DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
+};
+
 UINT ToD3D11ResourceBinDings(uint32_t bindings)
 {
     UINT result = 0;
@@ -333,31 +342,72 @@ void RenderDeviceDX11::DestroyResource(IResource* resource)
     d3d11resource->Release();
 }
 
-IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuResourceView& desc)
+
+D3D11_DEPTH_STENCIL_VIEW_DESC ToD3D11DepthStencilView(const DepthStencilViewDesc& desc)
+{
+    D3D11_DEPTH_STENCIL_VIEW_DESC result;
+    result.Flags = to_underlying(desc.Flag);
+    result.Format = ToD3D_DepthFormat[to_underlying(desc.Format)];
+    result.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    result.Texture2D.MipSlice = 0;
+    return result;
+}
+
+
+constexpr D3D_SRV_DIMENSION ToD3D_ShaderViewDimension[] = {
+
+    D3D_SRV_DIMENSION_UNKNOWN,
+    D3D_SRV_DIMENSION_TEXTURE1D,
+    D3D_SRV_DIMENSION_TEXTURE1DARRAY,
+    D3D_SRV_DIMENSION_TEXTURE2D,
+    D3D_SRV_DIMENSION_TEXTURE2DARRAY,
+    D3D_SRV_DIMENSION_TEXTURE3D,
+    D3D_SRV_DIMENSION_TEXTURECUBE,
+    D3D_SRV_DIMENSION_TEXTURECUBEARRAY,
+};
+
+D3D11_SHADER_RESOURCE_VIEW_DESC ToD3D11ShaderView(const ShaderResourceViewDesc& desc)
+{
+    D3D11_SHADER_RESOURCE_VIEW_DESC result;
+    result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
+    result.ViewDimension = ToD3D_ShaderViewDimension[to_underlying(desc.Dimension)];
+    result.Texture2D.MipLevels = 1;
+    result.Texture2D.MostDetailedMip = 0;
+    return result;
+}
+
+IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
 {
     switch (desc.type)
     {
     case GpuResourceView::EViewType::CB:
     {
-        ConstBufferViewD3D11* result = new ConstBufferViewD3D11(desc.cbViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        ConstBufferViewD3D11* result = new ConstBufferViewD3D11(desc.cbViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
         return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::VB:
     {
-        VertexBufferViewD3D11* result = new VertexBufferViewD3D11(desc.vbViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        VertexBufferViewD3D11* result = new VertexBufferViewD3D11(desc.vbViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
         return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::IB:
     {
-        IndexBufferViewD3D11* result = new IndexBufferViewD3D11(desc.ibViewDescription, reinterpret_cast<ID3D11Buffer*>(desc.resource));
+        IndexBufferViewD3D11* result = new IndexBufferViewD3D11(desc.ibViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
         return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::DB:
     {
-        return nullptr;
+        ID3D11DepthStencilView* result;
+        auto d3d11desc = ToD3D11DepthStencilView(desc.dbViewDescription);
+        device->CreateDepthStencilView(
+            reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+            &d3d11desc,
+            &result
+        );
+        return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::RT:
@@ -367,7 +417,26 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
     }
     case GpuResourceView::EViewType::SR:
     {
-        return nullptr;
+        ID3D11ShaderResourceView* result;
+        if (desc.srViewDescription.MakeDefault)
+        {
+            device->CreateShaderResourceView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                nullptr,
+                &result
+            );
+        }
+        else
+        {
+            auto d3d11desc = ToD3D11ShaderView(desc.srViewDescription);
+            device->CreateShaderResourceView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                &d3d11desc,
+                &result
+            );
+        }
+
+        return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::UA:
@@ -439,8 +508,8 @@ IRenderDevice::IShader* RenderDeviceDX11::CreateShader(const ShaderDesc& desc)
 
 std::vector<D3D11_INPUT_ELEMENT_DESC> ToD3D11(const InputAssemblerDeclarationDesc& desc)
 {
-    std::vector<D3D11_INPUT_ELEMENT_DESC> result (desc.InputElementDescs.size());
-    for (int i= 0; i< desc.InputElementDescs.size(); i++)
+    std::vector<D3D11_INPUT_ELEMENT_DESC> result(desc.InputElementDescs.size());
+    for (int i = 0; i < desc.InputElementDescs.size(); i++)
     {
         result[i].Format = ToD3D_TextureFormat[to_underlying(desc.InputElementDescs[i].Format)];
         result[i].InputSlot = desc.InputElementDescs[i].InputSlot;
@@ -448,23 +517,22 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> ToD3D11(const InputAssemblerDeclarationDes
         result[i].SemanticName = desc.InputElementDescs[i].SemanticName;
         result[i].AlignedByteOffset = desc.InputElementDescs[i].AlignedByteOffset;
         result[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION(to_underlying(desc.InputElementDescs[i].InputSlotClass));
-        result[i].InstanceDataStepRate =  desc.InputElementDescs[i].InstanceDataStepRate;
+        result[i].InstanceDataStepRate = desc.InputElementDescs[i].InstanceDataStepRate;
     }
     return result;
-    
 }
 
 IRenderDevice::IInputLayout* RenderDeviceDX11::CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader)
 {
     auto d3d11InputDesc = ToD3D11(desc);
     ID3D11InputLayout* inputLayout;
-    
+
     device->CreateInputLayout(
         d3d11InputDesc.data(),
         d3d11InputDesc.size(),
         Shader.bytecode,
         Shader.byteCodeSize,
         &inputLayout);
-    
+
     return reinterpret_cast<IRenderDevice::IInputLayout*>(inputLayout);
 }

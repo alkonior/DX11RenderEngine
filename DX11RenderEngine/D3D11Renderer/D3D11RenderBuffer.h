@@ -27,6 +27,7 @@ struct D3D11Renderbuffer : Renderbuffer {
 			DepthFormat format = DepthFormat::DEPTHFORMAT_D16;
 			wrl::ComPtr<ID3D11DepthStencilView> dsView = nullptr;
 			GVM::DepthStencilView* nDsView = nullptr;
+			GVM::ShaderResourceView* nShView = nullptr;
 		} depth;
 	};
 
