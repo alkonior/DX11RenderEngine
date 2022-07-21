@@ -69,15 +69,12 @@ private:
     wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
 
     /* Textures */
-    std::vector<ResourceView*> vertexTextures;
-    std::vector<ResourceView*> pixelTextures;
-    std::vector<ID3D11SamplerState*> vertexSamplers;
-    std::vector<ID3D11SamplerState*> pixelSamplers;
+    std::vector<ID3D11ShaderResourceView*> Textures;
 
     /* Input Assembly */
     InputLayoutDX11 inputLayout;
     EPrimitiveTopology topology;
-    std::vector<ResourceViewDX11> vertexBuffers;
+    std::vector<ID3D11Buffer*> vertexBuffers;
     std::vector<uint32_t> vertexBufferOffsets;
     std::vector<uint32_t> vertexBufferStrides;
     ResourceViewDX11* indexBuffer;
@@ -105,15 +102,15 @@ private:
 
     std::mutex ctxLock;
 
-    std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>>				hashBS;
-    std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>>  hashDSS;
-    std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>>		hashRS;
-    std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>>			hashSS;
+    std::unordered_map<uint64_t, ID3D11BlendState*>		    hashBS;
+    std::unordered_map<uint64_t, ID3D11DepthStencilState*>  hashDSS;
+    std::unordered_map<uint64_t, ID3D11RasterizerState*>	hashRS;
+    std::unordered_map<uint64_t, ID3D11SamplerState*>	    hashSS;
 
-    wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
-    wrl::ComPtr<ID3D11DepthStencilState> FetchDepthStencilState(const DepthStencilState& state);
-    wrl::ComPtr<ID3D11RasterizerState> FetchRasterizerState(const RasterizerState& state);
-    wrl::ComPtr<ID3D11SamplerState> FetchSamplerState(const SamplerState& state);
+    ID3D11BlendState* FetchBlendState(const Compressed::CoreBlendDesc& blendState);
+    ID3D11DepthStencilState* FetchDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
+    ID3D11RasterizerState*FetchRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
+    ID3D11SamplerState* FetchSamplerState(const Compressed::SamplerStateDesc& state);
 
 #pragma endregion 
 
@@ -137,10 +134,10 @@ protected:
     virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
     virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
     virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+    virtual void SetupSamplers(const Compressed::SamplerStateDesc* samplers[], uint8_t num);
     virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology);
 
-    virtual void SetupVertexBuffer(const IIndexBufferView vertexBuffers[]);
+    virtual void SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num);
     virtual void SetupIndexBuffer(const IIndexBufferView* indices);
     virtual void SetupTextures(IResourceView* textures[], uint8_t num);
     virtual void SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);

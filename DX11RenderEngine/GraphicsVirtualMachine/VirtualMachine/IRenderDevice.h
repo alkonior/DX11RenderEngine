@@ -83,10 +83,10 @@ protected:
     virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState) = 0;
     virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) = 0;
     virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState) = 0;
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num) = 0;
+    virtual void SetupSamplers(const Compressed::SamplerStateDesc* samplers[], uint8_t num) = 0;
     virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology) = 0;
 
-    virtual void SetupVertexBuffer(const IIndexBufferView vertexBuffers[]) = 0;
+    virtual void SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num) = 0;
     virtual void SetupIndexBuffer(const IIndexBufferView* indices) = 0;
     virtual void SetupTextures(IResourceView* textures[], uint8_t num) = 0;
     virtual void SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer) = 0;

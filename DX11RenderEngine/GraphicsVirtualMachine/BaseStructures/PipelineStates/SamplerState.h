@@ -22,7 +22,7 @@ struct SamplerStateDesc {
         uint8_t        MaxAnisotropy   ;
         uint8_t        ComparisonFunc  : 4;
         uint8_t        AddressU        : 3;
-        uint8_t                    BorderColor[4] = {0,0,0,0};
+        uint8_t        BorderColor[4] = {0,0,0,0};
     };
 
     union
