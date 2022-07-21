@@ -34,8 +34,19 @@ void VirtualMachine::Present()
             break;
         }
             
+        case EMachineCommands::SET_RESOURCE_DATA:
+        {
+            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+            const ResourceUpdateData& params = PullData<ResourceUpdateData>();
+            const void* data = PullPointer(params.dataSize);
+            RenderDevice->SetResourceData(resource,params.dstSubresource,
+                params.rect,data, params.srcRowPitch,params.srcDepthPitch);
+            break;
+        }
+            
         }
     }
+    queueShift = 0;
     pipelinesQueue.clear();
     commandQueue.clear();
     dataQueue.clear();

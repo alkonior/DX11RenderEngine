@@ -55,7 +55,7 @@ protected:
 
     virtual IStructuresSize GetClassesSize() = 0;
     
-    virtual IResource* CreateResource(const GpuResource& desc) = 0;
+    virtual IResource* CreateResource(const GpuResource& resource) = 0;
     virtual void DestroyResource(IResource* resource) = 0;
     virtual IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) = 0;
 
@@ -63,6 +63,19 @@ protected:
     
     virtual IShader* CreateShader(const ShaderDesc& desc) = 0;
     virtual IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) = 0;
+
+
+
+
+    virtual void SetResourceData(
+        const GpuResource& resource,
+        uint16_t dstSubresource,
+        const UBox& rect,
+        const void* pSrcData,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    ) = 0;
+
     
     /*
     virtual ~IRenderDevice() = default;

@@ -1405,6 +1405,7 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     dstBox.bottom = y + h;
     dstBox.back = 1;
 
+    uint8_t byteLength = GVM::FormatByteSize[GVM::to_underlying(ToGVM(d3dTexture->format))];
 
     testApi->SetResourceData(d3dTexture->resource,
                              cubeMapFace,
@@ -1415,7 +1416,7 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
                                  dstBox.right,
                                  dstBox.bottom,
                                  dstBox.back
-                             }, data);
+                             }, data,w*byteLength,byteLength*h*w);
 
     //SDL_LockMutex(renderer->ctxLock);
     context->UpdateSubresource(
@@ -1486,14 +1487,15 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
     dstBox.bottom = y + h;
     dstBox.back = 1;
 
+    uint8_t byteLength = GVM::FormatByteSize[GVM::to_underlying(ToGVM(d3dTexture->format))];
     //std::lock_guard<std::mutex> guard(ctxLock);
     GFX_THROW_INFO_ONLY(context->UpdateSubresource(
         d3dTexture->handle.Get(),
         level,
         &dstBox,
         data,
-        w * 4,
-        0
+        w * byteLength,
+        w * byteLength*h
     ));
 
     testApi->SetResourceData(d3dTexture->resource,
@@ -1505,7 +1507,8 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
                                  dstBox.right,
                                  dstBox.bottom,
                                  dstBox.back
-                             }, data);
+                             }, data, w*byteLength,
+        w * byteLength*h);
 }
 
 
@@ -1941,7 +1944,7 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
             dataLen
         ));
     }
-    testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data,dataLen);
+    testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data,dataLen, offsetInBytes);
 }
 
 void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data,
@@ -2116,7 +2119,7 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
             dataLength
         ));
     }
-    testApi->SetIndexBufferData((GVM::IndexBuffer*)d3dBuffer->handleTest,data,dataLength);
+    testApi->SetIndexBufferData((GVM::IndexBuffer*)d3dBuffer->handleTest, data, dataLength, offsetInBytes);
 }
 
 void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength)

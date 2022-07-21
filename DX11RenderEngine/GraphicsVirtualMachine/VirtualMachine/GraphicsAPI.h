@@ -154,6 +154,7 @@ public:
         VertexBuffer* vertexBuffer,
         const void* pSrcData,
         uint32_t dataLength,
+        uint32_t offset = 0,
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );
@@ -162,6 +163,7 @@ public:
         IndexBuffer* buffer,
         const void* pSrcData,
         uint32_t dataLength,
+        uint32_t offset = 0,
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );//todo offset
@@ -170,7 +172,8 @@ public:
     void SetConstBufferData(
         ConstBuffer* constBuffer,
         const void* data,
-        uint32_t dataSize);
+        uint32_t dataSize,
+        uint32_t offset = 0);
 
 #pragma endregion
 

@@ -266,31 +266,36 @@ InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDe
 void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource, const UBox& rect,
     const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    //PushCommand(EMachineCommands::SET_RESOURCE_DATA);
-
-    //ResourceUpdateData rud = {dstSubresource,srcRowPitch,srcRowPitch};
-    //PushData(&rud, sizeof(rud));
+    PushCommand(EMachineCommands::SET_RESOURCE_DATA);
+    PushData((void*)resource);
+    auto& Resource = resourcesManager.GetResource(resource);
+    
+    uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top)
+    *FormatByteSize[to_underlying(Resource.resourceDescription.Format)];
+    
+    ResourceUpdateData rud = {rect, dstSubresource, srcRowPitch,srcDepthPitch, dataSize};
+    PushData(rud);
     //
-    //uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top);
-    //PushData(pSrcData, dataSize);
+    PushData(pSrcData, dataSize);
+    
 }
 
-void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
+void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{0,0,0,dataLength,1,1};
+    UBox rect{offset,0,0,offset+dataLength,1,1};
     SetResourceData(vertexBuffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
-void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
+void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{0,0,0,dataLength,1,1};
+    UBox rect{offset,0,0,offset+dataLength,1,1};
     SetResourceData(buffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
-void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize)
+void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize, uint32_t offset)
 {
-    UBox rect{0,0,0,dataSize,1,1};
+    UBox rect{offset,0,0,offset+dataSize,1,1};
     SetResourceData(constBuffer, 0, rect, data, 0, 0);
 }

@@ -10,7 +10,7 @@
 
 namespace GVM {
 
-class RenderDeviceDX11 : public IRenderDevice {
+class RenderDeviceDX11 final : public IRenderDevice {
 public:
 
     RenderDeviceDX11(const RenderDeviceInitParams& initParams, bool debugMode);
@@ -118,6 +118,9 @@ protected:
 
     IShader* CreateShader(const ShaderDesc& desc) override;
     IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
+    
+    void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+  
 };
 
 }

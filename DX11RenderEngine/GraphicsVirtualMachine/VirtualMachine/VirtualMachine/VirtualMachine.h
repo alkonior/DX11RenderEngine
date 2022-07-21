@@ -53,7 +53,7 @@ class VirtualMachine
     void PushData(const void* data, uint32_t dataSize);
     
     template<class T>
-    void PushData(T data)
+    void PushData(const T& data)
     {
         constexpr uint32_t dataSize = sizeof(T);
         uint32_t position = dataQueue.size();
@@ -81,12 +81,14 @@ class VirtualMachine
     uint32_t queueShift = 0;
     
     template<class T>
-    void PullData(T* data)
+    const T& PullData()
     {
-        constexpr uint32_t dataSize = sizeof(*data);
-        uint32_t position = queueShift;
-        memcpy_s(dataQueue.data()+queueShift,dataSize,data,dataSize);
+        constexpr uint32_t dataSize = sizeof(T);
+        T* result = (T*)(dataQueue.data()+queueShift); 
+        //uint32_t position = queueShift;
+        //memcpy_s(dataQueue.data()+queueShift,dataSize,,dataSize);
         queueShift+=dataSize;
+        return *(result);
     }
     
     void* PullPointer()
@@ -95,6 +97,13 @@ class VirtualMachine
 
         void* result = *((void**)(dataQueue.data()+queueShift));
         queueShift+=dataSize;
+        return result;
+    }
+    
+    const void* PullPointer(size_t dataLength)
+    {
+        void* result = dataQueue.data()+queueShift;
+        queueShift+=dataLength;
         return result;
     }
 
@@ -155,9 +164,11 @@ public:
 
     struct ResourceUpdateData
     {
+        UBox rect = {};
         uint16_t dstSubresource = 0;
         int32_t srcRowPitch = 0;
         int32_t srcDepthPitch = 0;
+        uint32_t dataSize = 0;
     };
     
     void SetResourceData(
@@ -173,6 +184,7 @@ public:
         VertexBuffer* vertexBuffer,
         const void* pSrcData,
         uint32_t dataLength,
+        uint32_t offset,
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );
@@ -181,15 +193,16 @@ public:
         IndexBuffer* buffer,
         const void* pSrcData,
         uint32_t dataLength,
+        uint32_t offset,
         int32_t srcRowPitch = 0,
         int32_t srcDepthPitch = 0
     );
     
-
     void SetConstBufferData(
            ConstBuffer* constBuffer,
            const void* data,
-           uint32_t dataSize);
+           uint32_t dataSize,
+           uint32_t offset);
 
 #pragma endregion
 

@@ -536,3 +536,36 @@ IRenderDevice::IInputLayout* RenderDeviceDX11::CreateInputLayout(const InputAsse
 
     return reinterpret_cast<IRenderDevice::IInputLayout*>(inputLayout);
 }
+void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch,
+    int32_t srcDepthPitch)
+{
+    D3D11_BOX dstBox;
+
+    //int32_t blockSize = Texture_GetBlockSize(d3dTexture->format);
+
+    ///if (blockSize > 1) {
+    //	w = (w + blockSize - 1) & ~(blockSize - 1);
+    //	h = (h + blockSize - 1) & ~(blockSize - 1);
+    //}
+    if (resource.resourceBindings && to_underlying(EBindFlags::BIND_CONSTANT_BUFFER) )
+    {
+        GFX_THROW_INFO_ONLY(context->UpdateSubresource(
+            reinterpret_cast<ID3D11Resource*>(resource.resource),
+            dstSubresource,
+            nullptr,
+            pSrcData,
+            srcRowPitch,
+            srcDepthPitch
+        ));
+    }
+    dstBox.left = rect.Left;
+    dstBox.top = rect.Top;
+    dstBox.front = rect.Front;
+    dstBox.right = rect.Right;
+    dstBox.bottom = rect.Bottom;
+    dstBox.back = rect.Back;
+
+
+    //SDL_LockMutex(renderer->ctxLock);
+}
+

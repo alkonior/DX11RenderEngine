@@ -374,24 +374,24 @@ void GraphicsApi::SetResourceData(Resource* resource, uint16_t dstSubresource, c
     pSrcData, srcRowPitch, srcDepthPitch);
 }
 
-void GraphicsApi::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 { 
-    graphicsMachine.SetVertexBufferData(vertexBuffer, pSrcData, dataLength
+    graphicsMachine.SetVertexBufferData(vertexBuffer, pSrcData, dataLength, offset
     , srcRowPitch, srcDepthPitch);
 }
 
-void GraphicsApi::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength,
+void GraphicsApi::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    graphicsMachine.SetIndexBufferData(buffer, pSrcData, dataLength
+    graphicsMachine.SetIndexBufferData(buffer, pSrcData, dataLength, offset
       , srcRowPitch, srcDepthPitch);
 }
 
 
-void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize)
+void GraphicsApi::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize, uint32_t offset)
 {
-    graphicsMachine.SetConstBufferData(constBuffer, data, dataSize);
+    graphicsMachine.SetConstBufferData(constBuffer, data, dataSize, offset);
 }
 
 InputLayout* GraphicsApi::CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader)

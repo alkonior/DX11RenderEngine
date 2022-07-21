@@ -74,7 +74,7 @@ void SSAORenderer::Init(void* shaderData, size_t dataSize) {
 		}
 	}
 	//delete[] randData;
-	renderer->SetTextureData2D(randVect,0,0,256,256,0,initData.data(),256*256);
+	renderer->SetTextureData2D(randVect,0,0,256,256,0,initData.data(),256*256*16);
 
 	float4 mOffsets[14];
 	
