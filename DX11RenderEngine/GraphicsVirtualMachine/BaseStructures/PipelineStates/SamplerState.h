@@ -9,6 +9,11 @@ struct SamplerStateDesc;
 namespace Compressed {
     
 struct SamplerStateDesc {
+    SamplerStateDesc();
+    SamplerStateDesc(const SamplerStateDesc&);
+    SamplerStateDesc(const SamplerStateDesc&&) noexcept;
+    SamplerStateDesc(const GVM::SamplerStateDesc& );
+    
     struct SamplerStateFields
     {
         uint8_t        Filter          : 6;
@@ -17,20 +22,18 @@ struct SamplerStateDesc {
         uint8_t        MaxAnisotropy   ;
         uint8_t        ComparisonFunc  : 4;
         uint8_t        AddressU        : 3;
+        uint8_t                    BorderColor[4] = {0,0,0,0};
     };
 
     union
     {
-        uint32_t               Data = 0;
+        uint64_t               Data = 0;
         SamplerStateFields     Fields;
     };
-    
-    uint8_t                    BorderColor[4] = {0,0,0,0};
     float                      MipLODBias;
     float                      MinLOD;
     float                      MaxLOD;
 
-    SamplerStateDesc (const GVM::SamplerStateDesc& );
 };
     
 }

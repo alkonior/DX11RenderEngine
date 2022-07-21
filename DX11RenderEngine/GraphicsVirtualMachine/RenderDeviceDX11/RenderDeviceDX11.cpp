@@ -547,7 +547,7 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
     //	w = (w + blockSize - 1) & ~(blockSize - 1);
     //	h = (h + blockSize - 1) & ~(blockSize - 1);
     //}
-    if (resource.resourceBindings && to_underlying(EBindFlags::BIND_CONSTANT_BUFFER) )
+    if (resource.resourceBindings && to_underlying(EBindFlags::BIND_CONSTANT_BUFFER))
     {
         GFX_THROW_INFO_ONLY(context->UpdateSubresource(
             reinterpret_cast<ID3D11Resource*>(resource.resource),
@@ -569,3 +569,42 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
     //SDL_LockMutex(renderer->ctxLock);
 }
 
+bool ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D11_VIEWPORT d3d11viewports[8], uint8_t num)
+{
+    bool result = false;
+    for (int i = 0; i < num; i++)
+    {
+        if (((D3D11_VIEWPORT*)viewports)[i] != d3d11viewports[i])
+        {
+            d3d11viewports[i] = ((D3D11_VIEWPORT*)viewports)[i];
+            result = true;
+        }
+    }
+    return result;
+}
+
+void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
+{
+    static D3D11_VIEWPORT d3d11viewports[8];
+    if (ToD3D11Viewports(viewports, d3d11viewports,num))
+         GFX_THROW_INFO_ONLY(context->RSSetViewports(num, d3d11viewports));
+}
+
+
+
+void RenderDeviceDX11::SetupBlendState(const Compressed::CoreBlendDesc& blendState)
+{
+    
+}
+
+void RenderDeviceDX11::SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) {}
+void RenderDeviceDX11::SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState) {}
+void RenderDeviceDX11::SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num) {}
+void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology) {}
+void RenderDeviceDX11::SetupVertexBuffer(const IIndexBufferView vertexBuffers[]) {}
+void RenderDeviceDX11::SetupIndexBuffer(const IIndexBufferView* indices) {}
+void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num) {}
+void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer) {}
+void RenderDeviceDX11::SetupShader(IShader* shader, EShaderType type) {}
+void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) {}
+void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout) {}

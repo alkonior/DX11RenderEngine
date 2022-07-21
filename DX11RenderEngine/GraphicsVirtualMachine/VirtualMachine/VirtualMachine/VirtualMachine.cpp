@@ -35,7 +35,7 @@ resourcesManager()
 }
 
 
-void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
+void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
 {
     auto position = pipelinesQueue.size();
     pipelinesQueue.resize(position + pipelineSnapshot.GetSize(iStructSizes));
@@ -44,25 +44,8 @@ void VirtualMachine::PushPSC(PipelineSnapshot& pipelineSnapshot)
     PushCommand(EMachineCommands::SETUP_PIPELINE);
 }
 
-constexpr VirtualMachine::EMachineCommands VirtualMachine::ToCommand(EDrawCallType drawCall)
-{
-    switch (drawCall)
-    {
-    case EDrawCallType::DISPATCH: return EMachineCommands::DISPATCH;
-    case EDrawCallType::DISPATCH_INDIRECT: return EMachineCommands::DRAW_INDEXED;
-    case EDrawCallType::DRAW: return EMachineCommands::DRAW;
-    case EDrawCallType::DRAW_AUTO: return EMachineCommands::DRAW_AUTO;
-    case EDrawCallType::DRAW_INDEXED: return EMachineCommands::DRAW_INDEXED;
-    case EDrawCallType::DRAW_INDEXED_INSTANCED: return EMachineCommands::DRAW_INDEXED_INSTANCED;
-    case EDrawCallType::DRAW_INDEXED_INSTANCED_INDIRECT: return EMachineCommands::DRAW_INDEXED_INSTANCED_INDIRECT;
-    case EDrawCallType::DRAW_INSTANCED: return EMachineCommands::DRAW_INSTANCED;
-    case EDrawCallType::DRAW_INSTANCED_INDIRECT: return EMachineCommands::DRAW_INSTANCED_INDIRECT;
-    }
-    return EMachineCommands::UNKNOWN;
-}
-
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
 {
-    PushCommand(ToCommand(drawCall.type));
+    PushCommand(EMachineCommands::DRAW);
     drawCallsQueue.push_back(drawCall);
 }

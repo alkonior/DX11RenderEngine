@@ -16,15 +16,7 @@ class VirtualMachine
 
         SETUP_PIPELINE,
         
-        DISPATCH,
-        DISPATCH_INDIRECT,
         DRAW,
-        DRAW_AUTO,
-        DRAW_INDEXED,
-        DRAW_INDEXED_INSTANCED,
-        DRAW_INDEXED_INSTANCED_INDIRECT,
-        DRAW_INSTANCED,
-        DRAW_INSTANCED_INDIRECT,
 
         CREATE_RESOURCE,
         CREATE_RESOURCE_VIEW,
@@ -108,9 +100,14 @@ class VirtualMachine
     }
 
 #pragma endregion
-    
 
-    IRenderDevice* RenderDevice;
+#pragma Commands
+
+void ExecuteSetupPipeline();
+    
+#pragma endregion
+
+    IRenderDevice* RenderDevice = nullptr;
 public:
     
     VirtualMachine(const RenderDeviceInitParams& initParams, bool debugMode = true);
@@ -119,8 +116,9 @@ public:
     ~VirtualMachine() = default;
 
     void Present();
+    
 
-    void PushPSC(PipelineSnapshot& pipelineSnapshot);
+    void PushPSC(const PipelineSnapshot& pipelineSnapshot);
     void PushDrawCall(const DrawCall& drawCall);
 
 

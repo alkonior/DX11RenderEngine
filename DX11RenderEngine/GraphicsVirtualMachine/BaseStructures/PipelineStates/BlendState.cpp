@@ -4,6 +4,9 @@
 
 using namespace GVM;
 
+Compressed::BlendStateDesc::BlendStateDesc(): BlendStateDesc(GVM::BlendStateDesc())
+{}
+
 Compressed::BlendStateDesc::BlendStateDesc(uint64_t data): data(data)
 {
 #ifdef _DEBUG

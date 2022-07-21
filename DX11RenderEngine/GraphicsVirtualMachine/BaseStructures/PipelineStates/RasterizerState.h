@@ -10,6 +10,7 @@ struct RasterizerStateDesc;
 namespace Compressed {
     struct RasterizerStateDesc {
         
+        RasterizerStateDesc();
         RasterizerStateDesc(uint64_t data);
         RasterizerStateDesc(GVM::RasterizerStateDesc desc);
         

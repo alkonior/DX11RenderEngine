@@ -10,6 +10,7 @@ struct  BlendStateDesc;
 namespace Compressed {
     struct BlendStateDesc {
         
+        BlendStateDesc();
         BlendStateDesc(uint64_t data);
         BlendStateDesc(GVM::BlendStateDesc desc);
         
@@ -41,6 +42,7 @@ namespace Compressed {
         };
 
     };
+
 }
 
 struct BlendStateDesc : BaseStateDesc
@@ -72,5 +74,16 @@ struct CoreBlendDesc
     uint32_t            SampleMask              = 0xffffffff;
     float               BlendFactor[4]          = {1,1,1,1};
 };
-   
+
+namespace Compressed {
+
+    struct CoreBlendDesc
+    {
+        bool                IsBlendEnable        = false;
+        uint32_t            SampleMask           = 0xffffffff;
+        float               BlendFactor[4]       = {1,1,1,1};
+        BlendStateDesc      BlendStates[8]       = {};
+    };
+
+}
 }

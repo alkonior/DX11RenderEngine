@@ -5,6 +5,10 @@
 
 using namespace GVM;
 
+void VirtualMachine::ExecuteSetupPipeline()
+{
+    
+}
 
 void VirtualMachine::Present()
 {
@@ -41,6 +45,18 @@ void VirtualMachine::Present()
             const void* data = PullPointer(params.dataSize);
             RenderDevice->SetResourceData(resource,params.dstSubresource,
                 params.rect,data, params.srcRowPitch,params.srcDepthPitch);
+            break;
+        }
+            
+        case EMachineCommands::SETUP_PIPELINE:
+        {
+            ExecuteSetupPipeline();
+            break;
+        }
+            
+        case EMachineCommands::DRAW:
+        {
+            
             break;
         }
             

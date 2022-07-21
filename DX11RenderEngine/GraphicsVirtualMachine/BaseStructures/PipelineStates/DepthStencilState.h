@@ -8,7 +8,7 @@ struct DepthStencilStateDesc;
     
 namespace Compressed {
     struct DepthStencilStateDesc {
-        DepthStencilStateDesc() = default;
+        DepthStencilStateDesc();
         DepthStencilStateDesc(GVM::DepthStencilStateDesc desc);
         
         struct  DepthStencilStateFields{

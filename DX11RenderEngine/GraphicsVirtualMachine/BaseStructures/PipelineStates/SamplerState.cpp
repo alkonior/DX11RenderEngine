@@ -1,5 +1,20 @@
 ﻿#include "SamplerState.h"
 
+GVM::Compressed::SamplerStateDesc::SamplerStateDesc():SamplerStateDesc(GVM::SamplerStateDesc()) {}
+
+GVM::Compressed::SamplerStateDesc::SamplerStateDesc(const SamplerStateDesc& copy):
+MipLODBias(copy.MipLODBias),
+MaxLOD(copy.MaxLOD),
+MinLOD(copy.MinLOD),
+Data(copy.Data)
+{}
+GVM::Compressed::SamplerStateDesc::SamplerStateDesc(const SamplerStateDesc&& copy) noexcept:
+MipLODBias(copy.MipLODBias),
+MaxLOD(copy.MaxLOD),
+MinLOD(copy.MinLOD),
+Data(copy.Data)
+{}
+
 GVM::Compressed::SamplerStateDesc::SamplerStateDesc(const GVM::SamplerStateDesc& desc)
 {
    
@@ -8,10 +23,10 @@ GVM::Compressed::SamplerStateDesc::SamplerStateDesc(const GVM::SamplerStateDesc&
     this->MipLODBias = desc.MipLODBias;
 
 
-    this->BorderColor[0] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[0]));
-    this->BorderColor[1] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[1]));
-    this->BorderColor[2] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[2]));
-    this->BorderColor[3] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[3]));
+    this->Fields.BorderColor[0] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[0]));
+    this->Fields.BorderColor[1] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[1]));
+    this->Fields.BorderColor[2] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[2]));
+    this->Fields.BorderColor[3] = static_cast<uint8_t>(std::lroundf(255.f * desc.BorderColor[3]));
     
     //this->t.ColorArray =  r  | (g << 8) | (b << 16) | (b << 24);
 
@@ -34,10 +49,10 @@ GVM::SamplerStateDesc::SamplerStateDesc(const CompressedType& desc)
     this-> MaxAnisotropy    = desc.Fields.MaxAnisotropy;
     this-> ComparisonFunc   = to_enum<EComparisonFunc>(desc.Fields.ComparisonFunc);
 
-    this->BorderColor[0]    = desc.BorderColor[0]*1.0f/255.f;
-    this->BorderColor[1]    = desc.BorderColor[1]*1.0f/255.f;
-    this->BorderColor[2]    = desc.BorderColor[2]*1.0f/255.f;
-    this->BorderColor[3]    = desc.BorderColor[3]*1.0f/255.f;
+    this->BorderColor[0]    = desc.Fields.BorderColor[0]*1.0f/255.f;
+    this->BorderColor[1]    = desc.Fields.BorderColor[1]*1.0f/255.f;
+    this->BorderColor[2]    = desc.Fields.BorderColor[2]*1.0f/255.f;
+    this->BorderColor[3]    = desc.Fields.BorderColor[3]*1.0f/255.f;
 
     this-> MinLOD           = desc.MinLOD;
     this-> MaxLOD           = desc.MaxLOD;

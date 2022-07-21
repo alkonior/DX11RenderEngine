@@ -6,6 +6,7 @@ using namespace GVM;
 
 const RasterizerStateDesc RasterizerStateDesc::Default;
 
+Compressed::RasterizerStateDesc::RasterizerStateDesc():RasterizerStateDesc(GVM::RasterizerStateDesc()) {}
 Compressed::RasterizerStateDesc::RasterizerStateDesc(uint64_t data):data(data)
 {
 #ifdef _DEBUG

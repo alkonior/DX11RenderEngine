@@ -64,7 +64,7 @@ private:
 
     /* Rasterizer State */
     D3D11_VIEWPORT viewport[10];
-    int maxViewportSlot = 0;
+    int maxViewportSlot;
     Rect scissorRect;
     wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
 
@@ -105,6 +105,15 @@ private:
 
     std::mutex ctxLock;
 
+    std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>>				hashBS;
+    std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>>  hashDSS;
+    std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>>		hashRS;
+    std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>>			hashSS;
+
+    wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
+    wrl::ComPtr<ID3D11DepthStencilState> FetchDepthStencilState(const DepthStencilState& state);
+    wrl::ComPtr<ID3D11RasterizerState> FetchRasterizerState(const RasterizerState& state);
+    wrl::ComPtr<ID3D11SamplerState> FetchSamplerState(const SamplerState& state);
 
 #pragma endregion 
 
@@ -120,7 +129,30 @@ protected:
     IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
-  
+
+
+#pragma region SetupPipeline
+    
+    virtual void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
+    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
+    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
+    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
+    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology);
+
+    virtual void SetupVertexBuffer(const IIndexBufferView vertexBuffers[]);
+    virtual void SetupIndexBuffer(const IIndexBufferView* indices);
+    virtual void SetupTextures(IResourceView* textures[], uint8_t num);
+    virtual void SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);
+    
+    virtual void SetupShader(IShader* shader, EShaderType type);
+    virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num);
+    virtual void SetupInputLayout(IInputLayout* layout);
+
+
+#pragma endregion
+
+    
 };
 
 }

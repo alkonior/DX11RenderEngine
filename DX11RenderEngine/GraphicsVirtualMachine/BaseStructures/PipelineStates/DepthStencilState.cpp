@@ -6,6 +6,7 @@ using namespace GVM;
 
 const DepthStencilStateDesc DepthStencilStateDesc::Default;
 
+Compressed::DepthStencilStateDesc::DepthStencilStateDesc():DepthStencilStateDesc(GVM::DepthStencilStateDesc()) {}
 Compressed::DepthStencilStateDesc::DepthStencilStateDesc(GVM::DepthStencilStateDesc desc):
 data(desc.Compress().data)
 {}
