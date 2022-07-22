@@ -185,7 +185,7 @@ void GraphicsApi::SetupTexture(ResourceView* texture, uint8_t slot)
 {
     wasPSUpdated = true;
     ps.Textures[slot] = (ResourceView*)texture;
-    ps.texturesNum = std::max<uint8_t>(ps.texturesNum, slot);
+    ps.texturesNum = std::max<uint8_t>(ps.texturesNum, slot+1);
 }
 
 void GraphicsApi::SetupNumRenderTargets(int32_t num)
@@ -209,7 +209,7 @@ void GraphicsApi::SetupRenderTarget(const RenderTargetDesc& renderTarget, int32_
 {
     wasPSUpdated = true;
     ps.RenderTargets[slot] = renderTarget;
-    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot+1);
 }
 void GraphicsApi::SetupRenderTargets(RenderTargetView* renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer)
 {
@@ -227,7 +227,7 @@ void GraphicsApi::SetupRenderTarget(RenderTargetView* renderTarget, int32_t slot
 {
     wasPSUpdated = true;
     ps.RenderTargets[slot].rtv = renderTarget;
-    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot);
+    ps.renderTargetsNum = std::max<uint8_t>(ps.renderTargetsNum, slot+1);
 }
 
 void GraphicsApi::SetupDepthStencilBuffer(DepthStencilView* depthStencilBuffer)
@@ -269,7 +269,7 @@ void GraphicsApi::SetupConstBuffer(ConstBufferView* constBuffer, uint8_t slot)
 {
     wasPSUpdated = true;
     ps.ConstBuffers[slot] = constBuffer;
-    ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, slot);
+    ps.constBuffersNum = std::max<uint8_t>(ps.constBuffersNum, slot+1);
 }
 
 void GraphicsApi::SetupInputLayout(InputLayout* layout)
