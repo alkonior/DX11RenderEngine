@@ -67,7 +67,7 @@ struct DrawCall
     template<size_t index>
     uint32_t get()
     {
-        return std::tuple_element<index, decltype(args)>(args);
+        return std::get<index>(args);
     }
 };
 

@@ -64,8 +64,8 @@ class ResourcesManager {
 
 #pragma region Shaders
 
-    std::vector<GPUShader> SavedShaders;
-    std::vector<GPUInputLayout> SavedInputLayouts;
+    std::vector<GPUShader> SavedShaders = {GPUShader(ShaderDesc(), 0)};
+    std::vector<GPUInputLayout> SavedInputLayouts = {GPUInputLayout({},0)};
 
     GPUShader& CreateShader(const ShaderDesc& desc);
     GPUInputLayout& CreateInputLayout(const InputAssemblerDeclarationDesc& desc);

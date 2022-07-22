@@ -8,6 +8,14 @@ MaxLOD(copy.MaxLOD),
 MinLOD(copy.MinLOD),
 Data(copy.Data)
 {}
+GVM::Compressed::SamplerStateDesc& GVM::Compressed::SamplerStateDesc::operator=(const SamplerStateDesc& copy)
+{
+    MipLODBias=(copy.MipLODBias);
+    MaxLOD=(copy.MaxLOD);
+    MinLOD=(copy.MinLOD);
+    Data=(copy.Data);
+    return *this;
+}
 GVM::Compressed::SamplerStateDesc::SamplerStateDesc(const SamplerStateDesc&& copy) noexcept:
 MipLODBias(copy.MipLODBias),
 MaxLOD(copy.MaxLOD),

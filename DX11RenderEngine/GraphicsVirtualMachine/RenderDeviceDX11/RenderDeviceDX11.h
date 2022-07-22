@@ -94,10 +94,10 @@ private:
     size_t backBufferHeight;
     ID3D11RenderTargetView* swapchainRTView;
     ID3D11UnorderedAccessView* swapchainUAView;
-    std::vector<ResourceViewDX11*> renderTargetViews;
+    std::vector<ID3D11RenderTargetView*> renderTargetViews;
+    std::vector<ID3D11UnorderedAccessView*> uaViews;
 	
-    ResourceViewDX11* depthStencilBuffer;
-    GVM::DepthStencilView* depthStencilBufferTest;
+    ID3D11DepthStencilView* depthStencilBuffer;
 
 
     std::mutex ctxLock;
@@ -127,6 +127,8 @@ protected:
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
+     virtual void Draw(DrawCall call) override;
+    void Present() override;
 
 #pragma region SetupPipeline
     
@@ -134,17 +136,18 @@ protected:
     virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
     virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
     virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc* samplers[], uint8_t num);
+    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
     virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology);
 
     virtual void SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num);
     virtual void SetupIndexBuffer(const IIndexBufferView* indices);
     virtual void SetupTextures(IResourceView* textures[], uint8_t num);
-    virtual void SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);
+    virtual void SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);
     
     virtual void SetupShader(IShader* shader, EShaderType type);
     virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num);
-    virtual void SetupInputLayout(IInputLayout* layout);
+    void SetupInputLayout(IInputLayout* layout) override;
+  
 
 
 #pragma endregion

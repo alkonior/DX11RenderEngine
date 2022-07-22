@@ -42,6 +42,16 @@ void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
     pipelineSnapshot.Compress(
         PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager, iStructSizes));
     PushCommand(EMachineCommands::SETUP_PIPELINE);
+    if (!( -32768.000000 <= pipelineSnapshot.Viewports[0].TopLeftX &&
+     -32768.000000 <= pipelineSnapshot.Viewports[0].TopLeftY&&
+     (pipelineSnapshot.Viewports[0].TopLeftX+pipelineSnapshot.Viewports[0].Width) <= 32767.000000&&
+      (pipelineSnapshot.Viewports[0].TopLeftY+pipelineSnapshot.Viewports[0].Height) <= 32767.000000&&
+ 0.000000 <= pipelineSnapshot.Viewports[0].MinDepth&&
+     pipelineSnapshot.Viewports[0].MaxDepth <= 1.000000&&
+     pipelineSnapshot.Viewports[0].MinDepth <= pipelineSnapshot.Viewports[0].MaxDepth))
+    {
+        pipelinesQueueShift+=0;
+    }
 }
 
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)

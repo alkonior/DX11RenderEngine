@@ -117,9 +117,11 @@ public:
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
 	virtual void SwapBuffers() override;
 	virtual void Clear(ClearOptions options, FColor color, float depth, int32_t stencil) override;
+
 	virtual void DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount) override;
 	virtual void DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount) override;
 	virtual void DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) override;
+
 	virtual void SetViewport(const Viewport& viewport, uint32_t slot) override;
 	virtual void SetScissorRect(Rect scissor) override;
 	virtual void GetBlendFactor(Color& blendFactor) override;

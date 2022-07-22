@@ -75,7 +75,7 @@ namespace Compressed {
 
         EPrimitiveTopology          primitiveTopology;
         
-        CoreBlendDesc               blendDesc;
+        GVM::CoreBlendDesc               blendDesc;
     
         uint8_t                     renderTargetsNum;
         //RenderTargetDesc*           RenderTargets;
@@ -112,6 +112,7 @@ namespace Compressed {
         SamplerStateDesc*           Samplers = {};
         ViewportDesc*               Viewports = {};
         ConstBufferView**           ConstBuffers = {};
+        VertexBufferView**          VertexBuffers = {};
         ResourceView**              Textures = {};
         
         uint8_t Data[];

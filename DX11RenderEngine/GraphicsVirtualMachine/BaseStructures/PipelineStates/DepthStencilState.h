@@ -9,7 +9,10 @@ struct DepthStencilStateDesc;
 namespace Compressed {
     struct DepthStencilStateDesc {
         DepthStencilStateDesc();
-        DepthStencilStateDesc(GVM::DepthStencilStateDesc desc);
+        DepthStencilStateDesc(const GVM::DepthStencilStateDesc& desc);
+        DepthStencilStateDesc(const DepthStencilStateDesc& desc);
+        DepthStencilStateDesc&operator=(const DepthStencilStateDesc& desc);
+        DepthStencilStateDesc(const DepthStencilStateDesc&& desc)noexcept;
         
         struct  DepthStencilStateFields{
             uint8_t State                      : 3;
@@ -60,9 +63,7 @@ struct DepthStencilStateDesc : BaseStateDesc
     DepthStencilDesc    BackFace;
 
     DepthStencilStateDesc();
-    
-    DepthStencilStateDesc(CompressedType descriptor);
-    CompressedType Compress() const;
+    DepthStencilStateDesc(const CompressedType& descriptor);
 };
 
 }

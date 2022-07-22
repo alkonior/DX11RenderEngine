@@ -7,13 +7,41 @@ using namespace GVM;
 const DepthStencilStateDesc DepthStencilStateDesc::Default;
 
 Compressed::DepthStencilStateDesc::DepthStencilStateDesc():DepthStencilStateDesc(GVM::DepthStencilStateDesc()) {}
-Compressed::DepthStencilStateDesc::DepthStencilStateDesc(GVM::DepthStencilStateDesc desc):
-data(desc.Compress().data)
-{}
+Compressed::DepthStencilStateDesc::DepthStencilStateDesc(const GVM::DepthStencilStateDesc& desc)
+{
+    Fields.State                    = desc.State;
+    Fields.DepthEnable              = desc.DepthEnable;
+    Fields.StencilEnable            = desc.StencilEnable;
+    Fields.DepthWriteMask           = to_underlying(desc.DepthWriteMask);
+    Fields.DepthFunc                = to_underlying(desc.DepthFunc);
+    Fields.StencilReadMask          = desc.StencilReadMask;
+    Fields.StencilWriteMask         = desc.StencilWriteMask;
+    
+    Fields.FrontStencilFunc         = to_underlying(desc.FrontFace.StencilFunc);
+    Fields.FrontStencilFailOp       = to_underlying(desc.FrontFace.StencilFailOp);
+    Fields.FrontStencilPassOp       = to_underlying(desc.FrontFace.StencilPassOp);
+    Fields.FrontStencilDepthFailOp  = to_underlying(desc.FrontFace.StencilDepthFailOp);
+    
+    Fields.BackStencilFunc          = to_underlying(desc.BackFace.StencilFunc);
+    Fields.BackStencilFailOp        = to_underlying(desc.BackFace.StencilFailOp);
+    Fields.BackStencilPassOp        = to_underlying(desc.BackFace.StencilPassOp);
+    Fields.BackStencilDepthFailOp   = to_underlying(desc.BackFace.StencilDepthFailOp);
+    
+}
+Compressed::DepthStencilStateDesc::DepthStencilStateDesc(const DepthStencilStateDesc& desc)
+:data(desc.data) {}
+Compressed::DepthStencilStateDesc& Compressed::DepthStencilStateDesc::operator=(const DepthStencilStateDesc& desc)
+{
+    data=desc.data;
+    return *this;
+}
+Compressed::DepthStencilStateDesc::DepthStencilStateDesc(const DepthStencilStateDesc&& desc) noexcept
+:data(desc.data){}
+
 
 DepthStencilStateDesc::DepthStencilStateDesc() : BaseStateDesc(DepthStencilStateMask) {}
 
-DepthStencilStateDesc::DepthStencilStateDesc(CompressedType descriptor) : BaseStateDesc(0) 
+DepthStencilStateDesc::DepthStencilStateDesc(const CompressedType& descriptor) : BaseStateDesc(0) 
 {
     //uint8_t shift = 0;
 
@@ -37,29 +65,6 @@ DepthStencilStateDesc::DepthStencilStateDesc(CompressedType descriptor) : BaseSt
     BackFace.StencilPassOp       =  to_enum<EStencilOp>(descriptor.Fields.BackStencilPassOp)         ;
     BackFace.StencilDepthFailOp  =  to_enum<EStencilOp>(descriptor.Fields.BackStencilDepthFailOp)    ;
     
-}
-Compressed::DepthStencilStateDesc DepthStencilStateDesc::Compress() const
-{
-    Compressed::DepthStencilStateDesc result;
-    result.Fields.State                    = State;
-    result.Fields.DepthEnable              = DepthEnable;
-    result.Fields.StencilEnable            = StencilEnable;
-    result.Fields.DepthWriteMask           = to_underlying(DepthWriteMask);
-    result.Fields.DepthFunc                = to_underlying(DepthFunc);
-    result.Fields.StencilReadMask          = StencilReadMask;
-    result.Fields.StencilWriteMask         = StencilWriteMask;
-    
-    result.Fields.FrontStencilFunc         = to_underlying(FrontFace.StencilFunc);
-    result.Fields.FrontStencilFailOp       = to_underlying(FrontFace.StencilFailOp);
-    result.Fields.FrontStencilPassOp       = to_underlying(FrontFace.StencilPassOp);
-    result.Fields.FrontStencilDepthFailOp  = to_underlying(FrontFace.StencilDepthFailOp);
-    
-    result.Fields.BackStencilFunc          = to_underlying(BackFace.StencilFunc);
-    result.Fields.BackStencilFailOp        = to_underlying(BackFace.StencilFailOp);
-    result.Fields.BackStencilPassOp        = to_underlying(BackFace.StencilPassOp);
-    result.Fields.BackStencilDepthFailOp   = to_underlying(BackFace.StencilDepthFailOp);
-    
-    return result;
 }
 
 /*

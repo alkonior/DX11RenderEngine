@@ -11,8 +11,9 @@ namespace Compressed {
 struct SamplerStateDesc {
     SamplerStateDesc();
     SamplerStateDesc(const SamplerStateDesc&);
+    SamplerStateDesc& operator=(const SamplerStateDesc&);
     SamplerStateDesc(const SamplerStateDesc&&) noexcept;
-    SamplerStateDesc(const GVM::SamplerStateDesc& );
+    SamplerStateDesc(const GVM::SamplerStateDesc&);
     
     struct SamplerStateFields
     {

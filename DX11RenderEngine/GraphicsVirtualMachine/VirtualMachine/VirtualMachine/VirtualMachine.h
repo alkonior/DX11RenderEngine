@@ -32,7 +32,9 @@ class VirtualMachine
     VMStack<uint32_t> intStack;
     VMStack<EMachineCommands> commandQueue;
     VMStack<uint8_t> dataQueue;
+    uint32_t drawCallsQueueShift = 0; 
     VMStack<DrawCall> drawCallsQueue;
+    uint32_t pipelinesQueueShift = 0; 
     VMStack<uint8_t> pipelinesQueue;
     ResourcesManager resourcesManager;
     PSC* LastSnapshot = nullptr;

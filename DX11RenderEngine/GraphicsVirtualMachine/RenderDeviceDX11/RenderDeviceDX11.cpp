@@ -582,8 +582,8 @@ bool ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D11_VIEWPORT
 void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
 {
     static D3D11_VIEWPORT d3d11viewports[8];
-    if (ToD3D11Viewports(viewports, d3d11viewports,num))
-         GFX_THROW_INFO_ONLY(context->RSSetViewports(num, d3d11viewports));
+    if (ToD3D11Viewports(viewports, d3d11viewports, num))
+    GFX_THROW_INFO_ONLY(context->RSSetViewports(num, d3d11viewports));
 }
 
 ID3D11BlendState* RenderDeviceDX11::FetchBlendState(const Compressed::CoreBlendDesc& blendState)
@@ -591,8 +591,8 @@ ID3D11BlendState* RenderDeviceDX11::FetchBlendState(const Compressed::CoreBlendD
     if (hashBS.size() == 0)
     {
         ID3D11BlendState* bs;
-        CD3D11_BLEND_DESC desc;
-        
+        CD3D11_BLEND_DESC desc{CD3D11_DEFAULT()};
+
         device->CreateBlendState(&desc, &bs);
         hashBS.insert({0,bs});
     }
@@ -602,10 +602,15 @@ ID3D11BlendState* RenderDeviceDX11::FetchBlendState(const Compressed::CoreBlendD
 void RenderDeviceDX11::SetupBlendState(const Compressed::CoreBlendDesc& blendState)
 {
     static FLOAT BlendFactor[4];
-    blendFactor = {blendState.BlendFactor[0],blendState.BlendFactor[1],blendState.BlendFactor[2],blendState.BlendFactor[3]};
-    
+    blendFactor = {
+        blendState.desc.BlendFactor[0],
+        blendState.desc.BlendFactor[1],
+        blendState.desc.BlendFactor[2],
+        blendState.desc.BlendFactor[3]
+    };
+
     auto bs = FetchBlendState(blendState);
-    context->OMSetBlendState(bs,blendFactor.Color,blendState.SampleMask);
+    context->OMSetBlendState(bs, blendFactor.Color, blendState.desc.SampleMask);
 }
 
 ID3D11DepthStencilState* RenderDeviceDX11::FetchDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState)
@@ -613,8 +618,8 @@ ID3D11DepthStencilState* RenderDeviceDX11::FetchDepthStencilState(const Compress
     if (hashDSS.size() == 0)
     {
         ID3D11DepthStencilState* bs;
-        CD3D11_DEPTH_STENCIL_DESC desc;
-        
+        CD3D11_DEPTH_STENCIL_DESC desc{CD3D11_DEFAULT()};
+
         device->CreateDepthStencilState(&desc, &bs);
         hashDSS.insert({0,bs});
     }
@@ -624,7 +629,7 @@ ID3D11DepthStencilState* RenderDeviceDX11::FetchDepthStencilState(const Compress
 void RenderDeviceDX11::SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState)
 {
     auto ds = FetchDepthStencilState(depthStencilState);
-    context->OMSetDepthStencilState(ds,0);
+    context->OMSetDepthStencilState(ds, 0);
 }
 
 ID3D11RasterizerState* RenderDeviceDX11::FetchRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState)
@@ -632,8 +637,8 @@ ID3D11RasterizerState* RenderDeviceDX11::FetchRasterizerState(const Compressed::
     if (hashRS.size() == 0)
     {
         ID3D11RasterizerState* bs;
-        CD3D11_RASTERIZER_DESC desc;
-        
+        CD3D11_RASTERIZER_DESC desc{CD3D11_DEFAULT()};
+
         device->CreateRasterizerState(&desc, &bs);
         hashRS.insert({0,bs});
     }
@@ -689,7 +694,7 @@ D3D11_FILTER ToD3D11SamplerFilter[] = {
 
 ID3D11SamplerState* RenderDeviceDX11::FetchSamplerState(const Compressed::SamplerStateDesc& state)
 {
-    if(hashSS.contains(state.Data))
+    if (hashSS.contains(state.Data))
         return hashSS[state.Data];
 
     ID3D11SamplerState* istate;
@@ -701,18 +706,18 @@ ID3D11SamplerState* RenderDeviceDX11::FetchSamplerState(const Compressed::Sample
     desc.MaxLOD = state.MaxLOD;
     desc.MinLOD = state.MinLOD;
 
-    device->CreateSamplerState(&desc,&istate);
+    device->CreateSamplerState(&desc, &istate);
     hashSS.insert({state.Data,istate});
     return hashSS[state.Data];
 }
 
 
-void RenderDeviceDX11::SetupSamplers(const Compressed::SamplerStateDesc* samplers[], uint8_t num)
+void RenderDeviceDX11::SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num)
 {
     ID3D11SamplerState* Samplers[16] = {};
-    for (int i =0; i< num; i++)
+    for (int i = 0; i < num; i++)
     {
-        Samplers[i] = samplers[i] != nullptr ? FetchSamplerState(*(samplers[i])) : nullptr;
+        Samplers[i] = FetchSamplerState((samplers[i]));
     }
     context->CSSetSamplers(0, num, Samplers);
     context->PSSetSamplers(0, num, Samplers);
@@ -723,21 +728,21 @@ void RenderDeviceDX11::SetupSamplers(const Compressed::SamplerStateDesc* sampler
 }
 
 D3D11_PRIMITIVE_TOPOLOGY ToD3DPT[] = {
-    D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED                   ,
-    D3D11_PRIMITIVE_TOPOLOGY_POINTLIST                   ,
-    D3D11_PRIMITIVE_TOPOLOGY_LINELIST                    ,
-    D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP                   ,
-    D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED                   ,
-    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST                ,
-    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP               ,
-    D3D11_PRIMITIVE_TOPOLOGY_LINELIST_ADJ                ,
-    D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ               ,
-    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ            ,
-    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ           ,
-    D3D11_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST   ,
-    D3D11_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST   ,
-    D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST   ,
-    D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST   ,
+    D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED,
+    D3D11_PRIMITIVE_TOPOLOGY_POINTLIST,
+    D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+    D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP,
+    D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED,
+    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+    D3D11_PRIMITIVE_TOPOLOGY_LINELIST_ADJ,
+    D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ,
+    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ,
+    D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ,
+    D3D11_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST,
+    D3D11_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST,
+    D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST,
+    D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST,
 };
 
 void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
@@ -747,10 +752,13 @@ void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
 
 void RenderDeviceDX11::SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num)
 {
-    for (int i =0; i< num; i++)
+    this->vertexBuffers.resize(32);
+    this->vertexBufferOffsets.resize(32);
+    this->vertexBufferStrides.resize(32);
+    for (int i = 0; i < num; i++)
     {
-        const VertexBufferViewD3D11* vb= reinterpret_cast<const VertexBufferViewD3D11*>(vertexBuffers[i]);
-        if (vb!=nullptr)
+        const VertexBufferViewD3D11* vb = reinterpret_cast<const VertexBufferViewD3D11*>(vertexBuffers[i]);
+        if (vb != nullptr)
         {
             this->vertexBuffers[i] = vb->vertexBuffer;
             vertexBufferOffsets[i] = vb->Offset;
@@ -764,31 +772,128 @@ void RenderDeviceDX11::SetupVertexBuffer(const IVertexBufferView* vertexBuffers[
         }
     }
     context->IASetVertexBuffers(0, num, this->vertexBuffers.data(), vertexBufferStrides.data(), vertexBufferOffsets.data());
-    
 }
 
 void RenderDeviceDX11::SetupIndexBuffer(const IIndexBufferView* indices)
 {
-    const IndexBufferViewD3D11* indexBuffer= reinterpret_cast<const IndexBufferViewD3D11*>(indices);
-    context->IASetIndexBuffer(indexBuffer->indexBuffer,indexBuffer->format,0);
+    const IndexBufferViewD3D11* indexBuffer = reinterpret_cast<const IndexBufferViewD3D11*>(indices);
+    context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0);
 }
 
 void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
 {
-    for (int i =0; i< num; i++)
+    for (int i = 0; i < num; i++)
     {
-        ID3D11ShaderResourceView* sh= const_cast<ID3D11ShaderResourceView*>(reinterpret_cast<const ID3D11ShaderResourceView*>(textures[i]));
+        ID3D11ShaderResourceView* sh = const_cast<ID3D11ShaderResourceView*>(reinterpret_cast<const ID3D11ShaderResourceView*>(textures[i]));
         Textures[i] = sh;
     }
-    context->CSSetShaderResources(0,num,Textures.data());
-    context->PSSetShaderResources(0,num,Textures.data());
-    context->GSSetShaderResources(0,num,Textures.data());
-    context->DSSetShaderResources(0,num,Textures.data());
-    context->HSSetShaderResources(0,num,Textures.data());
-    context->VSSetShaderResources(0,num,Textures.data());
+    context->CSSetShaderResources(0, num, Textures.data());
+    context->PSSetShaderResources(0, num, Textures.data());
+    context->GSSetShaderResources(0, num, Textures.data());
+    context->DSSetShaderResources(0, num, Textures.data());
+    context->HSSetShaderResources(0, num, Textures.data());
+    context->VSSetShaderResources(0, num, Textures.data());
 }
 
-void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer) {}
-void RenderDeviceDX11::SetupShader(IShader* shader, EShaderType type) {}
-void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) {}
-void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout) {}
+void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)
+{
+    for (int i = 0; i < num; i++)
+    {
+        renderTargetViews[i] = renderTargets[i] == nullptr ? swapchainRTView : ((ID3D11RenderTargetView*)renderTargets[i]);
+    }
+    for (int i = num; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
+    {
+        renderTargetViews[i] = nullptr;
+    }
+    this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer;
+
+    context->OMSetRenderTargets(MAX_RENDERTARGET_ATTACHMENTS, renderTargetViews.data(), this->depthStencilBuffer);
+}
+
+
+
+void RenderDeviceDX11::SetupShader(IShader* shader, EShaderType type)
+{
+    switch (type)
+    {
+    case EShaderType::COMPUTE_SHADER:
+    {
+        context->CSSetShader((ID3D11ComputeShader*)shader, nullptr, 0);
+        break;
+    }
+    case EShaderType::HULL_SHADER:
+    {
+        context->HSSetShader((ID3D11HullShader*)shader, nullptr, 0);
+        break;
+    }
+    case EShaderType::PIXEL_SHADER:
+    {
+        context->PSSetShader((ID3D11PixelShader*)shader, nullptr, 0);
+        break;
+    }
+    case EShaderType::DOMAIN_SHADER:
+    {
+        context->DSSetShader((ID3D11DomainShader*)shader, nullptr, 0);
+        break;
+    }
+    case EShaderType::VERTEX_SHADER:
+    {
+        context->VSSetShader((ID3D11VertexShader*)shader, nullptr, 0);
+        break;
+    }
+    case EShaderType::GEOMETRY_SHADER:
+    {
+        context->GSSetShader((ID3D11GeometryShader*)shader, nullptr, 0);
+        break;
+    }
+    }
+}
+
+void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num)
+{
+    static ID3D11Buffer* buffers[32];
+    for (int i = 0; i < num; i++)
+    {
+        buffers[i] = ((ConstBufferViewD3D11*)constBuffers)->constBuffer;
+    }
+    for (int i = num; i < 32; i++)
+    {
+        buffers[i] = nullptr;
+    }
+    context->CSSetConstantBuffers(0, num, buffers);
+    context->PSSetConstantBuffers(0, num, buffers);
+    context->GSSetConstantBuffers(0, num, buffers);
+    context->DSSetConstantBuffers(0, num, buffers);
+    context->HSSetConstantBuffers(0, num, buffers);
+    context->VSSetConstantBuffers(0, num, buffers);
+}
+void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout)
+{
+    context->IASetInputLayout((ID3D11InputLayout*)layout);
+}
+
+void RenderDeviceDX11::Draw(DrawCall call)
+{
+    switch (call.type)
+    {
+    case EDrawCallType::DRAW_INDEXED:
+    {
+        context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
+        break;
+    }
+    case EDrawCallType::DRAW:
+    {
+        context->Draw(call.get<0>(), call.get<1>());
+        break;
+    }
+    case EDrawCallType::DRAW_INDEXED_INSTANCED:
+    {
+        context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(),call.get<3>(),call.get<4>());
+        break;
+    }
+    }
+}
+void RenderDeviceDX11::Present()
+{
+    GFX_THROW_INFO(swapchain->Present(syncInterval, 0));
+}

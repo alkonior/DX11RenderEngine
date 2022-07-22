@@ -61,7 +61,8 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     cps->blendDesc = blendDesc;
 
     auto* pointerPosition = cps->Data;
-    //pointerPosition+=sizeof(uintptr_t);
+    cps->indexBuffer = mesh.indexBuffer;
+    cps->vertexDeclaration = this->InputDeclaration;
 
     cps->RenderTargets = (Compressed::RenderTargetDesc*)pointerPosition;
     cps->renderTargetsNum = renderTargetsNum;
@@ -75,8 +76,7 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     cps->samplersNum = samplersNum;
     for (int i =0; i < samplersNum; i++)
     {
-        cps->Samplers[i] = Samplers[i];
-        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
+        cps->Samplers[i] = SamplerStateDesc(Samplers[i]);
     }
     pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
     
@@ -85,7 +85,6 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     for (int i =0; i < viewportsNum; i++)
     {
         cps->Viewports[i] = Viewports[i];
-        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
     }
     pointerPosition+=sizeof(Compressed::ViewportDesc)*viewportsNum;
     
@@ -94,7 +93,6 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     for (int i =0; i < constBuffersNum; i++)
     {
         cps->ConstBuffers[i] = ConstBuffers[i];
-        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
     }
     pointerPosition+=sizeof(uintptr_t)*constBuffersNum;
     
@@ -103,8 +101,16 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     for (int i =0; i < texturesNum; i++)
     {
         cps->Textures[i] = Textures[i];
-        //new (cps->RenderTargets) Compressed::RenderTargetDesc(RenderTargets[i]);
     }
+    pointerPosition+=sizeof(uintptr_t)*texturesNum;
+
+    cps->VertexBuffers = (VertexBufferView**)pointerPosition;
+    cps->vertexBuffersNum = mesh.vertexBuffer.buffersNum;
+    for (int i =0; i < mesh.vertexBuffer.buffersNum; i++)
+    {
+        cps->VertexBuffers[i] = mesh.vertexBuffer.vertexBuffers[i];
+    }
+    
     //pointerPosition+=sizeof(uintptr_t)*constBuffersNum;
 
     /*
