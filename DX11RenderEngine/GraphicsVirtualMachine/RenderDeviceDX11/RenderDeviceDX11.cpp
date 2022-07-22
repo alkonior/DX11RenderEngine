@@ -583,7 +583,9 @@ void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[]
 {
     static D3D11_VIEWPORT d3d11viewports[8];
     if (ToD3D11Viewports(viewports, d3d11viewports, num))
-    GFX_THROW_INFO_ONLY(context->RSSetViewports(num, d3d11viewports));
+    {
+        GFX_THROW_INFO_ONLY(context->RSSetViewports(num, d3d11viewports));
+    }
 }
 
 ID3D11BlendState* RenderDeviceDX11::FetchBlendState(const Compressed::CoreBlendDesc& blendState)
@@ -854,7 +856,7 @@ void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8
     static ID3D11Buffer* buffers[32];
     for (int i = 0; i < num; i++)
     {
-        buffers[i] = ((ConstBufferViewD3D11*)constBuffers)->constBuffer;
+        buffers[i] = ((ConstBufferViewD3D11**)constBuffers)[i] ? ((ConstBufferViewD3D11**)constBuffers)[i]->constBuffer : nullptr;
     }
     for (int i = num; i < 32; i++)
     {
