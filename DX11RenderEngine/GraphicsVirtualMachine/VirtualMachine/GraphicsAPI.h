@@ -1,15 +1,18 @@
 ﻿#pragma once
-#include "VirtualMachine/VirtualMachine.h"
-#include "../CoreStructures\PipelineSnapshot.h"
+#include "GraphicsVirtualMachine/BaseStructures.h"
+#include "GraphicsVirtualMachine/BaseStructures/RenderDeviceInitParams.h"
+
 namespace GVM {
+class VirtualMachine;
+struct PipelineSnapshot;
 
 class GraphicsApi {
 
 #pragma region Fields
 
-    PipelineSnapshot ps;
+    PipelineSnapshot* ps;
     bool wasPSUpdated = true;
-    VirtualMachine graphicsMachine;
+    VirtualMachine* graphicsMachine;
 
 #pragma endregion
 

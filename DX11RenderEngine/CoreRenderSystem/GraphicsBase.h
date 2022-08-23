@@ -42,12 +42,11 @@ public:
 
 
 	float time;
-	void UpdateBaseConstants ();
 
 	TAAShiftBuffer taaConstants;
 	MainConstants viewConstants;
-	Renderer::ConstBuffer* pLocalConstants;
 	
+	Renderer::ConstBuffer* pLocalConstants;
 	TexturesManager texturesManger;
 	ModelsManager modelsManadger;
 

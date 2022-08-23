@@ -17,46 +17,49 @@ void VirtualMachine::ExecuteSetupPipeline()
     pipelinesQueueShift += ps->SnapshotByteSize;
 
     cBS.desc = ps->blendDesc;
+
+
+    auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data+ps->RenderTargetsShift);
+    
     
     for(int i = 0; i < ps->renderTargetsNum; i++)
     {
-        cBS.BlendStates[i] = ps->RenderTargets[i].BlendState;
-        renderTargets[i] = (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(ps->RenderTargets[i].rtv);
+        cBS.BlendStates[i] = RenderTargets[i].BlendState;
+        renderTargets[i] = (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(RenderTargets[i].rtv);
     }
     for(int i = ps->renderTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
     {
         cBS.BlendStates[i] = Compressed::BlendStateDesc();
-        renderTargets[i] = (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(ps->RenderTargets[i].rtv);
+        renderTargets[i] = (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(RenderTargets[i].rtv);
     }
+
+
+    auto VertexBuffers = (VertexBufferView**)(ps->Data+ps->VertexBuffersShift);
+    auto Textures = (ResourceView**)(ps->Data+ps->TexturesShift);
+    auto ConstBuffers = (ConstBufferView**)(ps->Data+ps->ConstBuffersShift);
     
     for(int i = 0; i < ps->vertexBuffersNum; i++)
     {
-       vertexBuffers[i] = (IRenderDevice::IVertexBufferView*)resourcesManager.GetRealResourceView(ps->VertexBuffers[i]);
+       vertexBuffers[i] = (IRenderDevice::IVertexBufferView*)resourcesManager.GetRealResourceView(VertexBuffers[i]);
     }
     for(int i = 0; i < ps->texturesNum; i++)
     {
-       textures[i] = (IRenderDevice::IResourceView*)resourcesManager.GetRealResourceView(ps->Textures[i]);
+       textures[i] = (IRenderDevice::IResourceView*)resourcesManager.GetRealResourceView(Textures[i]);
     }
     for(int i = 0; i < ps->constBuffersNum; i++)
     {
-       constBuffers[i] = (IRenderDevice::IConstBufferView*)resourcesManager.GetRealResourceView(ps->ConstBuffers[i]);
+       constBuffers[i] = (IRenderDevice::IConstBufferView*)resourcesManager.GetRealResourceView(ConstBuffers[i]);
     }
 
-    if ( !(-32768.000000 <= ps->Viewports[0].TopLeftX&&
-        -32768.000000 <= ps->Viewports[0].TopLeftY&&
-        (ps->Viewports[0].TopLeftX+ps->Viewports[0].Width) <= 32767.000000&&
-         (ps->Viewports[0].TopLeftY+ps->Viewports[0].Height) <= 32767.000000&&
-    0.000000 <= ps->Viewports[0].MinDepth&&
-        ps->Viewports[0].MaxDepth <= 1.000000&&
-        ps->Viewports[0].MinDepth <= ps->Viewports[0].MaxDepth))
-    {
-        return;;
-    }
-    RenderDevice->SetupViewports(ps->Viewports,ps->viewportsNum);
+    auto Viewports = (Compressed::ViewportDesc*)(ps->Data+ps->ViewportsShift);
+    auto Samplers = (Compressed::SamplerStateDesc*)(ps->Data+ps->SamplersShift);
+
+    
+    RenderDevice->SetupViewports(Viewports,ps->viewportsNum);
     RenderDevice->SetupBlendState(cBS);
     RenderDevice->SetupDepthStencilState(ps->depthStencilState);
     RenderDevice->SetupRasterizerState(ps->rasterizerState);
-    RenderDevice->SetupSamplers(ps->Samplers, ps->samplersNum);
+    RenderDevice->SetupSamplers(Samplers, ps->samplersNum);
     RenderDevice->SetupPrimitiveTopology(ps->primitiveTopology);
     RenderDevice->SetupVertexBuffer((const IRenderDevice::IVertexBufferView**)vertexBuffers, ps->vertexBuffersNum);
     RenderDevice->SetupIndexBuffer((IRenderDevice::IIndexBufferView*)resourcesManager.GetRealResourceView(ps->indexBuffer));
@@ -135,4 +138,5 @@ void VirtualMachine::Present()
     pipelinesQueue.clear();
     commandQueue.clear();
     dataQueue.clear();
+    drawCallsQueue.clear();
 }

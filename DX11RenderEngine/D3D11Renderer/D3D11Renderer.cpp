@@ -2970,6 +2970,7 @@ GVM::EFormat ToGVM(const DXGI_FORMAT& format)
     const std::unordered_map<DXGI_FORMAT, GVM::EFormat> formatMap = {
     {DXGI_FORMAT_R32_FLOAT, GVM::EFormat::FORMAT_R32_FLOAT},
     {DXGI_FORMAT_R32G32_FLOAT, GVM::EFormat::FORMAT_R32G32_FLOAT},
+    {DXGI_FORMAT_R32G32B32_FLOAT, GVM::EFormat::FORMAT_R32G32B32_FLOAT},
     };
     return formatMap.at(format);
 }

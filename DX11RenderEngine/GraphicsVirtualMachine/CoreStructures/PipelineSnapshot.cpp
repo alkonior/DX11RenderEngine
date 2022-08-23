@@ -64,51 +64,57 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     cps->indexBuffer = mesh.indexBuffer;
     cps->vertexDeclaration = this->InputDeclaration;
 
-    cps->RenderTargets = (Compressed::RenderTargetDesc*)pointerPosition;
+    auto renderTargets = (Compressed::RenderTargetDesc*)pointerPosition;
+    cps->RenderTargetsShift = pointerPosition - cps->Data;
     cps->renderTargetsNum = renderTargetsNum;
     for (int i =0; i < renderTargetsNum; i++)
     {
-        cps->RenderTargets[i]= RenderTargets[i];
+        renderTargets[i]= RenderTargets[i];
     }
     pointerPosition+=sizeof(Compressed::RenderTargetDesc)*renderTargetsNum;
     
-    cps->Samplers = (Compressed::SamplerStateDesc*)pointerPosition;
+    auto samplers = (Compressed::SamplerStateDesc*)pointerPosition;
+    cps->SamplersShift = pointerPosition - cps->Data;
     cps->samplersNum = samplersNum;
     for (int i =0; i < samplersNum; i++)
     {
-        cps->Samplers[i] = SamplerStateDesc(Samplers[i]);
+        samplers[i] = SamplerStateDesc(Samplers[i]);
     }
     pointerPosition+=sizeof(Compressed::SamplerStateDesc)*samplersNum;
     
-    cps->Viewports = (Compressed::ViewportDesc*)pointerPosition;
+    auto viewports = (Compressed::ViewportDesc*)pointerPosition;
+    cps->ViewportsShift = pointerPosition - cps->Data;
     cps->viewportsNum = viewportsNum;
     for (int i =0; i < viewportsNum; i++)
     {
-        cps->Viewports[i] = Viewports[i];
+        viewports[i] = Viewports[i];
     }
     pointerPosition+=sizeof(Compressed::ViewportDesc)*viewportsNum;
     
-    cps->ConstBuffers = (ConstBufferView**)pointerPosition;
+    auto constBuffers = (ConstBufferView**)pointerPosition;
+    cps->ConstBuffersShift = pointerPosition - cps->Data;
     cps->constBuffersNum = constBuffersNum;
     for (int i =0; i < constBuffersNum; i++)
     {
-        cps->ConstBuffers[i] = ConstBuffers[i];
+        constBuffers[i] = ConstBuffers[i];
     }
     pointerPosition+=sizeof(uintptr_t)*constBuffersNum;
     
-    cps->Textures = (ResourceView**)pointerPosition;
+    auto textures = (ResourceView**)pointerPosition;
+    cps->TexturesShift = pointerPosition - cps->Data;
     cps->texturesNum = texturesNum;
     for (int i =0; i < texturesNum; i++)
     {
-        cps->Textures[i] = Textures[i];
+        textures[i] = Textures[i];
     }
     pointerPosition+=sizeof(uintptr_t)*texturesNum;
 
-    cps->VertexBuffers = (VertexBufferView**)pointerPosition;
+    auto vertexBuffers = (VertexBufferView**)pointerPosition;
+    cps->VertexBuffersShift = pointerPosition - cps->Data;
     cps->vertexBuffersNum = mesh.vertexBuffer.buffersNum;
     for (int i =0; i < mesh.vertexBuffer.buffersNum; i++)
     {
-        cps->VertexBuffers[i] = mesh.vertexBuffer.vertexBuffers[i];
+        vertexBuffers[i] = mesh.vertexBuffer.vertexBuffers[i];
     }
     
     //pointerPosition+=sizeof(uintptr_t)*constBuffersNum;

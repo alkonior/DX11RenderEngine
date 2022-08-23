@@ -108,12 +108,19 @@ namespace Compressed {
         DepthStencilView*           DepthBuffer;
         IndexBufferView*            indexBuffer;
 
-        RenderTargetDesc*           RenderTargets = {};
-        SamplerStateDesc*           Samplers = {};
-        ViewportDesc*               Viewports = {};
-        ConstBufferView**           ConstBuffers = {};
-        VertexBufferView**          VertexBuffers = {};
-        ResourceView**              Textures = {};
+        //RenderTargetDesc*           RenderTargets = {};
+        //SamplerStateDesc*           Samplers = {};
+        //ViewportDesc*               Viewports = {};
+        //ConstBufferView**           ConstBuffers = {};
+        //VertexBufferView**          VertexBuffers = {};
+        //ResourceView**              Textures = {};
+
+        uint16_t          RenderTargetsShift = {};
+        uint16_t          SamplersShift = {};
+        uint16_t          ViewportsShift = {};
+        uint16_t          ConstBuffersShift = {};
+        uint16_t          VertexBuffersShift = {};
+        uint16_t          TexturesShift = {};
         
         uint8_t Data[];
 

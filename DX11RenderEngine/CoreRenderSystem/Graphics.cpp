@@ -63,7 +63,8 @@ void Graphics::BeginFrame() {
 	}
 }
 
-
+//#define GFX_CATCH_RENDER(render) try {render} catch (const std::exception& exe) {printf(exe.what()); printf("\n"); static char c[100]; scanf("%s", c); success = false; }
+#define GFX_CATCH_RENDER(render) {render}
 
 bool Graphics::RenderFrame() {
 	managerIMGUI.BeginFrame(*this);
@@ -73,10 +74,12 @@ bool Graphics::RenderFrame() {
 	managerTAA.UpdateHaltonSequence();
 	taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
 	renderer->SetConstBuffer(pLocalConstants, &taaConstants);
+	renderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
+	renderer->VerifyConstBuffer(GraphicsBase::pLocalConstants, mainConstants.slot);
 	
 	bool success = true;
 	pRenderer.BeginEvent("BSP draw.");
-	//GFX_CATCH_RENDER(managerUP.Render(*this););
+	GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("BloomMask draw.");
@@ -88,7 +91,7 @@ bool Graphics::RenderFrame() {
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Models draw.");
-	//GFX_CATCH_RENDER(managerModels.Render(*this););
+	GFX_CATCH_RENDER(managerModels.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Dynamic motion blur draw.");
@@ -112,11 +115,11 @@ bool Graphics::RenderFrame() {
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("End BSP draw.");
-	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("TAA-pass.");
-	//GFX_CATCH_RENDER(managerTAA.Render(*this););
+	GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
 
 	renderer->ClearState();

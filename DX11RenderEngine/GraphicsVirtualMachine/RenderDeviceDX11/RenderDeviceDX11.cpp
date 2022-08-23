@@ -362,6 +362,15 @@ constexpr D3D_SRV_DIMENSION ToD3D_ShaderViewDimension[] = {
     D3D_SRV_DIMENSION_TEXTURECUBEARRAY,
 };
 
+constexpr D3D11_RTV_DIMENSION ToD3D_RTViewDimension[] = {
+    D3D11_RTV_DIMENSION_UNKNOWN,
+    D3D11_RTV_DIMENSION_TEXTURE1D,
+    D3D11_RTV_DIMENSION_TEXTURE1DARRAY,
+    D3D11_RTV_DIMENSION_TEXTURE2D,
+    D3D11_RTV_DIMENSION_TEXTURE2DARRAY,
+    D3D11_RTV_DIMENSION_TEXTURE3D,
+};
+
 D3D11_SHADER_RESOURCE_VIEW_DESC ToD3D11ShaderView(const ShaderResourceViewDesc& desc)
 {
     D3D11_SHADER_RESOURCE_VIEW_DESC result;
@@ -369,6 +378,15 @@ D3D11_SHADER_RESOURCE_VIEW_DESC ToD3D11ShaderView(const ShaderResourceViewDesc& 
     result.ViewDimension = ToD3D_ShaderViewDimension[to_underlying(desc.Dimension)];
     result.Texture2D.MipLevels = 1;
     result.Texture2D.MostDetailedMip = 0;
+    return result;
+}
+
+D3D11_RENDER_TARGET_VIEW_DESC ToD3D11RTView(const RenderTargetViewDesc& desc)
+{
+    D3D11_RENDER_TARGET_VIEW_DESC result;
+    result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
+    result.ViewDimension = ToD3D_RTViewDimension[to_underlying(desc.Dimension)];
+    result.Texture2D.MipSlice = 0;
     return result;
 }
 
@@ -408,7 +426,26 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
     }
     case GpuResourceView::EViewType::RT:
     {
-        return nullptr;
+        ID3D11RenderTargetView* result;
+        if (desc.rtViewDescription.MakeDefault)
+        {
+            device->CreateRenderTargetView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                nullptr,
+                &result
+            );
+        }
+        else
+        {
+            auto d3d11desc = ToD3D11RTView(desc.rtViewDescription);
+            device->CreateRenderTargetView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                &d3d11desc,
+                &result
+            );
+        }
+
+        return reinterpret_cast<IResourceView*>(result);
         break;
     }
     case GpuResourceView::EViewType::SR:
@@ -701,12 +738,13 @@ ID3D11SamplerState* RenderDeviceDX11::FetchSamplerState(const Compressed::Sample
 
     ID3D11SamplerState* istate;
 
-    CD3D11_SAMPLER_DESC desc;
+    CD3D11_SAMPLER_DESC desc{CD3D11_DEFAULT()};
     assert(state.Fields.Filter != 0);
     desc.Filter = ToD3D11SamplerFilter[state.Fields.Filter];
     desc.MaxAnisotropy = state.Fields.MaxAnisotropy;
     desc.MaxLOD = state.MaxLOD;
     desc.MinLOD = state.MinLOD;
+    desc.MipLODBias = 0;
 
     device->CreateSamplerState(&desc, &istate);
     hashSS.insert({state.Data,istate});
@@ -880,7 +918,7 @@ void RenderDeviceDX11::Draw(DrawCall call)
     {
     case EDrawCallType::DRAW_INDEXED:
     {
-        context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
+        GFX_THROW_INFO_ONLY(context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>()));
         break;
     }
     case EDrawCallType::DRAW:
@@ -890,7 +928,7 @@ void RenderDeviceDX11::Draw(DrawCall call)
     }
     case EDrawCallType::DRAW_INDEXED_INSTANCED:
     {
-        context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(),call.get<3>(),call.get<4>());
+        context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(), call.get<3>(), call.get<4>());
         break;
     }
     }
