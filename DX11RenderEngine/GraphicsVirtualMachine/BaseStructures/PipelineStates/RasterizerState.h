@@ -23,7 +23,7 @@ namespace Compressed {
         struct RasterizerStateFields
         {
             uint8_t       State        : 3;
-            uint8_t       FillMode              : 1;
+            uint8_t       FillMode              : 2;
             uint8_t       CullMode              : 2;
             uint8_t       FrontCounterClockwise : 1;
             uint8_t       DepthClipEnable       : 1;

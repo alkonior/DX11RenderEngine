@@ -80,12 +80,12 @@ public:
 			//	renderer->SetIndexBufferData(bigIndexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 		}
 
-		if (vertexBuffSize != cpuVertices.size() || force) {
+		if (vertexBuffSize != cpuVertices.size() || (force && cpuVertices.size()!=0)) {
 			renderer->SetVertexBufferData(mesh.vertexBuffer.vertexBuffers[0], 0, cpuVertices.data(), cpuVertices.size(), sizeof(VertexType), sizeof(VertexType), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 			vertexBuffSize = cpuVertices.size();
 		}
 
-		if (indexBuffSize != cpuIndexes.size() || force) {
+		if (indexBuffSize != cpuIndexes.size() || (force && cpuVertices.size()!=0)) {
 			renderer->SetIndexBufferData(mesh.indexBuffer, 0, cpuIndexes.data(), cpuIndexes.size() * sizeof(std::uint32_t), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);
 			indexBuffSize = cpuIndexes.size();
 		}

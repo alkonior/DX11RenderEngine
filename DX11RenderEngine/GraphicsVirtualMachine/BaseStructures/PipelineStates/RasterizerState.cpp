@@ -19,7 +19,7 @@ Compressed::RasterizerStateDesc::RasterizerStateDesc(GVM::RasterizerStateDesc de
       Fields.State = desc.State;
     
       Fields.FillMode  = to_underlying(desc.FillMode);
-      Fields.CullMode  = to_underlying(desc.FillMode);
+      Fields.CullMode  = to_underlying(desc.CullMode);
       
       Fields.FrontCounterClockwise = desc.FrontCounterClockwise;
       

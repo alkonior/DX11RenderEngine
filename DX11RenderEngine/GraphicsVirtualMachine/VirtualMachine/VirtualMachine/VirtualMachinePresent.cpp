@@ -80,6 +80,7 @@ void VirtualMachine::ExecuteSetupPipeline()
 
 void VirtualMachine::Present()
 {
+    
     for (auto& command : commandQueue)
     {
         switch (command)
@@ -128,10 +129,35 @@ void VirtualMachine::Present()
             drawCallsQueueShift++;
             break;
         }
+        case EMachineCommands::CLEAR_PIPELINE:
+        {
+            RenderDevice->ClearState();
+            break;
+        }
+        case EMachineCommands::CLEAR_RT:
+        {
+            auto& resource = PullData<RenderTargetView*>();
+            auto& color = PullData<FColor>();
+            RenderDevice->ClearRenderTarget((IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(resource), color);
+            break;
+        }
+        case EMachineCommands::CLEAR_DS:
+        {
+            auto& resource = PullData<DepthStencilView*>();
+            auto& depth = PullData<float>();
+            auto& stencil = PullData<uint8_t>();
+            RenderDevice->ClearDepthStencil(
+            (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(resource),
+            depth,
+            stencil
+            );
+            break;
+        }
             
         }
     }
     RenderDevice->Present();
+    
     queueShift = 0;
     pipelinesQueueShift = 0;
     drawCallsQueueShift = 0;

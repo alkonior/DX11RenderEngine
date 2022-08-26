@@ -299,3 +299,20 @@ void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* da
     UBox rect{offset,0,0,offset+dataSize,1,1};
     SetResourceData(constBuffer, 0, rect, data, 0, 0);
 }
+void VirtualMachine::ClearState()
+{
+    PushCommand(EMachineCommands::CLEAR_PIPELINE);
+}
+void VirtualMachine::ClearRenderTarget(RenderTargetView* rtView, FColor color)
+{
+    PushData((void*)rtView);
+    PushData(color);
+    PushCommand(EMachineCommands::CLEAR_RT);
+}
+void VirtualMachine::ClearDepthStencil(DepthStencilView*dsView, float depth, int8_t stencil)
+{
+    PushData((void*)dsView);
+    PushData(depth);
+    PushData(stencil);
+    PushCommand(EMachineCommands::CLEAR_DS);
+}

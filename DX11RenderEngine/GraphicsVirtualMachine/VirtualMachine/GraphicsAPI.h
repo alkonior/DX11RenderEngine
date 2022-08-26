@@ -30,7 +30,7 @@ public:
 
     void ClearRenderTargets(RenderTargetView* renderTargets[], int32_t numRenderTargets, FColor color);
     void ClearRenderTarget(RenderTargetView* renderTarget, FColor color);
-    void Clear(DepthStencilView* septhStencil, float depth, int8_t stencil);
+    void ClearDepthStencil(DepthStencilView* septhStencil, float depth, int8_t stencil);
     void ClearState();
 
 
@@ -61,7 +61,6 @@ public:
     void Dispatch(size_t x, size_t y, size_t z = 1);
 
 #pragma endregion
-
 
 #pragma region SetupPipeline
     void SetupViewports(const ViewportDesc viewport[], uint8_t num, uint8_t offset);

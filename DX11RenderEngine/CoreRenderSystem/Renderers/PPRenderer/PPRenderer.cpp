@@ -94,6 +94,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->SetRenderTargets(targets, 1, nullptr, vp);
 	
 	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
+	renderer->VerifyPixelSampler(1, Samplers::pointClamp);
 
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.bloomMask);

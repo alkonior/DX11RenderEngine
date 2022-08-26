@@ -168,6 +168,7 @@ void UIRenderer::UIRendererProvider::PatchPipelineState(PipelineState* refToPS, 
 
 	refToPS->dss = &DepthStencilStates::NoDSS;
 	refToPS->rs = &RasterizerStates::CClockWise;
+	
 }
 
 

@@ -4,7 +4,7 @@
 
 
 namespace GVM {
-    
+
 
 enum RenderDeviceLimitations {
     MAX_RENDERTARGET_ATTACHMENTS = 8,
@@ -18,28 +18,26 @@ class IRenderDevice {
 public:
     IRenderDevice(const IRenderDevice&) = delete;
     IRenderDevice(const IRenderDevice&&) = delete;
-    virtual ~IRenderDevice() = 0 {};
+    virtual ~IRenderDevice() = 0 {}
 
-    
-    struct IPlaceable
-    {
+
+    struct IPlaceable {
     public:
         virtual void Place(void* ptr) const = 0;
         virtual ~IPlaceable() = 0 {};
     };
 
-    
+
     class IResource : public IPlaceable {};
     class IResourceView : public IPlaceable {};
     class IInputLayout : public IPlaceable {};
     class IShader : public IPlaceable {};
-    
-protected:
 
+protected:
     class IVertexBufferView : public IResourceView {};
     class IIndexBufferView : public IResourceView {};
     class IConstBufferView : public IResourceView {};
-    class IRenderTargetView : public  IResourceView {};
+    class IRenderTargetView : public IResourceView {};
     class IDepthStencilView : public IResourceView {};
     class IShaderResourceView : public IResourceView {};
     class IUATargetView : public IResourceView {};
@@ -56,15 +54,16 @@ protected:
     virtual void Present() = 0;
 
     virtual IStructuresSize GetClassesSize() = 0;
-    
+
     virtual IResource* CreateResource(const GpuResource& resource) = 0;
     virtual void DestroyResource(IResource* resource) = 0;
     virtual IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) = 0;
 
 
-    
+
     virtual IShader* CreateShader(const ShaderDesc& desc) = 0;
     virtual IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) = 0;
+    virtual void ClearState() = 0;
 
 
 
@@ -78,9 +77,9 @@ protected:
         int32_t srcDepthPitch = 0
     ) = 0;
 
-    
+
 #pragma region SetupPipeline
-    
+
     virtual void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num) = 0;
     virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState) = 0;
     virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) = 0;
@@ -92,15 +91,17 @@ protected:
     virtual void SetupIndexBuffer(const IIndexBufferView* indices) = 0;
     virtual void SetupTextures(IResourceView* textures[], uint8_t num) = 0;
     virtual void SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer) = 0;
-    
+
     virtual void SetupShader(IShader* shader, EShaderType type) = 0;
     virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) = 0;
     virtual void SetupInputLayout(IInputLayout* layout) = 0;
+    virtual void ClearRenderTarget(const IRenderTargetView* rtView, FColor color) = 0;
+    virtual void ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil) = 0;
 
 
 #pragma endregion
 
-    
+
     /*
     virtual ~IRenderDevice() = default;
 

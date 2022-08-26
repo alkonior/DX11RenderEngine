@@ -15,19 +15,12 @@ static inline int32_t PrimitiveVerts(
 {
     switch (primitiveType)
     {
-    case PRIMITIVETYPE_TRIANGLELIST:
-        return primitiveCount * 3;
-    case PRIMITIVETYPE_TRIANGLESTRIP:
-        return primitiveCount + 2;
-    case PRIMITIVETYPE_LINELIST:
-        return primitiveCount * 2;
-    case PRIMITIVETYPE_LINESTRIP:
-        return primitiveCount + 1;
-    case PRIMITIVETYPE_POINTLIST_EXT:
-        return primitiveCount;
-    default:
-
-        return 0;
+    case PRIMITIVETYPE_TRIANGLELIST: return primitiveCount * 3;
+    case PRIMITIVETYPE_TRIANGLESTRIP: return primitiveCount + 2;
+    case PRIMITIVETYPE_LINELIST: return primitiveCount * 2;
+    case PRIMITIVETYPE_LINESTRIP: return primitiveCount + 1;
+    case PRIMITIVETYPE_POINTLIST_EXT: return primitiveCount;
+    default: return 0;
     }
 }
 
@@ -45,8 +38,7 @@ D3D11Texture D3D11Texture::NullTexture = D3D11Texture
 
 
 void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h)
-{
-}
+{}
 
 IRenderer* IRenderer::pRenderer = nullptr;
 
@@ -138,8 +130,9 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     pixelSamplers.resize(MAX_TEXTURE_SAMPLERS, nullptr);
 
     renderTargetViews.resize(MAX_RENDERTARGET_BINDINGS);
+    renderTargetViewsTest.resize(MAX_RENDERTARGET_BINDINGS);
 
-    /* Initialize SetStringMarker support, if available */ 
+    /* Initialize SetStringMarker support, if available */
     //if (featureLevel == D3D_FEATURE_LEVEL_11_1) {
     //	context->QueryInterface(&annotation);
     //
@@ -190,7 +183,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
 {
     int32_t i;
     uint32_t dsClearFlags;
-    float clearColor[4] = {color.x, color.y, color.z, color.w};
+    float clearColor[4] = {color.x,color.y,color.z,color.w};
 
     //std::lock_guard<std::mutex> guard(ctxLock);
 
@@ -224,7 +217,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
             depth,
             (uint8_t)stencil
         ));
-        testApi->Clear(depthStencilBufferTest, depth, stencil);
+        testApi->ClearDepthStencil(depthStencilBufferTest, depth, stencil);
     }
 }
 
@@ -253,11 +246,11 @@ GVM::EPrimitiveTopology ToGVM(PrimitiveType type)
 {
     switch (type)
     {
-    case PRIMITIVETYPE_LINELIST : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINELIST;
-    case PRIMITIVETYPE_POINTLIST_EXT : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_POINTLIST;
-    case PRIMITIVETYPE_LINESTRIP : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINESTRIP;
-    case PRIMITIVETYPE_TRIANGLELIST : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-    case PRIMITIVETYPE_TRIANGLESTRIP : return  GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+    case PRIMITIVETYPE_LINELIST: return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINELIST;
+    case PRIMITIVETYPE_POINTLIST_EXT: return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_POINTLIST;
+    case PRIMITIVETYPE_LINESTRIP: return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_LINESTRIP;
+    case PRIMITIVETYPE_TRIANGLELIST: return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    case PRIMITIVETYPE_TRIANGLESTRIP: return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
     }
     return GVM::EPrimitiveTopology::PRIMITIVE_TOPOLOGY_UNKNOWN;
 };
@@ -307,14 +300,16 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
         );
         if (!d3dIndices->indexViewTest)
         {
-            d3dIndices->indexViewTest = testApi->CreateIndexBufferView({(GVM::IndexBuffer*)d3dIndices->handleTest,GVMIndexType[indexElementSize / 16 - 1] ,(uint32_t)d3dIndices->size});
+            d3dIndices->indexViewTest = testApi->CreateIndexBufferView({
+                (GVM::IndexBuffer*)d3dIndices->handleTest,GVMIndexType[indexElementSize / 16 - 1],(uint32_t)d3dIndices->size
+            });
         }
         testApi->SetupIndexBuffer((GVM::IndexBufferView*)d3dIndices->indexViewTest);
     }
 }
 
 void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex,
-                                          int32_t numVertices, int32_t startIndex, int32_t primitiveCount)
+    int32_t numVertices, int32_t startIndex, int32_t primitiveCount)
 {
     //std::lock_guard<std::mutex> guard(ctxLock);
 
@@ -338,8 +333,8 @@ void D3D11Renderer::DrawIndexedPrimitives(PrimitiveType primitiveType, int32_t b
 }
 
 void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t baseVertex, int32_t minVertexIndex,
-                                            int32_t numVertices, int32_t startIndex, int32_t primitiveCount,
-                                            int32_t instanceCount)
+    int32_t numVertices, int32_t startIndex, int32_t primitiveCount,
+    int32_t instanceCount)
 {
     //std::lock_guard<std::mutex> guard(ctxLock);
 
@@ -363,7 +358,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
         0
     ));
     testApi->DrawInstancedPrimitives(baseVertex, 0, PrimitiveVerts(primitiveType, primitiveCount), startIndex,
-                                     primitiveCount, instanceCount);
+        primitiveCount, instanceCount);
 }
 
 void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount)
@@ -436,7 +431,7 @@ void D3D11Renderer::SetScissorRect(Rect scissor)
         scissorRect = scissor;
         GFX_THROW_INFO_ONLY(context->RSSetScissorRects(1, &rect));
     }
-    
+
     //testApi->SetupScissorRect(ToGVM(scissor)); todo
 }
 
@@ -461,7 +456,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0], factor[1], factor[2], factor[3]}});
+        testApi->SetupCoreBlendState({true,multiSampleMask,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -486,7 +481,7 @@ void D3D11Renderer::SetMultiSampleMask(int32_t mask)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true, multiSampleMask, {factor[0], factor[1], factor[2], factor[3]}});
+        testApi->SetupCoreBlendState({true,multiSampleMask,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -589,6 +584,8 @@ GVM::DepthStencilStateDesc ToGVM(const DepthStencilState& dsState)
     GVM::DepthStencilStateDesc result;
     result.DepthEnable = dsState.depthBufferEnable;
     result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
+    result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
+    result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
 
     //todo
     return result;
@@ -642,7 +639,7 @@ GVM::RasterizerStateDesc ToGVM(const RasterizerState& rasterizerState)
     result.ScissorEnable = rasterizerState.scissorTestEnable;
     result.CullMode = ToGVM(rasterizerState.cullMode);
     result.FillMode = ToGVM(rasterizerState.fillMode);
-
+    result.FrontCounterClockwise = 1;
     return result;
 }
 
@@ -891,7 +888,7 @@ void D3D11Renderer::VerifyVertexSampler(int32_t index, const SamplerState& sampl
 }
 
 void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets,
-                                     Renderbuffer* depthStencilBuffer, const Viewport viewport)
+    Renderbuffer* depthStencilBuffer, const Viewport viewport)
 {
     D3D11Texture* tex;
     D3D11Renderbuffer* rb;
@@ -920,6 +917,8 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 NULL
             );
             testApi->SetupRenderTarget(nullptr, 0, nullptr);
+            renderTargetViewsTest[0] = nullptr;
+            depthStencilBufferTest =  nullptr;
         }
         else
         {
@@ -929,11 +928,14 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 this->depthStencilBuffer->depth.dsView.Get()
             );
             testApi->SetupRenderTarget(nullptr, 0, this->depthStencilBuffer->depth.nDsView);
+            renderTargetViewsTest[0] = nullptr;
+            depthStencilBufferTest =  this->depthStencilBuffer->depth.nDsView;
         }
         this->SetViewport(viewport, 0);
         testApi->SetupViewport(ToGVM(viewport), 0);
 
         renderTargetViews[0] = comViews[0];
+
         i = 1;
         while (i < MAX_RENDERTARGET_BINDINGS)
         {
@@ -957,6 +959,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
         {
             views[i] = swapchainRTView.Get();
             nviews[i] = nullptr;
+            renderTargetViewsTest[i] = nullptr;
             comViews[i] = swapchainRTView;
             this->SetViewport(viewport, i);
             testApi->SetupViewport(ToGVM(viewport), i);
@@ -968,6 +971,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 rb = (D3D11Renderbuffer*)renderTargets[i]->colorBuffer;
                 views[i] = rb->color.rtView.Get();
                 nviews[i] = rb->color.nRsView;
+                renderTargetViewsTest[i] = rb->color.nRsView;
                 comViews[i] = rb->color.rtView;
             }
             else
@@ -983,6 +987,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
                 //}
                 comViews[i] = tex->rtView;
                 nviews[i] = tex->rtTestView;
+                renderTargetViewsTest[i] = tex->rtTestView;
                 views[i] = tex->rtView.Get();
             }
             this->SetViewport(renderTargets[i]->viewport, i);
@@ -993,6 +998,8 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     {
         comViews[i] = nullptr;
         nviews[i] = nullptr;
+
+        renderTargetViewsTest[i] = nullptr;
         views[i++] = nullptr;
     }
 
@@ -1008,6 +1015,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             NULL
         ));
         testApi->SetupRenderTargets(nviews, numRenderTargets, 0, nullptr);
+            depthStencilBufferTest =  nullptr;
     }
     else
     {
@@ -1017,6 +1025,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             this->depthStencilBuffer->depth.dsView.Get()
         ));
         testApi->SetupRenderTargets(nviews, numRenderTargets, 0, this->depthStencilBuffer->depth.nDsView);
+        depthStencilBufferTest =  this->depthStencilBuffer->depth.nDsView;
     }
     //RestoreTargetTextures();
 
@@ -1126,7 +1135,7 @@ constexpr GVM::EFormat ToGVM(SurfaceFormat format)
 }
 
 Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount,
-                                        uint8_t isRenderTarget)
+    uint8_t isRenderTarget)
 {
     D3D11Texture* result = new D3D11Texture();
     D3D11_TEXTURE2D_DESC desc;
@@ -1182,7 +1191,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
         NULL,
         &result->shaderView
     ));
-    result->shView = testApi->CreateShaderResourceView({result->resource, true});
+    result->shView = testApi->CreateShaderResourceView({result->resource,true});
 
     /* Create the render target view, if applicable */
     if (isRenderTarget)
@@ -1197,7 +1206,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
             &result->rtView
         ));
 
-        result->rtTestView = testApi->CreateRtView({result->resource, true});
+        result->rtTestView = testApi->CreateRtView({result->resource,true});
     }
 
     return result;
@@ -1257,7 +1266,7 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
         NULL,
         &result->shaderView
     ));
-    result->shView = testApi->CreateShaderResourceView({result->resource, true});
+    result->shView = testApi->CreateShaderResourceView({result->resource,true});
 
     /* Create the render target view, if applicable */
 
@@ -1270,21 +1279,21 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
         &rtViewDesc,
         &result->rtView
     ));
-    result->rtTestView = testApi->CreateRtView({result->resource, true});
+    result->rtTestView = testApi->CreateRtView({result->resource,true});
 
     GFX_THROW_INFO(device->CreateUnorderedAccessView(
         result->handle.Get(),
         NULL,
         &result->uaView
     ));
-    result->uaTestView = testApi->CreateUaView({result->resource, true});
+    result->uaTestView = testApi->CreateUaView({result->resource,true});
 
     return result;
 }
 
 
 Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, int32_t levelCount,
-                                          uint8_t isRenderTarget)
+    uint8_t isRenderTarget)
 {
     D3D11Texture* result;
     wrl::ComPtr<ID3D11Texture2D> texture;
@@ -1342,14 +1351,14 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
     result->format = format;
 
     result->resource = testApi->CreateTextureCube(resourceDesc);
-    
+
     /* Create the shader resource view */
     srvDesc.Format = desc.Format;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
     srvDesc.TextureCube.MipLevels = levelCount;
     srvDesc.TextureCube.MostDetailedMip = 0;
 
-    result->shView = testApi->CreateShaderResourceView({result->resource, true});
+    result->shView = testApi->CreateShaderResourceView({result->resource,true});
 
     //todo fix it
 
@@ -1386,7 +1395,7 @@ Texture* D3D11Renderer::CreateTextureCube(SurfaceFormat format, int32_t size, in
 }
 
 void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h,
-                                       int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength)
+    int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength)
 {
     D3D11Texture* d3dTexture = (D3D11Texture*)texture;
     D3D11_BOX dstBox;
@@ -1408,15 +1417,15 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     uint8_t byteLength = GVM::FormatByteSize[GVM::to_underlying(ToGVM(d3dTexture->format))];
 
     testApi->SetResourceData(d3dTexture->resource,
-                             cubeMapFace,
-                             GVM::UBox{
-                                 dstBox.left,
-                                 dstBox.top,
-                                 dstBox.front,
-                                 dstBox.right,
-                                 dstBox.bottom,
-                                 dstBox.back
-                             }, data,w*byteLength,byteLength*h*w);
+        cubeMapFace,
+        GVM::UBox{
+            dstBox.left,
+            dstBox.top,
+            dstBox.front,
+            dstBox.right,
+            dstBox.bottom,
+            dstBox.back
+        }, data, w * byteLength, byteLength * h * w);
 
     //SDL_LockMutex(renderer->ctxLock);
     context->UpdateSubresource(
@@ -1467,7 +1476,7 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture)
 }
 
 void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t level,
-                                     void* data, int32_t dataLength)
+    void* data, int32_t dataLength)
 {
     D3D11Texture* d3dTexture = (D3D11Texture*)texture;
     D3D11_BOX dstBox;
@@ -1499,23 +1508,23 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
     ));
 
     testApi->SetResourceData(d3dTexture->resource,
-                             level,
-                             GVM::UBox{
-                                 dstBox.left,
-                                 dstBox.top,
-                                 dstBox.front,
-                                 dstBox.right,
-                                 dstBox.bottom,
-                                 dstBox.back
-                             }, data, w*byteLength,
-        w * byteLength*h);
+        level,
+        GVM::UBox{
+            dstBox.left,
+            dstBox.top,
+            dstBox.front,
+            dstBox.right,
+            dstBox.bottom,
+            dstBox.back
+        }, data, w * byteLength,
+        w * byteLength * h);
 }
 
 
 #pragma warning(push)
 #pragma warning(disable : 26451)
 void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h,
-                                     int32_t level, void* data, int32_t dataLength)
+    int32_t level, void* data, int32_t dataLength)
 {
     D3D11Texture* tex = (D3D11Texture*)texture;
     D3D11_TEXTURE2D_DESC stagingDesc;
@@ -1523,7 +1532,7 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
     uint32_t subresourceIndex = level;
     unsigned int texW = static_cast<unsigned int>(tex->width >> level);
     unsigned int texH = static_cast<unsigned int>(tex->height >> level);
-    D3D11_BOX srcBox = {0, 0, 0, texW, texH, 1};
+    D3D11_BOX srcBox = {0,0,0,texW,texH,1};
     D3D11_MAPPED_SUBRESOURCE subresource;
     uint8_t* dataPtr = (uint8_t*)data;
 
@@ -1610,7 +1619,7 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 
 
 Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, SurfaceFormat format,
-                                                  int32_t multiSampleCount, Texture* texture)
+    int32_t multiSampleCount, Texture* texture)
 {
     D3D11_TEXTURE2D_DESC desc;
     D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_COLOR);
@@ -1717,7 +1726,7 @@ GVM::EFormat ToGVMSh(DepthFormat format)
 }
 
 Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t height, DepthFormat format,
-                                                         int32_t multiSampleCount)
+    int32_t multiSampleCount)
 {
     D3D11_TEXTURE2D_DESC desc;
     D3D11Renderbuffer* result = new D3D11Renderbuffer(RENDERBUFFER_DEPTH);
@@ -1742,7 +1751,7 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
 
-    
+
     GVM::Texture2DResourceDesc resourceDesc;
 
     resourceDesc.Width = width;
@@ -1750,14 +1759,14 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     resourceDesc.Format = ToGVM(ToGVM(format));
     resourceDesc.Array = 1;
     resourceDesc.initialData = nullptr;
-    
+
 
     GFX_THROW_INFO(device->CreateTexture2D(
         &desc,
         NULL,
         &result->handle
     ));
-    
+
     result->resource = testApi->CreateTexture2D(resourceDesc);
 
     texture->isRenderTarget = true;
@@ -1774,7 +1783,7 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     shDesc.T2Desc.PlaneSlice = 0;
     shDesc.T2Desc.ResourceMinLODClamp = 0;
     result->depth.nShView = testApi->CreateShaderResourceView(shDesc);
-    
+
 
 
     GFX_THROW_INFO(device->CreateShaderResourceView(
@@ -1798,13 +1807,13 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
         &result->depth.dsView
     ));
 
-    
+
     GVM::DepthStencilViewDesc view_desc;
     view_desc.Resource = result->resource;
-    view_desc.Flag = GVM::EDsvFlags::DSV_FLAG_READ_ONLY_DEPTH;
+    view_desc.Flag = GVM::EDsvFlags::DSV_FLAG_NONE;
     view_desc.Format = ToGVM(format);
     view_desc.Resource = result->resource;
-    
+
 
     result->depth.nDsView = testApi->CreateDepthStencilsView(view_desc);
 
@@ -1898,12 +1907,12 @@ void D3D11Renderer::AddDisposeVertexBuffer(Buffer* buffer)
 }
 
 void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t elementCount,
-                                        int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options)
+    int32_t elementSizeInBytes, int32_t vertexStride, SetDataOptions options)
 {
     D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
-    D3D11_MAPPED_SUBRESOURCE subres = {0, 0, 0};
+    D3D11_MAPPED_SUBRESOURCE subres = {0,0,0};
     int32_t dataLen = vertexStride * elementCount;
-    D3D11_BOX dstBox = {(UINT)offsetInBytes, 0, 0, (UINT)(offsetInBytes + dataLen), 1, 1};
+    D3D11_BOX dstBox = {(UINT)offsetInBytes,0,0,(UINT)(offsetInBytes + dataLen),1,1};
 
     //std::lock_guard<std::mutex> guard(ctxLock);
     if (d3dBuffer->dynamic)
@@ -1913,8 +1922,8 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
             dataLen < d3dBuffer->size)
         {
             throw InfoException(__LINE__, __FILE__, {
-                                    "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!"
-                                });
+                "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!"
+            });
         }
 
         GFX_THROW_INFO_ONLY(context->Map(
@@ -1944,11 +1953,11 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
             dataLen
         ));
     }
-    testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data,dataLen, offsetInBytes);
+    testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data, dataLen, offsetInBytes);
 }
 
 void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data,
-                                        int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride)
+    int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride)
 {
     const D3D11Buffer* d3dBuffer = (const D3D11Buffer*)buffer;
     D3D11_BUFFER_DESC desc;
@@ -1957,7 +1966,7 @@ void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBy
     uint8_t *src, *dst;
     int32_t i;
     D3D11_MAPPED_SUBRESOURCE subres;
-    D3D11_BOX srcBox = {(UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1};
+    D3D11_BOX srcBox = {(UINT)offsetInBytes,0,0,(UINT)offsetInBytes + (UINT)dataLength,1,1};
 
     /* Create staging buffer */
     desc.ByteWidth = d3dBuffer->size;
@@ -2032,7 +2041,7 @@ Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_
     desc.MiscFlags = 0;
     desc.StructureByteStride = 0;
 
-    
+
     GVM::BufferResourceDesc tdesc;
     tdesc.Size = sizeInBytes;
     result->handleTest = testApi->CreateBuffer(tdesc);
@@ -2064,17 +2073,17 @@ void D3D11Renderer::AddDisposeIndexBuffer(Buffer* buffer)
             0
         );
     }
-testApi->AddDisposeResource(d3dBuffer->handleTest);
+    testApi->AddDisposeResource(d3dBuffer->handleTest);
     d3dBuffer->handle = nullptr;
     delete d3dBuffer;
 }
 
 void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength,
-                                       SetDataOptions options)
+    SetDataOptions options)
 {
     D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
-    D3D11_MAPPED_SUBRESOURCE subres = {0, 0, 0};
-    D3D11_BOX dstBox = {(UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1};
+    D3D11_MAPPED_SUBRESOURCE subres = {0,0,0};
+    D3D11_BOX dstBox = {(UINT)offsetInBytes,0,0,(UINT)offsetInBytes + (UINT)dataLength,1,1};
 
 
     //std::lock_guard<std::mutex> guard(ctxLock);
@@ -2085,8 +2094,8 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
             dataLength < d3dBuffer->size)
         {
             throw InfoException(__LINE__, __FILE__, {
-                                    "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!"
-                                });
+                "Dynamic buffer using SetDataOptions.None, expect bad performance and broken output!"
+            });
         }
 
         GFX_THROW_INFO_ONLY(context->Map(
@@ -2128,7 +2137,7 @@ void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInByt
     D3D11_BUFFER_DESC desc;
     wrl::ComPtr<ID3D11Buffer> stagingBuffer;
     D3D11_MAPPED_SUBRESOURCE subres;
-    D3D11_BOX srcBox = {(UINT)offsetInBytes, 0, 0, (UINT)offsetInBytes + (UINT)dataLength, 1, 1};
+    D3D11_BOX srcBox = {(UINT)offsetInBytes,0,0,(UINT)offsetInBytes + (UINT)dataLength,1,1};
 
     /* Create staging buffer */
     desc.ByteWidth = d3dBuffer->size;
@@ -2181,20 +2190,20 @@ void D3D11Renderer::SetPresentationInterval(PresentInterval presentInterval)
     {
     case PRESENTINTERVAL_DEFAULT:
     case PRESENTINTERVAL_ONE:
-        {
-            syncInterval = 1;
-            break;
-        }
+    {
+        syncInterval = 1;
+        break;
+    }
     case PRESENTINTERVAL_TWO:
-        {
-            syncInterval = 2;
-            break;
-        }
+    {
+        syncInterval = 2;
+        break;
+    }
     case PRESENTINTERVAL_IMMEDIATE:
-        {
-            syncInterval = 0;
-            break;
-        }
+    {
+        syncInterval = 0;
+        break;
+    }
     }
 }
 
@@ -2739,7 +2748,8 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
             buff->vertexViewTest = testApi->CreateVertexBufferView({
                 buff->vertexTest,
                 uint32_t(vertexBuffer.vertexStride[0]),
-                vertexBuffer.vertexOffset[0]});
+                vertexBuffer.vertexOffset[0]
+            });
         vb.vertexBuffers[0] = buff->vertexViewTest;
         //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
         //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
@@ -2747,17 +2757,18 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
     else
     {
         static std::vector<ID3D11Buffer*> buffers(16);
-            vb.buffersNum = vertexBuffer.buffersCount;
+        vb.buffersNum = vertexBuffer.buffersCount;
         for (size_t i = 0; i < vertexBuffer.buffersCount; i++)
         {
-            auto* buff =((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i]); 
+            auto* buff = ((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i]);
             buffers[i] = ((D3D11Buffer*)(vertexBuffer.vertexBuffers)[i])->handle.Get();
-            
+
             if (!buff->vertexViewTest)
                 buff->vertexViewTest = testApi->CreateVertexBufferView({
                     buff->vertexTest,
                     uint32_t(vertexBuffer.vertexStride[i]),
-                    vertexBuffer.vertexOffset[i]});
+                    vertexBuffer.vertexOffset[i]
+                });
             vb.vertexBuffers[0] = buff->vertexViewTest;
             //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
             //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
@@ -2809,7 +2820,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -2817,7 +2828,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -2862,7 +2873,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
         GFX_THROW_INFO(
             device->CreateComputeShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
                 pComputeShader));
-        
+
         GVM::ShaderDesc desc;
         desc.type = GVM::EShaderType::COMPUTE_SHADER;
         desc.name = shaderData.name;
@@ -2873,7 +2884,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
@@ -2882,7 +2893,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
@@ -2928,7 +2939,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
             device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
                 pGeometryShader));
 
-        
+
         GVM::ShaderDesc desc;
         desc.type = GVM::EShaderType::GEOMETRY_SHADER;
         desc.name = shaderData.name;
@@ -2939,7 +2950,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -2947,7 +2958,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -2968,9 +2979,9 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
 GVM::EFormat ToGVM(const DXGI_FORMAT& format)
 {
     const std::unordered_map<DXGI_FORMAT, GVM::EFormat> formatMap = {
-    {DXGI_FORMAT_R32_FLOAT, GVM::EFormat::FORMAT_R32_FLOAT},
-    {DXGI_FORMAT_R32G32_FLOAT, GVM::EFormat::FORMAT_R32G32_FLOAT},
-    {DXGI_FORMAT_R32G32B32_FLOAT, GVM::EFormat::FORMAT_R32G32B32_FLOAT},
+        {DXGI_FORMAT_R32_FLOAT,GVM::EFormat::FORMAT_R32_FLOAT},
+        {DXGI_FORMAT_R32G32_FLOAT,GVM::EFormat::FORMAT_R32G32_FLOAT},
+        {DXGI_FORMAT_R32G32B32_FLOAT,GVM::EFormat::FORMAT_R32G32B32_FLOAT},
     };
     return formatMap.at(format);
 }
@@ -2978,7 +2989,7 @@ GVM::EFormat ToGVM(const DXGI_FORMAT& format)
 GVM::InputAssemblerDeclarationDesc ToGVM(const D3D11_INPUT_ELEMENT_DESC* inputLayout, uint32_t inputLayoutSize)
 {
     GVM::InputAssemblerDeclarationDesc result;
-    for (int i=0; i<inputLayoutSize; i++)
+    for (int i = 0; i < inputLayoutSize; i++)
     {
         result.PushBack({
             inputLayout[i].SemanticName,
@@ -2994,7 +3005,7 @@ GVM::InputAssemblerDeclarationDesc ToGVM(const D3D11_INPUT_ELEMENT_DESC* inputLa
 }
 
 VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, void* inputLayout,
-                                                 size_t inputLayoutSize)
+    size_t inputLayoutSize)
 {
     D3D11VertexShader* result = new D3D11VertexShader();
 
@@ -3034,7 +3045,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
             pVSData->GetBufferSize(),
             &result->pInputLayout));
 
-        
+
         GVM::ShaderDesc desc;
         desc.type = GVM::EShaderType::VERTEX_SHADER;
         desc.name = shaderData.name;
@@ -3051,7 +3062,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         if (psErrorBlob != nullptr)
         {
             CompileException ce{
-                __LINE__, __FILE__, (hr), infoManager.GetMessages(),
+                __LINE__, __FILE__,(hr),infoManager.GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
                 shaderData.name
             };
@@ -3064,7 +3075,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         if (psErrorBlob != nullptr)
         {
             CompileException ce{
-                __LINE__, __FILE__, (hr), infoManager.GetMessages(),
+                __LINE__, __FILE__,(hr),infoManager.GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
                 shaderData.name
             };
@@ -3105,7 +3116,7 @@ void D3D11Renderer::ApplyPixelShader(PixelShader* pixelShader)
         return;
     D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
     GFX_THROW_INFO_ONLY(context->PSSetShader(shader->pPixelShader.Get(), nullptr, 0u));
-    testApi->SetupShader(shader->testShader,GVM::EShaderType::PIXEL_SHADER);
+    testApi->SetupShader(shader->testShader, GVM::EShaderType::PIXEL_SHADER);
 }
 
 void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
@@ -3116,7 +3127,7 @@ void D3D11Renderer::ApplyVertexShader(VertexShader* vertexShader)
     GFX_THROW_INFO_ONLY(context->VSSetShader(shader->pVertexShader.Get(), nullptr, 0u));
     GFX_THROW_INFO_ONLY(context->IASetInputLayout(shader->pInputLayout.Get()));
     testApi->SetupInputLayout(shader->testIL);
-    testApi->SetupShader(shader->testShader,GVM::EShaderType::VERTEX_SHADER);
+    testApi->SetupShader(shader->testShader, GVM::EShaderType::VERTEX_SHADER);
 }
 
 ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
@@ -3139,8 +3150,8 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
     rDesc.Size = (UINT)((size / 16 + (size % 16 != 0)) * 16);
 
     result->buffer = testApi->CreateConstBuffer(rDesc);
-    result->bufferView = testApi->CreateConstBufferView({result->buffer, (UINT)((size / 16 + (size % 16 != 0)) * 16)});
-    
+    result->bufferView = testApi->CreateConstBufferView({result->buffer,(UINT)((size / 16 + (size % 16 != 0)) * 16)});
+
     result->size = size;
 
     return result;
@@ -3167,7 +3178,7 @@ void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data)
     GFX_THROW_INFO_ONLY(context->UpdateSubresource(
         buffer->handle.Get(), 0, 0,
         data, 0, 0));
-    testApi->SetConstBufferData(buffer->buffer,data,buffer->size);
+    testApi->SetConstBufferData(buffer->buffer, data, buffer->size);
 
     //GFX_THROW_INFO_ONLY(context->Map(
     //      buffer->handle.Get(),
@@ -3216,7 +3227,7 @@ void D3D11Renderer::Flush()
 }
 
 Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount,
-                                        uint8_t isRenderTarget)
+    uint8_t isRenderTarget)
 {
     return nullptr;
 }
@@ -3229,9 +3240,9 @@ void D3D11Renderer::ClearState()
     blendState = nullptr;
     rasterizerState = nullptr;
     depthStencilBuffer = nullptr;
-    SET_VECTOR_NULL(vertexTextures); 
-    SET_VECTOR_NULL(pixelSamplers); 
-    SET_VECTOR_NULL(pixelTextures); 
+    SET_VECTOR_NULL(vertexTextures);
+    SET_VECTOR_NULL(pixelSamplers);
+    SET_VECTOR_NULL(pixelTextures);
     SET_VECTOR_NULL(renderTargetViews);
     indexBuffer = nullptr;
     vertexBuffer = nullptr;
@@ -3274,12 +3285,12 @@ void D3D11Renderer::ApplyGeometryShader(GeometryShader* geometryShader)
     {
         D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
         GFX_THROW_INFO_ONLY(context->GSSetShader(shader->pGeometryShader.Get(), nullptr, 0u));
-        testApi->SetupShader(shader->testShader,GVM::EShaderType::GEOMETRY_SHADER);
+        testApi->SetupShader(shader->testShader, GVM::EShaderType::GEOMETRY_SHADER);
     }
     else
     {
         GFX_THROW_INFO_ONLY(context->GSSetShader(NULL, nullptr, 0u));
-        testApi->SetupShader(nullptr,GVM::EShaderType::COMPUTE_SHADER);
+        testApi->SetupShader(nullptr, GVM::EShaderType::COMPUTE_SHADER);
     }
 }
 
@@ -3289,12 +3300,12 @@ void D3D11Renderer::ApplyComputeShader(ComputeShader* computeShader)
     {
         D3D11ComputeShader* shader = (D3D11ComputeShader*)computeShader;
         GFX_THROW_INFO_ONLY(context->CSSetShader(shader->pComputeShader.Get(), nullptr, 0u));
-        testApi->SetupShader(shader->testShader,GVM::EShaderType::COMPUTE_SHADER);
+        testApi->SetupShader(shader->testShader, GVM::EShaderType::COMPUTE_SHADER);
     }
     else
     {
         GFX_THROW_INFO_ONLY(context->CSSetShader(NULL, nullptr, 0u));
-        testApi->SetupShader(nullptr,GVM::EShaderType::COMPUTE_SHADER);
+        testApi->SetupShader(nullptr, GVM::EShaderType::COMPUTE_SHADER);
     }
 }
 

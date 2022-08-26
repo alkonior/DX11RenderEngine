@@ -82,6 +82,8 @@ bool Graphics::RenderFrame() {
 	GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer.EndEvent();
 	
+	renderer->ClearState();
+	
 	pRenderer.BeginEvent("BloomMask draw.");
 	//GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
 	pRenderer.EndEvent();
@@ -91,7 +93,7 @@ bool Graphics::RenderFrame() {
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Models draw.");
-	GFX_CATCH_RENDER(managerModels.Render(*this););
+	//GFX_CATCH_RENDER(managerModels.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Dynamic motion blur draw.");
@@ -113,16 +115,14 @@ bool Graphics::RenderFrame() {
 	pRenderer.BeginEvent("Bloom pass.");
 	//GFX_CATCH_RENDER(managerBloom.Render(*this););
 	pRenderer.EndEvent();
-
+	
 	pRenderer.BeginEvent("End BSP draw.");
-	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("TAA-pass.");
-	GFX_CATCH_RENDER(managerTAA.Render(*this););
+	//GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
-
-	renderer->ClearState();
 	
 	pRenderer.BeginEvent("UI draw.");
 	GFX_CATCH_RENDER(managerUI.Render(););

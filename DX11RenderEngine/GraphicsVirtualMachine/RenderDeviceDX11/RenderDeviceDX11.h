@@ -147,7 +147,10 @@ protected:
     virtual void SetupShader(IShader* shader, EShaderType type);
     virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num);
     void SetupInputLayout(IInputLayout* layout) override;
-  
+    void ClearState() override;
+    
+    void ClearRenderTarget(const IRenderTargetView* rtView, FColor color) override;
+    void ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil) override;
 
 
 #pragma endregion

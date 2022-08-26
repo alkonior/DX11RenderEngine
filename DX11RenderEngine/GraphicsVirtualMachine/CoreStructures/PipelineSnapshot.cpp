@@ -62,6 +62,7 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
 
     auto* pointerPosition = cps->Data;
     cps->indexBuffer = mesh.indexBuffer;
+    cps->DepthBuffer = this->DepthStencilBuffer;
     cps->vertexDeclaration = this->InputDeclaration;
 
     auto renderTargets = (Compressed::RenderTargetDesc*)pointerPosition;

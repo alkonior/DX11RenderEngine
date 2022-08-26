@@ -309,6 +309,11 @@ IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& Re
         dx11desc.ByteWidth = desc.Width;
         dx11desc.Usage = D3D11_USAGE_DEFAULT;
         dx11desc.BindFlags = ToD3D11ResourceBinDings(ResourceDesc.resourceBindings);
+        if (!(dx11desc.BindFlags & D3D11_BIND_CONSTANT_BUFFER))
+        {
+            dx11desc.BindFlags |= D3D11_BIND_INDEX_BUFFER ;
+            dx11desc.BindFlags |= D3D11_BIND_VERTEX_BUFFER ;
+        }
         dx11desc.CPUAccessFlags = 0;
         dx11desc.MiscFlags = 0;
 
@@ -652,17 +657,65 @@ void RenderDeviceDX11::SetupBlendState(const Compressed::CoreBlendDesc& blendSta
     context->OMSetBlendState(bs, blendFactor.Color, blendState.desc.SampleMask);
 }
 
+D3D11_DEPTH_STENCIL_DESC ToDX11DSState(const Compressed::DepthStencilStateDesc& depthStencilState)
+{
+    const std::array<D3D11_STENCIL_OP, 9> depthOpArray = {
+        D3D11_STENCIL_OP(0),
+        D3D11_STENCIL_OP_KEEP,
+        D3D11_STENCIL_OP_ZERO,
+        D3D11_STENCIL_OP_REPLACE,
+        D3D11_STENCIL_OP_INCR_SAT,
+        D3D11_STENCIL_OP_DECR_SAT,
+        D3D11_STENCIL_OP_INVERT,
+        D3D11_STENCIL_OP_INCR,
+        D3D11_STENCIL_OP_DECR
+    };
+
+    const std::array<D3D11_COMPARISON_FUNC, 9> depthCompArray = {
+        D3D11_COMPARISON_FUNC(0),
+        D3D11_COMPARISON_NEVER,
+        D3D11_COMPARISON_LESS,
+        D3D11_COMPARISON_EQUAL,
+        D3D11_COMPARISON_LESS_EQUAL,
+        D3D11_COMPARISON_GREATER,
+        D3D11_COMPARISON_NOT_EQUAL,
+        D3D11_COMPARISON_GREATER_EQUAL,
+        D3D11_COMPARISON_ALWAYS
+    };
+
+
+    CD3D11_DEPTH_STENCIL_DESC desc{CD3D11_DEFAULT()};
+    desc.BackFace.StencilFailOp = depthOpArray[depthStencilState.Fields.BackStencilFailOp];
+    desc.BackFace.StencilFunc = depthCompArray[depthStencilState.Fields.BackStencilFunc];
+    desc.BackFace.StencilPassOp = depthOpArray[depthStencilState.Fields.BackStencilPassOp];
+    desc.BackFace.StencilDepthFailOp = depthOpArray[depthStencilState.Fields.BackStencilDepthFailOp];
+
+    desc.BackFace.StencilFailOp = depthOpArray[depthStencilState.Fields.FrontStencilFailOp];
+    desc.BackFace.StencilFunc = depthCompArray[depthStencilState.Fields.FrontStencilFunc];
+    desc.BackFace.StencilPassOp = depthOpArray[depthStencilState.Fields.FrontStencilPassOp];
+    desc.BackFace.StencilDepthFailOp = depthOpArray[depthStencilState.Fields.FrontStencilDepthFailOp];
+
+    desc.DepthEnable = depthStencilState.Fields.DepthEnable;
+    desc.DepthFunc = depthCompArray[depthStencilState.Fields.DepthFunc];
+    desc.StencilEnable = depthCompArray[depthStencilState.Fields.StencilEnable];
+    desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK(depthStencilState.Fields.DepthWriteMask);
+    desc.StencilWriteMask = depthStencilState.Fields.StencilWriteMask;
+    desc.StencilReadMask = depthStencilState.Fields.StencilReadMask;
+
+    return desc;
+}
+
 ID3D11DepthStencilState* RenderDeviceDX11::FetchDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState)
 {
-    if (hashDSS.size() == 0)
+    if (hashDSS.contains(depthStencilState.data))
     {
-        ID3D11DepthStencilState* bs;
-        CD3D11_DEPTH_STENCIL_DESC desc{CD3D11_DEFAULT()};
+        ID3D11DepthStencilState* ds;
+        auto desc = ToDX11DSState(depthStencilState);
 
-        device->CreateDepthStencilState(&desc, &bs);
-        hashDSS.insert({0,bs});
+        device->CreateDepthStencilState(&desc, &ds);
+        hashDSS.insert({depthStencilState.data,ds});
     }
-    return hashDSS[0];
+    return hashDSS[depthStencilState.data];
 }
 
 void RenderDeviceDX11::SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState)
@@ -671,17 +724,45 @@ void RenderDeviceDX11::SetupDepthStencilState(const Compressed::DepthStencilStat
     context->OMSetDepthStencilState(ds, 0);
 }
 
+
+
+D3D11_RASTERIZER_DESC ToDX11RSState(const Compressed::RasterizerStateDesc& rasterizerState)
+{
+    CD3D11_RASTERIZER_DESC result{CD3D11_DEFAULT()};
+    result.CullMode =
+        std::array<D3D11_CULL_MODE, 4>({
+            D3D11_CULL_NONE,
+            D3D11_CULL_NONE,
+            D3D11_CULL_FRONT,
+            D3D11_CULL_BACK
+        })
+        [rasterizerState.Fields.CullMode];
+    result.FillMode =
+        std::array<D3D11_FILL_MODE, 3>({
+            D3D11_FILL_MODE(0),
+            D3D11_FILL_WIREFRAME,
+            D3D11_FILL_SOLID
+        })
+        [rasterizerState.Fields.FillMode];
+    result.FrontCounterClockwise = rasterizerState.Fields.FrontCounterClockwise;
+    result.DepthClipEnable = rasterizerState.Fields.DepthClipEnable;
+    result.ScissorEnable = rasterizerState.Fields.ScissorEnable;
+    result.DepthBiasClamp = D3D11_FLOAT32_MAX;
+
+    return result;
+}
+
 ID3D11RasterizerState* RenderDeviceDX11::FetchRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState)
 {
-    if (hashRS.size() == 0)
+    if (!hashRS.contains(rasterizerState.data))
     {
-        ID3D11RasterizerState* bs;
-        CD3D11_RASTERIZER_DESC desc{CD3D11_DEFAULT()};
+        ID3D11RasterizerState* rs;
+        D3D11_RASTERIZER_DESC desc = ToDX11RSState(rasterizerState);
 
-        device->CreateRasterizerState(&desc, &bs);
-        hashRS.insert({0,bs});
+        device->CreateRasterizerState(&desc, &rs);
+        hashRS.insert({rasterizerState.data,rs});
     }
-    return hashRS[0];
+    return hashRS[rasterizerState.data];
 }
 
 
@@ -741,6 +822,9 @@ ID3D11SamplerState* RenderDeviceDX11::FetchSamplerState(const Compressed::Sample
     CD3D11_SAMPLER_DESC desc{CD3D11_DEFAULT()};
     assert(state.Fields.Filter != 0);
     desc.Filter = ToD3D11SamplerFilter[state.Fields.Filter];
+    desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
     desc.MaxAnisotropy = state.Fields.MaxAnisotropy;
     desc.MaxLOD = state.MaxLOD;
     desc.MinLOD = state.MinLOD;
@@ -817,7 +901,7 @@ void RenderDeviceDX11::SetupVertexBuffer(const IVertexBufferView* vertexBuffers[
 void RenderDeviceDX11::SetupIndexBuffer(const IIndexBufferView* indices)
 {
     const IndexBufferViewD3D11* indexBuffer = reinterpret_cast<const IndexBufferViewD3D11*>(indices);
-    context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0);
+    GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0));
 }
 
 void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
@@ -910,6 +994,19 @@ void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8
 void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout)
 {
     context->IASetInputLayout((ID3D11InputLayout*)layout);
+}
+void RenderDeviceDX11::ClearState()
+{
+    context->ClearState();
+}
+void RenderDeviceDX11::ClearRenderTarget(const IRenderTargetView* rtView, FColor color)
+{
+    context->ClearRenderTargetView((ID3D11RenderTargetView*)rtView ? (ID3D11RenderTargetView*)rtView : swapchainRTView, color.Color);
+}
+
+void RenderDeviceDX11::ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil)
+{
+    context->ClearDepthStencilView((ID3D11DepthStencilView*)dsView, D3D11_CLEAR_DEPTH, depth, stencil);
 }
 
 void RenderDeviceDX11::Draw(DrawCall call)

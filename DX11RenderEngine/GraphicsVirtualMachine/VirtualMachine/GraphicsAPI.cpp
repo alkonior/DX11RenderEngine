@@ -15,11 +15,21 @@ void GraphicsApi::Present()
 
 
 void GraphicsApi::ClearRenderTargets(RenderTargetView* renderTargets[], int32_t numRenderTargets, FColor color)
-{ }
+{
+    for (int i = 0; i < numRenderTargets; i++)
+    {
+        graphicsMachine->ClearRenderTarget(renderTargets[i], color);
+    }
+    
+}
 void GraphicsApi::ClearRenderTarget(RenderTargetView* renderTarget, FColor color)
-{ }
-void GraphicsApi::Clear(DepthStencilView* septhStencil, float depth, int8_t stencil)
-{ }
+{
+    graphicsMachine->ClearRenderTarget(renderTarget, color);
+}
+void GraphicsApi::ClearDepthStencil(DepthStencilView* septhStencil, float depth, int8_t stencil)
+{
+    graphicsMachine->ClearDepthStencil(septhStencil, depth, stencil);
+}
 
 void GraphicsApi::ClearState()
 {
@@ -45,7 +55,7 @@ void GraphicsApi::ClearState()
     //ps->texturesNum = 0;
     //ps->Textures = {};
     *ps = PipelineSnapshot();
-
+    graphicsMachine->ClearState();
     wasPSUpdated = true;
 }
 
