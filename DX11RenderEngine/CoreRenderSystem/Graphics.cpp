@@ -89,15 +89,15 @@ bool Graphics::RenderFrame() {
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Static motion blur draw.");
-	//GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
+	GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("Models draw.");
-	//GFX_CATCH_RENDER(managerModels.Render(*this););
+	GFX_CATCH_RENDER(managerModels.Render(*this););
 	pRenderer.EndEvent();
 
 	pRenderer.BeginEvent("Dynamic motion blur draw.");
-	//GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+	GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("SSAO draw.");
@@ -117,11 +117,11 @@ bool Graphics::RenderFrame() {
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("End BSP draw.");
-	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("TAA-pass.");
-	//GFX_CATCH_RENDER(managerTAA.Render(*this););
+	GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer.EndEvent();
 	
 	pRenderer.BeginEvent("UI draw.");

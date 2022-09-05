@@ -55,7 +55,7 @@ enum class ELogicOperator : uint8_t {
 };
 
 enum class EBlendType : uint8_t {
-    BLEND_UNKNOWN,
+    BLEND_UNKNOWN = 0,
     BLEND_ZERO,
     BLEND_ONE,
     BLEND_SRC_COLOR,
@@ -66,9 +66,9 @@ enum class EBlendType : uint8_t {
     BLEND_INV_DEST_ALPHA,
     BLEND_DEST_COLOR,
     BLEND_INV_DEST_COLOR,
+    BLEND_SRC_ALPHA_SAT,
     BLEND_BLEND_FACTOR,
     BLEND_INV_BLEND_FACTOR,
-    BLEND_SRC_ALPHA_SAT,
 };
 
 

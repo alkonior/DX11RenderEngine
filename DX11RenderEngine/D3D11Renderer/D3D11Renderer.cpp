@@ -456,7 +456,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true,multiSampleMask,{factor[0],factor[1],factor[2],factor[3]}});
+        testApi->SetupCoreBlendState({true,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -481,7 +481,7 @@ void D3D11Renderer::SetMultiSampleMask(int32_t mask)
             factor,
             multiSampleMask
         ));
-        testApi->SetupCoreBlendState({true,multiSampleMask,{factor[0],factor[1],factor[2],factor[3]}});
+        testApi->SetupCoreBlendState({true,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -559,7 +559,8 @@ void D3D11Renderer::SetBlendState(const BlendState& blendState)
         GFX_THROW_INFO_ONLY(context->OMSetBlendState(
             bs.Get(),
             factor,
-            (UINT)multiSampleMask));
+            (UINT)multiSampleMask))
+        testApi->SetupCoreBlendState({true,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
 
@@ -2982,6 +2983,7 @@ GVM::EFormat ToGVM(const DXGI_FORMAT& format)
         {DXGI_FORMAT_R32_FLOAT,GVM::EFormat::FORMAT_R32_FLOAT},
         {DXGI_FORMAT_R32G32_FLOAT,GVM::EFormat::FORMAT_R32G32_FLOAT},
         {DXGI_FORMAT_R32G32B32_FLOAT,GVM::EFormat::FORMAT_R32G32B32_FLOAT},
+        {DXGI_FORMAT_R32G32B32A32_FLOAT,GVM::EFormat::FORMAT_R32G32B32A32_FLOAT},
     };
     return formatMap.at(format);
 }

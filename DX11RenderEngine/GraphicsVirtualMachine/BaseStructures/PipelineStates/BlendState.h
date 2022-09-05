@@ -70,7 +70,7 @@ struct BlendStateDesc : BaseStateDesc
 
 struct CoreBlendDesc
 {
-    bool                IsBlendEnable           = false;
+   // bool                IsBlendEnable           = false;
     uint32_t            SampleMask              = 0xffffffff;
     float               BlendFactor[4]          = {1,1,1,1};
 };

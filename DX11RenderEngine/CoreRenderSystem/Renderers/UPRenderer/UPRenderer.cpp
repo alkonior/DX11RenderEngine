@@ -72,7 +72,7 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelData newModel, TexturesManag
 void UPRenderer::Render(GraphicsBase& gfx) {
 	
 	RenderTargetBinding* targets[] = {
-		 nullptr, //&gfx.texturesManger.diffuseColorRT,
+		 &gfx.texturesManger.diffuseColorRT,
 		 &gfx.texturesManger.lightColorRT,
 		 &gfx.texturesManger.alphaSurfacesRT,
 		 &gfx.texturesManger.velocityFieldRT,

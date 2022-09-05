@@ -632,15 +632,44 @@ void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[]
 
 ID3D11BlendState* RenderDeviceDX11::FetchBlendState(const Compressed::CoreBlendDesc& blendState)
 {
-    if (hashBS.size() == 0)
+    auto hash =
+       (std::hash<uint64_t>{}(blendState.BlendStates[0].data)      )^(std::hash<uint64_t>{}(blendState.BlendStates[4].data) << 4u)^
+       (std::hash<uint64_t>{}(blendState.BlendStates[1].data) >> 1u)^(std::hash<uint64_t>{}(blendState.BlendStates[5].data) << 1u)^
+       (std::hash<uint64_t>{}(blendState.BlendStates[2].data) >> 2u)^(std::hash<uint64_t>{}(blendState.BlendStates[6].data) << 2u)^
+       (std::hash<uint64_t>{}(blendState.BlendStates[3].data) >> 3u)^(std::hash<uint64_t>{}(blendState.BlendStates[7].data) << 3u);
+    if (!hashBS.contains(hash))
     {
         ID3D11BlendState* bs;
         CD3D11_BLEND_DESC desc{CD3D11_DEFAULT()};
+        desc.AlphaToCoverageEnable = 0;
+        desc.IndependentBlendEnable = 0;
+        
+        for (int i =0; i< 8; i++)
+        {
+            auto& tbs = blendState.BlendStates[i];
+            BlendStateDesc test = GVM::BlendStateDesc(tbs);
+            desc.RenderTarget[i].BlendEnable = tbs.Fields.BlendEnable &&
+                !(
+                    tbs.Fields.SrcBlend == D3D11_BLEND_ONE &&
+                    tbs.Fields.DestBlend == D3D11_BLEND_ZERO &&
+                    tbs.Fields.SrcBlendAlpha == D3D11_BLEND_ONE &&
+                    tbs.Fields.DestBlendAlpha == D3D11_BLEND_ZERO
+                );
+            if (desc.RenderTarget[i].BlendEnable)
+            {
+                desc.RenderTarget[i].BlendOp = D3D11_BLEND_OP((tbs.Fields.BlendOp));
+                desc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP((tbs.Fields.BlendOpAlpha));
+                desc.RenderTarget[i].DestBlend = D3D11_BLEND((tbs.Fields.DestBlend));
+                desc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND((tbs.Fields.DestBlendAlpha));
+                desc.RenderTarget[i].SrcBlend = D3D11_BLEND((tbs.Fields.SrcBlend));
+                desc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND((tbs.Fields.SrcBlendAlpha));
+            }
+        }
 
         device->CreateBlendState(&desc, &bs);
-        hashBS.insert({0,bs});
+        hashBS.insert({hash,bs});
     }
-    return hashBS[0];
+    return hashBS[hash];
 }
 
 void RenderDeviceDX11::SetupBlendState(const Compressed::CoreBlendDesc& blendState)
