@@ -63,6 +63,7 @@ void MotionBlurRenderer::Init(void* shaderData, size_t dataSize) {
 void MotionBlurRenderer::Init(LPCWSTR dirr) {}
 
 void MotionBlurRenderer::RenderStatic(GraphicsBase& gfx) {
+	//renderer->ClearState();
 	QuadRenderer::Render();
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -95,7 +96,7 @@ void MotionBlurRenderer::RenderStatic(GraphicsBase& gfx) {
 }
 
 void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
-	QuadRenderer::Render();
+	//renderer->ClearState();
 	QuadRenderer::Render();
 	int32_t width, height;
 	renderer->GetBackbufferSize(&width, &height);
@@ -118,6 +119,10 @@ void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(MBDYNAMIC));
 	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
+	
+	//renderer->ClearState();
+	QuadRenderer::Render();
+	renderer->VerifyConstBuffer(constBuffer, motionBlurCosntBuffer.slot);
 	
 	renderer->VerifyPixelTexture(0, nullptr);
 	renderer->VerifyPixelTexture(1, nullptr);

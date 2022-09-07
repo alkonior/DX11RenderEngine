@@ -54,7 +54,14 @@ void VirtualMachine::ExecuteSetupPipeline()
     auto Viewports = (Compressed::ViewportDesc*)(ps->Data+ps->ViewportsShift);
     auto Samplers = (Compressed::SamplerStateDesc*)(ps->Data+ps->SamplersShift);
 
+    RenderDevice->ClearState();
     
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->CS), EShaderType::COMPUTE_SHADER);
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->PS), EShaderType::PIXEL_SHADER);
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->VS), EShaderType::VERTEX_SHADER);
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->DS), EShaderType::DOMAIN_SHADER);
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->HS), EShaderType::HULL_SHADER);
+    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->GS), EShaderType::GEOMETRY_SHADER);
     RenderDevice->SetupViewports(Viewports,ps->viewportsNum);
     RenderDevice->SetupBlendState(cBS);
     RenderDevice->SetupDepthStencilState(ps->depthStencilState);
@@ -67,12 +74,6 @@ void VirtualMachine::ExecuteSetupPipeline()
     RenderDevice->SetupRenderTargets(
         (const IRenderDevice::IRenderTargetView**)renderTargets,ps->renderTargetsNum,
         (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(ps->DepthBuffer));
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->CS), EShaderType::COMPUTE_SHADER);
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->PS), EShaderType::PIXEL_SHADER);
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->VS), EShaderType::VERTEX_SHADER);
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->DS), EShaderType::DOMAIN_SHADER);
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->HS), EShaderType::HULL_SHADER);
-    RenderDevice->SetupShader(resourcesManager.GetRealShader(ps->GS), EShaderType::GEOMETRY_SHADER);
     RenderDevice->SetupConstBuffers(constBuffers,ps->constBuffersNum);
     RenderDevice->SetupInputLayout(resourcesManager.GetRealInputLayout(ps->vertexDeclaration));
     

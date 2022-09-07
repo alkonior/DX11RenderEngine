@@ -271,7 +271,8 @@ void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource
     auto& Resource = resourcesManager.GetResource(resource);
     
     uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top)
-    *FormatByteSize[to_underlying(Resource.resourceDescription.Format)];
+    *(FormatByteSize[to_underlying(Resource.resourceDescription.Format)]);
+        //+  ((Resource.resourceDescription.Dimension == EResourceDimension::RESOURCE_DIMENSION_BUFFER) ? 1 : 0));
     
     ResourceUpdateData rud = {rect, dstSubresource, srcRowPitch,srcDepthPitch, dataSize};
     PushData(rud);

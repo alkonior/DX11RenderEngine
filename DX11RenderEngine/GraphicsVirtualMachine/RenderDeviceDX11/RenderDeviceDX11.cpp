@@ -376,6 +376,16 @@ constexpr D3D11_RTV_DIMENSION ToD3D_RTViewDimension[] = {
     D3D11_RTV_DIMENSION_TEXTURE3D,
 };
 
+
+constexpr D3D11_UAV_DIMENSION ToD3D_UAViewDimension[] = {
+    D3D11_UAV_DIMENSION_UNKNOWN,
+    D3D11_UAV_DIMENSION_TEXTURE1D,
+    D3D11_UAV_DIMENSION_TEXTURE1DARRAY,
+    D3D11_UAV_DIMENSION_TEXTURE2D,
+    D3D11_UAV_DIMENSION_TEXTURE2DARRAY,
+    D3D11_UAV_DIMENSION_TEXTURE3D,
+};
+
 D3D11_SHADER_RESOURCE_VIEW_DESC ToD3D11ShaderView(const ShaderResourceViewDesc& desc)
 {
     D3D11_SHADER_RESOURCE_VIEW_DESC result;
@@ -391,6 +401,15 @@ D3D11_RENDER_TARGET_VIEW_DESC ToD3D11RTView(const RenderTargetViewDesc& desc)
     D3D11_RENDER_TARGET_VIEW_DESC result;
     result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
     result.ViewDimension = ToD3D_RTViewDimension[to_underlying(desc.Dimension)];
+    result.Texture2D.MipSlice = 0;
+    return result;
+}
+
+D3D11_UNORDERED_ACCESS_VIEW_DESC ToD3D11UAView(const UATargetViewDesc& desc)
+{
+    D3D11_UNORDERED_ACCESS_VIEW_DESC result;
+    result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
+    result.ViewDimension = ToD3D_UAViewDimension[to_underlying(desc.Dimension)];
     result.Texture2D.MipSlice = 0;
     return result;
 }
@@ -479,7 +498,26 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
     }
     case GpuResourceView::EViewType::UA:
     {
-        return nullptr;
+        ID3D11UnorderedAccessView* result;
+        if (desc.rtViewDescription.MakeDefault)
+        {
+            device->CreateUnorderedAccessView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                nullptr,
+                &result
+            );
+        }
+        else
+        {
+            auto d3d11desc = ToD3D11UAView(desc.uaViewDescription);
+            device->CreateUnorderedAccessView(
+                reinterpret_cast<ID3D11Resource*>(ResourceDesc.resource),
+                &d3d11desc,
+                &result
+            );
+        }
+
+        return reinterpret_cast<IResourceView*>(result);
         break;
     }
     }
@@ -585,7 +623,7 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
     //	w = (w + blockSize - 1) & ~(blockSize - 1);
     //	h = (h + blockSize - 1) & ~(blockSize - 1);
     //}
-    if (resource.resourceBindings && to_underlying(EBindFlags::BIND_CONSTANT_BUFFER))
+    if (resource.resourceBindings & to_underlying(EBindFlags::BIND_CONSTANT_BUFFER))
     {
         GFX_THROW_INFO_ONLY(context->UpdateSubresource(
             reinterpret_cast<ID3D11Resource*>(resource.resource),
@@ -595,15 +633,24 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
             srcRowPitch,
             srcDepthPitch
         ));
+    }else
+    {
+        dstBox.left = rect.Left;
+        dstBox.top = rect.Top;
+        dstBox.front = rect.Front;
+        dstBox.right = rect.Right;
+        dstBox.bottom = rect.Bottom;
+        dstBox.back = rect.Back;
+
+        GFX_THROW_INFO_ONLY(context->UpdateSubresource(
+                    reinterpret_cast<ID3D11Resource*>(resource.resource),
+                    dstSubresource,
+                    &dstBox,
+                    pSrcData,
+                    srcRowPitch,
+                    srcDepthPitch
+                ));
     }
-    dstBox.left = rect.Left;
-    dstBox.top = rect.Top;
-    dstBox.front = rect.Front;
-    dstBox.right = rect.Right;
-    dstBox.bottom = rect.Bottom;
-    dstBox.back = rect.Back;
-
-
     //SDL_LockMutex(renderer->ctxLock);
 }
 
@@ -618,7 +665,7 @@ bool ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D11_VIEWPORT
             result = true;
         }
     }
-    return result;
+    return true;
 }
 
 void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
@@ -935,6 +982,18 @@ void RenderDeviceDX11::SetupIndexBuffer(const IIndexBufferView* indices)
 
 void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
 {
+    if (textures == nullptr)
+    {
+        static ID3D11ShaderResourceView* nulls[128];
+        context->CSSetShaderResources(0, 128, nulls);
+        context->PSSetShaderResources(0, 128, nulls);
+        context->GSSetShaderResources(0, 128, nulls);
+        context->DSSetShaderResources(0, 128, nulls);
+        context->HSSetShaderResources(0, 128, nulls);
+        context->VSSetShaderResources(0, 128, nulls);
+        return;
+    }
+    
     for (int i = 0; i < num; i++)
     {
         ID3D11ShaderResourceView* sh = const_cast<ID3D11ShaderResourceView*>(reinterpret_cast<const ID3D11ShaderResourceView*>(textures[i]));
@@ -950,6 +1009,13 @@ void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
 
 void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)
 {
+    this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer;
+    if (renderTargets == nullptr)
+    {
+        static ID3D11RenderTargetView* nulls[MAX_RENDERTARGET_ATTACHMENTS];
+        context->OMSetRenderTargets(MAX_RENDERTARGET_ATTACHMENTS, nulls, this->depthStencilBuffer);
+        return;
+    }
     for (int i = 0; i < num; i++)
     {
         renderTargetViews[i] = renderTargets[i] == nullptr ? swapchainRTView : ((ID3D11RenderTargetView*)renderTargets[i]);
@@ -958,7 +1024,6 @@ void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView* renderTargets
     {
         renderTargetViews[i] = nullptr;
     }
-    this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer;
 
     context->OMSetRenderTargets(MAX_RENDERTARGET_ATTACHMENTS, renderTargetViews.data(), this->depthStencilBuffer);
 }
@@ -1044,7 +1109,7 @@ void RenderDeviceDX11::Draw(DrawCall call)
     {
     case EDrawCallType::DRAW_INDEXED:
     {
-        GFX_THROW_INFO_ONLY(context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>()));
+        context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
         break;
     }
     case EDrawCallType::DRAW:
@@ -1055,6 +1120,11 @@ void RenderDeviceDX11::Draw(DrawCall call)
     case EDrawCallType::DRAW_INDEXED_INSTANCED:
     {
         context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(), call.get<3>(), call.get<4>());
+        break;
+    }
+    case EDrawCallType::DISPATCH:
+    {
+        context->Dispatch(call.get<0>(), call.get<1>(), call.get<2>());
         break;
     }
     }

@@ -366,7 +366,7 @@ constexpr EShaderViewDimension ResourceDimToViewDim[]=
     
 enum class ERTViewDimension {
     DIMENSION_UNKNOWN = 0,
-    //DIMENSION_BUFFER, TODO unsupported
+    DIMENSION_BUFFER, //TODO unsupported
     DIMENSION_TEXTURE1D,
     DIMENSION_TEXTURE1D_ARRAY,
     DIMENSION_TEXTURE2D,

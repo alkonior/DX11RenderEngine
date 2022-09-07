@@ -747,7 +747,7 @@ void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)
             1,
             view,
             iiiii));
-        //testApi->SetupTexture(d3dTexture->uaView, index); todo
+        testApi->SetupTexture(d3dTexture->uaTestView, index); //todo
     }
 }
 
@@ -2770,11 +2770,11 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
                     uint32_t(vertexBuffer.vertexStride[i]),
                     vertexBuffer.vertexOffset[i]
                 });
-            vb.vertexBuffers[0] = buff->vertexViewTest;
+            vb.vertexBuffers[i] = buff->vertexViewTest;
             //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
             //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
         }
-        this->vertexBuffer = buffers[0];
+       // this->vertexBuffer = buffers[0];
         //std::lock_guard<std::mutex> guard(ctxLock);
         GFX_THROW_INFO_ONLY(
             context->IASetVertexBuffers(0u, (UINT)vertexBuffer.buffersCount, buffers.data(), vertexBuffer.
@@ -2822,7 +2822,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     {
         CompileException ce{
             __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-            shaderData.name
+            shaderData.name, "PixelShader", d3ddefines
         };
         throw ce;
     }
@@ -2830,7 +2830,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     {
         CompileException ce{
             __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-            shaderData.name
+            shaderData.name, "PixelShader", d3ddefines
         };
         throw ce;
     }
@@ -2887,7 +2887,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
         CompileException ce{
             __LINE__, __FILE__,(hr),infoManager.GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
-            shaderData.name
+            shaderData.name, "Compute Shader", d3ddefines
         };
         throw ce;
     }
@@ -2896,7 +2896,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
         CompileException ce{
             __LINE__, __FILE__,(hr),infoManager.GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
-            shaderData.name
+            shaderData.name, "ComputeShader", d3ddefines
         };
         throw ce;
     }
@@ -3066,7 +3066,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
             CompileException ce{
                 __LINE__, __FILE__,(hr),infoManager.GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
+                shaderData.name, "VertexShader", d3ddefines
             };
             throw ce;
         }
@@ -3079,7 +3079,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
             CompileException ce{
                 __LINE__, __FILE__,(hr),infoManager.GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
+                shaderData.name, "VertexShader", d3ddefines
             };
             throw ce;
         }
@@ -3251,6 +3251,7 @@ void D3D11Renderer::ClearState()
     inputLayout = nullptr;
     topology = PRIMITIVETYPE_UNKNOWN;
     depthStencilBuffer = nullptr;
+    testApi->ClearState();
 }
 
 
@@ -3266,6 +3267,7 @@ void D3D11Renderer::BeginEvent(const char* name)
     std::wstring wc(strlen(name), L'#');
     mbstowcs(&wc[0], name, strlen(name));
     perf->BeginEvent(wc.c_str());
+    //testApi->BeginEvent(wc.c_str());
 }
 
 void D3D11Renderer::EndEvent()
@@ -3292,7 +3294,7 @@ void D3D11Renderer::ApplyGeometryShader(GeometryShader* geometryShader)
     else
     {
         GFX_THROW_INFO_ONLY(context->GSSetShader(NULL, nullptr, 0u));
-        testApi->SetupShader(nullptr, GVM::EShaderType::COMPUTE_SHADER);
+        testApi->SetupShader(nullptr, GVM::EShaderType::GEOMETRY_SHADER);
     }
 }
 
@@ -3314,6 +3316,7 @@ void D3D11Renderer::ApplyComputeShader(ComputeShader* computeShader)
 void D3D11Renderer::Dispatch(size_t x, size_t y, size_t z)
 {
     context->Dispatch(x, y, z);
+    testApi->Dispatch(x,y,z);
 }
 
 void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader)

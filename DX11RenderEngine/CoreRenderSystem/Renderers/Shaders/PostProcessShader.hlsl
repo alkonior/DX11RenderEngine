@@ -91,6 +91,6 @@ float4 psIn(PSIn input) : SV_Target
     float4 bloom = bloomMask.Sample(blureSampler, texCoord);
     
     
-    return color*light + bloom;
+    return color;//*light + bloom;
 
 }

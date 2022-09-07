@@ -76,9 +76,15 @@ private:
 
 class CompileException : public HrException {
 	std::string compileError;
+	std::string shaderType;
+	std::string defines;
 	std::string shaderName;
 public:
 	CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError, const char* shaderName) noexcept;
+	CompileException(int line, const char* file, HRESULT hr,
+		std::vector<std::string> infoMsgs, const char* compileError, const char* shaderName,
+		std::string typeShader,
+		const std::vector<_D3D_SHADER_MACRO>& d3ddefines);
 	const char* what() const noexcept override;
 	//const char* GetType() const noexcept override;
 	//std::string GetErrorInfo() const noexcept;

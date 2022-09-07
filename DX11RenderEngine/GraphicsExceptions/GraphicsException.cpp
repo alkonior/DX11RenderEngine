@@ -136,6 +136,18 @@ CompileException::CompileException(int line, const char* file, HRESULT hr, std::
 	this->compileError = std::string(compileError);
 	this->shaderName = std::string(shaderName);
 }
+CompileException::CompileException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs, const char* compileError, const char* shaderName,
+	std::string typeShader, const std::vector<_D3D_SHADER_MACRO>& d3ddefines):
+CompileException(line, file,  hr, infoMsgs, compileError,  shaderName)
+{
+	shaderType=(typeShader);
+	for (auto& def : d3ddefines)
+	{
+		defines.append(def.Name);
+		defines.append(": ");
+		defines.append(def.Definition);
+	}
+}
 
 const char* CompileException::what() const noexcept {
 	std::ostringstream oss;
@@ -146,7 +158,9 @@ const char* CompileException::what() const noexcept {
 		<< std::endl
 		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
 		<< "[Error String] " << GetErrorString() << std::endl
-		<< "[Description] " << GetErrorDescription() << std::endl;
+		<< "[Description] " << GetErrorDescription() << std::endl
+		<< "[Type] " << shaderType << std::endl
+		<< "[Defines] " << std::endl << defines << std::endl;
 	if (!info.empty()) {
 		oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
 	}
