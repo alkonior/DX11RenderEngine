@@ -1,7 +1,13 @@
 // ReSharper disable CppCStyleCast
 #include "D3D11Renderer.h"
 
+#include "D3D11Texture.h"
+#include "D3D11Buffer.h"
+#include "D3D11Shaders.h"
+#include "D3D11RenderBuffer.h"
+
 #include "GraphicsExceptions/GraphicsException.h"
+#include "RenderDeviceDX11.h"
 
 #pragma warning( disable : 26812 )
 
@@ -46,15 +52,17 @@ IRenderer* IRenderer::pRenderer = nullptr;
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
+    auto ppppp = new GVM::Dx11PlatformHandle();
+    ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle2;
     GVM::RenderDeviceInitParams init{
-        GVM::EDeviceToUse::DX11,
         presentationParameters.backBufferWidth,
         presentationParameters.backBufferHeight,
-        {(HWND)presentationParameters.deviceWindowHandle2},
+        ppppp,
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
 
-    testApi = new GVM::GraphicsApi(init, true);
+    testRD = new GVM::RenderDeviceDX11(init, debugMode);
+    testApi = new GVM::GraphicsApi(testRD);
 
 
     renderer = this;
@@ -1287,7 +1295,7 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
         NULL,
         &result->uaView
     ));
-    result->uaTestView = testApi->CreateUaView({result->resource,true});
+    result->uaTestView = testApi->CreateUaView(GVM::UATargetViewDesc(result->resource,true));
 
     return result;
 }
