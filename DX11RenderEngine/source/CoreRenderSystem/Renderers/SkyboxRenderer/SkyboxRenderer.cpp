@@ -123,7 +123,7 @@ void SkyboxRenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 	renderer->VerifyPixelTexture(0, skyTexture);
 
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
 		0, 0, 0, 0, 12);
 
 }

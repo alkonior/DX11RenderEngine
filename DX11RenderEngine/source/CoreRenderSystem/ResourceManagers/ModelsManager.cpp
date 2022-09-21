@@ -25,7 +25,7 @@ void ModelsManager::RegisterModel(const ModelData& model, size_t id) {
 	pModel.vertexBuffer = vertexBuffer;
 	pModel.indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, (UINT)(model.indexes.size() * sizeof(uint16_t)));
 	renderer->SetIndexBufferData(pModel.indexBuffer, 0, (void*)model.indexes.data(), (UINT)(model.indexes.size() * sizeof(uint16_t)), SetDataOptions::SETDATAOPTIONS_DISCARD);
-	pModel.pt = model.pt;
+	pModel.pt = (Renderer::PrimitiveType)model.pt;
 	pModel.primitiveCount = model.primitiveCount;
 	pModel.indexBufferElementSize = sizeof(uint16_t) * 8;
 }
@@ -60,7 +60,7 @@ void ModelsManager::RegisterFramedModel(const FramedModelData& model, size_t id)
 	pModel.vertexBuffer = vertexBuffer;
 	pModel.indexBuffer = renderer->GenIndexBuffer(0, BufferUsage::BUFFERUSAGE_WRITEONLY, (UINT)(model.indexes.size() * sizeof(uint16_t)));
 	renderer->SetIndexBufferData(pModel.indexBuffer, 0, (void*)model.indexes.data(), (UINT)(model.indexes.size() * sizeof(uint16_t)), SetDataOptions::SETDATAOPTIONS_DISCARD);
-	pModel.pt = model.pt;
+	pModel.pt = (Renderer::PrimitiveType)model.pt;
 	pModel.primitiveCount = model.primitiveCount;
 	pModel.indexBufferElementSize = sizeof(uint16_t) * 8;
 }

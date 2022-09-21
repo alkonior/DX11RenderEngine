@@ -53,13 +53,12 @@ struct PipelineSnapshot {
     uint8_t                     texturesNum = 0;
     ResourceView*               Textures[128] = {};
 
-    uint32_t GetSize(const IStructuresSize& structuresSizes) const;
+    uint32_t GetSize() const;
 
     struct CompressArgs
     {
         CompressedType* cps;
         ResourcesManager& resourceManager;
-        const IStructuresSize& structuresSizes;
     };
     void Compress(const CompressArgs& args) const;
     

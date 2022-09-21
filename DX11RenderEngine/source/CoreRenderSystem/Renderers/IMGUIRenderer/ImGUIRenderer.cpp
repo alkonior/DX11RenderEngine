@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ImGUIRenderer.h"
 #include "SimpleMath.h"
-#include "Utils/Geometry.h"
+#include "Geometry.h"
 
 void ImGUIRenderer::Init() {
 

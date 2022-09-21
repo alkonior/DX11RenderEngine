@@ -21,18 +21,6 @@
     <ClInclude Include="include\RenderDeviceDX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\BaseClasses\InputLayoutDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BaseClasses\ResourceDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BaseClasses\ResourceViewDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BaseClasses\ShaderDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\BaseDX11Classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -62,21 +50,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\RenderDeviceDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BaseClasses\InputLayoutDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BaseClasses\ResourceDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BaseClasses\ResourceViewDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BaseClasses\ShaderDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\BuffersViews\ConstBufferViewD3D11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RenderDeviceDX11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿#include "TransformUtils.h"
+﻿#pragma once
+#include "TransformUtils.h"
 
 
 struct UPVertex {

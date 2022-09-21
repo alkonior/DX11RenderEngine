@@ -4,8 +4,7 @@
 #include "DrawData.h"
 
 
-
-template<class VertexType>
+template<class VertexType, class Mesh = MeshData<VertexType>>
 class DynamicMeshBuffer {
 
     size_t vertexBuffSize = 0;
@@ -40,12 +39,6 @@ public:
     //Renderer::VertexBufferBinding vertexBuffer;
     //Renderer::Buffer* indexBuffer = nullptr;
 
-    struct MeshData {
-        Renderer::PrimitiveType pt;
-        size_t primitiveCount;
-        std::vector<VertexType> vertixes;
-        std::vector<uint32_t> indexes;
-    };
 
 
     DynamicMeshBuffer(size_t vertexBuffCapacity, size_t indexBuffCapacity) : vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity)
@@ -96,7 +89,7 @@ public:
         }
     }
 
-    MeshHashData AddMesh(const MeshData& model)
+    MeshHashData AddMesh(const Mesh& model)
     {
         MeshHashData res{cpuVertices.size(),cpuIndexes.size(),model.primitiveCount,model.pt};
 
@@ -115,7 +108,7 @@ public:
 
     //bool forceUpdate = true;
 
-    void UpdateMesh(const MeshHashData& oldModel, const MeshData& newModel)
+    void UpdateMesh(const MeshHashData& oldModel, const Mesh& newModel)
     {
         for (size_t i = 0; i < newModel.indexes.size(); i++)
         {

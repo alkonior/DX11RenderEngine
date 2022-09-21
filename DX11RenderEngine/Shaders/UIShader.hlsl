@@ -24,9 +24,9 @@ struct PSIn {
 
 PSIn vsIn(VSIn input) {
 	PSIn vso;
-	vso.pos = mul(float4(input.pos.x, input.pos.y, 0.0f, 1.0f), UITransform.transform);
+	vso.pos = mul(float4(input.pos.x, input.pos.y, 0.0f, 1.0f), uiTransformCB.transform);
 #ifdef SCALED
-	vso.uv = input.uv * UITransform.uvScale + UITransform.uvShift;
+	vso.uv = input.uv * uiTransformCB.uvScale + uiTransformCB.uvShift;
 #else
 	vso.uv = input.uv;
 #endif
@@ -39,7 +39,7 @@ SamplerState basicSampler : register(s0);
 float4 psIn(PSIn input) : SV_Target
 {
 #ifdef COLORED
-	return UITransform.color;
+	return uiTransformCB.color;
 #endif
 
 #ifdef RED

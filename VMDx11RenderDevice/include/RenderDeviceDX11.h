@@ -135,7 +135,6 @@ private:
 
     
 protected:
-    IStructuresSize GetClassesSize() override;
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
     void DestroyResource(IResource* resource) override;

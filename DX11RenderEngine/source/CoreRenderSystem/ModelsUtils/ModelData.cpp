@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "Utils/ModelData.h"
 
-ModelData::ModelData(std::vector<ModelVertex> verticies, std::vector<uint16_t> indexes, Renderer::PrimitiveType pt, size_t primitiveCount) :
+ModelData::ModelData(std::vector<ModelVertex> verticies, std::vector<uint16_t> indexes, PrimitiveType pt, size_t primitiveCount) :
 	verticies(verticies), indexes(indexes), pt(pt), primitiveCount(primitiveCount)
 {}
 
 FramedModelData::FramedModelData(): primitiveCount(0) {}
 
-FramedModelData::FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, Renderer::PrimitiveType pt, size_t primitiveCount) :
+FramedModelData::FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, PrimitiveType pt, size_t primitiveCount) :
 	verticies(verticies), frames(frames), indexes(indexes), pt(pt), primitiveCount(primitiveCount)
 {}
 

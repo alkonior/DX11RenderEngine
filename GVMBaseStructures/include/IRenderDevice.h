@@ -23,8 +23,8 @@ public:
 
     struct IPlaceable {
     public:
-        virtual void Place(void* ptr) const = 0;
-        virtual ~IPlaceable() = 0 {};
+        //virtual void Place(void* ptr) const = 0;
+        //virtual ~IPlaceable() = 0 {};
     };
 
 
@@ -53,7 +53,6 @@ protected:
     virtual void Draw(DrawCall call) = 0;
     virtual void Present() = 0;
 
-    virtual IStructuresSize GetClassesSize() = 0;
 
     virtual IResource* CreateResource(const GpuResource& resource) = 0;
     virtual void DestroyResource(IResource* resource) = 0;

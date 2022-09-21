@@ -8,7 +8,9 @@
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
+#include "pch.h"
 #include <exception>
+#include <vector>
 #include "VertexTypes.h"
 
 namespace DirectX

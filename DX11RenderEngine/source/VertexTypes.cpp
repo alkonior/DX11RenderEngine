@@ -7,7 +7,6 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 //--------------------------------------------------------------------------------------
 
-#include "pch.h"
 #include "VertexTypes.h"
 
 #include <DirectXPackedVector.h>

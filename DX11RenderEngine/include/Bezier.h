@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "pch.h"
 #include <array>
 #include <algorithm>
 #include <DirectXMath.h>

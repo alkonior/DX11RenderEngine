@@ -166,6 +166,11 @@
     <ClCompile Include="source\GPUIputLayout.cpp" />
     <ClCompile Include="source\GPUResource.cpp" />
     <ClCompile Include="source\GPUShader.cpp" />
+    <ClCompile Include="source\PipelineStates\BlendState.cpp" />
+    <ClCompile Include="source\PipelineStates\DepthStencilState.cpp" />
+    <ClCompile Include="source\PipelineStates\RasterizerState.cpp" />
+    <ClCompile Include="source\PipelineStates\SamplerState.cpp" />
+    <ClCompile Include="source\PipelineStates\Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GPUResourcesDescription\GPUInputLayout.h" />

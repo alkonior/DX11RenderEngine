@@ -1,5 +1,4 @@
-﻿#include "pch.h"
-# include <cmath>
+﻿# include <cmath>
 # include <cstdlib>
 # include <iomanip>
 # include <iostream>

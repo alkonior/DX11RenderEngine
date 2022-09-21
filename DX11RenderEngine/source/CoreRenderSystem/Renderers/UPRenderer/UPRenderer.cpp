@@ -126,13 +126,13 @@ void UPRenderer::Render(GraphicsBase& gfx) {
 		if (drawCalls[i].data.dynamic) {
 			renderer->ApplyMeshBuffersBinding(dynamicMeshes.mesh);
 			renderer->DrawIndexedPrimitives(
-				(PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
+				(Renderer::PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
 				drawCalls[i].model.numElem);
 		}
 		else {
 			renderer->ApplyMeshBuffersBinding(staticMeshes.mesh);
 			renderer->DrawIndexedPrimitives(
-				(PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
+				(Renderer::PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
 				drawCalls[i].model.numElem);
 		}
 

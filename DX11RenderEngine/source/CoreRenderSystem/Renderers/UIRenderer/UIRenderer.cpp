@@ -114,7 +114,7 @@ void UIRenderer::Render() {
 		renderer->VerifyPixelTexture(0, pTexture);
 
 
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
+		renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
 			0, 0, 0, 0, 2);
 
 	}

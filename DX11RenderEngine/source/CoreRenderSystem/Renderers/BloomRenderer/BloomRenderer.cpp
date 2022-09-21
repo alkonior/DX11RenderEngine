@@ -97,7 +97,7 @@ void BloomRenderer::RenderBloomMask(GraphicsBase& gfx)
 	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
 }
 void BloomRenderer::Render(GraphicsBase& gfx) {
@@ -121,7 +121,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	renderer->SetRenderTargets(targets, 1, nullptr, Viewport());
 	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.diffuseColor);
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	targets[0] = &bloom2RT;
 	targets[1] = &bloom1RT;
@@ -131,7 +131,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
 		
 		renderer->ApplyPipelineState(factory->GetState(BLOOMVERTICAL));
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 		renderer->VerifyPixelTexture(0, nullptr);
 		
 		targets[2] = targets[0];
@@ -142,7 +142,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 		renderer->VerifyPixelTexture(0, targets[1]->texture);
 
 		renderer->ApplyPipelineState(factory->GetState(BLOOMHORISONTAL));
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 		renderer->VerifyPixelTexture(0, nullptr);
 		
 		targets[2] = targets[0];
@@ -156,7 +156,7 @@ void BloomRenderer::Render(GraphicsBase& gfx) {
 	renderer->ApplyPipelineState(factory->GetState(BLOOMEND));
 	renderer->VerifyPixelTexture(0, targets[1]->texture);
 
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
 }
 

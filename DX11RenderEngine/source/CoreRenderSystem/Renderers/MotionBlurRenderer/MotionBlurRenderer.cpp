@@ -90,7 +90,7 @@ void MotionBlurRenderer::RenderStatic(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.bloomMask);
 
 	renderer->ApplyPipelineState(factory->GetState(MBZERO));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
 	renderer->VerifyPixelTexture(0, nullptr);
 	renderer->VerifyPixelTexture(1, nullptr);
@@ -120,7 +120,7 @@ void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(3, gfx.texturesManger.blurMask);
 
 	renderer->ApplyPipelineState(factory->GetState(MBDYNAMIC));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	
 	//renderer->ClearState();
@@ -138,7 +138,7 @@ void MotionBlurRenderer::RenderDynamic(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(1, buffLight);
 	
 	renderer->ApplyPipelineState(factory->GetState(MBCOPY));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 }
 
 void MotionBlurRenderer::Clear() {}

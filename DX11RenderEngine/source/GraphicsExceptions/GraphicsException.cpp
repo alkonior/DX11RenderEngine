@@ -140,8 +140,9 @@ CompileException::CompileException(int line, const char* file, HRESULT hr, std::
 CompileException(line, file,  hr, infoMsgs, compileError,  shaderName)
 {
 	shaderType=(typeShader);
-	for (auto& def : d3ddefines)
+	for (int i =0; i < (d3ddefines.size() - 1); i++)
 	{
+		auto& def = d3ddefines[i];
 		defines.append(def.Name);
 		defines.append(": ");
 		defines.append(def.Definition);

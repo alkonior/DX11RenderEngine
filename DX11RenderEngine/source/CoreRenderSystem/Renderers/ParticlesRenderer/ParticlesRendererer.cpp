@@ -57,7 +57,7 @@ void ParticlesRenderer::Render(const GraphicsBase& gfx) {
 
 
 			renderer->DrawIndexedPrimitives(
-				(PrimitiveType)drawCalls[i].particles.pt, 0, 0, 0, drawCalls[i].particles.indexOffset,
+				(Renderer::PrimitiveType)drawCalls[i].particles.pt, 0, 0, 0, drawCalls[i].particles.indexOffset,
 				drawCalls[i].particles.numElem);
 
 		}

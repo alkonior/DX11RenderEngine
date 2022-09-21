@@ -4,7 +4,7 @@
 #include <d3d11.h>
 
 #include "imgui/imgui.h"
-#include "Utils/halton.h"
+#include "halton.h"
 
 using namespace Renderer;
 
@@ -138,7 +138,7 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(0, TAAHistory);
 	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
 	renderer->ApplyPipelineState(factory->GetState(TAACOPY));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 	renderer->VerifyPixelTexture(1, nullptr);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "IRenderer.h"
+#include "RenderFlags.h"
 #include <map>
 #include <vector>
 

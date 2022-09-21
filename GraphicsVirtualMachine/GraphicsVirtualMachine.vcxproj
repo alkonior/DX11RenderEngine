@@ -258,6 +258,9 @@
     <ProjectReference Include="..\GVMBaseStructures\GVMBaseStructures.vcxproj">
       <Project>{1a9e9c14-9704-4fb5-9978-253c0e9dbb17}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\VMDx11RenderDevice\VMDx11RenderDevice.vcxproj">
+      <Project>{eed93469-9dcf-4a80-a11f-0d9bcb560b25}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

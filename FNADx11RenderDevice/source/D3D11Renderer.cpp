@@ -1,6 +1,8 @@
 // ReSharper disable CppCStyleCast
 #include "D3D11Renderer.h"
 
+#include "GraphicsExceptions/DxgiInfoManager.h"
+
 #include "D3D11Texture.h"
 #include "D3D11Buffer.h"
 #include "D3D11Shaders.h"
@@ -117,6 +119,8 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     //	&swapchain
     //));
 
+    infoManager = new DxgiInfoManager();
+    
     GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
         NULL, /* FIXME: Should be renderer->adapter! */
         D3D_DRIVER_TYPE_HARDWARE,
@@ -180,6 +184,7 @@ D3D11Renderer::~D3D11Renderer()
 {
     context->ClearState();
     testApi->ClearState();
+    delete infoManager;
 }
 
 void D3D11Renderer::SwapBuffers()
@@ -2833,7 +2838,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name, "PixelShader", d3ddefines
         };
         throw ce;
@@ -2841,7 +2846,7 @@ PixelShader* D3D11Renderer::CompilePixelShader(const ShaderData& shaderData)
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name, "PixelShader", d3ddefines
         };
         throw ce;
@@ -2897,7 +2902,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
             shaderData.name, "Compute Shader", d3ddefines
         };
@@ -2906,7 +2911,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderData& shaderData)
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),
             (char*)psErrorBlob->GetBufferPointer(),
             shaderData.name, "ComputeShader", d3ddefines
         };
@@ -2963,7 +2968,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
     catch (HrException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -2971,7 +2976,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderDat
     catch (InfoException exe)
     {
         CompileException ce{
-            __LINE__, __FILE__,(hr),infoManager.GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
+            __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
             shaderData.name
         };
         throw ce;
@@ -3076,7 +3081,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         if (psErrorBlob != nullptr)
         {
             CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager.GetMessages(),
+                __LINE__, __FILE__,(hr),infoManager->GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
                 shaderData.name, "VertexShader", d3ddefines
             };
@@ -3089,7 +3094,7 @@ VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, v
         if (psErrorBlob != nullptr)
         {
             CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager.GetMessages(),
+                __LINE__, __FILE__,(hr),infoManager->GetMessages(),
                 (char*)psErrorBlob->GetBufferPointer(),
                 shaderData.name, "VertexShader", d3ddefines
             };

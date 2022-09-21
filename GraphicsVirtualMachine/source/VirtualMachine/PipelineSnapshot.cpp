@@ -2,7 +2,7 @@
 using namespace GVM;
 
 
-uint32_t PipelineSnapshot::GetSize(const IStructuresSize& structuresSizes) const {
+uint32_t PipelineSnapshot::GetSize() const {
     uint32_t size = sizeof(Compressed::PipelineSnapshot);
 
     size += renderTargetsNum * sizeof(RenderTargetDesc::CompressedType);
@@ -43,7 +43,7 @@ void PipelineSnapshot::Compress(const CompressArgs& args) const {
     //using namespace Compressed;
     auto* cps = args.cps;
     
-    cps->SnapshotByteSize = GetSize(args.structuresSizes);
+    cps->SnapshotByteSize = GetSize();
     
     
     cps->VS = VS;

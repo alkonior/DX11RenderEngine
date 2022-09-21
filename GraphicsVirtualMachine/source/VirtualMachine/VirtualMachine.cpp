@@ -23,10 +23,10 @@ resourcesManager(), RenderDevice(RenderDevice)
 void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
 {
     auto position = pipelinesQueue.size();
-    auto psSize = pipelineSnapshot.GetSize(iStructSizes);
+    auto psSize = pipelineSnapshot.GetSize();
     pipelinesQueue.resize(position + psSize);
     pipelineSnapshot.Compress(
-        PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager, iStructSizes));
+        PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager));
     PushCommand(EMachineCommands::SETUP_PIPELINE);
    
     

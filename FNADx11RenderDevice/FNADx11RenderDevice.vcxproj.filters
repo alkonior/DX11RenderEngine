@@ -18,10 +18,10 @@
     <ClCompile Include="source\D3D11Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp">
+    <ClCompile Include="include\GraphicsExceptions\DxgiInfoManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp">
+    <ClCompile Include="include\GraphicsExceptions\GraphicsException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,10 +47,10 @@
     <ClInclude Include="source\D3D11Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h">
+    <ClInclude Include="include\GraphicsExceptions\DxgiInfoManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\GraphicsExceptions\GraphicsException.h">
+    <ClInclude Include="include\GraphicsExceptions\GraphicsException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -111,7 +111,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	renderer->SetConstBuffer(pConstBuffer, &localData);
 
 	renderer->ApplyPipelineState(factory->GetState(PPZERO | flags));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	
 	renderer->VerifyPixelTexture(0,nullptr);
 	renderer->VerifyPixelTexture(1,nullptr);
@@ -133,7 +133,7 @@ void PPRenderer::Render(GraphicsBase& gfx) {
 	if (!flags)
 	{
 		renderer->ApplyPipelineState(factory->GetState(PPALPHA | flags));
-		renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+		renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 	}
 	
 	renderer->VerifyPixelTexture(3, nullptr);

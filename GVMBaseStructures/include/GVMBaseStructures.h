@@ -72,13 +72,6 @@ struct DrawCall
 };
 
 
-struct IStructuresSize
-{
-    uint32_t IResourceSize = 0;
-    uint32_t IResourceViewSize = 0;
-    uint32_t IShaderSize = 0;
-    uint32_t IInputLayoutSize = 0;
-};
 
 
 namespace Compressed {

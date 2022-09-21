@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawData.h"
+#include "RenderFlags.h"
 #include "Utils/TextureData.h"
 #include "Utils/ModelData.h"
 #include "imgui/imgui.h"

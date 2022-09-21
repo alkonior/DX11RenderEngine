@@ -28,7 +28,6 @@ class VirtualMachine {
     };
 
     constexpr static EMachineCommands ToCommand(EDrawCallType drawCall);
-    IStructuresSize iStructSizes;
 
     VMStack<uint32_t> intStack;
     VMStack<EMachineCommands> commandQueue;

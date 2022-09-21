@@ -3,13 +3,14 @@
 #include "winHandler.h"
 #include "IRenderer.h"
 #include "PipelineState.h"
-#include "GraphicsExceptions/DxgiInfoManager.h"
 
 #include <mutex>
 
 
 #include <unordered_map>
 
+
+class DxgiInfoManager;
 
 namespace GVM {
 class IRenderDevice;
@@ -109,7 +110,7 @@ private:
 	std::mutex ctxLock;
 
 #ifdef _DEBUG
-	DxgiInfoManager infoManager;
+	DxgiInfoManager* infoManager;
 #endif
 	HRESULT hr;
 

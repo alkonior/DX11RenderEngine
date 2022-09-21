@@ -8,6 +8,8 @@
 #include "GraphicsExceptions/GraphicsException.h"
 
 
+
+
 TextureData::TextureData(unsigned int width, unsigned int height) noexcept
     :
     pBuffer(std::make_unique<Color[]>(width * height)),

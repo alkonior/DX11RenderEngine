@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "pch.h"
 #include <string>
 
 double *halton ( int i, int m );

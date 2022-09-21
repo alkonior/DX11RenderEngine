@@ -80,7 +80,7 @@ void FXAARenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelTexture(0, gfx.texturesManger.preAAcolor);
 
 	renderer->ApplyPipelineState(factory->GetState(FXAASETLUMA));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 
 
 	
@@ -88,7 +88,7 @@ void FXAARenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
 	renderer->VerifyPixelTexture(0, preFXAA);
 	renderer->ApplyPipelineState(factory->GetState(FXAAZERO));
-	renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
 }
 
 

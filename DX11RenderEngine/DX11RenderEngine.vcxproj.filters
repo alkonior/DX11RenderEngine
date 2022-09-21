@@ -80,22 +80,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="include\RenderEngine.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\Geometry.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\halton.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\VertexTypes.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="include\Utils\ModelData.h">
@@ -117,12 +105,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="include\Bezier.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utils\DynamicMeshBuffer.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="source\winHandler.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
     <ClInclude Include="source\CoreRenderSystem\CoreShaderInclude.h">
@@ -200,9 +182,6 @@
     <ClInclude Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesUtils.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="source\CoreRenderSystem\Renderers\PPRenderer\PPConstBuffer.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -260,9 +239,6 @@
     <ClInclude Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRendererUtils.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="source\CoreRenderSystem\ResourceManagers\ModelsManager.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -308,31 +284,36 @@
     <ClInclude Include="include\imgui\imstb_truetype.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
+    <ClInclude Include="include\RenderFlags.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\pch.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DynamicMeshBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Geometry.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GraphicsExceptions\GraphicsException.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\halton.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\VertexTypes.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>RenderEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils\VertexTypes.cpp" />
-    <ClCompile Include="source\Utils\Geometry.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils\halton.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="source\GDIPlusManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\RenderEngine.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils\SimpleMath.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils\TextureData.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils\TransformUtils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\CoreRenderSystem\Graphics.cpp" />
@@ -373,12 +354,18 @@
     <ClCompile Include="include\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="source\pch.cpp" />
+    <ClCompile Include="source\Geometry.cpp" />
+    <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp" />
+    <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp" />
+    <ClCompile Include="source\halton.cpp" />
+    <ClCompile Include="source\SimpleMath.cpp" />
+    <ClCompile Include="source\TextureData.cpp" />
+    <ClCompile Include="source\TransformUtils.cpp" />
+    <ClCompile Include="source\VertexTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="source\Utils\SimpleMath.inl">
-      <Filter>RenderEngine</Filter>
-    </None>
     <None Include="..\..\..\baseq2\MotionBlurShader.hlsl">
       <Filter>Shaders</Filter>
     </None>
@@ -394,6 +381,9 @@
     <None Include="Shaders\SSAOShader.hlsl" />
     <None Include="Shaders\TAAShader.hlsl" />
     <None Include="Shaders\UIShader.hlsl" />
+    <None Include="include\Utils\SimpleMath.inl">
+      <Filter>RenderEngine</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

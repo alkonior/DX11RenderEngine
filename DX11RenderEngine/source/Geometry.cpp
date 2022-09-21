@@ -8,8 +8,11 @@
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
 
-#include "pch.h"
 #include "Geometry.h"
+
+#include <map>
+#include <stdexcept>
+
 #include "Bezier.h"
 
 using namespace DirectX;
