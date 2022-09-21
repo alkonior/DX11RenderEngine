@@ -7,10 +7,16 @@
 
 #include <mutex>
 
-#include "GraphicsAPI.h"
 
 #include <unordered_map>
 
+
+namespace GVM {
+class IRenderDevice;
+class GraphicsApi;
+class RenderTargetView;
+class DepthStencilView;
+}
 
 namespace Renderer{
 struct D3D11Renderbuffer;

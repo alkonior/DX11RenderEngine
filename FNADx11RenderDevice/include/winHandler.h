@@ -1,5 +1,6 @@
 ﻿#ifndef WH_H
 #define WH_H
+
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -74,6 +75,7 @@ namespace Gdiplus
 	
 }
 
+#include <objidl.h>
 #include <gdiplus.h>
 
 #pragma warning(push)

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "RenderDeviceDX11.h"
 
+#include "d3d.h"
+
 #include "BuffersViews/ConstBufferViewD3D11.h"
 #include "BuffersViews/IndexBufferViewD3D11.h"
 #include "BuffersViews/VertexBufferViewD3D11.h"
@@ -156,16 +158,6 @@ RenderDeviceDX11::RenderDeviceDX11(const RenderDeviceInitParams& initParams, boo
 
 RenderDeviceDX11::~RenderDeviceDX11()
 {}
-
-IStructuresSize RenderDeviceDX11::GetClassesSize()
-{
-    return {
-        sizeof(ResourceDX11),
-        sizeof(ResourceViewDX11),
-        sizeof(ShaderDX11),
-        sizeof(InputLayoutDX11)
-    };
-}
 
 constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
 {

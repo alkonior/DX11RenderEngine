@@ -70,7 +70,7 @@ struct RenderTargetViewDesc {
     };
 };
 
-struct UATargetViewDesc : RenderTargetViewDesc
+struct UATargetViewDesc : public RenderTargetViewDesc
 {};
 
 struct ShaderResourceViewDesc {

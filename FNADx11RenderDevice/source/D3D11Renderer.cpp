@@ -9,8 +9,11 @@
 #include "GraphicsExceptions/GraphicsException.h"
 #include "RenderDeviceDX11.h"
 
+
+#include "GraphicsAPI.h"
 #pragma warning( disable : 26812 )
 
+#pragma comment( lib,"gdiplus.lib" )
 
 using namespace Renderer;
 
@@ -1295,7 +1298,8 @@ Texture* D3D11Renderer::CreateUATexture2D(SurfaceFormat format, int32_t width, i
         NULL,
         &result->uaView
     ));
-    result->uaTestView = testApi->CreateUaView(GVM::UATargetViewDesc(result->resource,true));
+    GVM::UATargetViewDesc res = GVM::UATargetViewDesc{result->resource,true};
+    result->uaTestView = testApi->CreateUaView(res);
 
     return result;
 }

@@ -1,20 +1,19 @@
 #pragma once
-#include "pch.h"
-#include "Utils.h"
-#include "BlendState.h"
-#include "DepthStencilState.h"
-#include "RasterizerState.h"
-#include "SamplerState.h"
+#include "IRenderer/Utils.h"
+#include "IRenderer/BlendState.h"
+#include "IRenderer/DepthStencilState.h"
+#include "IRenderer/RasterizerState.h"
+#include "IRenderer/SamplerState.h"
 
 namespace Renderer {
 struct PipelineState {
 
 
-	PixelShader* ps;
-	VertexShader* vs;
+	PixelShader* ps = nullptr;
+	VertexShader* vs = nullptr;
 
-	GeometryShader* gs;
-	ComputeShader* cs;
+	GeometryShader* gs = nullptr;
+	ComputeShader* cs = nullptr;
 
 	DepthStencilState* dss = nullptr;
 	BlendState* bs = nullptr;

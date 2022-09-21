@@ -4,6 +4,7 @@
 #include "IRenderer/DepthStencilState.h"
 #include "IRenderer/RasterizerState.h"
 #include "IRenderer/SamplerState.h"
+#include "PipelineState.h"
 
 namespace Renderer {
 

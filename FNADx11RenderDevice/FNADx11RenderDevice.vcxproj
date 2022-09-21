@@ -95,6 +95,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,6 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,6 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,6 +152,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,19 +180,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\D3D11Renderer.h" />
+    <ClInclude Include="include\GraphicsExceptions\DxgiInfoManager.h" />
+    <ClInclude Include="include\GraphicsExceptions\GraphicsException.h" />
     <ClInclude Include="include\winHandler.h" />
     <ClInclude Include="source\D3D11BackBuffer.h" />
     <ClInclude Include="source\D3D11Buffer.h" />
     <ClInclude Include="source\D3D11RenderBuffer.h" />
     <ClInclude Include="source\D3D11Shaders.h" />
     <ClInclude Include="source\D3D11Texture.h" />
-    <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h" />
-    <ClInclude Include="source\GraphicsExceptions\GraphicsException.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\GraphicsExceptions\DxgiInfoManager.cpp" />
+    <ClCompile Include="include\GraphicsExceptions\GraphicsException.cpp" />
     <ClCompile Include="source\D3D11Renderer.cpp" />
-    <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp" />
-    <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

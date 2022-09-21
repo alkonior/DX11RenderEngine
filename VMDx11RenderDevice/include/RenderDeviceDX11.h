@@ -4,12 +4,12 @@
 
 #include "winHandler.h"
 #include "IRenderDevice.h"
-#include "BaseDX11Classes.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 
 
 
 namespace GVM {
+class ResourceViewDX11;
 
 struct Dx11PlatformHandle : public PlatformHandle {
 
@@ -92,7 +92,6 @@ private:
     std::vector<ID3D11ShaderResourceView*> Textures;
 
     /* Input Assembly */
-    InputLayoutDX11 inputLayout;
     EPrimitiveTopology topology;
     std::vector<ID3D11Buffer*> vertexBuffers;
     std::vector<uint32_t> vertexBufferOffsets;

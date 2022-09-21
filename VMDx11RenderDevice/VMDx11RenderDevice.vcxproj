@@ -150,7 +150,6 @@
     <ClInclude Include="include\RenderDeviceDX11.h" />
     <ClInclude Include="include\winHandler.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="source\BaseClasses\InputLayoutDX11.h" />
     <ClInclude Include="source\BaseClasses\ResourceDX11.h" />
     <ClInclude Include="source\BaseClasses\ResourceViewDX11.h" />
     <ClInclude Include="source\BaseClasses\ShaderDX11.h" />
@@ -168,7 +167,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\BaseClasses\InputLayoutDX11.cpp" />
     <ClCompile Include="source\BaseClasses\ResourceDX11.cpp" />
     <ClCompile Include="source\BaseClasses\ResourceViewDX11.cpp" />
     <ClCompile Include="source\BaseClasses\ShaderDX11.cpp" />
