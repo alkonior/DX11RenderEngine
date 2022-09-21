@@ -123,7 +123,7 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("SSAO draw.");
-	//GFX_CATCH_RENDER(managerSSAO.Render(*this););
+	 GFX_CATCH_RENDER(managerSSAO.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();

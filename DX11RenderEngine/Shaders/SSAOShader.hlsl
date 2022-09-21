@@ -2,7 +2,7 @@
 #include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/CoreShaderInclude.h"
 #include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem\Renderers\SSAORenderer\SSAORendererConstBuffer.h"
 
- 
+//#define BLUR
 
 static const int gSampleCount = 14;
 
@@ -43,7 +43,7 @@ float OcclusionFunction(float distZ)
 	return occlusion;	
 }
 
-#ifndef BLUR
+#ifdef OCCLUSION
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gNormalMap    : register(t0);
 Texture2D gDepthMap     : register(t1);
@@ -170,7 +170,7 @@ void main( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
 static const int gMaxBlurRadius = 5;
 
 
-//Texture2D InputBuf           : register(t0);
+Texture2D InputBuf        : register(t0);
 RWTexture2D<float> Result : register(u0);
 
 
@@ -243,7 +243,7 @@ void BlurVertically( uint2 pixelCoord, uint topMostIndex )
     Load1Pixel( topMostIndex+56, s7 );
     Load1Pixel( topMostIndex+64, s8 );
 
-    Result[pixelCoord] = saturate(BlurPixels(s0, s1, s2, s3, s4, s5, s6, s7, s8)*SSAOData.intensity);
+    Result[pixelCoord] = saturate(BlurPixels(s0, s1, s2, s3, s4, s5, s6, s7, s8))*SSAOData.intensity;
 }
 
 float gauss_weight(int sampleDist, float sigma)
@@ -273,8 +273,8 @@ void blur( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
     // Store 4 unblurred pixels in LDS
     //
     int destIdx = GTid.x + (GTid.y << 4);
-    Store2Pixels(destIdx+0, Result[ThreadUL + uint2(0, 0)], Result[ThreadUL + uint2(1, 0)]);
-    Store2Pixels(destIdx+8, Result[ThreadUL + uint2(0, 1)], Result[ThreadUL + uint2(1, 1)]);
+    Store2Pixels(destIdx+0, InputBuf[ThreadUL + uint2(0, 0)], InputBuf[ThreadUL + uint2(1, 0)]);
+    Store2Pixels(destIdx+8, InputBuf[ThreadUL + uint2(0, 1)], InputBuf[ThreadUL + uint2(1, 1)]);
 
     GroupMemoryBarrierWithGroupSync();
 
@@ -291,5 +291,26 @@ void blur( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
     //
     BlurVertically(DTid.xy, (GTid.y << 3) + GTid.x);
 }
+
+#endif
+
+
+#ifdef COPY
+
+Texture2D InputBuf        : register(t0);
+RWTexture2D<float> Result : register(u0);
+
+[numthreads( SSAO_NUM_THREADS_X, SSAO_NUM_THREADS_Y, 1 )]
+void copy( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV_DispatchThreadID )
+{
+	//
+	// Load 4 pixels per thread into LDS
+	//
+	int2 GroupUL = (Gid.xy << 3) - 4;                // Upper-left pixel coordinate of group read location
+	int2 ThreadUL = (GTid.xy << 1) + GroupUL;        // Upper-left pixel coordinate of quad that this thread will read
+	
+	Result[DTid.xy] = InputBuf[DTid.xy];
+}
+
 
 #endif

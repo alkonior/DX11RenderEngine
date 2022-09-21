@@ -176,7 +176,7 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 
 	renderer->VerifyUATexture(0,  gfx.texturesManger.oclusionField);
 	
-	renderer->ApplyPipelineState(factory->GetComputeState(flags, "main"));
+	renderer->ApplyPipelineState(factory->GetComputeState(flags|SSAOOCCLUSION, "main"));
 	//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
 	renderer->Dispatch((width + SSAO_NUM_THREADS_X -1) / (SSAO_NUM_THREADS_X),
 			(height + SSAO_NUM_THREADS_Y -1) / (SSAO_NUM_THREADS_Y));
@@ -193,22 +193,41 @@ void SSAORenderer::Render(GraphicsBase& gfx) {
 	renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField );
 	//renderer->VerifyPixelTexture(0,buff );
 	renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
+
+	auto*  p1=  gfx.texturesManger.oclusionField;
+	auto*  p2=  buff;
 	
 	for (int i =0; i<localBuffer.kernel; i++)
 	{
+		renderer->VerifyUATexture(0, p2);
+		renderer->VerifyPixelTexture(0, p1);
+		renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
 		renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
 							(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
+		renderer->VerifyUATexture(0, nullptr);
+		renderer->VerifyPixelTexture(0, nullptr);
+
+		std::swap(p1,p2);
+	}
+
+	if (p2 == buff)
+	{
+		renderer->VerifyPixelTexture(0, buff);
+		renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField);
+
+		renderer->ApplyPipelineState(factory->GetComputeState(SSAOCOPY, "copy"));
+		//renderer->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
+		renderer->Dispatch((width + SSAO_NUM_THREADS_X -1) / (SSAO_NUM_THREADS_X),
+				(height + SSAO_NUM_THREADS_Y -1) / (SSAO_NUM_THREADS_Y));
+		
+		renderer->VerifyUATexture(0, nullptr);
+		renderer->VerifyPixelTexture(0, nullptr);
+
 	}
 	renderer->VerifyUATexture(0, nullptr);
 	renderer->VerifyPixelTexture(0, nullptr);
 		
-		//renderer->VerifyUATexture(0, gfx.texturesManger.oclusionField);
-		//renderer->VerifyPixelTexture(0, buff);
-		//renderer->ApplyPipelineState(factory->GetComputeState(SSAOBLUR, "blur"));
-		//renderer->Dispatch((width + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS),
-		//					(height + SSAOBLUR_NUM_THREADS -1) / (SSAOBLUR_NUM_THREADS) );
-		//renderer->VerifyUATexture(0, nullptr);
-		//renderer->VerifyPixelTexture(0, nullptr);
+		
 	//}
 		
 	

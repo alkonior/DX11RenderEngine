@@ -72,7 +72,7 @@ typedef uint16_t4 ui16_t4;
 
 // Whether to use thread group shared memory
 #ifndef USE_TGSM
-#define USE_TGSM 1
+#define USE_TGSM 0
 #endif
 
 #ifndef COPY
@@ -379,12 +379,14 @@ fp16_t LuminanceRec709( fp16_t3 inRGB )
 
 fp16_t3 Reinhard( fp16_t3 inRGB )
 {
-    return inRGB / ( fp16_t( 1.f ) + LuminanceRec709( inRGB ) );
+    return inRGB;
+    inRGB / ( fp16_t( 1.f ) + LuminanceRec709( inRGB ) );
 }
 
 fp16_t3 InverseReinhard( fp16_t3 inRGB )
 {
-    return inRGB / ( fp16_t( 1.f ) - LuminanceRec709( inRGB ) );
+    return inRGB;
+    inRGB / ( fp16_t( 1.f ) - LuminanceRec709( inRGB ) );
 }
 
 #if 1 == USE_TGSM

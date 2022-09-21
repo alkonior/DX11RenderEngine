@@ -7,12 +7,16 @@ enum  SSAORendererDefines : std::uint32_t {
 	SSAOZERO = 0,
 	SSAORED = 1,
 	SSAOBLUR = 2,
+	SSAOOCCLUSION = 4,
+	SSAOCOPY = 8,
 
 };
 
 const Renderer::ShaderDefines SSAORendererDefines[] = {
 	Renderer::ShaderDefines("RED"),
 	Renderer::ShaderDefines("BLUR"),
+	Renderer::ShaderDefines("OCCLUSION"),
+	Renderer::ShaderDefines("COPY"),
 };
 
 
