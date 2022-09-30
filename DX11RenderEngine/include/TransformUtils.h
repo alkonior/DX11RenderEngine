@@ -1,11 +1,11 @@
 #pragma once
 #include"SimpleMath.h"
 
-#define float4 DirectX::SimpleMath::Vector4
-#define matrix DirectX::SimpleMath::Matrix
-#define float4x4 DirectX::SimpleMath::Matrix
-#define float3 DirectX::SimpleMath::Vector3
-#define float2 DirectX::SimpleMath::Vector2
+typedef DirectX::SimpleMath::Vector4  float4;
+typedef DirectX::SimpleMath::Matrix   matrix;
+typedef DirectX::SimpleMath::Matrix   float4x4;
+typedef DirectX::SimpleMath::Vector3  float3;
+typedef DirectX::SimpleMath::Vector2  float2;
 typedef uint32_t uint;
 
 class Transform {

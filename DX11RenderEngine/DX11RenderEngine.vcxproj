@@ -144,7 +144,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -167,12 +167,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;WIN32%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\; $(ProjectDir)source\; $(ProjectDir)..\FNABaseStructs\include\; $(ProjectDir)..\FNADx11RenderDevice\include\; $(ProjectDir)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -370,7 +370,7 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -450,7 +450,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;;E:\Quake-2\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\dxerr\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -676,7 +675,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;;E:\Quake-2\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\dxerr\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -752,7 +750,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNABaseStructs\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNADx11RenderDevice\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -828,7 +825,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -908,7 +904,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;;E:\Quake-2\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\dxerr\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -984,7 +979,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;E:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -1060,7 +1054,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\Utils\include;E:\Quake-2\ref_dx11rg\DX11RenderEngine\dxerr;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -1136,7 +1129,6 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>E:\Quake-2\packages\WinPixEventRuntime.1.0.220124001\build\..\Include\WinPixEventRuntime;;E:\Quake-2\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\IRenderer\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\DX11RenderEngine\Utils\include\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\dxerr\;E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\..\DX11RenderEngine\GraphicsVirtualMachine\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
@@ -1156,9 +1148,6 @@
     <None Include="Shaders\SSAOShader.hlsl" />
     <None Include="Shaders\TAAShader.hlsl" />
     <None Include="Shaders\UIShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc" />
@@ -1243,13 +1232,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\packages\WinPixEventRuntime.1.0.220124001\build\WinPixEventRuntime.targets" Condition="Exists('..\..\..\packages\WinPixEventRuntime.1.0.220124001\build\WinPixEventRuntime.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\WinPixEventRuntime.1.0.220124001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\WinPixEventRuntime.1.0.220124001\build\WinPixEventRuntime.targets'))" />
-  </Target>
 </Project>
