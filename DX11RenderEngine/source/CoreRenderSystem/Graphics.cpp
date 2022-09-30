@@ -60,14 +60,14 @@ void Graphics::BeginFrame() {
 	{
 		pass->Clear(*this);
 	}
+
+	managerIMGUI.BeginFrame(*this);
 }
 
 #define GFX_CATCH_RENDER(render) try {render} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c); success = false; }
 //#define GFX_CATCH_RENDER(render) {render}
 
 bool Graphics::RenderFrame() {
-	managerIMGUI.BeginFrame(*this);
-
 	renderer->ClearState();
 	
 	managerTAA.UpdateHaltonSequence();
