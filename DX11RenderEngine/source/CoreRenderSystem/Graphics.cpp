@@ -78,7 +78,7 @@ bool Graphics::RenderFrame() {
 	
 	bool success = true;
 	pRenderer->BeginEvent("BSP draw.");
-	GFX_CATCH_RENDER(managerUP.Render(*this););
+	//GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
