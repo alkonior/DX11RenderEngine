@@ -146,6 +146,10 @@ void TAARenderer::Render(GraphicsBase& gfx) {
 
 void TAARenderer::UpdateHaltonSequence()
 {
+	if (localBuffer.numSamples == 0) {
+		localBuffer.numSamples = 10;
+	}
+
 	if (HaltonSequence.size() < localBuffer.numSamples)
 	{
 		int32_t width, height;

@@ -1,7 +1,8 @@
 #pragma once
+#include <vector>
 #include "Utils/VertexesData.h"
 
-enum PrimitiveType {
+enum EPrimitiveType {
 	PRIMITIVETYPE_TRIANGLELIST,
 	PRIMITIVETYPE_TRIANGLESTRIP,
 	PRIMITIVETYPE_LINELIST,
@@ -12,7 +13,7 @@ enum PrimitiveType {
 
 template<class VertexType>
 struct MeshData {
-	PrimitiveType pt;
+	EPrimitiveType pt;
 	size_t primitiveCount;
 	std::vector<VertexType> vertixes;
 	std::vector<uint32_t> indexes;
@@ -23,9 +24,9 @@ class ModelData {
 public:
 	std::vector<ModelVertex> verticies;
 	std::vector<uint16_t> indexes;
-	PrimitiveType pt;
+	EPrimitiveType pt;
 	size_t primitiveCount;
-	ModelData(std::vector<ModelVertex> verticies, std::vector<uint16_t> indexes, PrimitiveType pt, size_t primitiveCount);
+	ModelData(std::vector<ModelVertex> verticies, std::vector<uint16_t> indexes, EPrimitiveType pt, size_t primitiveCount);
 
 };
 
@@ -36,11 +37,11 @@ public:
 	std::vector<FramedModelCommon> verticies;
 	std::vector<Frame> frames;
 	std::vector<uint16_t> indexes;
-	PrimitiveType pt;
+	EPrimitiveType pt;
 	size_t primitiveCount;
 
 	FramedModelData();
-	FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, PrimitiveType pt, size_t primitiveCount);
+	FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, EPrimitiveType pt, size_t primitiveCount);
 
 
 	void AddTriangle(const std::vector<Frame>& verticies3, const FramedModelCommon uvs[3]);

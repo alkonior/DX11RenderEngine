@@ -365,7 +365,6 @@
     <ClCompile Include="source\VertexTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="..\..\..\baseq2\MotionBlurShader.hlsl">
       <Filter>Shaders</Filter>
     </None>

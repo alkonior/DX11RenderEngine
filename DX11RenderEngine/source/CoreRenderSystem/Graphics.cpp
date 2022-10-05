@@ -60,14 +60,14 @@ void Graphics::BeginFrame() {
 	{
 		pass->Clear(*this);
 	}
+
+	managerIMGUI.BeginFrame(*this);
 }
 
 #define GFX_CATCH_RENDER(render) try {render} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c); success = false; }
 //#define GFX_CATCH_RENDER(render) {render}
 
 bool Graphics::RenderFrame() {
-	managerIMGUI.BeginFrame(*this);
-
 	renderer->ClearState();
 	
 	managerTAA.UpdateHaltonSequence();
@@ -78,7 +78,7 @@ bool Graphics::RenderFrame() {
 	
 	bool success = true;
 	pRenderer->BeginEvent("BSP draw.");
-	GFX_CATCH_RENDER(managerUP.Render(*this););
+	//GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -96,7 +96,7 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("Static motion blur draw.");
-	GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
+	//GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -114,7 +114,7 @@ bool Graphics::RenderFrame() {
 	
 
 	pRenderer->BeginEvent("Dynamic motion blur draw.");
-	GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+	//GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -123,7 +123,7 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("SSAO draw.");
-	 GFX_CATCH_RENDER(managerSSAO.Render(*this););
+	//GFX_CATCH_RENDER(managerSSAO.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -159,7 +159,7 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("End BSP draw.");
-	GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -168,7 +168,7 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("TAA-pass.");
-	GFX_CATCH_RENDER(managerTAA.Render(*this););
+	//GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
