@@ -19,6 +19,7 @@ void ModelsManager::RegisterModel(const ModelData& model, size_t id) {
 	vertexBuffer.vertexOffset[0] = 0;
 	vertexBuffer.vertexStride = new UINT[1];
 	vertexBuffer.vertexStride[0] = sizeof(ModelVertex);
+	vertexBuffer.buffersCount = 1;
 	renderer->SetVertexBufferData(vertexBuffer.vertexBuffers[0], 0, (void*)model.verticies.data(), (UINT)model.verticies.size(), (UINT)sizeof(ModelVertex), (UINT)sizeof(ModelVertex), SetDataOptions::SETDATAOPTIONS_NONE);
 
 

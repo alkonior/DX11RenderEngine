@@ -55,11 +55,24 @@ void ModelRenderer::DrawLerp(ModelsManager::ModelCache model, TexturesManager::T
 }
 
 void ModelRenderer::Clear() {
-
+	
+}
+void ModelRenderer::Clear(GraphicsBase& gfx)
+{
 	drawCalls.clear();
 	drawLerpCalls.clear();
 
+	RenderTargetBinding* targets[5] = {
+		nullptr
+		//&gfx.texturesManger.diffuseColorRT,
+		//&gfx.texturesManger.lightColorRT,
+		//&gfx.texturesManger.velocityFieldRT,
+		//&gfx.texturesManger.blurMaskRT,
+		//&gfx.texturesManger.normalsFieldRT,
+   };
 	
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, vp);
+	renderer->Clear((ClearOptions)(CLEAROPTIONS_TARGET||CLEAROPTIONS_DEPTHBUFFER), {}, 0, 0);
 }
 
 ModelRenderer::~ModelRenderer() { Destroy(); }
@@ -76,14 +89,15 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 	renderer->GetBackbufferSize(&width, &height);
 
 	RenderTargetBinding* targets[5] = {
-		&gfx.texturesManger.diffuseColorRT,
-		&gfx.texturesManger.lightColorRT,
-		&gfx.texturesManger.velocityFieldRT,
-		&gfx.texturesManger.blurMaskRT,
-		&gfx.texturesManger.normalsFieldRT,
+		nullptr
+		//&gfx.texturesManger.diffuseColorRT,
+		//&gfx.texturesManger.lightColorRT,
+		//&gfx.texturesManger.velocityFieldRT,
+		//&gfx.texturesManger.blurMaskRT,
+		//&gfx.texturesManger.normalsFieldRT,
    };
 	
-	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, vp);
+	renderer->SetRenderTargets(targets, 1, gfx.texturesManger.depthBuffer, vp);
 
 
 	size_t lastFlags = -1;
@@ -101,10 +115,23 @@ void ModelRenderer::Render(GraphicsBase& gfx) {
 		}
 
 		renderer->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
-		renderer->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
+		renderer->ApplyIndexBufferBinding(drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
+		//renderer->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
 
-		auto  pTexture = drawCalls[i].texture.texture;
-		renderer->VerifyPixelTexture(0, pTexture);
+
+		dataBuffer.alpha	  = 1;
+		dataBuffer.oldAlpha   = 1;
+		dataBuffer.wh		  = float2(drawCalls[i].texture.width, drawCalls[i].texture.height);
+		dataBuffer.color	  = {1,0,1};
+		dataBuffer.world	  = drawCalls[i].position.GetTransform();
+		dataBuffer.oldWorld   = drawCalls[i].position.GetTransform();
+		dataBuffer.blurSwitch = 2.f;
+		//if (drawCalls[i].data.isGun)
+		//	dataBuffer.blurSwitch = 1.f;
+		renderer->SetConstBuffer(pDataCB, &dataBuffer);
+		
+		//auto  pTexture = drawCalls[i].texture.texture;
+		//renderer->VerifyPixelTexture(0, pTexture);
 
 		renderer->DrawIndexedPrimitives(
 			drawCalls[i].model.pt, 0, 0, 0, 0,
@@ -209,7 +236,7 @@ InputLayoutDescription ModelRenderer::ModelRendererProvider::GetInputLayoutDescr
 		return InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
 	}
 	else {
-		return InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
+		return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 	}
 
 	//return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };

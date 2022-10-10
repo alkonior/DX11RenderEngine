@@ -44,6 +44,7 @@ public:
 	void Render(GraphicsBase& gfx);
 	
 	virtual void Clear() override;
+	virtual void Clear(GraphicsBase& gfx) override;
 
 	
 	~ModelRenderer() override;

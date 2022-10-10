@@ -105,7 +105,18 @@ bool Graphics::RenderFrame() {
 	
 	
 	pRenderer->BeginEvent("Models draw.");
-	GFX_CATCH_RENDER(managerModels.Render(*this););
+	try
+	{
+		managerModels.Render(*this);
+	} catch (const std::exception& exe)
+	{
+		printf_s(exe.what());
+		printf_s("\n");
+		std::cout << std::flush;
+		static char c[100];
+		scanf_s("%s", c);
+		success = false;
+	};
 	pRenderer->EndEvent();
 	
 	renderer->ClearState();
@@ -248,7 +259,9 @@ void Graphics::RegisterImg(size_t id, int width, int height, void* data, bool mi
 }
 
 void Graphics::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags) {
-	managerModels.Draw(modelsManadger.GetModel(modelId), texturesManger.GetImg(textureId), position, flags);
+	managerModels.Draw(modelsManadger.GetModel(modelId),
+		texturesManger.GetImg(textureId),
+		position, flags);
 }
 
 void Graphics::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
