@@ -86,7 +86,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>
     </IncludePath>
-    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir)</ExternalIncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir)..\TestSetup\</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -309,7 +309,6 @@
     <ClCompile Include="source\TextureData.cpp" />
     <ClCompile Include="source\TransformUtils.cpp" />
     <ClCompile Include="source\VertexTypes.cpp" />
-	
     <None Include="include\Utils\SimpleMath.inl" />
     <None Include="Shaders\BloomShader.hlsl" />
     <None Include="Shaders\BSPShader.hlsl" />
