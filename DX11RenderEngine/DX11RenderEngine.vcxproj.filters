@@ -92,9 +92,6 @@
     <ClInclude Include="include\DrawData.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="include\SimpleMath.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Utils\VertexesData.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -359,7 +356,6 @@
     <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp" />
     <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp" />
     <ClCompile Include="source\halton.cpp" />
-    <ClCompile Include="source\SimpleMath.cpp" />
     <ClCompile Include="source\TextureData.cpp" />
     <ClCompile Include="source\TransformUtils.cpp" />
     <ClCompile Include="source\VertexTypes.cpp" />
@@ -377,9 +373,6 @@
     <None Include="Shaders\SSAOShader.hlsl" />
     <None Include="Shaders\TAAShader.hlsl" />
     <None Include="Shaders\UIShader.hlsl" />
-    <None Include="include\Utils\SimpleMath.inl">
-      <Filter>RenderEngine</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">
