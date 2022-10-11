@@ -137,8 +137,11 @@ void TexturesManager::CreateUATarget(Renderer::SurfaceFormat format, size_t widt
 	renderTarget.multiSampleCount = 0;
 }
 
-TexturesManager::TextureCache TexturesManager::GetImg(size_t id) {
-	return textures[id];	
+TexturesManager::TextureCache TexturesManager::GetImg(size_t id)
+{
+	if (textures.contains(id))
+		return textures[id];	
+	return {};
 }
 
 

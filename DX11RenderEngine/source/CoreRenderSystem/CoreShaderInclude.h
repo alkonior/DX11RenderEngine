@@ -16,7 +16,7 @@ struct TEXTURE_HANDLE {
 	int slot;
 };
 #else
-#include "../Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/Shaders/PixelPacking_Velocity.hlsl"
+#include "../../DX11RenderEngine/DX11RenderEngine/Shaders/PixelPacking_Velocity.hlsl"
 #endif
 
 

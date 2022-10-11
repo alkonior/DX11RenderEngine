@@ -11,8 +11,8 @@ public:
 
 	struct TextureCache {
 		Renderer::Texture* texture = nullptr;
-		size_t width;
-		size_t height;
+		size_t width = 0;
+		size_t height = 0;
 
 	};
 
