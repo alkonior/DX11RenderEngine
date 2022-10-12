@@ -1,6 +1,6 @@
 // dear imgui, 1.88 WIP
 // (main code and documentation)
-#include "pch.h"
+
 // Help:
 // - Read FAQ at http://dearimgui.org/faq
 // - Newcomers, read 'Programmer guide' below for notes on how to setup Dear ImGui in your codebase.

@@ -1,6 +1,6 @@
 // dear imgui, v1.88 WIP
 // (demo code)
-#include "pch.h"
+
 
 // Help:
 // - Read FAQ at http://dearimgui.org/faq

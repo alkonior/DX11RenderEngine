@@ -1,7 +1,6 @@
 // dear imgui, v1.88 WIP
 // (tables and columns code)
 
-#include "pch.h"
 /*
 
 Index of this file:

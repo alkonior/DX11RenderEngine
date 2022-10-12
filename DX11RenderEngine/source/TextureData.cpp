@@ -1,11 +1,11 @@
-#include "pch.h"
+
 #define FULL_WINTARD
 #include "winHandler.h"
 
-#include "Utils/TextureData.h"
+#include "TextureData.h"
 #include <algorithm>
 #include <sstream>
-#include "GraphicsExceptions/GraphicsException.h"
+#include "CoreRenderSystem/GraphicsExceptions/GraphicsException.h"
 
 
 
