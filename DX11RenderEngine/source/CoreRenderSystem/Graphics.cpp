@@ -53,7 +53,7 @@ void Graphics::ReinitShaders(const char * dirr)
 	{
 		pass->Init(dirr);
 	}
-};
+}
 
 void Graphics::BeginFrame() {
 	for(auto pass : renderPasses)
@@ -198,6 +198,7 @@ void Graphics::EndFrame()
 {
 	pRenderer->BeginEvent("IMGUI draw.");
 	managerIMGUI.Render();
+	ImGui::EndFrame();
 	pRenderer->EndEvent();
 	pRenderer->SwapBuffers();
 }
