@@ -18,37 +18,28 @@
     <ClCompile Include="GVMBaseStructures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\PipelineStates\BlendState.cpp">
+    <ClCompile Include="source\GPUIputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\PipelineStates\DepthStencilState.cpp">
+    <ClCompile Include="source\GPUResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\PipelineStates\RasterizerState.cpp">
+    <ClCompile Include="source\GPUShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\PipelineStates\SamplerState.cpp">
+    <ClCompile Include="source\PipelineStates\BlendState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\PipelineStates\Viewport.cpp">
+    <ClCompile Include="source\PipelineStates\DepthStencilState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\RenderDeviceInitParams.cpp">
+    <ClCompile Include="source\PipelineStates\RasterizerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\ResourceViews\BaseViews.cpp">
+    <ClCompile Include="source\PipelineStates\SamplerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\ResourceViews\ResourceDesc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\ResourceViews\ShaderResourceViewDesc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\GVMBaseStructures\VertexDeclaration.cpp">
+    <ClCompile Include="source\PipelineStates\Viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,6 +90,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\IRenderDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GPUResourcesDescription\GPUInputLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GPUResourcesDescription\GPUResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GPUResourcesDescription\GPUShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

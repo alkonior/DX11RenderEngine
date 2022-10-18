@@ -51,9 +51,6 @@ D3D11Texture D3D11Texture::NullTexture = D3D11Texture
 void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h)
 {}
 
-IRenderer* IRenderer::pRenderer = nullptr;
-
-
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
@@ -68,9 +65,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
     testRD = new GVM::RenderDeviceDX11(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
-
-
-    renderer = this;
+    
 
     //DXGI_ADAPTER_DESC adapterDesc;
     D3D_FEATURE_LEVEL levels[] =

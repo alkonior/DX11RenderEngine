@@ -24,33 +24,34 @@
     <ProjectGuid>{6bd7be35-e16c-474a-b507-9883ae657e1e}</ProjectGuid>
     <RootNamespace>DX11RenderEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>DX11RenderEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -75,18 +76,21 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)include\</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>
     </IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>
     </IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -106,6 +110,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +132,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\; $(ProjectDir)source\; $(ProjectDir)..\FNABaseStructs\include\; $(ProjectDir)..\FNADx11RenderDevice\include\; $(ProjectDir)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -151,6 +156,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)include\; $(ProjectDir)source\; $(ProjectDir)..\FNABaseStructs\include\; $(ProjectDir)..\FNADx11RenderDevice\include\; $(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,7 +191,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Bezier.h" />
-    <ClInclude Include="include\DrawData.h" />
+    <ClInclude Include="include\CoreRenderSystem\BaseRenderSystem.h" />
+    <ClInclude Include="include\CoreRenderSystem\CoreShaderInclude.h" />
+    <ClInclude Include="include\CoreRenderSystem\DynamicMeshBuffer.h" />
+    <ClInclude Include="include\CoreRenderSystem\GraphicsExceptions\DxgiInfoManager.h" />
+    <ClInclude Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.h" />
+    <ClInclude Include="include\CoreRenderSystem\PipelineFactory.h" />
+    <ClInclude Include="include\CoreRenderSystem\RenderPasses\BaseRenderPass.h" />
+    <ClInclude Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.h" />
+    <ClInclude Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.h" />
+    <ClInclude Include="include\CoreRenderSystem\ResourceManagers\IModelsManager.h" />
+    <ClInclude Include="include\CoreRenderSystem\ResourceManagers\ITexturesManager.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
     <ClInclude Include="include\imgui\imgui_impl_dx11.h" />
@@ -194,71 +210,169 @@
     <ClInclude Include="include\imgui\imstb_rectpack.h" />
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
-    <ClInclude Include="include\RenderEngine.h" />
-    <ClInclude Include="include\TransformUtils.h" />
-    <ClInclude Include="include\Utils\ModelData.h" />
-    <ClInclude Include="include\Utils\TextureData.h" />
+    <ClInclude Include="include\SID.h" />
+    <ClInclude Include="include\TextureData.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="source\CoreRenderSystem\CoreShaderInclude.h" />
-    <ClInclude Include="source\CoreRenderSystem\Graphics.h" />
-    <ClInclude Include="source\CoreRenderSystem\GraphicsBase.h" />
-    <ClInclude Include="source\CoreRenderSystem\PipelineFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BaseRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BeamRenderer\BeamConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BeamRenderer\BeamRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BeamRenderer\BeamRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BloomRenderer\BloomConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BloomRenderer\BloomFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\FXAARenderer\Fxaa3_11.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\FXAARenderer\FXAARenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\FXAARenderer\FXAARendererConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\FXAARenderer\FXAARendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ModelRenderer\ModelConstBuffers.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ModelRenderer\ModelRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\PPRenderer\PPConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\PPRenderer\PPRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\PPRenderer\PPRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\QuadRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxConstBuffers.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SSAORenderer\SSAORenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SSAORenderer\SSAORendererConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\SSAORenderer\SSAORendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\TAARenderer\TAARenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\TAARenderer\TAARendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UIRenderer\UIConstBuffers.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UIRenderer\UIRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UIRenderer\UIRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UPRenderer\UPConstBuffers.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRenderer.h" />
-    <ClInclude Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\ModelsManager.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\States\BlendStates.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\States\DSStates.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\States\RasterizerStates.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\States\Samplers.h" />
-    <ClInclude Include="source\CoreRenderSystem\ResourceManagers\TexturesManager.h" />
-    <ClInclude Include="source\DynamicMeshBuffer.h" />
     <ClInclude Include="source\GDIPlusManager.h" />
-    <ClInclude Include="source\Geometry.h" />
-    <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h" />
-    <ClInclude Include="source\GraphicsExceptions\GraphicsException.h" />
-    <ClInclude Include="source\halton.h" />
-    <ClInclude Include="source\pch.h" />
     <ClInclude Include="source\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\CoreRenderSystem\BaseRenderSystem.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformationFile>Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>E:\Quake-2\Debug\DX11RenderEngine.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>Debug\DX11RenderEngine.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>Debug\DX11RenderEngine.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DX11RENDERENGINE_EXPORTS;_WINDOWS;_USRDLL;DEBUG;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNABaseStructs\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNADx11RenderDevice\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\DxgiInfoManager.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>E:\Quake-2\Debug\QuakeRenderEngine.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>Debug\QuakeRenderEngine.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>Debug\QuakeRen.73E93B22.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNABaseStructs\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\..\FNADx11RenderDevice\include\; E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
@@ -266,61 +380,11 @@
     <ClCompile Include="include\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Graphics.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\GraphicsBase.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ModelsUtils\ModelData.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\PipelineFactory.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\BeamRenderer\BeamRendererer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\BeamRenderer\BeamRendererProvider.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\BloomRenderer\BloomRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\FXAARenderer\FXAARenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\IMGUIRenderer\ImGUIRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\ModelRenderer\ModelRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererFactory.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\ParticlesRenderer\ParticlesRendererProvider.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\PPRenderer\PPRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\QuadRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\SkyboxRenderer\SkyboxRendererFactory.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\SSAORenderer\SSAORenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\TAARenderer\TAARenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\UIRenderer\UIRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\UIRenderer\UIRendererFactory.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRenderer.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRendererFactory.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\Renderers\UPRenderer\UPRendererProvider.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\ModelsManager.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\States\BlendStates.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\States\DSStates.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\States\RasterizerStates.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\States\Samplers.cpp" />
-    <ClCompile Include="source\CoreRenderSystem\ResourceManagers\TexturesManager.cpp" />
     <ClCompile Include="source\GDIPlusManager.cpp" />
-    <ClCompile Include="source\Geometry.cpp" />
-    <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp" />
-    <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp" />
-    <ClCompile Include="source\halton.cpp" />
-    <ClCompile Include="source\pch.cpp" />
-    <ClCompile Include="source\RenderEngine.cpp" />
     <ClCompile Include="source\TextureData.cpp" />
     <ClCompile Include="source\TransformUtils.cpp" />
     <ClCompile Include="source\VertexTypes.cpp" />
-	
-    <None Include="include\Utils\SimpleMath.inl" />
-    <None Include="Shaders\BloomShader.hlsl" />
-    <None Include="Shaders\BSPShader.hlsl" />
-    <None Include="Shaders\FXAAShader.hlsl" />
-    <None Include="Shaders\ModelsShader.hlsl" />
-    <None Include="Shaders\MotionBlurShader.hlsl" />
-    <None Include="Shaders\ParticlesShader.hlsl" />
     <None Include="Shaders\PixelPacking_Velocity.hlsl" />
-    <None Include="Shaders\PostProcessShader.hlsl" />
-    <None Include="Shaders\SkyShader.hlsl" />
-    <None Include="Shaders\SSAOShader.hlsl" />
-    <None Include="Shaders\TAAShader.hlsl" />
-    <None Include="Shaders\UIShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc" />
@@ -388,12 +452,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Utils\VertexesData.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\RenderFlags.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\dxerr\dxerr.vcxproj">
       <Project>{f23e0f3e-9006-4510-828e-3b9ec4271041}</Project>
     </ProjectReference>
@@ -406,6 +464,9 @@
     <ProjectReference Include="..\SimpleMath\SimpleMath.vcxproj">
       <Project>{a8b84bff-0299-4f72-91b1-afe9574b2128}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="include\RenderSystem" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

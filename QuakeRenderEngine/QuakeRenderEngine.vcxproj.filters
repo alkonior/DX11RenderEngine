@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header files\RenderPasses">
+      <UniqueIdentifier>{c74ba7c1-5c5e-469e-8cc8-8f8e8d279fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\ConstBuffers">
+      <UniqueIdentifier>{c67578ee-e6e3-40cf-ba43-f148772eb54f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Factories">
+      <UniqueIdentifier>{1fec3ab1-c02f-4bf3-a01e-1c9299740a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\States">
+      <UniqueIdentifier>{844502b7-5d94-46be-a0a3-de3e064e4ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b0db90fa-1915-494a-9c99-4e5e15637547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Utils">
+      <UniqueIdentifier>{33c70373-5b9e-4666-a543-70174000a9f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderPasses">
+      <UniqueIdentifier>{01c4400e-0f32-4ba5-8908-d31c92a1049a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Providers">
+      <UniqueIdentifier>{d0d1ce66-853b-409c-8d8d-46e71302c98b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{6f169620-4835-436c-ab44-a129b2a4fd04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewRenderPasses">
+      <UniqueIdentifier>{d1223db6-e42a-4012-a8b2-80ef6a712405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewRenderPasses\ModelsRenderpass">
+      <UniqueIdentifier>{ed367ab5-7009-4ac7-9ad3-92cfd483107c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewRenderPasses\UIRenderPass">
+      <UniqueIdentifier>{9303daf9-8b13-4e6c-9941-dad28b82de5c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\BeamRenderer\BeamRendererer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\BeamRenderer\BeamRendererProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\BloomRenderer\BloomRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\FXAARenderer\FXAARenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\States\BlendStates.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\States\DSStates.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\TAARenderer\halton.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModelData.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\ModelRenderer\ModelRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\ModelsManager.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\MotionBlurRenderer\MotionBlurRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesRendererer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesRendererFactory.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesRendererProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\PPRenderer\PPRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\pch.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="QuakeRenderEngine.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\States\RasterizerStates.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RenderSystem.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RenderEngine.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\States\Samplers.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\SkyboxRenderer\SkyboxRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\SkyboxRenderer\SkyboxRendererFactory.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\TAARenderer\TAARenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ResourceManagers\TexturesManager.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\UIRenderer\UIRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPRenderer.cpp">
+      <Filter>Source Files\RenderPasses</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\UIRenderer\UIRendererFactory.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPRendererFactory.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPRendererProvider.cpp">
+      <Filter>Source Files\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsPassConstBuffer.cpp">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsPassProvider.cpp">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.cpp">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Utils\DrawData.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BeamRenderer\BeamConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BeamRenderer\BeamRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BeamRenderer\BeamRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BloomRenderer\BloomConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BloomRenderer\BloomRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\FXAARenderer\FXAARenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\FXAARenderer\FXAARendererConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\States\BlendStates.h">
+      <Filter>Header files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\BloomRenderer\BloomFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\States\DSStates.h">
+      <Filter>Header files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\FXAARenderer\Fxaa3_11.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\FXAARenderer\FXAARendererFactory.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ModelRenderer\ModelConstBuffers.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ModelRenderer\ModelRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ModelRenderer\ModelRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\MotionBlurRenderer\MotionBlurConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\MotionBlurRenderer\MotionBlurRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\MotionBlurRenderer\MotionBlurRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\ParticlesRenderer\ParticlesRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\PPRenderer\PPRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\PPRenderer\PPConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\PPRenderer\PPRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\States\RasterizerStates.h">
+      <Filter>Header files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\ModelData.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\pch.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\ModelsManager.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderEngine.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderFlags.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RenderSystem.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\States\Samplers.h">
+      <Filter>Header files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SkyboxRenderer\SkyboxConstBuffers.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SkyboxRenderer\SkyboxRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORendererConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\TAARenderer\TAARenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\TAARenderer\TAARendererConstBuffer.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceManagers\TexturesManager.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\TAARenderer\TAARendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UIRenderer\UIRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UIRenderer\UIConstBuffers.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPConstBuffers.h">
+      <Filter>Header files\ConstBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UIRenderer\UIRendererFactory.h">
+      <Filter>Header files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\UPRenderer\UPRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\SkyboxRenderer\SkyboxRenderer.h">
+      <Filter>Header files\RenderPasses</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\VertexesData.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\OldRenderPasses\TAARenderer\halton.h">
+      <Filter>Header files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassConstBuffer.h">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassProvider.h">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.h">
+      <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.h">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPass.h">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.h">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\FXAAShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ModelsShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\MotionBlurShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ParticlesShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PixelPacking_Velocity.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PostProcessShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SSAOShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\TAAShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\UIShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BloomShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BSPShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
