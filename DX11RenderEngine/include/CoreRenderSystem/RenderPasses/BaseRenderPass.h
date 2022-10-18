@@ -20,7 +20,7 @@ protected:
     };
     
     const BaseRendererParams baseRendererParams;
-    static Renderer::IRenderer * renderDevice;
+    Renderer::IRenderer * renderDevice;
 
     
     PipelineFactory* factory = nullptr;
@@ -30,7 +30,9 @@ protected:
     
     
     BaseRenderPass(const BaseRendererParams& in):
-    baseRendererParams(in){ };
+    baseRendererParams(in),
+    renderDevice(in.renderSystem.pRenderer)
+    { };
 
     void Init(const char* dirr, Renderer::IStateProvider* provider){
         
@@ -45,7 +47,7 @@ protected:
             delete factory;
         }
         
-        factory = new PipelineFactory(provider, data, size);
+        factory = new PipelineFactory(renderDevice, provider, data, size);
     };
     
 public:

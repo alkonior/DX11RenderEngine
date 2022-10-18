@@ -1,8 +1,8 @@
 #pragma once
-#include "DrawData.h"
-#include "RenderFlags.h"
-#include "Utils/TextureData.h"
+#include "Utils/DrawData.h"
 #include "Utils/ModelData.h"
+#include "RenderFlags.h"
+#include "TextureData.h"
 #include "imgui/imgui.h"
 
 class RenderSystem;

@@ -14,11 +14,13 @@ PipelineFactory::PipelineFactory(IStateProvider* provider, const ShaderDefines* 
 {}
 
 PipelineFactory::PipelineFactory(
+Renderer::IRenderer* renderDevice,
 Renderer::IStateProvider* provider,
 void* shaderData,
 size_t dataSize):
     PipelineFactory(provider, provider->GetFactoryDescription().defines, provider->GetFactoryDescription().defineCount, provider->GetFactoryDescription().compileFlags)
 {
+    this->renderDevice = renderDevice;
     this->shaderData = malloc(dataSize);
     _memccpy(this->shaderData, shaderData, 1, dataSize);
     this->dataSize = dataSize;;
@@ -54,7 +56,7 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
 
         auto definesArray = GetDefines(definesFlags);
         const char* name = provider->GetShaderName();
-        ps->ps = renderer->CompilePixelShader(
+        ps->ps = renderDevice->CompilePixelShader(
             IRenderer::ShaderData{
                 shaderData,dataSize,
                 definesArray.data(),
@@ -68,7 +70,7 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
         );
 
         auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-        ps->vs = renderer->CompileVertexShader(
+        ps->vs = renderDevice->CompileVertexShader(
             IRenderer::ShaderData{
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -80,7 +82,7 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
         );
 
         if (useShaders & Renderer::UseGeometryShader)
-            ps->gs = renderer->CompileGeometryShader(
+            ps->gs = renderDevice->CompileGeometryShader(
                 IRenderer::ShaderData{
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -94,7 +96,7 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
             ps->gs = nullptr;
 
         if (useShaders & Renderer::UseComputeShader)
-            ps->cs = renderer->CompileComputeShader(
+            ps->cs = renderDevice->CompileComputeShader(
                 IRenderer::ShaderData{
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -131,7 +133,7 @@ PipelineState* PipelineFactory::GetComputeState(size_t definesFlags, const char*
         auto definesArray = GetDefines(definesFlags);
         const char* name = provider->GetShaderName();
 
-        ps->cs = renderer->CompileComputeShader(
+        ps->cs = renderDevice->CompileComputeShader(
             IRenderer::ShaderData{
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -152,10 +154,10 @@ PipelineFactory::~PipelineFactory()
     delete provider;
     for (auto& [key, ps] : dictinary)
     {
-        renderer->AddDisposeVertexShader(ps->vs);
-        renderer->AddDisposePixelShader(ps->ps);
+        renderDevice->AddDisposeVertexShader(ps->vs);
+        renderDevice->AddDisposePixelShader(ps->ps);
         delete ps;
     }
     free(shaderData);
-    renderer->Flush();
+    renderDevice->Flush();
 }

@@ -9,7 +9,7 @@ class ModelsManager : public IModelsManager<ModelData, FramedModelData> {
 
 public:
 
-	ModelsManager();
+	ModelsManager(Renderer::IRenderer* renderDevice) : IModelsManager<ModelData, FramedModelData>(renderDevice) {};
 
 	void ReleaseModel(size_t id) override;
 	SavedModel GetModel(size_t id) override;
@@ -20,6 +20,6 @@ public:
 
 	virtual ~ModelsManager() override;
 private:
-	std::unordered_map<size_t, SavedModel> models;
+	std::unordered_map<size_t, SavedModel> models = {};
 };
 

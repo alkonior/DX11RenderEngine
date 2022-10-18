@@ -10,8 +10,8 @@ enum UsedShaders: uint16_t {
 };
 
 class PipelineFactory {
-	static Renderer::IRenderer* renderer;
 	
+	Renderer::IRenderer* renderDevice;
 	Renderer::IStateProvider* provider;
 	
 	void* shaderData;
@@ -31,6 +31,7 @@ class PipelineFactory {
 	PipelineFactory(Renderer::IStateProvider* provider, const  Renderer::ShaderDefines* defines, size_t defineCount, uint16_t compileFlags);
 public:
 	PipelineFactory(
+		Renderer::IRenderer* renderDevice,
 		Renderer::IStateProvider* provider,
 		void* shaderData,
 		size_t dataSize);

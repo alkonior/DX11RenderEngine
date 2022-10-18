@@ -9,12 +9,6 @@
 
 class GDIPlusManager;
 
-struct RenderData{
-	float  time;
-	matrix view;
-	matrix projection;
-};
-
 
 class BaseRenderSystem {
 

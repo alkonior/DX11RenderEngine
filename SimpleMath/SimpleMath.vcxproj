@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\SimpleMath.h" />
+    <ClInclude Include="include\TransformUtils.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>

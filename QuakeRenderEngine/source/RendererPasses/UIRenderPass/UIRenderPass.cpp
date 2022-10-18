@@ -1,15 +1,16 @@
 ﻿#include "UIRenderPass.h"
 
 #include "RenderFlags.h"
+#include "UIRenderPassProvider.h"
 #include "ResourceManagers/States/Samplers.h"
 
 
 using namespace Renderer;
 
 
-UIRenderPass::UIRenderPass(const BaseRendererParams& in) : BaseRenderPass<>(in) {
+UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass<>({"UIShader.hlsl", renderSystem}) {
 
-    renderDevice = in.renderSystem.pRenderer;
+    //renderDevice = in.renderSystem.pRenderer;
     int32_t width, height;
     renderDevice->GetBackbufferSize(&width, &height);
 
@@ -79,13 +80,10 @@ float2 UIRenderPass::DrawCall::getUVScale()
 }
 
 
-
-
-
-
-
-
-void UIRenderPass::Init(const char* dirr) {}
+void UIRenderPass::Init(const char* dirr)
+{
+    BaseRenderPass<>::Init(dirr, new UIRenderPassProvider());
+}
 
 void UIRenderPass::PreRender()
 {

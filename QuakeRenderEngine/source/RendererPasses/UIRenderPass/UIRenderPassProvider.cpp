@@ -1,6 +1,7 @@
 ﻿#include "UIRenderPassProvider.h"
 
 #include <d3d11.h>
+#include <array>
 
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"

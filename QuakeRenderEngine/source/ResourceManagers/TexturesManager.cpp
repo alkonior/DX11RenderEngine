@@ -1,26 +1,28 @@
 ﻿#include "TexturesManager.h"
 
+#include "client/client.h"
+
 using namespace Renderer;
 
-TexturesManager::TexturesManager()
+TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesManager(renderDevice) 
 {
     int width, height;
     renderDevice->GetBackbufferSize(&width, &height);
 
     depthBuffer = renderDevice->GenDepthStencilRenderbuffer(width, height, DepthFormat::DEPTHFORMAT_D32, 0);
 
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, diffuseColor, diffuseColorRT);
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, lightColor, lightColorRT);
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, bloomMask, bloomMaskRT);
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, alphaSurfaces, alphaSurfacesRT);
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, preAAcolor, preAAcolorRT);
-    CreateRenderTarget(SURFACEFORMAT_RGBA1010102, width, height, velocityField, velocityFieldRT);
-    CreateRenderTarget(SURFACEFORMAT_SINGLE, width, height, blurMask, blurMaskRT);;
-    CreateRenderTarget(SURFACEFORMAT_COLOR, width, height, pastColor, pastColorRT);
-    CreateRenderTarget(SURFACEFORMAT_SINGLE, width, height, pastDepth, pastDepthRT);
-    CreateRenderTarget(SURFACEFORMAT_VECTOR4, width, height, normalsField, normalsFieldRT);
+    CreateRenderTarget(SID("diffuseColor"),  SURFACEFORMAT_COLOR,         false, width, height,          diffuseColor, diffuseColorRT);
+    CreateRenderTarget(SID("lightColor"),    SURFACEFORMAT_COLOR,         false, width, height,          lightColor, lightColorRT);
+    CreateRenderTarget(SID("bloomMask"),     SURFACEFORMAT_COLOR,         false, width, height,          bloomMask, bloomMaskRT);
+    CreateRenderTarget(SID("alphaSurfaces"), SURFACEFORMAT_COLOR,         false, width, height,          alphaSurfaces, alphaSurfacesRT);
+    CreateRenderTarget(SID("preAAcolor"),    SURFACEFORMAT_COLOR,         false, width, height,          preAAcolor, preAAcolorRT);
+    CreateRenderTarget(SID("velocityField"), SURFACEFORMAT_RGBA1010102,   false, width, height,          velocityField, velocityFieldRT);
+    CreateRenderTarget(SID("blurMask"),      SURFACEFORMAT_SINGLE,        false, width, height,          blurMask, blurMaskRT);;
+    CreateRenderTarget(SID("pastColor"),     SURFACEFORMAT_COLOR,         false, width, height,          pastColor, pastColorRT);
+    CreateRenderTarget(SID("pastDepth"),     SURFACEFORMAT_SINGLE,        false, width, height,          pastDepth, pastDepthRT);
+    CreateRenderTarget(SID("normalsField"),  SURFACEFORMAT_VECTOR4,       false, width, height,          normalsField, normalsFieldRT);
 
-    CreateUATarget(SURFACEFORMAT_SINGLE, width, height, oclusionField, oclusionFieldRT);
+    CreateRenderTarget(SID("oclusionField"),       SURFACEFORMAT_SINGLE, true, width, height, oclusionField, oclusionFieldRT);
 }
 
 void TexturesManager::RegTexture(void* data, int width, int height, bool mipmap, size_t id)
@@ -85,22 +87,30 @@ void TexturesManager::ReleaseTexture(size_t id)
     pTexture.texture = nullptr;
     //textures.erase(id);
 }
+void TexturesManager::CreateRenderTarget(string_id name, SurfaceFormat format, bool isUA, size_t width, size_t height, Renderer::Texture*& texture,
+    Renderer::RenderTargetBinding& renderTarget)
+{
+    renderTarget = CreatePublicRenderTarget(name, {format, isUA,width,height});
+    texture = renderTarget.texture;
+}
 
 TexturesManager::~TexturesManager()
 {
     for (auto& [key, texture] : textures)
-    {
-        ReleaseTexture(key);
+    {    auto& pTexture = textures[key];
+        if (pTexture.texture != nullptr)
+            renderDevice->AddDisposeTexture(pTexture.texture);
+        pTexture.texture = nullptr;
     }
     
     for (auto& [key, texture] : publicRenderTargets)
     {
-        ReleaseTexture(key);
+        renderDevice->AddDisposeTexture(texture.texture);
     }
     
     for (auto& [key, texture] : privateRenderTargets)
     {
-        ReleaseTexture(key);
+        renderDevice->AddDisposeTexture(texture.texture);
     }
 
     renderDevice->AddDisposeRenderbuffer(depthBuffer);
@@ -152,6 +162,10 @@ const RenderTargetBinding& TexturesManager::CreatePrivateRenderTarget(string_id 
     diffuseColorRT = privateRenderTargets[id];
     
     return diffuseColorRT;
+}
+const Renderer::RenderTargetBinding& TexturesManager::GetRenderTarget(Renderer::string_id id)
+{
+    return publicRenderTargets[id];
 }
 
 

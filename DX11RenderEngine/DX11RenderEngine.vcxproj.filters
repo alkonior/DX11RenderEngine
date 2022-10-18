@@ -83,9 +83,6 @@
     <ClInclude Include="resource.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="include\TransformUtils.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Bezier.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -155,6 +152,9 @@
     <ClInclude Include="include\TextureData.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
+    <ClInclude Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\GDIPlusManager.cpp">
@@ -175,6 +175,7 @@
     <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.cpp" />
     <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BloomShader.hlsl" />

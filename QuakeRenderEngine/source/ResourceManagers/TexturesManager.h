@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include "Utils/TextureData.h"
-#include "DrawData.h"
-
 #include <map>
 #include <unordered_map>
 
@@ -13,7 +10,7 @@ public:
 
 
 public:
-	TexturesManager();
+	TexturesManager(Renderer::IRenderer* renderDevice);
 
 	virtual void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
 	virtual void RegTexture(const TextureData& tx, size_t id);
@@ -64,13 +61,11 @@ public:
 	Renderer::Texture* oclusionField;
 	Renderer::RenderTargetBinding oclusionFieldRT;
 	
-	
-	void CreateRenderTarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
+private:
+	void CreateRenderTarget(Renderer::string_id name, Renderer::SurfaceFormat format, bool isUA, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
+//
+public:
 
-	void CreateUATarget(Renderer::SurfaceFormat format, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
-
-	
-	//Renderer::Texture* blumeMask;
 
 		
 	virtual ~TexturesManager();

@@ -3,7 +3,21 @@
 #include <memory>
 #include <vector>
 #include "TransformUtils.h"
+#include "SimpleMath.h"
 
+
+struct ImageBox {
+	int32_t x; int32_t y;
+	int32_t w; int32_t h;
+};
+
+struct ImageUpdate {
+	size_t id;
+	ImageBox box;
+	int32_t width; int32_t height;
+	int32_t level;
+	uint8_t* data;
+};
 
 
 class TextureData {

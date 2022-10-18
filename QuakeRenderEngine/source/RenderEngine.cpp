@@ -1,13 +1,12 @@
 #include "pch.h"
 #include "RenderEngine.h"
 #include "RenderSystem.h"
-#include "RenderEngine.h"
 
 
 void RenderDevice::InitDevice(RenderEngineInitStruct init) {
 	if (gfx != nullptr) DestroyDevice();
-	gfx = new RenderSystem(init);
-	gfx->skyFlags = SKYNOTHING;
+	gfx =  RenderSystem::Initialise(init);
+	//gfx->skyFlags = SKYNOTHING;
 	//gfx->SetCameraPosition({ float3(0,0,0), float3(0,0,0), float3(1,1,1) });
 
 
@@ -95,11 +94,11 @@ void RenderDevice::EndFrame()
 }
 
 void RenderDevice::SetSky(size_t side, const TextureData& data) {
-	gfx->managerSkybox.UpdateSkybox(data, side);
+	//gfx->managerSkybox.UpdateSkybox(data, side);
 }
 
 void RenderDevice::SetSkyFlags(uint64_t flags) {
-	gfx->skyFlags = flags;
+	//gfx->skyFlags = flags;
 }
 
 void RenderDevice::Flush() {

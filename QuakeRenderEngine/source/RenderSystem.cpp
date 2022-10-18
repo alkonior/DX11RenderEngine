@@ -1,8 +1,9 @@
 #include "pch.h"
 
-#include "D3D11Renderer.h"
 
 #include "RenderSystem.h"
+
+#include "D3D11Renderer.h"
 
 #include <filesystem>
 #include <resource.h>
@@ -17,7 +18,7 @@ using namespace Renderer;
 
 RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemInitStruct& bInit) :
 BaseRenderSystem(bInit),
-managerUI({"", *this}),
+managerUI(*this),
 managerIMGUI({"", *this})
 {
 	ImGui::CreateContext();
@@ -27,7 +28,9 @@ managerIMGUI({"", *this})
 	
 	ImGui_ImplWin32_Init(init.hWnd1);
 	ImGui_ImplDX11_Init(((D3D11Renderer*)pRenderer)->device.Get(), ((D3D11Renderer*)pRenderer)->context.Get());
-	
+
+	renderPasses.push_back(&managerUI);
+	renderPasses.push_back(&managerIMGUI);
 	//managerImGUI.Init();
 	//ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -57,8 +60,29 @@ void RenderSystem::ReinitShaders(const char * dirr)
 	}
 };
 
-RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct)
+RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
 {
+
+	auto renderDevice = new Renderer::D3D11Renderer{
+					{
+						(int32_t)init.width,
+						(int32_t)init.height,
+						0,
+						init.hWnd1,
+						init.hWnd2,
+						false,
+						DepthFormat::DEPTHFORMAT_D32,
+						PresentInterval::PRESENTINTERVAL_DEFAULT
+					},1
+				};
+	return new RenderSystem
+	{ init,
+		{
+			renderDevice,
+			new TexturesManager(renderDevice),
+			new ModelsManager(renderDevice)
+		}
+	};
 	//todo
 }
 
@@ -87,93 +111,55 @@ bool RenderSystem::RenderFrame() {
 	//GFX_CATCH_RENDER(managerUP.Render(*this););
 	pRenderer->EndEvent();
 	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-	
 	pRenderer->BeginEvent("BloomMask draw.");
 	//GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
 	
 	pRenderer->BeginEvent("Static motion blur draw.");
 	//GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
 	pRenderer->EndEvent();
 	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-	
 	pRenderer->BeginEvent("Models draw.");
 	//GFX_CATCH_RENDER(managerModels.Render(*this));
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
 
 	pRenderer->BeginEvent("Dynamic motion blur draw.");
 	//GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
 	
 	
 	pRenderer->BeginEvent("SSAO draw.");
 	//GFX_CATCH_RENDER(managerSSAO.Render(*this););
 	pRenderer->EndEvent();
 	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-	
 	pRenderer->BeginEvent("Sky draw.");
 	//GFX_CATCH_RENDER(managerSkybox.Render(*this););
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
 
 	pRenderer->BeginEvent("Particles draw.");
 	//GFX_CATCH_RENDER(managerParticles.Render(*this););
 	pRenderer->EndEvent();
 	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-
 	pRenderer->BeginEvent("Bloom pass.");
 	//GFX_CATCH_RENDER(managerBloom.Render(*this););
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
 	
 	pRenderer->BeginEvent("End BSP draw.");
 	//GFX_CATCH_RENDER(managerPostProcess.Render(*this););
 	pRenderer->EndEvent();
 	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-	
 	pRenderer->BeginEvent("TAA-pass.");
 	//GFX_CATCH_RENDER(managerTAA.Render(*this););
 	pRenderer->EndEvent();
-	
-	pRenderer->ClearState();
-	BaseRenderSystem::Present();
-	
-	
+		
 	pRenderer->BeginEvent("UI draw.");
-	GFX_CATCH_RENDER(managerUI.Render(););
+	GFX_CATCH_RENDER((&managerUI)->Render(););
 	pRenderer->EndEvent();
+	
+	pRenderer->BeginEvent("IMGUI draw.");
+	managerIMGUI.Render();
+	pRenderer->EndEvent();
+	
 	
 	return success;
 }
@@ -181,10 +167,6 @@ bool RenderSystem::RenderFrame() {
 void RenderSystem::EndFrame()
 {
 	PostRender();
-	
-	pRenderer->BeginEvent("IMGUI draw.");
-	managerIMGUI.Render();
-	pRenderer->EndEvent();
 	
 	pRenderer->SwapBuffers();
 }
@@ -267,7 +249,9 @@ void RenderSystem::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, 
 	//managerUP.DrawSet(model, newModel, texturesManger->GetImg(textureId), data);
 }
 
-MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic) {
+MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic)
+{
+	return {};
 	//return managerUP.Register(model, dynamic);
 }
 

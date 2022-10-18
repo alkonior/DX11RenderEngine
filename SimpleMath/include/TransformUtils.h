@@ -1,5 +1,5 @@
 #pragma once
-#include"SimpleMath.h"
+#include "SimpleMath.h"
 
 typedef DirectX::SimpleMath::Vector4  float4;
 typedef DirectX::SimpleMath::Matrix   matrix;
@@ -7,6 +7,14 @@ typedef DirectX::SimpleMath::Matrix   float4x4;
 typedef DirectX::SimpleMath::Vector3  float3;
 typedef DirectX::SimpleMath::Vector2  float2;
 typedef uint32_t uint;
+
+
+struct RenderData{
+	float  time;
+	matrix view;
+	matrix projection;
+};
+
 
 class Transform {
 	matrix transform;

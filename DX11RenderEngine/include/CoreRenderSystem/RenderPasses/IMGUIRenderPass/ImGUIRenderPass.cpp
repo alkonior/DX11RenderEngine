@@ -1,7 +1,6 @@
-#include "pch.h"
+
 #include "ImGUIRenderPass.h"
 #include "SimpleMath.h"
-#include "Geometry.h"
 
 ImGUIRenderPass::ImGUIRenderPass(const BaseRendererParams& in): BaseRenderPass<>(in) {}
 
@@ -14,6 +13,12 @@ void ImGUIRenderPass::PreRender() {
 }
 
 void ImGUIRenderPass::Render() {
+}
+
+
+void ImGUIRenderPass::PostRender()
+{
+
 	static bool show = true;
 	ImGui::ShowDemoWindow(&show);
 	
@@ -28,10 +33,8 @@ void ImGUIRenderPass::Render() {
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 	}
+	
 }
-
-
-void ImGUIRenderPass::PostRender() {}
 
 ImGUIRenderPass::~ImGUIRenderPass() {}
 

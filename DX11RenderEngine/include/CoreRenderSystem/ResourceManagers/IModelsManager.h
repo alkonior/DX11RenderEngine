@@ -7,8 +7,12 @@ class IModelsManager;
 
 template <>
 class IModelsManager<> {
-
+protected:
+	Renderer::IRenderer* renderDevice = nullptr;
 public:
+	IModelsManager(Renderer::IRenderer* renderDevice) : renderDevice(renderDevice) {};
+
+	
 	struct SavedModel {
 		Renderer::VertexBufferBinding vertexBuffer;
 		Renderer::Buffer* indexBuffer = nullptr;
@@ -28,7 +32,7 @@ public:
 template <class ModelType, class... T>
 class IModelsManager<ModelType, T...> : public IModelsManager<T...>{
 public:
-	
+	IModelsManager<ModelType, T...>(Renderer::IRenderer* renderDevice) : IModelsManager<T...>(renderDevice) {};
 	virtual void RegisterModel(size_t id, const ModelType& model) = 0;
 	
 };

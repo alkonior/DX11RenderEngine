@@ -27,7 +27,7 @@ class UIRenderPass final : public BaseRenderPass<> {
     };
     
 public:
-    explicit UIRenderPass(const BaseRendererParams& in);
+    explicit UIRenderPass(BaseRenderSystem& in);
 
 
     

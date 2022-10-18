@@ -72,9 +72,6 @@
     <ClCompile Include="source\RendererPasses\OldRenderPasses\TAARenderer\halton.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="source\RendererPasses\OldRenderPasses\IMGUIRenderer\ImGUIRenderer.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="source\ModelData.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
@@ -156,6 +153,15 @@
     <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.cpp">
       <Filter>NewRenderPasses\ModelsRenderpass</Filter>
     </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Utils\DrawData.h">
@@ -195,9 +201,6 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="source\RendererPasses\OldRenderPasses\FXAARenderer\FXAARendererFactory.h">
-      <Filter>Header files\RenderPasses</Filter>
-    </ClInclude>
-    <ClInclude Include="source\RendererPasses\OldRenderPasses\IMGUIRenderer\ImGUIRenderer.h">
       <Filter>Header files\RenderPasses</Filter>
     </ClInclude>
     <ClInclude Include="source\RendererPasses\OldRenderPasses\ModelRenderer\ModelConstBuffers.h">
@@ -322,6 +325,15 @@
     </ClInclude>
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.h">
       <Filter>NewRenderPasses\ModelsRenderpass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPass.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.h">
+      <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

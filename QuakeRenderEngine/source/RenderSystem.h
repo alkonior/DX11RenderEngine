@@ -1,8 +1,10 @@
 #pragma once
 #include "CoreRenderSystem/BaseRenderSystem.h"
 #include "SimpleMath.h"
-#include "CoreRenderSystem/IMGUIRenderPass/ImGUIRenderPass.h"
+
+#include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
+#include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
 
 

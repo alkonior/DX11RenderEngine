@@ -76,12 +76,14 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)include\</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>
     </IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -128,7 +130,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\; $(ProjectDir)source\; $(ProjectDir)..\FNABaseStructs\include\; $(ProjectDir)..\FNADx11RenderDevice\include\; $(ProjectDir)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -191,9 +193,9 @@
     <ClInclude Include="include\CoreRenderSystem\DynamicMeshBuffer.h" />
     <ClInclude Include="include\CoreRenderSystem\GraphicsExceptions\DxgiInfoManager.h" />
     <ClInclude Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.h" />
-    <ClInclude Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.h" />
     <ClInclude Include="include\CoreRenderSystem\PipelineFactory.h" />
     <ClInclude Include="include\CoreRenderSystem\RenderPasses\BaseRenderPass.h" />
+    <ClInclude Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.h" />
     <ClInclude Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.h" />
     <ClInclude Include="include\CoreRenderSystem\ResourceManagers\IModelsManager.h" />
     <ClInclude Include="include\CoreRenderSystem\ResourceManagers\ITexturesManager.h" />
@@ -207,7 +209,6 @@
     <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\SID.h" />
     <ClInclude Include="include\TextureData.h" />
-    <ClInclude Include="include\TransformUtils.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="source\GDIPlusManager.h" />
     <ClInclude Include="source\VertexTypes.h" />
@@ -291,8 +292,8 @@
     </ClCompile>
     <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\DxgiInfoManager.cpp" />
     <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.cpp" />
-    <ClCompile Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.cpp" />
     <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

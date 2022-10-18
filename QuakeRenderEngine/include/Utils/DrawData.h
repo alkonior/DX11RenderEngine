@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "TransformUtils.h"
+#include "TextureData.h"
 
 struct  RenderEngineInitStruct {
     void* hWnd1;
