@@ -103,6 +103,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,6 +121,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -914,6 +916,9 @@
     <ClInclude Include="source\ResourceManagers\TexturesManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DX11RenderEngine\DX11RenderEngine.vcxproj">
+      <Project>{6bd7be35-e16c-474a-b507-9883ae657e1e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\FNABaseStructs\FNABaseStructs.vcxproj">
       <Project>{36bba8f9-6c5c-4629-aa43-da929a06daa6}</Project>
     </ProjectReference>
