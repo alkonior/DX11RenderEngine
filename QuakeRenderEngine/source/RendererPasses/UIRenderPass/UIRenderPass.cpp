@@ -1,4 +1,5 @@
-﻿#include "UIRenderPass.h"
+﻿
+#include "UIRenderPass.h"
 
 #include "RenderFlags.h"
 #include "UIRenderPassProvider.h"
@@ -8,7 +9,7 @@
 using namespace Renderer;
 
 
-UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass<>({"UIShader.hlsl", renderSystem}) {
+UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"UIShader.hlsl", renderSystem}) {
 
     //renderDevice = in.renderSystem.pRenderer;
     int32_t width, height;
@@ -82,7 +83,7 @@ float2 UIRenderPass::DrawCall::getUVScale()
 
 void UIRenderPass::Init(const char* dirr)
 {
-    BaseRenderPass<>::Init(dirr, new UIRenderPassProvider());
+    BaseRenderPass::Init(dirr, new UIRenderPassProvider());
 }
 
 void UIRenderPass::PreRender()

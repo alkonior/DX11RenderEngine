@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "CoreRenderSystem/RenderPasses/QuadRenderPass.h"
-#include "RendererPasses/OldRenderPasses/UIRenderer/UIConstBuffers.h"
+#include "UIRenderPassConstBuffer.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "Utils/DrawData.h"
 
 
-class UIRenderPass final : public BaseRenderPass<> {
+class UIRenderPass : public BaseRenderPass {
 
     
     struct Vertex2D {
@@ -35,7 +35,7 @@ public:
     
     void PreRender() override;
     
-    void Render() override;
+    void Render();
     
     void PostRender() override;
 
@@ -49,7 +49,7 @@ private:
 
     Renderer::VertexBufferBinding vertexBuffer;
     Renderer::Buffer* indexBuffer;
-    Shader2DCosntBuffer localBuffer;
+    UIRenderPassConstBuffer localBuffer;
     Renderer::ConstBuffer* constBuffer;
 
     Renderer::SamplerState sampler;

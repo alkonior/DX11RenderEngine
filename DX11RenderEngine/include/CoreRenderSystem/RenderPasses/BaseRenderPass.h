@@ -7,11 +7,8 @@
 #include "CoreRenderSystem/PipelineFactory.h"
 #include "ref_dx11/render/IStateProvider.h"
 
-template<class... T>
-class BaseRenderPass;
 
-template<>
-class BaseRenderPass<> {
+class BaseRenderPass {
 protected:
     //Renderer::IRenderer* renderer;
     struct BaseRendererParams{
@@ -54,28 +51,9 @@ public:
     
     virtual void Init(const char* dirr) = 0;
     
-    virtual void Render() = 0;
     virtual void PreRender() = 0;
     virtual void PostRender() = 0;
 
     virtual ~BaseRenderPass() { delete factory; };
-    
-};
-
-template<class T>
-class BaseRenderPass<T> : public BaseRenderPass<>  {
-
-    static_assert(!std::is_void_v<T>, "T is void");
-    
-    using Super =  BaseRenderPass<>;
-    
-    public:
-
-    BaseRenderPass(const BaseRendererParams& in) : Super(in){ };
-    
-    
-    virtual void Render(const T&) = 0;
-    virtual void RenderIMGUI() = 0;
-    void Render() final {};
     
 };

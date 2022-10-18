@@ -2,12 +2,8 @@
 #include "BaseRenderPass.h"
 #include "ref_dx11/render/IStateProvider.h"
 
-
-template<class... T>
-class QuadRenderPass;
-
-template<>
-class QuadRenderPass<>
+template<size_t Id>
+class QuadRenderPass
 {
 protected:
 	static bool isInited;	
@@ -83,38 +79,4 @@ public:
 
 private:
 	
-};
-
-template<>
-class QuadRenderPass<void> : public BaseRenderPass<>, public QuadRenderPass<> 
-{
-
-public:
-	QuadRenderPass(const typename BaseRenderPass<>::BaseRendererParams& in)
-		: BaseRenderPass<>(in),
-		  QuadRenderPass<>(in.renderSystem.pRenderer)
-	{	}
-
-	void Render() override
-	{
-		QuadRenderPass<>::renderDevice->ApplyVertexBufferBinding(vertexBuffer);
-		QuadRenderPass<>::renderDevice->ApplyIndexBufferBinding(indexBuffer, 16);
-	};
-};
-
-template<class T>
-class QuadRenderPass<T> : public BaseRenderPass<T>, public QuadRenderPass<> 
-{
-
-public:
-	QuadRenderPass(const typename BaseRenderPass<T>::BaseRendererParams& in)
-		: BaseRenderPass<T>(in),
-		  QuadRenderPass<>(in.renderSystem.pRenderer)
-	{	}
-
-	void Render(const T& ) override
-	{
-		QuadRenderPass<>::renderDevice->ApplyVertexBufferBinding(vertexBuffer);
-		QuadRenderPass<>::renderDevice->ApplyIndexBufferBinding(indexBuffer, 16);
-	};
 };

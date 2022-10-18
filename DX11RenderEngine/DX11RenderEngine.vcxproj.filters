@@ -152,7 +152,7 @@
     <ClInclude Include="include\TextureData.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.h">
+    <ClInclude Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -175,7 +175,7 @@
     <ClCompile Include="include\CoreRenderSystem\GraphicsExceptions\GraphicsException.cpp" />
     <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp" />
-    <ClCompile Include="include\CoreRenderSystem\IMGUIRenderPass\ImGUIRenderPass.cpp" />
+    <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BloomShader.hlsl" />

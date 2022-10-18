@@ -1,11 +1,9 @@
-#ifndef _CORE_SHADER_
-#define _CORE_SHADER_
+#ifndef _CORE_SHADER_RG_
+#define _CORE_SHADER_RG_
 #ifndef HLSL
 #pragma once
 #include "TransformUtils.h"
 // COMMON
-
-
 struct CONST_HANDLE {
 	CONST_HANDLE(int slot) { this->slot = slot; }
 	int slot;
@@ -16,7 +14,7 @@ struct TEXTURE_HANDLE {
 	int slot;
 };
 #else
-#include "../../DX11RenderEngine/DX11RenderEngine/Shaders/PixelPacking_Velocity.hlsl"
+#include "ref_dx11rg\DX11RenderEngine/DX11RenderEngine/Shaders/PixelPacking_Velocity.hlsl"
 #endif
 
 
@@ -36,17 +34,19 @@ struct TEXTURE_HANDLE {
 #pragma pack(4)
 #endif
 
+struct ViewProjectionMatrices {
+	matrix view;
+	matrix projection;
+	matrix inverseView;
+	matrix inverseProjection;
+	matrix viewProjection;
+	matrix viewProjectionInverse;
+	matrix reprojectionMatrix;
+};
+
 struct CoreConstants {
 
-    struct ViewProjectionMatrices {
-        matrix view;
-        matrix projection;
-        matrix inverseView;
-        matrix inverseProjection;
-        matrix viewProjection;
-        matrix viewProjectionInverse;
-        matrix reprojectionMatrix;
-    };
+ 
     ViewProjectionMatrices currentMatrices;
     ViewProjectionMatrices pastMatrices;
 

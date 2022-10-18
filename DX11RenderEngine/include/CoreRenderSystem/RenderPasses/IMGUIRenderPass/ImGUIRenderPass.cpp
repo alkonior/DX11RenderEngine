@@ -2,7 +2,7 @@
 #include "ImGUIRenderPass.h"
 #include "SimpleMath.h"
 
-ImGUIRenderPass::ImGUIRenderPass(const BaseRendererParams& in): BaseRenderPass<>(in) {}
+ImGUIRenderPass::ImGUIRenderPass(const BaseRendererParams& in): BaseRenderPass(in) {}
 
 void ImGUIRenderPass::Init(const char*) {}
 

@@ -5,11 +5,11 @@
 #include "imgui/imgui_impl_dx11.h"
 
 
-class ImGUIRenderPass final : public BaseRenderPass<> {
+class ImGUIRenderPass final : public BaseRenderPass {
 public:
     explicit ImGUIRenderPass(const BaseRendererParams& in);
     void Init(const char* dirr) override;
-    void Render() override;
+    void Render();
     void PreRender() override;
     void PostRender() override;
     ~ImGUIRenderPass() override;

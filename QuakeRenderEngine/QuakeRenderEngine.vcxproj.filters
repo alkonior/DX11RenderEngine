@@ -154,13 +154,13 @@
       <Filter>NewRenderPasses\ModelsRenderpass</Filter>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,14 +326,14 @@
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.h">
       <Filter>NewRenderPasses\ModelsRenderpass</Filter>
     </ClInclude>
+    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.h">
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
+    </ClInclude>
     <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPass.h">
-      <Filter>Header files</Filter>
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
     </ClInclude>
     <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.h">
-      <Filter>Header files</Filter>
+      <Filter>NewRenderPasses\UIRenderPass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

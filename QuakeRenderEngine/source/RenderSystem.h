@@ -74,7 +74,7 @@ public:
 	
 	//SkyboxRenderer	     managerSkybox;
 private:
-	std::vector<BaseRenderPass<>*> renderPasses;
+	std::vector<BaseRenderPass*> renderPasses;
 	
 	UIRenderPass			 managerUI;
 	//ModelRenderer		 managerModels;
