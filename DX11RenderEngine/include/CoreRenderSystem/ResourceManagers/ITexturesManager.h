@@ -52,7 +52,7 @@ public:
 		Renderer::RenderTargetBinding& diffuseColorRT
 	) = 0;
 
-	virtual const Renderer::RenderTargetBinding& GetRenderTarget(Renderer::string_id id) = 0;
+	virtual Renderer::RenderTargetBinding* GetRenderTarget(Renderer::string_id id) = 0;
 	
 	Renderer::Renderbuffer* depthBuffer = nullptr;
 	

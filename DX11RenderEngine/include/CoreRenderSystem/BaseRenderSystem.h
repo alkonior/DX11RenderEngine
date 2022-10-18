@@ -23,8 +23,6 @@ protected:
 		
 	};
 	
-	ITexturesManager* texturesManger;
-	IModelsManager<>* modelsManager;
 	
 	BaseRenderSystem(const BaseRenderSystemInitStruct&);
 
@@ -35,6 +33,8 @@ private:
 
 public:
 	Renderer::IRenderer* pRenderer;
+	ITexturesManager* texturesManger;
+	IModelsManager<>* modelsManager;
 	
 	const CoreConstants& GetViewConstants() {return viewConstants;};
 	

@@ -1,6 +1,6 @@
 #define HLSL
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/CoreShaderInclude.h"
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/Renderers/ModelRenderer/ModelConstBuffers.h"
+#include "ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include/CoreRenderSystem/CoreShaderInclude.h"
+#include "ref_dx11rg\DX11RenderEngine\QuakeRenderEngine/source/RendererPasses/ModelsRenderPass/ModelsPassConstBuffer.h"
 
 #ifdef LERP
 struct VSIn {
@@ -61,12 +61,12 @@ PSIn vsIn(VSIn input) {
 
 	//vso.oldPos = oldWorlPos;
 	//vso.newPos = worlPos;
-	vso.pos = mul(mul(float4(worlPos, 1.0f), worldMat), mainConstants.viewProjection);
+	vso.pos = mul(mul(float4(worlPos, 1.0f), worldMat), coreConstants.currentMatrices.viewProjection);
 	vso.oldWorldPos = mul(float4(oldWorlPos, 1.0f), oldWorldMat);
 	vso.worldPos = mul(float4(worlPos, 1.0f), worldMat);
 
-	vso.pos.xy += taaShiftBuffer.taaStrength*
-	taaShiftBuffer.taaPixelShift*
+	vso.pos.xy += coreConstants.taaBuffer.taaStrength*
+	coreConstants.taaBuffer.taaPixelShift*
 		vso.pos.w;
 	
 	//vso.oldPixelPos = mul(float4(worlPos, 1.0f), worldMat);
@@ -121,8 +121,8 @@ PSOut psIn(PSIn input) : SV_Target
 {
 	PSOut pso = (PSOut)0;
 	
-	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection)*0.5+0.5;
-	float4 oldPixelPos = mul(input.oldWorldPos, mainConstants.past_viewProjection)*0.5+0.5;
+	float4 curPixelPos = mul(input.worldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
+	float4 oldPixelPos = mul(input.oldWorldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
 	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
 	
 	if (dot(input.normal, input.normal) > 0.00001)

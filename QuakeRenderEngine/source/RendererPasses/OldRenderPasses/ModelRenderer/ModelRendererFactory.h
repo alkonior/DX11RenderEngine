@@ -3,15 +3,6 @@
 
 
 
-const Renderer::ShaderDefines ModelRendererDefines[] = {
-    {"RED", "1"},
-    {"LERP", "1"},
-    {"BAD_UV", "1"},
-    {"MNONORMAL", "1"},
-    {"COLORED", "1"},
-    {"LIGHTED", "1"},
-};
-
 
 
 class ModelRendererFactory: public Renderer::PipelineFactory {

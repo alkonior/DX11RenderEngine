@@ -81,7 +81,7 @@ public:
 		Renderer::RenderTargetBinding& diffuseColorRT
 	) override;
 
-	virtual const Renderer::RenderTargetBinding& GetRenderTarget(Renderer::string_id id) override;
+	virtual Renderer::RenderTargetBinding* GetRenderTarget(Renderer::string_id id) override;
 	
 private:
 	std::map<Renderer::string_id, TextureCache> textures;

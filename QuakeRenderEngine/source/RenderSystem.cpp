@@ -16,10 +16,15 @@
 
 using namespace Renderer;
 
-RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemInitStruct& bInit) :
+RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemInitStruct& bInit,
+    ModelsManager* modelsManager,
+    TexturesManager* texturesManager) :
     BaseRenderSystem(bInit),
-    managerUI(*this),
-    managerIMGUI({"",*this})
+    renderPassUI(*this),
+    renderPassModels(*this),
+    renderPassIMGUI({"",*this}),
+    modelsManager(modelsManager),
+    texturesManager(texturesManager)
 {
     ImGui::CreateContext();
 
@@ -29,8 +34,9 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     ImGui_ImplWin32_Init(init.hWnd1);
     ImGui_ImplDX11_Init(((D3D11Renderer*)pRenderer)->device.Get(), ((D3D11Renderer*)pRenderer)->context.Get());
 
-    renderPasses.push_back(&managerUI);
-    renderPasses.push_back(&managerIMGUI);
+    renderPasses.push_back(&renderPassUI);
+    renderPasses.push_back(&renderPassIMGUI);
+    renderPasses.push_back(&renderPassModels);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -75,13 +81,15 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
         },
         1
     };
+
+    auto t = new TexturesManager(renderDevice);
+    auto m = new ModelsManager(renderDevice);
     return new RenderSystem{
         init,
         {
-            renderDevice,
-            new TexturesManager(renderDevice),
-            new ModelsManager(renderDevice)
-        }
+            renderDevice,t,m
+        },
+        m,t
     };
     //todo
 }
@@ -94,7 +102,7 @@ void RenderSystem::BeginFrame()
     }
 }
 
-#define GFX_CATCH_RENDER(render) try {render} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c,1); success = false; }
+#define GFX_CATCH_RENDER(render) try {render;} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c,1); success = false; }
 //#define GFX_CATCH_RENDER(render) {render}
 
 bool RenderSystem::RenderFrame()
@@ -122,7 +130,15 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
-    //GFX_CATCH_RENDER(managerModels.Render(*this));
+    try { renderPassModels.Render(); }
+    catch (const std::exception& exe)
+    {
+        printf_s(exe.what());
+        printf_s("\n");
+        static char c[100];
+        scanf_s("%s", c, 1);
+        success = false;
+    };
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Dynamic motion blur draw.");
@@ -155,20 +171,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
-    try { (&managerUI)->Render(); }
-    catch (const std::exception& exe)
-    {
-        printf_s(exe.what());
-        printf_s("\n");
-        static char c[100];
-        std::cout<<std::flush;
-        scanf_s("%s",c, 1);
-        success = false;
-    };
+    GFX_CATCH_RENDER(renderPassUI.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("IMGUI draw.");
-    managerIMGUI.Render();
+    renderPassIMGUI.Render();
     pRenderer->EndEvent();
 
 
@@ -205,13 +212,13 @@ void RenderSystem::PostRender()
 void RenderSystem::DrawImg(size_t texId, const UIDrawData& data)
 {
     //queue.push_back(DrawCall::draw2D).
-    managerUI.Draw(texturesManger->GetImg(texId), data);
+    renderPassUI.Draw(texturesManger->GetImg(texId), data);
 }
 
 
 void RenderSystem::DrawColor(const UIDrawData& data)
 {
-    managerUI.Draw(data);
+    renderPassUI.Draw(data);
 }
 
 void RenderSystem::RegisterImg(size_t id, const TextureData& text)
@@ -236,17 +243,17 @@ void RenderSystem::ReleaseImg(size_t id)
 
 void RenderSystem::RegisterModel(size_t id, const ModelData& model)
 {
-    //modelsManadger.RegisterModel(model, id);
+    modelsManager->RegisterModel(id, model);
 }
 
 void RenderSystem::RegisterFramedModel(size_t id, const FramedModelData& model)
 {
-    //modelsManadger.RegisterFramedModel(model, id);
+    modelsManager->RegisterModel(id, model);
 }
 
 void RenderSystem::ReleaseModel(size_t id)
 {
-    //modelsManadger.ReleaseModel(id);
+    modelsManager->ReleaseModel(id);
 }
 
 void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, bool mipmap)
@@ -256,9 +263,9 @@ void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, boo
 
 void RenderSystem::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
 {
-    //managerModels.Draw(modelsManadger.GetModel(modelId),
-    //	texturesManger->GetImg(textureId),
-    //	position, flags);
+    renderPassModels.Draw(modelsManager->GetModel(modelId),
+        texturesManger->GetImg(textureId),
+        position, flags);
 }
 
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data)
@@ -283,10 +290,10 @@ MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic)
 
 void RenderSystem::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data)
 {
-    //managerModels.DrawLerp(modelsManadger.GetModel(modelId), texturesManger->GetImg(textureId), data);
+    renderPassModels.DrawLerp(modelsManager->GetModel(modelId), texturesManger->GetImg(textureId), data);
 }
 
 void RenderSystem::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data)
 {
-    //managerParticles.Draw(particles, data);
+    // managerParticles.Draw(particles, data);
 }

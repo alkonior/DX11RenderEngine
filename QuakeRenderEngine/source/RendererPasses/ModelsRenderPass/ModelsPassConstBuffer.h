@@ -1,4 +1,4 @@
-﻿#ifdef __cplusplus
+#ifdef __cplusplus
 #pragma once
 #include "TransformUtils.h"
 #include "CoreRenderSystem/CoreShaderInclude.h"

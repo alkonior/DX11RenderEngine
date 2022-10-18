@@ -163,9 +163,9 @@ const RenderTargetBinding& TexturesManager::CreatePrivateRenderTarget(string_id 
     
     return diffuseColorRT;
 }
-const Renderer::RenderTargetBinding& TexturesManager::GetRenderTarget(Renderer::string_id id)
+Renderer::RenderTargetBinding* TexturesManager::GetRenderTarget(Renderer::string_id id)
 {
-    return publicRenderTargets[id];
+    return &publicRenderTargets[id];
 }
 
 

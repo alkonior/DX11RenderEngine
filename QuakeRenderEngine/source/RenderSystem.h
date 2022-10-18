@@ -3,6 +3,7 @@
 #include "SimpleMath.h"
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
+#include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
@@ -20,7 +21,10 @@ class RenderSystem: public BaseRenderSystem{
 
 
 
-	RenderSystem(RenderEngineInitStruct, const BaseRenderSystemInitStruct&);
+	RenderSystem(RenderEngineInitStruct,
+		const BaseRenderSystemInitStruct&,
+		ModelsManager* modelsManager,
+		TexturesManager* texturesManager);
 	RenderSystem(const RenderSystem&) = delete;
 	RenderSystem& operator=(const RenderSystem&) = delete;
 public:
@@ -74,11 +78,15 @@ public:
 	
 	//SkyboxRenderer	     managerSkybox;
 private:
+
+	ModelsManager* modelsManager;
+	TexturesManager* texturesManager;
+	
 	std::vector<BaseRenderPass*> renderPasses;
 	
-	UIRenderPass			 managerUI;
-	//ModelRenderer		 managerModels;
-	ImGUIRenderPass	     managerIMGUI;
+	UIRenderPass			 renderPassUI;
+	ModelsRenderPass		 renderPassModels;
+	ImGUIRenderPass			 renderPassIMGUI;
 	
 	//MotionBlurRenderer	 managerMB;
 	//UPRenderer			 managerUP;

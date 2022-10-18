@@ -102,7 +102,7 @@ void RenderDevice::SetSkyFlags(uint64_t flags) {
 }
 
 void RenderDevice::Flush() {
-	gfx->PostRender();
+	//gfx->PostRender();
 }
 
 void RenderDevice::Clear(float r, float g, float b) {

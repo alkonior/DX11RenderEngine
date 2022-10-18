@@ -35,7 +35,6 @@ void ModelRenderer::Init(void* shaderData, size_t dataSize) {
 	factory = new ModelRendererFactory(provider, shaderData, dataSize);
 
 
-	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
 
 	vp.x = 0;
 	vp.y = 0;
