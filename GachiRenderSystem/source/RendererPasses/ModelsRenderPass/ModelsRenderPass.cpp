@@ -42,8 +42,7 @@ void ModelsRenderPass::Init(const char* dirr)
 void ModelsRenderPass::PreRender()
 {
     RenderTargetBinding* targets[5] = {
-        nullptr,
-        // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("outTexture")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
@@ -61,8 +60,7 @@ void ModelsRenderPass::Render()
     renderDevice->GetBackbufferSize(&width, &height);
 
     RenderTargetBinding* targets[5] = {
-        nullptr,
-        //baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("outTexture")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
@@ -89,10 +87,19 @@ void ModelsRenderPass::Render()
         }
 
         renderDevice->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
-        renderDevice->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
+        renderDevice->ApplyIndexBufferBinding(drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
 
-        auto pTexture = drawCalls[i].texture.texture;
-        renderDevice->VerifyPixelTexture(0, pTexture);
+
+        dataBuffer.alpha = 1;
+        dataBuffer.oldAlpha = 1;
+        dataBuffer.wh = float2(drawCalls[i].texture.width, drawCalls[i].texture.height);
+        dataBuffer.color = { 1,0,1 };
+        dataBuffer.world = drawCalls[i].position.GetTransform();
+        dataBuffer.oldWorld = drawCalls[i].position.GetTransform();
+        dataBuffer.blurSwitch = 2.f;
+        //if (drawCalls[i].data.isGun)
+        //	dataBuffer.blurSwitch = 1.f;
+        renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
         renderDevice->DrawIndexedPrimitives(
             drawCalls[i].model.pt, 0, 0, 0, 0,
@@ -131,9 +138,6 @@ void ModelsRenderPass::Render()
 
         renderDevice->ApplyVertexBufferBinding(vBB);
         renderDevice->ApplyIndexBufferBinding(drawLerpCalls[i].model.indexBuffer, drawLerpCalls[i].model.indexBufferElementSize);
-
-        auto pTexture = drawLerpCalls[i].texture.texture;
-        renderDevice->VerifyPixelTexture(0, pTexture);
 
 
         dataBuffer.alpha = drawLerpCalls[i].data.alpha;

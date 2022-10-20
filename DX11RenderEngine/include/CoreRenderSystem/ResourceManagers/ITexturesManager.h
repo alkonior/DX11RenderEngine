@@ -42,17 +42,17 @@ public:
 	};
 
 	virtual const Renderer::RenderTargetBinding& CreatePublicRenderTarget(
-		Renderer::string_id id,
+		string_id id,
 		const RenderTargetDescription& description) = 0;
 
 	virtual const Renderer::RenderTargetBinding& CreatePrivateRenderTarget(
-		Renderer::string_id id,
+		string_id id,
 		const RenderTargetDescription& description,
 		Renderer::Texture*& diffuseColor,
 		Renderer::RenderTargetBinding& diffuseColorRT
 	) = 0;
 
-	virtual Renderer::RenderTargetBinding* GetRenderTarget(Renderer::string_id id) = 0;
+	virtual Renderer::RenderTargetBinding* GetRenderTarget(string_id id) = 0;
 	
 	Renderer::Renderbuffer* depthBuffer = nullptr;
 	

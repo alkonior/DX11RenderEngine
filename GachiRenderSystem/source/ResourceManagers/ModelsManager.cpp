@@ -74,6 +74,7 @@ void ModelsManager::RegisterModel(size_t id, const ModelData& model)
 	VertexBufferBinding vertexBuffer;
 
 
+	vertexBuffer.buffersCount = 1;
 	vertexBuffer.vertexBuffers = new Buffer * [1];
 	vertexBuffer.vertexBuffers[0] = renderDevice->GenVertexBuffer(0, BufferUsage::BUFFERUSAGE_NONE, static_cast<int32_t>(sizeof(ModelVertex) * model.verticies.size()));
 	vertexBuffer.vertexOffset = new UINT[1];

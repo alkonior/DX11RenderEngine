@@ -14,7 +14,11 @@ struct TEXTURE_HANDLE {
 	int slot;
 };
 #else
+
+#ifdef GACHI
 #include "../DX11RenderEngine/DX11RenderEngine/Shaders/PixelPacking_Velocity.hlsl"
+#endif
+
 #endif
 
 

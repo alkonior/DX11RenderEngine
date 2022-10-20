@@ -42,6 +42,7 @@ const D3D11_INPUT_ELEMENT_DESC  SingleFrameInputElements[] =
 
 Renderer::InputLayoutDescription ModelsPassProvider::GetInputLayoutDescription(size_t definesFlags)
 {
+        return Renderer::InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
     if (definesFlags & ModelDefines::MLERP) {
         return Renderer::InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
     }

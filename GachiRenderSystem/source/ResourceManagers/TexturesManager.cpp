@@ -20,6 +20,9 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(SID("pastDepth"),     SURFACEFORMAT_SINGLE,        false, width, height,          pastDepth, pastDepthRT);
     CreateRenderTarget(SID("normalsField"),  SURFACEFORMAT_VECTOR4,       false, width, height,          normalsField, normalsFieldRT);
 
+    CreateRenderTarget(SID("outTexture"),    SURFACEFORMAT_COLOR,       false, width, height,          normalsField, normalsFieldRT);
+
+
     CreateRenderTarget(SID("oclusionField"),       SURFACEFORMAT_SINGLE, true, width, height, oclusionField, oclusionFieldRT);
 }
 
@@ -171,5 +174,7 @@ Renderer::RenderTargetBinding* TexturesManager::GetRenderTarget(Renderer::string
 
 TexturesManager::TextureCache TexturesManager::GetImg(size_t id)
 {
-    return textures[id];
+    if (textures.contains(id))
+        return textures[id];
+    return {};
 }

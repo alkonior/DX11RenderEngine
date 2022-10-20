@@ -1,6 +1,6 @@
 #define HLSL
-#include "../../DX11RenderEngine/include//CoreRenderSystem/CoreShaderInclude.h"
-#include "../../QuakeRenderEngine/source/RendererPasses/ModelsRenderPass/ModelsPassConstBuffer.h"
+#include "../DX11RenderEngine/DX11RenderEngine/include/CoreRenderSystem/CoreShaderInclude.h"
+#include "../DX11RenderEngine/QuakeRenderEngine/source/RendererPasses/ModelsRenderPass/ModelsPassConstBuffer.h"
 
 #ifdef LERP
 struct VSIn {
@@ -112,7 +112,7 @@ SamplerState basicSampler : register(s0);
 struct PSOut {
 	float4 color      : SV_Target0;
 	float4 light      : SV_Target1;
-	packed_velocity_t velocity   : SV_Target2;
+	//packed_velocity_t velocity   : SV_Target2;
 	float  blurMask   : SV_Target3;
 	float4  normal   : SV_Target4;
 };
@@ -123,7 +123,7 @@ PSOut psIn(PSIn input) : SV_Target
 	
 	float4 curPixelPos = mul(input.worldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
 	float4 oldPixelPos = mul(input.oldWorldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
-	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
+	//pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
 	
 	if (dot(input.normal, input.normal) > 0.00001)
 		pso.normal.xyz = input.normal;

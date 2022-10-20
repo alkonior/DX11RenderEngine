@@ -95,6 +95,7 @@ struct RenderDevice {
 
 	void SetSky(size_t side, const TextureData& data);
 	void SetSkyFlags(uint64_t flags);
+	void* GetGameTexture();
 
 	void Flush();
 	/* Debug staff */

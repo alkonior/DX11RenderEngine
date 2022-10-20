@@ -531,6 +531,8 @@ struct IRenderer {
 		int32_t dataLength
 	) = 0;
 
+	virtual void* GetNativeTexture(Texture* Texture) = 0;
+
 	///* Pulls image data from a 3D texture into client memory. Like any GetData,
 	// * this is generally asking for a massive CPU/GPU sync point, don't call this
 	// * unless there's absolutely no other way to use the image data!

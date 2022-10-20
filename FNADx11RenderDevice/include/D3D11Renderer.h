@@ -229,7 +229,7 @@ public:
 	virtual Texture* CreateTextureCube(SurfaceFormat format, int32_t size, int32_t levelCount, uint8_t isRenderTarget) override;
 	virtual void SetTextureDataCube(Texture* texture, int32_t x, int32_t y, int32_t w, int32_t h, int32_t cubeMapFace, int32_t level, void* data, int32_t dataLength) override;
 
-
+	virtual void* GetNativeTexture(Texture* texture) override;
 
 	virtual void ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize) override;
 	virtual void ApplyMeshBuffersBinding(const MeshBindings& bindings) override;

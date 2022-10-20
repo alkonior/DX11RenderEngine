@@ -49,6 +49,11 @@ void RenderDevice::SetSkyFlags(uint64_t flags) {
 	//gfx->skyFlags = flags;
 }
 
+void* RenderDevice::GetGameTexture()
+{
+	return gfx->pRenderer->GetNativeTexture(gfx->texturesManger->GetRenderTarget(SID("outTexture"))->texture);
+}
+
 void RenderDevice::Flush() {
 	//gfx->PostRender();
 }

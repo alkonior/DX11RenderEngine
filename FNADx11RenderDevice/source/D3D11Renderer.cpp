@@ -1452,6 +1452,11 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     );
 }
 
+void* Renderer::D3D11Renderer::GetNativeTexture(Texture* texture)
+{
+    return ((D3D11Texture*)texture)->shaderView.Get();
+}
+
 
 void D3D11Renderer::AddDisposeTexture(Texture* texture)
 {
