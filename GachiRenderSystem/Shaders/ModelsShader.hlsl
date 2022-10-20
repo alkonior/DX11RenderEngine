@@ -1,6 +1,6 @@
 #define HLSL
-#include "ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include/CoreRenderSystem/CoreShaderInclude.h"
-#include "ref_dx11rg\DX11RenderEngine\QuakeRenderEngine/source/RendererPasses/ModelsRenderPass/ModelsPassConstBuffer.h"
+#include "../../DX11RenderEngine/include//CoreRenderSystem/CoreShaderInclude.h"
+#include "../../QuakeRenderEngine/source/RendererPasses/ModelsRenderPass/ModelsPassConstBuffer.h"
 
 #ifdef LERP
 struct VSIn {

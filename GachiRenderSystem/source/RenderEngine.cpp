@@ -15,64 +15,12 @@ void RenderDevice::InitDevice(RenderEngineInitStruct init) {
 }
 
 void RenderDevice::InitShaders(const char* dirr) {
+	shadersDir = dirr;
 	gfx->ReinitShaders(dirr);
 }
-
-void RenderDevice::ReloadShader(ShaderData shD) {
-	/*
-	switch (shD.type) {
-	case ShaderType::UIShader:
-	{
-		gfx->manager2D.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::ModelsShader:
-	{
-		gfx->manager3D.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::UPShader:
-	{
-		gfx->managerUP.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::ParticlesShader:
-	{
-		gfx->managerParticles.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::SkyShader:
-	{
-		gfx->managerSkybox.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::EndBSPShader:
-	{
-		gfx->managerPostProcess.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::BloomShader:
-	{
-		gfx->managerBloom.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	case ShaderType::FXAAShader:
-	{
-		gfx->managerFXAA.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	case ShaderType::MBShader:
-	{
-		gfx->managerMB.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	default:
-		break;
-	}
-	*/
+void RenderDevice::ReloadShaders()
+{
+	gfx->ReinitShaders(shadersDir.c_str());
 }
 
 

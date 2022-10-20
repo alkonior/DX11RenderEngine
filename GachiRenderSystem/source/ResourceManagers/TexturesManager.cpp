@@ -1,7 +1,5 @@
 ﻿#include "TexturesManager.h"
 
-#include "client/client.h"
-
 using namespace Renderer;
 
 TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesManager(renderDevice) 

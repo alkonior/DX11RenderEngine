@@ -178,18 +178,7 @@
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\BloomShader.hlsl" />
-    <None Include="Shaders\BSPShader.hlsl" />
-    <None Include="Shaders\FXAAShader.hlsl" />
-    <None Include="Shaders\ModelsShader.hlsl" />
-    <None Include="Shaders\MotionBlurShader.hlsl" />
-    <None Include="Shaders\ParticlesShader.hlsl" />
     <None Include="Shaders\PixelPacking_Velocity.hlsl" />
-    <None Include="Shaders\PostProcessShader.hlsl" />
-    <None Include="Shaders\SkyShader.hlsl" />
-    <None Include="Shaders\SSAOShader.hlsl" />
-    <None Include="Shaders\TAAShader.hlsl" />
-    <None Include="Shaders\UIShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

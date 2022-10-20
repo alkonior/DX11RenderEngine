@@ -6,7 +6,6 @@
 #include "D3D11Renderer.h"
 
 #include <filesystem>
-#include <resource.h>
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 

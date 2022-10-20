@@ -43,10 +43,10 @@ struct RenderDevice {
 		uint8_t* data;
 		size_t dataSize;
 	};
-
+	std::string shadersDir;
 	void InitShaders(const char* dirr);
 	//void ReloadShaders(LPCWSTR);
-	void ReloadShader(ShaderData shD);
+	void ReloadShaders();
 
 	/* Presentation */
 

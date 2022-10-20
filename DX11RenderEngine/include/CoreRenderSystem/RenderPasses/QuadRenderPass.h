@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "BaseRenderPass.h"
-#include "ref_dx11/render/IStateProvider.h"
 
 template<size_t Id>
 class QuadRenderPass

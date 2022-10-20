@@ -5,7 +5,6 @@
 #include "IRenderer.h"
 #include "CoreRenderSystem/BaseRenderSystem.h"
 #include "CoreRenderSystem/PipelineFactory.h"
-#include "ref_dx11/render/IStateProvider.h"
 
 
 class BaseRenderPass {
