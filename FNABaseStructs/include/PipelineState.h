@@ -6,19 +6,25 @@
 #include "IRenderer/SamplerState.h"
 
 namespace Renderer {
-struct PipelineState {
 
-
+struct PipelineShaders {
 	PixelShader* ps = nullptr;
 	VertexShader* vs = nullptr;
 
 	GeometryShader* gs = nullptr;
 	ComputeShader* cs = nullptr;
+};
 
+struct Pipeline {
 	DepthStencilState* dss = nullptr;
 	BlendState* bs = nullptr;
 	RasterizerState* rs = nullptr; 
+};
 
+struct PipelineState {
+	PipelineShaders* shaders = nullptr;
+	Pipeline* pipeline = nullptr;
+	
 };
 
 enum UsedShaders: uint16_t {
@@ -47,8 +53,8 @@ struct PipelineFactoryDescription {
 
 
 struct IStateProvider {
-	virtual void PatchPipelineState(PipelineState* refToPS, size_t definesFlags) = 0;
-	virtual InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) = 0;
+	virtual void PatchPipelineState(Pipeline* refToPS, uint32_t definesFlags) = 0;
+	virtual InputLayoutDescription GetInputLayoutDescription(uint32_t definesFlags) = 0;
 	virtual PipelineFactoryDescription GetFactoryDescription() = 0;
 	virtual const char* GetShaderName() = 0;
 	virtual ~IStateProvider() = default;

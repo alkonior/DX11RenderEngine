@@ -6,7 +6,7 @@ using namespace Renderer;
 
 
 BaseRenderSystem::BaseRenderSystem(const BaseRenderSystemInitStruct& init):
-pRenderer(init.pRenderer), texturesManger(init.texturesManger), modelsManager(modelsManager)
+pRenderer(init.pRenderer), texturesManger(init.texturesManger), modelsManager(init.modelsManager)
 {
 
 	pLocalConstants = pRenderer->CreateConstBuffer(sizeof(viewConstants));

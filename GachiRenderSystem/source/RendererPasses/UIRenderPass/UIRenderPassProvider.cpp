@@ -14,7 +14,7 @@ const Renderer::ShaderDefines UIRendererDefines[] = {
 };
 
 
-void UIRenderPassProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags)
+void UIRenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags)
 {
     refToPS->bs = &BlendStates::Alpha;
     refToPS->dss = &DepthStencilStates::NoDSS;
@@ -28,7 +28,7 @@ const D3D11_INPUT_ELEMENT_DESC UIInputElements[] =
     {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
 };
 
-Renderer::InputLayoutDescription UIRenderPassProvider::GetInputLayoutDescription(size_t definesFlags)
+Renderer::InputLayoutDescription UIRenderPassProvider::GetInputLayoutDescription(uint32_t definesFlags)
 {
     return Renderer::InputLayoutDescription{(void*)UIInputElements,std::size(UIInputElements)};
 }

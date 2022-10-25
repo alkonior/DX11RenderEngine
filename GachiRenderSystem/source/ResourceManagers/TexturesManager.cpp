@@ -16,14 +16,17 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(SID("preAAcolor"),    SURFACEFORMAT_COLOR,         false, width, height,          preAAcolor, preAAcolorRT);
     CreateRenderTarget(SID("velocityField"), SURFACEFORMAT_RGBA1010102,   false, width, height,          velocityField, velocityFieldRT);
     CreateRenderTarget(SID("blurMask"),      SURFACEFORMAT_SINGLE,        false, width, height,          blurMask, blurMaskRT);;
+    CreateRenderTarget(SID("normalsField"),  SURFACEFORMAT_VECTOR4,       false, width, height,          normalsField, normalsFieldRT);
+    CreateRenderTarget(SID("oclusionField"),       SURFACEFORMAT_SINGLE, true, width, height, oclusionField, oclusionFieldRT);
+
+
+    
     CreateRenderTarget(SID("pastColor"),     SURFACEFORMAT_COLOR,         false, width, height,          pastColor, pastColorRT);
     CreateRenderTarget(SID("pastDepth"),     SURFACEFORMAT_SINGLE,        false, width, height,          pastDepth, pastDepthRT);
-    CreateRenderTarget(SID("normalsField"),  SURFACEFORMAT_VECTOR4,       false, width, height,          normalsField, normalsFieldRT);
-
+    
     CreateRenderTarget(SID("outTexture"),    SURFACEFORMAT_COLOR,       false, width, height,          normalsField, normalsFieldRT);
 
 
-    CreateRenderTarget(SID("oclusionField"),       SURFACEFORMAT_SINGLE, true, width, height, oclusionField, oclusionFieldRT);
 }
 
 void TexturesManager::RegTexture(void* data, int width, int height, bool mipmap, size_t id)

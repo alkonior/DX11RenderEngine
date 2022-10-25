@@ -236,7 +236,7 @@ public:
 
 
 
-	virtual void ApplyPipelineState(PipelineState* piplineState) override;
+	virtual void ApplyPipelineState(PipelineState piplineState) override;
 	virtual void Flush() override;
 
 

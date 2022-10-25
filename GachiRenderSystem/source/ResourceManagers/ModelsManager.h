@@ -5,16 +5,15 @@
 #include "Utils/ModelData.h"
 
 
-class ModelsManager : public IModelsManager<ModelData, FramedModelData> {
+class ModelsManager : public IModelsManager<ModelData> {
 
 public:
 
-	ModelsManager(Renderer::IRenderer* renderDevice) : IModelsManager<ModelData, FramedModelData>(renderDevice) {};
+	ModelsManager(Renderer::IRenderer* renderDevice) : IModelsManager<ModelData>(renderDevice) {};
 
 	void ReleaseModel(size_t id) override;
 	SavedModel GetModel(size_t id) override;
 	
-	void RegisterModel(size_t id, const FramedModelData& model) override;
 	void RegisterModel(size_t id, const ModelData& model) override;
 	
 

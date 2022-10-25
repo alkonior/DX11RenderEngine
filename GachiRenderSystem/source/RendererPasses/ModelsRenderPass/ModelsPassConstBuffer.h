@@ -5,10 +5,9 @@
 #endif
 
 struct ModelsCosntBuffer {
-    matrix oldWorld;
     matrix world;
+    matrix oldWorld;
     float4 color;
-    float oldAlpha;
     float alpha;
     float2 wh;
     float blurSwitch;

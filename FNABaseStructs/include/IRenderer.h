@@ -821,7 +821,7 @@ struct IRenderer {
 	virtual void SetConstBuffer(ConstBuffer* constBuffers, void* data) = 0;
 	virtual void AddDisposeConstBuffer(ConstBuffer* constBuffers) = 0;
 
-	virtual void ApplyPipelineState(PipelineState* piplineState) = 0;
+	virtual void ApplyPipelineState(PipelineState piplineState) = 0;
 	virtual void Flush() = 0;
 
 	virtual void BeginEvent(const char* name) = 0;

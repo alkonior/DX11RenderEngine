@@ -3223,18 +3223,21 @@ void D3D11Renderer::AddDisposeConstBuffer(ConstBuffer* constBuffers)
     delete buffer;
 }
 
-void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState)
+void D3D11Renderer::ApplyPipelineState(PipelineState piplineState)
 {
-    ApplyPixelShader(piplineState->ps);
-    ApplyVertexShader(piplineState->vs);
-    ApplyComputeShader(piplineState->cs);
-    ApplyGeometryShader(piplineState->gs);
-    if (piplineState->bs)
-        SetBlendState(*piplineState->bs);
-    if (piplineState->dss)
-        SetDepthStencilState(*piplineState->dss);
-    if (piplineState->rs)
-        ApplyRasterizerState(*piplineState->rs);
+    ApplyPixelShader(piplineState.shaders->ps);
+    ApplyVertexShader(piplineState.shaders->vs);
+    ApplyComputeShader(piplineState.shaders->cs);
+    ApplyGeometryShader(piplineState.shaders->gs);
+    if (piplineState.pipeline)
+    {
+        if (piplineState.pipeline->bs)
+            SetBlendState(*piplineState.pipeline->bs);
+        if (piplineState.pipeline->dss)
+            SetDepthStencilState(*piplineState.pipeline->dss);
+        if (piplineState.pipeline->rs)
+            ApplyRasterizerState(*piplineState.pipeline->rs);
+    }
 }
 
 void D3D11Renderer::Flush()
@@ -3339,11 +3342,13 @@ void D3D11Renderer::Dispatch(size_t x, size_t y, size_t z)
 void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader)
 {
     D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
+    if(shader)
     delete shader;
 }
 
 void D3D11Renderer::AddDisposeComputeShader(ComputeShader* computeShader)
 {
     D3D11PixelShader* shader = (D3D11PixelShader*)computeShader;
+    if(shader)
     delete shader;
 }

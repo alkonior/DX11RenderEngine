@@ -30,24 +30,6 @@ public:
 
 };
 
-typedef std::vector<FramedModelVertex> Frame;
-
-class FramedModelData {
-public:
-	std::vector<FramedModelCommon> verticies;
-	std::vector<Frame> frames;
-	std::vector<uint16_t> indexes;
-	EPrimitiveType pt;
-	size_t primitiveCount;
-
-	FramedModelData();
-	FramedModelData(std::vector<FramedModelCommon> verticies, std::vector<Frame> frames, std::vector<uint16_t> indexes, EPrimitiveType pt, size_t primitiveCount);
-
-
-	void AddTriangle(const std::vector<Frame>& verticies3, const FramedModelCommon uvs[3]);
-
-};
-
 typedef MeshData<ParticleVertex> ParticlesMesh;
 
 typedef  MeshData<UPVertex> UPModelMesh;

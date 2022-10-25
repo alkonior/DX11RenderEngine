@@ -20,28 +20,64 @@ struct UIDrawData {
     uint64_t flag;
 };
 
+union ModelsFlags{
+    ModelsFlags() {isVisible = 1;}
+    uint32_t flags;
+    struct {
+        uint8_t isRed : 1 ;  
+        uint8_t isVisible : 1;  
+        uint8_t isColored : 1;  
+        uint8_t isWireframe : 1;
+    } ;
+};
 
-struct LerpModelDrawData {
+struct ModelDrawData {
+    ModelDrawData() = default;
+    
+    ModelDrawData(size_t modelId, size_t textureId, Transform position):
+    modelId(modelId),
+    textureId(textureId),
+    oldPosition(position),
+    newPosition(position)
+    {};
+    
+    ModelDrawData(size_t modelId, Transform position):
+    modelId(modelId),
+    textureId(0),
+    oldPosition(position),
+    newPosition(position)
+    {
+        flags.isRed = 1;
+    };
+    
+    ModelDrawData(size_t modelId, float4 color, Transform position):
+    modelId(modelId),
+    textureId(0),
+    oldPosition(position),
+    newPosition(position)
+    {
+        flags.isColored = 1;
+    };
+    
+    size_t modelId = 0;
+    size_t textureId = 0;
+    
     Transform oldPosition;
     Transform newPosition;
-    bool isSingle;
-    bool isGun;
-
-    float alpha;
-    float oldAlpha;
-    size_t currentFrame;
-    size_t nextFrame;
+    
     float4 color;
-
-    uint64_t flags;
-
+    ModelsFlags flags;
 };
 
 struct MeshHashData {
-    int vertexOffset = 0;
-    int indexOffset = 0;
-    int numElem = 0;
-    uint8_t pt;
+    union {
+        uint64_t id = 0;
+        struct {
+            uint32_t vertexOffset : 24;
+            uint32_t indexOffset : 24;
+            int numElem : 16;
+        };
+    };
 };
 
 

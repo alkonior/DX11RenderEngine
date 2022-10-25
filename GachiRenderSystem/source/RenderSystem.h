@@ -4,6 +4,7 @@
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
+#include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
@@ -50,27 +51,19 @@ public:
 	void DrawColor(const UIDrawData& data);
 	void DrawImg(size_t texId, const UIDrawData& data);
 
-
 	void RegisterModel(size_t id, const ModelData& model);
-	void RegisterFramedModel(size_t id, const FramedModelData& model);
 	void ReleaseModel(size_t id);
 
 
 
 
-	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
-
-
+	void DrawModel(const ModelDrawData& drawData);
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
 	void DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
 	void DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, size_t textureId, UPDrawData data);
-	MeshHashData RegisterhUserPolygon(UPModelMesh model, bool dynamic);
-
-
-
-	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
-
-
+	MeshHashData RegisterStaticPolygon(UPModelMesh model, bool dynamic);
+	
+	
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
 	
@@ -87,6 +80,7 @@ private:
 	UIRenderPass			 renderPassUI;
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
+	TAARenderPass	         renderPassTAA;
 	
 	//MotionBlurRenderer	 managerMB;
 	//UPRenderer			 managerUP;
@@ -94,7 +88,6 @@ private:
 	//ParticlesRenderer	 managerParticles;
 	//BloomRenderer	     managerBloom;
 	//FXAARenderer	     managerFXAA;
-	//TAARenderer	         managerTAA;
 	//SSAORenderer	     managerSSAO;
 
 

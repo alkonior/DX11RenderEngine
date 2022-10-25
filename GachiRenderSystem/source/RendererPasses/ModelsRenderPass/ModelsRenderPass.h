@@ -9,29 +9,24 @@
 class ModelsRenderPass : public BaseRenderPass{
 
     struct DrawCall {
-        DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, Transform position, size_t flags);
+        DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData&);
 
-        ModelsManager::SavedModel model; TexturesManager::TextureCache texture; Transform position; size_t flags;
+        ModelsManager::SavedModel model;
+        TexturesManager::TextureCache texture;
+        ModelDrawData data;
     };	
 	
-    struct DrawLerpCall {
-        DrawLerpCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const LerpModelDrawData&);
-
-        ModelsManager::SavedModel model; TexturesManager::TextureCache texture; 
-        LerpModelDrawData data;
-    };
+    PipelineFactoryFlags ParseFlags(const ModelsFlags& flags);
     
 public:
     explicit ModelsRenderPass(BaseRenderSystem& in);
     
-    void Draw(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, Transform position, size_t flags);
-    void DrawLerp(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const LerpModelDrawData&);
-
+    void Draw(const ModelDrawData& drawData);
     
     void Init(const char* dirr) override;
     void PreRender() override;
 
-    
+
     void Render();
     
     void PostRender() override;
@@ -43,6 +38,5 @@ private:
     Renderer::ConstBuffer* pDataCB;
 
     std::vector<DrawCall> drawCalls;
-    std::vector<DrawLerpCall> drawLerpCalls;
 	Renderer::Viewport vp;
 };

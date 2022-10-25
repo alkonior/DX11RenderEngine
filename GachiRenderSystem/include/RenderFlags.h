@@ -4,7 +4,6 @@
 enum ModelDefines {
     MZERO = 0,
     MRED = 1,
-    MLERP = 2,
     MBAD_UV = 4,
     MNONORMAL = 8,
     MCOLORED = 16,

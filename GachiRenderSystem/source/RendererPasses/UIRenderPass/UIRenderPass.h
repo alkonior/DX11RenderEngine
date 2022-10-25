@@ -26,6 +26,7 @@ class UIRenderPass : public BaseRenderPass {
         UIDrawData data;
     };
     
+    PipelineFactoryFlags ParseFlags(size_t flag);
 public:
     explicit UIRenderPass(BaseRenderSystem& in);
 
@@ -34,7 +35,7 @@ public:
     void Init(const char* dirr) override;
     
     void PreRender() override;
-    
+
     void Render();
     
     void PostRender() override;

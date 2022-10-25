@@ -63,6 +63,11 @@ public:
 		indexBuffer = renderer->GenIndexBuffer(0, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(indices));
 		renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, sizeof(indices), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);		
 	}
+
+	void Render()
+	{
+		renderDevice->ApplyMeshBuffersBinding({vertexBuffer,indexBuffer, 16});
+	}
 	
     ~QuadRenderPass() {
 		renderPassesCounter--;

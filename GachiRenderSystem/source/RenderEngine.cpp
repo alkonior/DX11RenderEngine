@@ -92,10 +92,6 @@ void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
 	gfx->RegisterModel(id, model);
 }
 
-void RenderDevice::RegisterFramedModel(size_t id, const FramedModelData& model) {
-	gfx->RegisterFramedModel(id, model);
-}
-
 void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
@@ -110,13 +106,9 @@ void RenderDevice::DrawImg(size_t texId, const UIDrawData& data) {
 	gfx->DrawImg(texId, data);
 }
 
-void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
+void RenderDevice::DrawModel(const ModelDrawData& drawData)
 {
-	gfx->DrawModel(modelId, textureId, position, flags);
-}
-
-void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
-	gfx->DrawFramedModel(modelId, textureId, data);
+	gfx->DrawModel(drawData);
 }
 
 void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
@@ -132,7 +124,7 @@ void RenderDevice::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, 
 }
 
 MeshHashData RenderDevice::RegisterUserPolygon(UPModelMesh model, bool dynamic) {
-	return gfx->RegisterhUserPolygon(model, dynamic);
+	return gfx->RegisterStaticPolygon(model, dynamic);
 }
 
 void RenderDevice::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data) {

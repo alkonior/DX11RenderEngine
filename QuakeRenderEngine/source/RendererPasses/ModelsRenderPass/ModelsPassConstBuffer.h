@@ -11,6 +11,7 @@ struct ModelsCosntBuffer {
     float oldAlpha;
     float alpha;
     float2 wh;
+    
     float blurSwitch;
 };
 

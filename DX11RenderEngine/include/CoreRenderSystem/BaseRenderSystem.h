@@ -28,10 +28,10 @@ protected:
 
 private:
 	
-	CoreConstants viewConstants;
 	Renderer::ConstBuffer* pLocalConstants;
 
 public:
+	CoreConstants viewConstants;
 	Renderer::IRenderer* pRenderer;
 	ITexturesManager* texturesManger;
 	IModelsManager<>* modelsManager;

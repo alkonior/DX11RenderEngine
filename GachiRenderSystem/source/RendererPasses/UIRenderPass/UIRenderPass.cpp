@@ -9,6 +9,13 @@
 using namespace Renderer;
 
 
+PipelineFactoryFlags UIRenderPass::ParseFlags(size_t flag)
+{
+    PipelineFactoryFlags f;
+    f.definesFlags = flag;
+    f.pipelineFlags = flag;
+    return f;
+}
 UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"UIShader.hlsl", renderSystem}) {
 
     //renderDevice = in.renderSystem.pRenderer;
@@ -109,7 +116,9 @@ void UIRenderPass::Render()
         if (drawCalls[i].data.flag != lastFlag) {
             if (drawCalls[i].data.flag & UICHAR) { renderDevice->BeginEvent("Chars"); }
             if (lastFlag & UICHAR) { renderDevice->EndEvent(); }
-            renderDevice->ApplyPipelineState(factory->GetState(drawCalls[i].data.flag));
+
+            PipelineFactoryFlags flags = ParseFlags(drawCalls[i].data.flag);
+            renderDevice->ApplyPipelineState(factory->GetState(flags));
             lastFlag = drawCalls[i].data.flag;
         }
 

@@ -22,6 +22,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPassUI(*this),
     renderPassModels(*this),
     renderPassIMGUI({"",*this}),
+    renderPassTAA(*this),
     modelsManager(modelsManager),
     texturesManager(texturesManager)
 {
@@ -36,6 +37,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPasses.push_back(&renderPassUI);
     renderPasses.push_back(&renderPassIMGUI);
     renderPasses.push_back(&renderPassModels);
+    renderPasses.push_back(&renderPassTAA);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -107,11 +109,12 @@ void RenderSystem::BeginFrame()
 bool RenderSystem::RenderFrame()
 {
     pRenderer->ClearState();
+    BaseRenderSystem::Present();
 
-    //managerTAA.UpdateHaltonSequence();
-    //taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
+    //re.UpdateHaltonSequence();
+    
     //pRenderer->SetConstBuffer(pLocalConstants, &taaConstants);
-    //pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
+   // pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
 
     BaseRenderSystem::Present();
 
@@ -166,7 +169,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    //GFX_CATCH_RENDER(managerTAA.Render(*this););
+    GFX_CATCH_RENDER(renderPassTAA.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
@@ -245,11 +248,6 @@ void RenderSystem::RegisterModel(size_t id, const ModelData& model)
     modelsManager->RegisterModel(id, model);
 }
 
-void RenderSystem::RegisterFramedModel(size_t id, const FramedModelData& model)
-{
-    modelsManager->RegisterModel(id, model);
-}
-
 void RenderSystem::ReleaseModel(size_t id)
 {
     modelsManager->ReleaseModel(id);
@@ -260,11 +258,9 @@ void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, boo
     texturesManger->RegTexture(data, width, height, mipmap, id);
 }
 
-void RenderSystem::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
+void RenderSystem::DrawModel(const ModelDrawData& drawData)
 {
-    renderPassModels.Draw(modelsManager->GetModel(modelId),
-        texturesManger->GetImg(textureId),
-        position, flags);
+    renderPassModels.Draw(drawData);
 }
 
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data)
@@ -281,15 +277,10 @@ void RenderSystem::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, 
     //managerUP.DrawSet(model, newModel, texturesManger->GetImg(textureId), data);
 }
 
-MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic)
+MeshHashData RenderSystem::RegisterStaticPolygon(UPModelMesh model, bool dynamic)
 {
     return {};
     //return managerUP.Register(model, dynamic);
-}
-
-void RenderSystem::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data)
-{
-    renderPassModels.DrawLerp(modelsManager->GetModel(modelId), texturesManger->GetImg(textureId), data);
 }
 
 void RenderSystem::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data)

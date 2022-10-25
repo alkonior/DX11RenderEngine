@@ -69,7 +69,6 @@ struct RenderDevice {
 
 
 	void RegisterModel(size_t id, const ModelData&);
-	void RegisterFramedModel(size_t id, const FramedModelData&);
 	void ReleaseTexture(size_t id);
 
 
@@ -80,8 +79,7 @@ struct RenderDevice {
 	
 	
 	
-	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
-	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
+	void DrawModel(const ModelDrawData& drawData);
 	
 	
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
