@@ -59,7 +59,7 @@ float3 UnpackVelocity( packed_velocity_t Velocity )
     return float3(UnpackXY(Velocity & 0x3FF), UnpackXY((Velocity >> 10) & 0x3FF), UnpackZ(Velocity >> 20));
 }
 
-#elif 1
+#elif 0
 #define packed_velocity_t float4
 
 // Pack the velocity to write to R10G10B10A2_UNORM

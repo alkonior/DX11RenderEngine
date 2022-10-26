@@ -14,7 +14,7 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(SID("bloomMask"),     SURFACEFORMAT_COLOR,         false, width, height,          bloomMask, bloomMaskRT);
     CreateRenderTarget(SID("alphaSurfaces"), SURFACEFORMAT_COLOR,         false, width, height,          alphaSurfaces, alphaSurfacesRT);
     CreateRenderTarget(SID("preAAcolor"),    SURFACEFORMAT_COLOR,         false, width, height,          preAAcolor, preAAcolorRT);
-    CreateRenderTarget(SID("velocityField"), SURFACEFORMAT_RGBA1010102,   false, width, height,          velocityField, velocityFieldRT);
+    CreateRenderTarget(SID("velocityField"), SURFACEFORMAT_HALFVECTOR4,   false, width, height,          velocityField, velocityFieldRT);
     CreateRenderTarget(SID("blurMask"),      SURFACEFORMAT_SINGLE,        false, width, height,          blurMask, blurMaskRT);;
     CreateRenderTarget(SID("normalsField"),  SURFACEFORMAT_VECTOR4,       false, width, height,          normalsField, normalsFieldRT);
     CreateRenderTarget(SID("oclusionField"),       SURFACEFORMAT_SINGLE, true, width, height, oclusionField, oclusionFieldRT);

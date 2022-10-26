@@ -12,11 +12,14 @@ struct VSIn {
 };
 
 struct PSIn {
-	float4 pos			: SV_Position;
-	float2 uv			: TEXCOORD;
-	float3 normal		: NORMAL;
-	float2 velocity		: VELOCITY;
-	float4 worldPos	    : NEWWPOS;
+	float4 pos				: SV_Position;
+	float2 uv				: TEXCOORD;
+	float3 normal			: NORMAL;
+	float2 velocity			: VELOCITY;
+	float3 worldPos	    	: WORLDPOS;
+	
+	float2 worldSP			: WORLDSV;
+	float2 oldWorldSP	    : OLDWORLDSV;
 };
 
 PSIn vsIn(VSIn input) {
@@ -25,11 +28,15 @@ PSIn vsIn(VSIn input) {
 
 	//vso.oldPos = oldWorlPos;
 	//vso.newPos = worlPos;
+	float4 worldPos = mul(float4(input.pos, 1.0f), modelsCosntBuffer.world);
+	vso.worldPos = worldPos/worldPos.w;
+	vso.pos = mul(worldPos, coreConstants.currentMatrices.viewProjection);
+	float4 oldWorldSV =  mul(mul(float4(input.pos, 1.0f), modelsCosntBuffer.oldWorld), coreConstants.pastMatrices.viewProjection);
 	
-	vso.worldPos = mul(float4(input.pos, 1.0f), modelsCosntBuffer.world);
-	vso.pos = mul(vso.worldPos, coreConstants.currentMatrices.viewProjection);
-	float4 oldWorldPos =  mul(mul(float4(input.pos, 1.0f), modelsCosntBuffer.oldWorld), coreConstants.pastMatrices.viewProjection);
-	vso.velocity =  PackVelocity((vso.pos/vso.pos.w - oldWorldPos/oldWorldPos.w)*0.5+0.5);
+	vso.worldSP = (vso.pos/vso.pos.w).xy;
+	vso.oldWorldSP = (oldWorldSV/oldWorldSV.w).xy;
+	
+	//vso.velocity =  PackVelocity((vso.pos/vso.pos.w - oldWorldPos/oldWorldPos.w)*0.5+0.5);
 	
 
 	vso.pos.xy += coreConstants.taaBuffer.taaStrength*
