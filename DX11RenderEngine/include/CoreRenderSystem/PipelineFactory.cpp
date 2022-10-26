@@ -124,6 +124,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
     {
         Pipeline* p = new Pipeline();
         provider->PatchPipelineState(p, definesFlags.pipelineFlags);
+        dictinaryPipeline[definesFlags.pipelineFlags] = p;
         ps.pipeline = p;
     }
     
