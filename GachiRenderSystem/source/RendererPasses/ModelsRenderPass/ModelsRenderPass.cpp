@@ -5,7 +5,7 @@
 
 using namespace Renderer;
 ModelsRenderPass::DrawCall::DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData& data) :
-    model(model), texture(texture), data(data){}
+    model(model), texture(texture), data(data) {}
 
 PipelineFactoryFlags ModelsRenderPass::ParseFlags(const ModelsFlags& flags)
 {
@@ -15,9 +15,9 @@ PipelineFactoryFlags ModelsRenderPass::ParseFlags(const ModelsFlags& flags)
         flagsOut.definesFlags |= MRED;
     if (flags.isColored)
         flagsOut.definesFlags |= MCOLORED;
-   
+
     flagsOut.pipelineFlags = flags.flags;
-    
+
     return flagsOut;
 }
 
@@ -39,10 +39,10 @@ ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : BaseRenderP
 void ModelsRenderPass::Draw(const ModelDrawData& drawData)
 {
     drawCalls.push_back(DrawCall(
-        baseRendererParams.renderSystem.modelsManager->GetModel(drawData.modelId),
-        baseRendererParams.renderSystem.texturesManger->GetImg(drawData.textureId),
-        drawData)
-        );
+            baseRendererParams.renderSystem.modelsManager->GetModel(drawData.modelId),
+            baseRendererParams.renderSystem.texturesManger->GetImg(drawData.textureId),
+            drawData)
+    );
 }
 
 
@@ -76,7 +76,7 @@ void ModelsRenderPass::Render()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
-       // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
+        // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
     };
 
@@ -106,13 +106,14 @@ void ModelsRenderPass::Render()
 
         dataBuffer.alpha = 1;
         dataBuffer.wh = float2(drawCalls[i].texture.width, drawCalls[i].texture.height);
-        dataBuffer.color = { 1,0,1 };
+        dataBuffer.color = {1,0,1};
         dataBuffer.world = drawCalls[i].data.newPosition.GetTransform();
         dataBuffer.oldWorld = drawCalls[i].data.oldPosition.GetTransform();
         dataBuffer.blurSwitch = 2.f;
         //if (drawCalls[i].data.isGun)
         //	dataBuffer.blurSwitch = 1.f;
         renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
+        renderDevice->VerifyPixelTexture(0, drawCalls[i].texture.texture);
 
         renderDevice->DrawIndexedPrimitives(
             drawCalls[i].model.pt, 0, 0, 0, 0,
