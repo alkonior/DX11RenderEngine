@@ -102,8 +102,8 @@ void DebugRenderPass::Render()
 
     renderDevice->SetRenderTargets(targets, std::size(targets), nullptr, vp);
 
-    vetexBuffer2D.UpdateBuffers();
-    vetexBuffer3D.UpdateBuffers();
+    vetexBuffer2D.UpdateBuffers(true);
+    vetexBuffer3D.UpdateBuffers(true);
 
     uint32_t lastFlags = -1;
 
@@ -112,7 +112,7 @@ void DebugRenderPass::Render()
     renderDevice->VerifyPixelSampler(0, Samplers::anisotropic16);
     renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture);
 
-    renderDevice->ApplyMeshBuffersBinding(vetexBuffer3D.mesh);
+    renderDevice->ApplyMeshBuffersBinding(vetexBuffer2D.mesh);
     auto ortho = matrix::CreateOrthographic(width, height, 1, 2);
 
     for (size_t i = 0; i < drawCalls2D.size(); i++)
@@ -135,7 +135,7 @@ void DebugRenderPass::Render()
             drawCalls2D[i].hash.numElem);
     }
 
-    renderDevice->ApplyMeshBuffersBinding(vetexBuffer2D.mesh);
+    renderDevice->ApplyMeshBuffersBinding(vetexBuffer3D.mesh);
 
     for (size_t i = 0; i < drawCalls3D.size(); i++)
     {

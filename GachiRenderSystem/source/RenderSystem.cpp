@@ -107,7 +107,6 @@ void RenderSystem::ResizeBackBuffer(uint32_t width, uint32_t height)
     pRenderer->ResizeBackbuffer(Size2D(width, height));
     texturesManager->ResizeTextures();
     Resize();
-    
 }
 
 void RenderSystem::ResizeViewport(uint32_t width, uint32_t height)
@@ -136,11 +135,11 @@ RenderSystem* RenderSystem::Initialise(RenderEngineCoreSettings init)
         {
             {
                 (int32_t)init.windowSettings.windowWidth,
-               (int32_t)init.windowSettings.windowHeight
+                (int32_t)init.windowSettings.windowHeight
             },
             {
                 (int32_t)init.windowSettings.windowWidth,
-               (int32_t)init.windowSettings.windowHeight
+                (int32_t)init.windowSettings.windowHeight
             },
             0,
             init.hWnd1,
@@ -182,6 +181,33 @@ void RenderSystem::BeginFrame()
 
 bool RenderSystem::RenderFrame()
 {
+
+    
+//#if _DEBUG
+//    renderPassDebug.Draw(
+//        DebugDraw3DData
+//        {
+//            {
+//                EPrimitiveType::PRIMITIVETYPE_LINESTRIP,
+//                4,
+//                {
+//                    DebugVertex3D{{0, 0, -10}},
+//                    DebugVertex3D{{3, 0, -10}},
+//                    DebugVertex3D{{6, 0, -10}},
+//                    DebugVertex3D{{20, 40, -10}},
+//                    DebugVertex3D{{100, 100, -10}}
+//                },
+//                {(uint32_t)0, (uint32_t)1, (uint32_t)2, (uint32_t)3, (uint32_t)4},
+//            },
+//            Transform(),
+//            float3(0, 1, 0),
+//            {}
+//        }
+//    );
+//
+//#endif
+
+
     pRenderer->ClearState();
     BaseRenderSystem::Present();
 
@@ -250,6 +276,7 @@ bool RenderSystem::RenderFrame()
     GFX_CATCH_RENDER(renderPassUI.Render(););
     pRenderer->EndEvent();
 
+    BaseRenderSystem::Present();
 #if _DEBUG
     pRenderer->BeginEvent("Debug draw.");
     GFX_CATCH_RENDER(renderPassDebug.Render(););

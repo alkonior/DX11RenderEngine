@@ -73,7 +73,7 @@ void RenderDevice::ResizeViewport(uint32_t width, uint32_t height)
 	gfx->ResizeViewport(width, height);
 }
 
-std::vector<const char*> RenderDevice::GetRenderTargets()
+std::vector<const char*> RenderDevice::GetRenderTargetsList()
 {
 	return  gfx->texturesManger->GetRenderTargetsList();
 }

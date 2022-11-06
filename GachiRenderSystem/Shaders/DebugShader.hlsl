@@ -16,10 +16,8 @@ struct PSIn {
 PSIn vsIn(VSIn input) {
 	PSIn vso = (PSIn)0;
 	
-
 	float4 worldPos = mul(float4(input.pos, 1.0f), debugCosntBuffer.world);
-	vso.pos = mul(worldPos, coreConstants.currentMatrices.viewProjection);
-
+	vso.pos = worldPos;
 	
 	return vso;
 }
@@ -51,11 +49,11 @@ PSOut psIn(PSIn input) : SV_Target
 
 
 #endif
-
+#define D3D
 #ifdef D3D
 
 struct VSIn {
-	float2 pos : Position;
+	float3 pos : Position;
 };
 
 struct PSIn {
@@ -66,8 +64,7 @@ PSIn vsIn(VSIn input) {
 	PSIn vso = (PSIn)0;
 	
 	float4 worldPos = mul(float4(input.pos, 1.0f), debugCosntBuffer.world);
-	vso.pos = worldPos;
-
+	vso.pos = mul(worldPos, coreConstants.currentMatrices.viewProjection);
 	
 	return vso;
 }
@@ -76,7 +73,7 @@ struct PSOut {
 	float4 color      : SV_Target0;
 };
 
-Texture2D depthTex : register(t0);
+Texture2D<float> depthTex : register(t0);
 
 PSOut psIn(PSIn input) : SV_Target
 {
@@ -93,6 +90,9 @@ PSOut psIn(PSIn input) : SV_Target
 
 	pso.color = float4(debugCosntBuffer.color, 1.0f);
 	//todo
+	float depth = depthTex.Load(int3(input.pos.x, input.pos.y, 0)); 
+	if (input.pos.z > depth)
+		pso.color.xyz = pso.color.yzx;
 
 	return pso;
 }

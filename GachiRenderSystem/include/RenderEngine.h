@@ -109,7 +109,7 @@ struct RenderDevice {
 
 	void ResizeBackBuffer(uint32_t width, uint32_t height);
 	void ResizeViewport(uint32_t width, uint32_t height);
-	std::vector<const char*> GetRenderTargets();
+	std::vector<const char*> GetRenderTargetsList();
 
 	void Flush();
 	/* Debug staff */
