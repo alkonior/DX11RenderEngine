@@ -337,7 +337,8 @@ IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& Re
 void RenderDeviceDX11::DestroyResource(IPlaceable* resource)
 {
     IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
-    d3d11resource->Release();
+    if (d3d11resource)
+        d3d11resource->Release();
 }
 
 

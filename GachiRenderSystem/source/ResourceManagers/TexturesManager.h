@@ -17,7 +17,9 @@ public:
     virtual void UpdateTexture(const ImageUpdate& updateData);
     virtual void ResizeTextures() override; 
 
-
+    uint32_t depthWidth;
+    uint32_t depthHeigh;
+    
     virtual void ReleaseTexture(size_t id);
     virtual TextureCache GetImg(size_t id);
     //void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
@@ -27,48 +29,13 @@ public:
     //Renderer::Renderbuffer* depthBuffer;
 
 
-    Renderer::Texture* diffuseColor;
-    Renderer::RenderTargetBinding diffuseColorRT;
-
-    Renderer::Texture* lightColor;
-    Renderer::RenderTargetBinding lightColorRT;
-
-    Renderer::Texture* alphaSurfaces;
-    Renderer::RenderTargetBinding alphaSurfacesRT;
-
-    Renderer::Texture* bloomMask;
-    Renderer::RenderTargetBinding bloomMaskRT;
-
-    Renderer::Texture* velocityField;
-    Renderer::RenderTargetBinding velocityFieldRT;
-
-    Renderer::Texture* blurMask;
-    Renderer::RenderTargetBinding blurMaskRT;
-
-    Renderer::Texture* preAAcolor;
-    Renderer::RenderTargetBinding preAAcolorRT;
-
-    Renderer::Texture* pastColor;
-    Renderer::RenderTargetBinding pastColorRT;
-    Renderer::Texture* pastDepth;
-    Renderer::RenderTargetBinding pastDepthRT;
-
-
-    Renderer::Texture* normalsField;
-    Renderer::RenderTargetBinding normalsFieldRT;
-
-    Renderer::Texture* oclusionField;
-    Renderer::RenderTargetBinding oclusionFieldRT;
-
 private:
     void CreateRenderTarget(const char* name,
                             Renderer::SurfaceFormat format,
                             bool isUA,
                             bool isVS,
                             bool isSS,
-                            uint32_t width, uint32_t height,
-                            Renderer::Texture*& texture,
-                            Renderer::RenderTargetBinding& renderTarget);
+                            uint32_t width, uint32_t height);
     //
 public:
     virtual ~TexturesManager();

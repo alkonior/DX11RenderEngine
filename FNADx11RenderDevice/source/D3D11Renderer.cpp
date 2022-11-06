@@ -1911,6 +1911,7 @@ void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer)
     }
 
     d3dRenderbuffer->handle = nullptr;
+    testApi->AddDisposeResource(d3dRenderbuffer->resource);
     delete d3dRenderbuffer;
 }
 
