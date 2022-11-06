@@ -10,8 +10,8 @@ void TAARenderPass::Init(const char* dirr)
 {
     BaseRenderPass::Init(dirr, new TAARenderPassProvider());
     
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+	uint32_t width, height;
+	renderDevice->GetMainViewportSize(width, height);
     
     TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
 	constBuffer = renderDevice->CreateConstBuffer(sizeof(localBuffer));
@@ -29,8 +29,8 @@ void TAARenderPass::UpdateHaltonSequence()
 
     if (HaltonSequence.size() < localBuffer.numSamples)
     {
-        int32_t width, height;
-        renderDevice->GetBackbufferSize(&width, &height);
+    	uint32_t width, height;
+    	renderDevice->GetMainViewportSize(width, height);
 		
         HaltonSequence.resize(localBuffer.numSamples);
         auto left = halton_sequence(20, 20 + localBuffer.numSamples-1, 2);
@@ -49,8 +49,8 @@ void TAARenderPass::UpdateHaltonSequence()
 
 void TAARenderPass::PreRender()
 {	
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+	uint32_t width, height;
+	renderDevice->GetMainViewportSize(width, height);
 	
     UpdateHaltonSequence();
     
@@ -62,10 +62,19 @@ void TAARenderPass::PreRender()
     baseRendererParams.renderSystem.viewConstants.taaBuffer.taaPixelShift = HaltonSequence[HaltonIndex];
 }
 
+void TAARenderPass::Resize()
+{
+	uint32_t width, height;
+	renderDevice->GetMainViewportSize(width, height);
+	
+    renderDevice->AddDisposeTexture(TAAHistory);
+	TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
+}
+
 void TAARenderPass::Render()
 {
-	int32_t width, height;
-	renderDevice->GetBackbufferSize(&width, &height);
+	uint32_t width, height;
+	renderDevice->GetMainViewportSize(width, height);
 	renderDevice->ClearState();
 	baseRendererParams.renderSystem.Present();
 	
@@ -123,7 +132,7 @@ void TAARenderPass::Render()
 		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastDepth")),
 	};
 	//target[0] = nullptr;
-	renderDevice->SetRenderTargets(target, 3, nullptr, {0,0,width,height,0,1});
+	renderDevice->SetRenderTargets(target, 3, nullptr, {0,0,(int32_t)width,(int32_t)height,0,1});
 	renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderDevice->VerifyPixelTexture(0, TAAHistory);
 	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture);
@@ -159,4 +168,10 @@ void TAARenderPass::RenderImGUI()
 }
 void TAARenderPass::PostRender()
 {
+}
+
+void TAARenderPass::SetupSettings(const RenderSettings& settings)
+{
+	Settings = settings.taaSettings;
+    Init(settings.shadersDirr);
 }

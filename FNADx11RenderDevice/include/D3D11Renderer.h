@@ -98,6 +98,8 @@ private:
 	int32_t numRenderTargets;
 	size_t backBufferWidth;
 	size_t backBufferHeight;
+	size_t mainViewportWidth;
+	size_t mainViewportHeight;
 	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
 	wrl::ComPtr<ID3D11UnorderedAccessView> swapchainUAView;
 	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
@@ -119,6 +121,8 @@ public:
 	~D3D11Renderer() override;
 	D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode);
 
+	virtual void ResizeBackbuffer(const Size2D& parameters) override;
+	virtual void ResizeMainViewport(const Size2D& parameters) override;
 
 	// Унаследовано через IRenderer
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
@@ -151,7 +155,8 @@ public:
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
 
 	virtual void ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, void* data, int32_t dataLength) override;
-	virtual void GetBackbufferSize(int32_t* w, int32_t* h) override;
+	virtual void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
+	virtual void GetMainViewportSize(uint32_t& w, uint32_t& h) override;
 	virtual DepthFormat GetBackbufferDepthFormat() override;
 	virtual Texture* CreateTexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount,  uint8_t isRenderTarget) override;
 	virtual Texture* CreateUATexture2D(SurfaceFormat format, int32_t width, int32_t height, int32_t levelCount) override;

@@ -61,6 +61,20 @@ struct Viewport {
 	int32_t h;
 	float minDepth;
 	float maxDepth;
+	bool operator == (const Viewport& vp) const
+	{
+		return
+		(x == vp.x) &&
+		(y == vp.y) &&
+		(w == vp.w) &&
+		(h == vp.h) &&
+		(minDepth == vp.minDepth) &&
+		(maxDepth == vp.maxDepth) ;
+	}
+	bool operator != (const Viewport& vp) const
+	{
+		return !(vp == *this);
+	}
 };
 
 struct Rect {
@@ -115,10 +129,18 @@ enum PresentInterval {
 	PRESENTINTERVAL_TWO,
 	PRESENTINTERVAL_IMMEDIATE
 };
-
+	
+struct Size2D
+{
+	int32_t Width;
+	int32_t Height;
+};
+	
 struct PresentationParameters {
-	int32_t backBufferWidth;
-	int32_t backBufferHeight;
+	
+	Size2D BackBufferSize;
+	Size2D ViewPortBufferSize;
+	
 	int32_t multiSampleCount;
 	void* deviceWindowHandle1;
 	void* deviceWindowHandle2;

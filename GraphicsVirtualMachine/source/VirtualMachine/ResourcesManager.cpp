@@ -91,7 +91,7 @@ GpuResource& ResourcesManager::CreateResource(const ResourceDesc& desc)
 
     if (savedDesc.initialData)
     {
-        const uint32_t resourceSize = CalculateResourceSize(desc);
+        const uintptr_t resourceSize = CalculateResourceSize(desc);
         savedData.resize(savedData.size() + resourceSize, 0);
         memcpy(savedData.data() + dataSize, savedDesc.initialData, resourceSize);
         savedDesc.initialData = savedData.data() + dataSize;
@@ -547,35 +547,48 @@ GPUInputLayout& ResourcesManager::CreateInputLayout(const InputAssemblerDeclarat
 
 IRenderDevice::IResource* ResourcesManager::GetRealResource(const Resource* resource)
 {
-    return Resources[reinterpret_cast<uint32_t>(resource)].resource;
+    return Resources[reinterpret_cast<uintptr_t>(resource)].resource;
 }
 
 IRenderDevice::IResourceView* ResourcesManager::GetRealResourceView(const ResourceView* resourceView)
 {
-    return ResourceViews[reinterpret_cast<uint32_t>(resourceView)].view;
+    return ResourceViews[reinterpret_cast<uintptr_t>(resourceView)].view;
 }
 
 IRenderDevice::IShader* ResourcesManager::GetRealShader(const Shader* shader)
 {
-    return SavedShaders[reinterpret_cast<uint32_t>(shader)].shader;
+    return SavedShaders[reinterpret_cast<uintptr_t>(shader)].shader;
 }
 
 IRenderDevice::IInputLayout* ResourcesManager::GetRealInputLayout(const InputLayout* inputLayout)
 {
-    return SavedInputLayouts[reinterpret_cast<uint32_t>(inputLayout)].inputLayout;
+    return SavedInputLayouts[reinterpret_cast<uintptr_t>(inputLayout)].inputLayout;
+}
+
+void ResourcesManager::AddDisposeResource(const Resource* resource)
+{
+    auto& gpuResource = GetResource(resource);
+    for (auto& resourceView : gpuResource.views)
+    {
+        ResourceViews.erase(reinterpret_cast<uintptr_t>(resourceView));
+    }
+    Resources.erase(reinterpret_cast<uintptr_t>(resource));
+}
+
+void ResourcesManager::AddDisposeResourceView(const ResourceView* resourceView)
+{
+    auto& gpuResourceView = GetResourceView(resourceView);
+    auto& gpuResource = GetResource(gpuResourceView.resource);
+    gpuResource.views.erase(std::find(gpuResource.views.begin(),gpuResource.views.end(), resourceView));
+    ResourceViews.erase(reinterpret_cast<uintptr_t>(resourceView));
 }
 
 
-void ResourcesManager::AddDisposeResource(const Resource* resource)
-{}
-
-void ResourcesManager::AddDisposeResourceView(const ResourceView* resourceView)
-{}
 GpuResource& ResourcesManager::GetResource(const Resource* resource)
 {
-    return Resources[reinterpret_cast<uint32_t>(resource)];
+    return Resources[reinterpret_cast<uintptr_t>(resource)];
 }
 GpuResourceView& ResourcesManager::GetResourceView(const ResourceView* resourceView)
 {
-    return ResourceViews[reinterpret_cast<uint32_t>(resourceView)];
+    return ResourceViews[reinterpret_cast<uintptr_t>(resourceView)];
 }

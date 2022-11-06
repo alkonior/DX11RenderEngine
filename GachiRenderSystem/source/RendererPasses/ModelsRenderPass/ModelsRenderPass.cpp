@@ -22,10 +22,10 @@ PipelineFactoryFlags ModelsRenderPass::ParseFlags(const ModelsFlags& flags)
 }
 
 
-ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"ModelsShader.hlsl",renderSystem})
+ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : GachiBasePass({"ModelsShader.hlsl",renderSystem})
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetMainViewportSize(width, height);
     pDataCB = renderDevice->CreateConstBuffer(sizeof(dataBuffer));
 
     vp.x = 0;
@@ -67,10 +67,18 @@ void ModelsRenderPass::PreRender()
     renderDevice->Clear(CLEAROPTIONS_DEPTHBUFFER, {}, 1, 0);
 }
 
+void ModelsRenderPass::Resize()
+{
+    
+    uint32_t width, height;
+    renderDevice->GetMainViewportSize(width, height);
+    
+    vp.w = width;
+    vp.h = height;
+}
+
 void ModelsRenderPass::Render()
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
 
     RenderTargetBinding* targets[] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
@@ -129,4 +137,9 @@ void ModelsRenderPass::PostRender()
 ModelsRenderPass::~ModelsRenderPass()
 {
     renderDevice->AddDisposeConstBuffer(pDataCB);
+}
+
+void ModelsRenderPass::SetupSettings(const RenderSettings& Settings)
+{
+    Init(Settings.shadersDirr);
 }

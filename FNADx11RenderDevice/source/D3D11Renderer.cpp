@@ -57,8 +57,8 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     auto ppppp = new GVM::Dx11PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle2;
     GVM::RenderDeviceInitParams init{
-        presentationParameters.backBufferWidth,
-        presentationParameters.backBufferHeight,
+        presentationParameters.BackBufferSize.Width,
+        presentationParameters.BackBufferSize.Height,
         ppppp,
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
@@ -173,6 +173,45 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
 
     CreateBackbuffer(presentationParameters);
+}
+
+void D3D11Renderer::ResizeBackbuffer(const Size2D& parameters)
+{
+    backBufferWidth = parameters.Width;
+    backBufferHeight = parameters.Height;
+    
+    context->OMSetRenderTargets(0, 0, 0);
+
+    // Release all outstanding references to the swap chain's buffers.
+    swapchainRTView->Release();
+    swapchainUAView->Release();
+    
+    // Preserve the existing buffer count and format.
+    // Automatically choose the width and height to match the client rect for HWNDs.
+    hr = swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+                                            
+    // Perform error handling here!
+
+    // Get buffer and create a render-target-view.
+    ID3D11Texture2D* pBuffer;
+    hr = swapchain->GetBuffer(0, __uuidof( ID3D11Texture2D),
+                                 (void**) &pBuffer );
+    // Perform error handling here!
+
+    hr = device->CreateRenderTargetView(pBuffer, NULL,
+                                             &swapchainRTView);
+    hr = device->CreateUnorderedAccessView(pBuffer, NULL,
+                                             &swapchainUAView);
+    // Perform error handling here!
+    pBuffer->Release();
+    testApi->ResizeBackbuffer(parameters.Width, parameters.Height);
+
+}
+
+void D3D11Renderer::ResizeMainViewport(const Size2D& parameters)
+{
+    mainViewportWidth = parameters.Width;
+    mainViewportHeight = parameters.Height;
 }
 
 D3D11Renderer::~D3D11Renderer()
@@ -943,9 +982,11 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             renderTargetViewsTest[0] = nullptr;
             depthStencilBufferTest =  this->depthStencilBuffer->depth.nDsView;
         }
-        this->SetViewport(viewport, 0);
-        testApi->SetupViewport(ToGVM(viewport), 0);
-
+        if (viewport != Viewport{})
+        {
+            this->SetViewport(viewport, 0);
+            testApi->SetupViewport(ToGVM(viewport), 0);
+        }
         renderTargetViews[0] = comViews[0];
 
         i = 1;
@@ -1102,10 +1143,16 @@ void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, v
     delete backbufferTexture;
 }
 
-void D3D11Renderer::GetBackbufferSize(int32_t* w, int32_t* h)
+void D3D11Renderer::GetBackbufferSize(uint32_t& w, uint32_t& h)
 {
-    *w = static_cast<int32_t>(backBufferWidth);
-    *h = static_cast<int32_t>(backBufferHeight);
+    w = static_cast<int32_t>(backBufferWidth);
+    h = static_cast<int32_t>(backBufferHeight);
+}
+
+void D3D11Renderer::GetMainViewportSize(uint32_t& w, uint32_t& h)
+{
+    w = static_cast<int32_t>(mainViewportWidth);
+    h = static_cast<int32_t>(mainViewportHeight);
 }
 
 DepthFormat D3D11Renderer::GetBackbufferDepthFormat()
@@ -1483,7 +1530,8 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture)
                 renderTargetViews[i] = nullptr;
             }
         }
-        tex->rtView->Release();
+        tex->rtView = nullptr;
+        tex->uaView = nullptr;
     }
 
     /* Release the shader resource view and texture */
@@ -2232,8 +2280,10 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters)
     wrl::ComPtr<ID3D11Texture2D> swapchainTexture;
 
 
-    backBufferWidth = parameters.backBufferWidth;
-    backBufferHeight = parameters.backBufferHeight;
+    backBufferWidth = parameters.BackBufferSize.Width;
+    backBufferHeight = parameters.BackBufferSize.Height;
+    mainViewportWidth = parameters.ViewPortBufferSize.Width;
+    mainViewportHeight = parameters.ViewPortBufferSize.Height;
 
     /* Create a render target view for the swapchain */
     swapchainViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

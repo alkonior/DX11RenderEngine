@@ -36,9 +36,6 @@
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +58,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ResourceManagers\TexturesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassConstBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\GachiBasePass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\halton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,6 +140,36 @@
     <ClInclude Include="source\ResourceManagers\TexturesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\RenderSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DynamicMeshBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugPassConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\GachiBasePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\halton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPassConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BloomShader.hlsl" />
@@ -136,5 +184,6 @@
     <None Include="Shaders\SSAOShader.hlsl" />
     <None Include="Shaders\TAAShader.hlsl" />
     <None Include="Shaders\UIShader.hlsl" />
+    <None Include="Shaders\DebugShader.hlsl" />
   </ItemGroup>
 </Project>

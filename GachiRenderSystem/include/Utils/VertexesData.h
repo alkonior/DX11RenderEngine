@@ -21,6 +21,16 @@ struct ModelVertex {
     float2 texcoord;
 };
 
+struct DebugVertex3D {
+    float3 position;
+    //float3 color;
+};
+
+struct DebugVertex2D {
+    float2 position;
+    //float3 color;
+};
+
 struct FramedModelCommon {
     float2 texcoord;
 };

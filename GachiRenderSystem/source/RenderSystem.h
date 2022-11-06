@@ -1,8 +1,10 @@
 #pragma once
+#include "RenderSettings.h"
 #include "CoreRenderSystem/BaseRenderSystem.h"
 #include "SimpleMath.h"
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
+#include "RendererPasses/DebugRenderPass/DebugRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
@@ -22,14 +24,14 @@ class RenderSystem: public BaseRenderSystem{
 
 
 
-	RenderSystem(RenderEngineInitStruct,
+	RenderSystem(RenderEngineCoreSettings,
 		const BaseRenderSystemInitStruct&,
 		ModelsManager* modelsManager,
 		TexturesManager* texturesManager);
 	RenderSystem(const RenderSystem&) = delete;
 	RenderSystem& operator=(const RenderSystem&) = delete;
 public:
-	static RenderSystem* Initialise(RenderEngineInitStruct);
+	static RenderSystem* Initialise(RenderEngineCoreSettings);
 	~RenderSystem() = default;
 
 
@@ -67,21 +69,33 @@ public:
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
 	
-	void ReinitShaders(const char *);
-	
+	void SetupSettings(const RenderSettings& Settings);
+	void ReloadShaders(const char* dirr);
+	void DrawDebug(const DebugDraw3DData& drawData);
+	void DrawDebug(const DebugDraw2DData& drawData);
+	void ResizeBackBuffer(uint32_t width, uint32_t height);
+	void ResizeViewport(uint32_t width, uint32_t height);
+
 	//SkyboxRenderer	     managerSkybox;
 private:
 
+	void Resize();
+	
 	ModelsManager* modelsManager;
 	TexturesManager* texturesManager;
 	
-	std::vector<BaseRenderPass*> renderPasses;
+	std::vector<GachiBasePass*> gachRenderPasses;
+	std::vector<BaseRenderPass*> baseRenderPasses;
 	
 	UIRenderPass			 renderPassUI;
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
 	TAARenderPass	         renderPassTAA;
 	
+#if _DEBUG
+	DebugRenderPass	         renderPassDebug;
+
+#endif
 	//MotionBlurRenderer	 managerMB;
 	//UPRenderer			 managerUP;
 	//PPRenderer			 managerPostProcess;

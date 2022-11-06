@@ -1,11 +1,12 @@
 ﻿#pragma once
 #include "CoreRenderSystem/RenderPasses/QuadRenderPass.h"
 #include "UIRenderPassConstBuffer.h"
+#include "RendererPasses/GachiBasePass.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "Utils/DrawData.h"
 
 
-class UIRenderPass : public BaseRenderPass {
+class UIRenderPass : public GachiBasePass {
 
     
     struct Vertex2D {
@@ -32,6 +33,7 @@ public:
 
 
     
+    void Resize() override;
     void Init(const char* dirr) override;
     
     void PreRender() override;
@@ -45,6 +47,7 @@ public:
     void Draw(const UIDrawData& data);
     
     ~UIRenderPass() override;
+    void SetupSettings(const RenderSettings& Settings) override;
 private:
     Renderer::Viewport vp;
 

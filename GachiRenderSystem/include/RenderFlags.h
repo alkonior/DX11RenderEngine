@@ -10,6 +10,13 @@ enum ModelDefines {
     MLIGHTED = 32
 };
 
+enum DebugPassDefines {
+    DZERO = 0,
+    DRED = 1,
+    D2D = 2,
+    D3D = 4,
+};
+
 enum  UIDefines : std::uint32_t {
     UIZERO = 0,
     UIRED = 1,

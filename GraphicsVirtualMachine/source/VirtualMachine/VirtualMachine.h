@@ -159,6 +159,7 @@ public:
 
     Shader* CreateShader(const ShaderDesc& desc);
     InputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader);
+    void ResizeBackbuffer(int32_t int32, int32_t height);
 
 #pragma endregion
 

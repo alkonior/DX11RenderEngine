@@ -2,8 +2,8 @@
 #include <vector>
 #include "Utils/VertexesData.h"
 
-enum EPrimitiveType {
-	PRIMITIVETYPE_TRIANGLELIST,
+enum EPrimitiveType : uint8_t {
+	PRIMITIVETYPE_TRIANGLELIST = 0,
 	PRIMITIVETYPE_TRIANGLESTRIP,
 	PRIMITIVETYPE_LINELIST,
 	PRIMITIVETYPE_LINESTRIP,

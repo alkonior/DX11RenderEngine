@@ -137,7 +137,7 @@ private:
 protected:
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
-    void DestroyResource(IResource* resource) override;
+    void DestroyResource(IPlaceable* resource) override;
     IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
 
     IShader* CreateShader(const ShaderDesc& desc) override;
@@ -174,6 +174,7 @@ protected:
 
 #pragma endregion
 
+    void ResizeBackbuffer(int32_t width, int32_t height) override;
     
 };
 

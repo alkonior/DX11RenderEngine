@@ -31,8 +31,6 @@ public:
 			return;
 
 		renderDevice = renderer;
-		int32_t width, height;
-		renderer->GetBackbufferSize(&width, &height);
 
 
 		QuadRendererVertex vertices[] =

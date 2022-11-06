@@ -334,7 +334,7 @@ IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& Re
     return nullptr;
 }
 
-void RenderDeviceDX11::DestroyResource(IResource* resource)
+void RenderDeviceDX11::DestroyResource(IPlaceable* resource)
 {
     IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
     d3d11resource->Release();
@@ -1131,6 +1131,37 @@ void RenderDeviceDX11::ClearRenderTarget(const IRenderTargetView* rtView, FColor
 void RenderDeviceDX11::ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil)
 {
     context->ClearDepthStencilView((ID3D11DepthStencilView*)dsView, D3D11_CLEAR_DEPTH, depth, stencil);
+}
+
+void RenderDeviceDX11::ResizeBackbuffer(int32_t width, int32_t height)
+{
+    backBufferWidth = width;
+    backBufferHeight = height;
+    
+    context->OMSetRenderTargets(0, 0, 0);
+
+    // Release all outstanding references to the swap chain's buffers.
+    swapchainRTView->Release();
+    swapchainUAView->Release();
+    // Preserve the existing buffer count and format.
+    // Automatically choose the width and height to match the client rect for HWNDs.
+    hr = swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+                                            
+    // Perform error handling here!
+
+    // Get buffer and create a render-target-view.
+    ID3D11Texture2D* pBuffer;
+    hr = swapchain->GetBuffer(0, __uuidof( ID3D11Texture2D),
+                                 (void**) &pBuffer );
+    // Perform error handling here!
+
+    hr = device->CreateRenderTargetView(pBuffer, NULL,
+                                             &swapchainRTView);
+    hr = device->CreateUnorderedAccessView(pBuffer, NULL,
+                                             &swapchainUAView);
+    // Perform error handling here!
+    pBuffer->Release();
+
 }
 
 void RenderDeviceDX11::Draw(DrawCall call)

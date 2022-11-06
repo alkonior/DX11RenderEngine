@@ -9,6 +9,7 @@ class ImGUIRenderPass final : public BaseRenderPass {
 public:
     explicit ImGUIRenderPass(const BaseRendererParams& in);
     void Init(const char* dirr) override;
+    void Resize() override;
     void Render();
     void PreRender() override;
     void PostRender() override;

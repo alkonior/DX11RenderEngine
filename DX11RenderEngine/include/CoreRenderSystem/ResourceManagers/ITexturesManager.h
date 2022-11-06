@@ -16,8 +16,8 @@ public:
 
 	struct TextureCache {
 		Renderer::Texture* texture = nullptr;
-		size_t width = 0;
-		size_t height = 0;
+		uint32_t width = 0;
+		uint32_t height = 0;
 	};
 
 public:
@@ -31,28 +31,32 @@ public:
 	
 	
 	virtual void ReleaseTexture(size_t id) = 0;
+	virtual void ResizeTextures() = 0;
 	virtual TextureCache GetImg(size_t id) = 0;
 
 
 	struct RenderTargetDescription{
+		const char* name = "";
 		Renderer::SurfaceFormat format = Renderer::SURFACEFORMAT_COLOR;
 		bool isUA = false;
-		size_t width = 0;
-		size_t height = 0;
+		bool isVS = false;
+		bool isSS = false;
+		uint32_t width = 0;
+		uint32_t height = 0;
 	};
 
 	virtual const Renderer::RenderTargetBinding& CreatePublicRenderTarget(
-		string_id id,
 		const RenderTargetDescription& description) = 0;
 
 	virtual const Renderer::RenderTargetBinding& CreatePrivateRenderTarget(
-		string_id id,
 		const RenderTargetDescription& description,
 		Renderer::Texture*& diffuseColor,
 		Renderer::RenderTargetBinding& diffuseColorRT
 	) = 0;
 
 	virtual Renderer::RenderTargetBinding* GetRenderTarget(string_id id) = 0;
+	virtual RenderTargetDescription GetRenderTargetDescription(string_id id) = 0;
+	virtual std::vector<const char*> GetRenderTargetsList() = 0;
 	
 	Renderer::Renderbuffer* depthBuffer = nullptr;
 	

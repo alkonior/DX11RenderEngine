@@ -186,6 +186,6 @@ public:
     void BeginEvent(const char* name);
     void EndEvent();
     void SetMarker(const char* name);
-
+    void ResizeBackbuffer(int32_t width, int32_t height);
 };
 }

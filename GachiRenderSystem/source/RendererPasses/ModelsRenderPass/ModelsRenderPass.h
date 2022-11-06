@@ -4,9 +4,10 @@
 #include "ResourceManagers/ModelsManager.h"
 #include "ResourceManagers/TexturesManager.h"
 #include "ModelsPassConstBuffer.h"
+#include "RendererPasses/GachiBasePass.h"
 #include "Utils/DrawData.h"
 
-class ModelsRenderPass : public BaseRenderPass{
+class ModelsRenderPass : public GachiBasePass{
 
     struct DrawCall {
         DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData&);
@@ -27,10 +28,12 @@ public:
     void PreRender() override;
 
 
+    void Resize() override;
     void Render();
     
     void PostRender() override;
     ~ModelsRenderPass() override;
+    void SetupSettings(const RenderSettings& Settings) override;
 
 private:
     ModelsCosntBuffer dataBuffer;

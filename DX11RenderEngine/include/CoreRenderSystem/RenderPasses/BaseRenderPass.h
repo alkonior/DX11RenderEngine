@@ -48,6 +48,7 @@ protected:
     
 public:
     
+    virtual void Resize() = 0;
     virtual void Init(const char* dirr) = 0;
     
     virtual void PreRender() = 0;

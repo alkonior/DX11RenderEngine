@@ -1,13 +1,7 @@
 ﻿#pragma once
 #include "TransformUtils.h"
 #include "TextureData.h"
-
-struct  RenderEngineInitStruct {
-    void* hWnd1;
-    void* hWnd2;
-    size_t width; size_t height;
-};
-
+#include "ModelData.h"
 
 
 
@@ -29,6 +23,29 @@ union ModelsFlags{
         uint8_t isColored : 1;  
         uint8_t isWireframe : 1;
     } ;
+};
+
+union DebugPassFlags{
+    DebugPassFlags() {}
+    uint32_t flags;
+    struct {
+        uint8_t isRed : 1;  
+        uint8_t is2D : 1;  
+        uint8_t is3D : 1;  
+    } ;
+};
+
+struct DebugDraw3DData {
+    MeshData<DebugVertex3D> mesh;
+    Transform world;
+    float3 color;
+    DebugPassFlags flags;
+};
+
+struct DebugDraw2DData {
+    MeshData<DebugVertex2D> mesh;
+    float3 color;
+    DebugPassFlags flags;
 };
 
 struct ModelDrawData {
@@ -73,9 +90,10 @@ struct MeshHashData {
     union {
         uint64_t id = 0;
         struct {
-            uint32_t vertexOffset : 24;
-            uint32_t indexOffset : 24;
-            int numElem : 16;
+            uint32_t vertexOffset : 22;
+            uint32_t indexOffset : 22;
+            uint32_t numElem : 16;
+            uint8_t pt : 4;
         };
     };
 };

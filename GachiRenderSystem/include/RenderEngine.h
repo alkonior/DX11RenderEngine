@@ -3,6 +3,7 @@
 #include "Utils/ModelData.h"
 #include "RenderFlags.h"
 #include "TextureData.h"
+#include "RenderSettings.h"
 #include "imgui/imgui.h"
 
 class RenderSystem;
@@ -19,7 +20,7 @@ struct RenderDevice {
 	/* Init */
 
 	
-	void InitDevice(RenderEngineInitStruct);
+	void CreateDevice(RenderEngineCoreSettings);
 
 	/* Quit */
 
@@ -44,7 +45,7 @@ struct RenderDevice {
 		size_t dataSize;
 	};
 	std::string shadersDir;
-	void InitShaders(const char* dirr);
+	void InitDevice(const RenderSettings& Settings);
 	//void ReloadShaders(LPCWSTR);
 	void ReloadShaders();
 
@@ -91,9 +92,24 @@ struct RenderDevice {
 	
 
 
+	void DrawDebug(const DebugDraw3DData& drawData);
+	void DrawDebug(const DebugDraw2DData& drawData);
+	
 	void SetSky(size_t side, const TextureData& data);
 	void SetSkyFlags(uint64_t flags);
-	void* GetGameTexture();
+
+	struct Texture
+	{
+		void* texture;
+		uint32_t width;
+		uint32_t height;
+	};
+	Texture GetTexture(size_t textureId);
+	Texture GetRenderTargetTexture(const char*);
+
+	void ResizeBackBuffer(uint32_t width, uint32_t height);
+	void ResizeViewport(uint32_t width, uint32_t height);
+	std::vector<const char*> GetRenderTargets();
 
 	void Flush();
 	/* Debug staff */

@@ -31,6 +31,8 @@ struct IRenderer {
 	IRenderer(const IRenderer&) = delete;
 	IRenderer(const IRenderer&&) = delete;
 
+	virtual void ResizeBackbuffer(const Size2D& parameters) = 0;
+	virtual void ResizeMainViewport(const Size2D& parameters) = 0;
 	/* Destroys a rendering context previously returned by CreateDevice. */
 	virtual ~IRenderer() {};
 
@@ -306,8 +308,18 @@ struct IRenderer {
 	 * h:	Filled with the backbuffer's height.
 	 */
 	virtual void GetBackbufferSize(
-		int32_t* w,
-		int32_t* h
+		uint32_t& w,
+		uint32_t& h
+	) = 0;
+
+	/* Gets the current dimensions of the viewport.
+	 *
+	 * w:	Filled with the backbuffer's width.
+	 * h:	Filled with the backbuffer's height.
+	 */
+	virtual void GetMainViewportSize(
+		uint32_t& w,
+		uint32_t& h
 	) = 0;
 
 	///* Gets the current pixel format of the backbuffer.
