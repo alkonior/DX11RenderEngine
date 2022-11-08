@@ -30,6 +30,10 @@ public:
 
 };
 
+typedef MeshData<OpaqueModelVertex> OpaqueMesh;
 typedef MeshData<ParticleVertex> ParticlesMesh;
 
 typedef  MeshData<UPVertex> UPModelMesh;
+
+
+typedef size_t StaticMeshId;

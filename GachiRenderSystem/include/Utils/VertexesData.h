@@ -39,3 +39,12 @@ struct FramedModelVertex {
     float3 position;
     float3 normal;
 };
+
+struct OpaqueModelVertex {
+    float3 position;
+    float3 normal;
+    float3 binormal;
+    float3 tangent;
+    color color;
+    float2 texcoord;
+};

@@ -117,3 +117,44 @@ struct UPDrawData {
 struct ParticlesDrawData {
     uint64_t flags;
 };
+
+typedef size_t StaticMesh;
+
+
+struct ModelDrawData {
+    ModelDrawData() = default;
+    
+    ModelDrawData(size_t modelId, size_t textureId, Transform position):
+    modelId(modelId),
+    textureId(textureId),
+    oldPosition(position),
+    newPosition(position)
+    {};
+    
+    ModelDrawData(size_t modelId, Transform position):
+    modelId(modelId),
+    textureId(0),
+    oldPosition(position),
+    newPosition(position)
+    {
+        flags.isRed = 1;
+    };
+    
+    ModelDrawData(size_t modelId, float4 color, Transform position):
+    modelId(modelId),
+    textureId(0),
+    oldPosition(position),
+    newPosition(position)
+    {
+        flags.isColored = 1;
+    };
+    
+    size_t modelId = 0;
+    size_t textureId = 0;
+    
+    Transform oldPosition;
+    Transform newPosition;
+    
+    float4 color;
+    ModelsFlags flags;
+};
