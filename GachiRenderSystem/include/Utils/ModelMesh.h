@@ -15,21 +15,13 @@ template<class VertexType>
 struct MeshData {
 	EPrimitiveType pt;
 	size_t primitiveCount;
-	std::vector<VertexType> vertixes;
+	std::vector<VertexType> vertices;
 	std::vector<uint32_t> indexes;
 };
 
 
-class ModelData {
-public:
-	std::vector<ModelVertex> verticies;
-	std::vector<uint16_t> indexes;
-	EPrimitiveType pt;
-	size_t primitiveCount;
-	ModelData(std::vector<ModelVertex> verticies, std::vector<uint16_t> indexes, EPrimitiveType pt, size_t primitiveCount);
 
-};
-
+typedef MeshData<ModelVertex> ModelMesh;
 typedef MeshData<OpaqueModelVertex> OpaqueMesh;
 typedef MeshData<ParticleVertex> ParticlesMesh;
 

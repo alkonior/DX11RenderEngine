@@ -10,17 +10,24 @@
 class OpaqueRenderPass : public GachiBasePass{
 
     struct DrawCall {
-        DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const OpaqueModelDrawData&);
+        DrawCall(ModelsManager::SavedModel model,
+            
+        TexturesManager::TextureCache diffuse,
+        TexturesManager::Float3TextureCache normal,
+        TexturesManager::FloatTextureCache roughness,
+        TexturesManager::FloatTextureCache metallic,
+        
+            const OpaqueModelDrawData&);
 
         ModelsManager::SavedModel model;
         TexturesManager::TextureCache diffuse;
-        TexturesManager::TextureCache normal;
-        TexturesManager::TextureCache texture;
-        TexturesManager::TextureCache texture;
+        TexturesManager::Float3TextureCache normal;
+        TexturesManager::FloatTextureCache roughness;
+        TexturesManager::FloatTextureCache metallic;
         OpaqueModelDrawData data;
     };	
 	
-    PipelineFactoryFlags ParseFlags(const OpaqueFlags& flags);
+    PipelineFactoryFlags ParseFlags(const OpaqueModelDrawData& flags);
     
 public:
     explicit OpaqueRenderPass(BaseRenderSystem& in);

@@ -24,6 +24,7 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     renderPassIMGUI({"", *this}),
     renderPassTAA(*this),
     renderPassDebug(*this),
+    renderPassOpaque(*this),
     modelsManager(modelsManager),
     texturesManager(texturesManager)
 {
@@ -353,7 +354,7 @@ void RenderSystem::ReleaseImg(size_t id)
     texturesManger->ReleaseTexture(id);
 }
 
-void RenderSystem::RegisterModel(size_t id, const ModelData& model)
+void RenderSystem::RegisterModel(size_t id, const ModelMesh& model)
 {
     modelsManager->RegisterModel(id, model);
 }
@@ -363,9 +364,9 @@ void RenderSystem::ReleaseModel(size_t id)
     modelsManager->ReleaseModel(id);
 }
 
-void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, bool mipmap)
+void RenderSystem::RegisterImg(size_t id, int width, int height, void* data)
 {
-    texturesManger->RegTexture(data, width, height, mipmap, id);
+    texturesManger->RegTexture(data, width, height, id);
 }
 
 void RenderSystem::DrawModel(const ModelDrawData& drawData)

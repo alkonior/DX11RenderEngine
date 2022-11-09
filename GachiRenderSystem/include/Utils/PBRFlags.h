@@ -6,11 +6,10 @@
 enum OpaqueDefines {
 	OZERO = 0,
 	ORED = 1,
-	ODIFFUSETEX = 4,
-	OBAD_UV = 4,
-	ONONORMAL = 8,
-	OCOLORED = 16,
-	OLIGHTED = 32
+	ODIFFUSE = 2,
+	OMETALIC = 4,
+	OROUGHNESS = 8,
+	ONORMAL = 16,
 };
 
 enum class PixelFlagsOpaque

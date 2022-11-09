@@ -23,7 +23,7 @@
     <ClInclude Include="include\RenderFlags.h" />
     <ClInclude Include="include\RenderSettings.h" />
     <ClInclude Include="include\Utils\DrawData.h" />
-    <ClInclude Include="include\Utils\ModelData.h" />
+    <ClInclude Include="include\Utils\ModelMesh.h" />
     <ClInclude Include="include\Utils\OpaqueModelDrawData.h" />
     <ClInclude Include="include\Utils\PBRFlags.h" />
     <ClInclude Include="include\Utils\VertexesData.h" />
@@ -36,13 +36,25 @@
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassConstBuffer.h" />
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassProvider.h" />
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.h" />
-    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassConstBuffer.h" />
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.h" />
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.h" />
-    <ClInclude Include="source\RendererPasses\PBR\GBuffer.h" />
-    <ClInclude Include="source\RendererPasses\PBR\RenderingSystemPBR.h" />
-    <ClInclude Include="source\RendererPasses\PBR\SkyRenderer.h" />
+    <ClInclude Include="source\RendererPasses\PBR\GBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBR\RenderingSystemPBR.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBR\SkyRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\RendererPasses\TAARenderPass\halton.h" />
     <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPass.h" />
     <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPassConstBuffer.h" />
@@ -98,178 +110,60 @@
     <None Include="Shaders\UIShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\ModelData.cpp" />
+    <None Include="Shaders\PBRFillGBuffer.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\PBRLighting.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\PBRToneMapping.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\SkyRenderingPS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\SkyRenderingVS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\SkyUpdatePS.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
     <ClCompile Include="source\pch.cpp" />
     <ClCompile Include="source\RenderEngine.cpp" />
     <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassConstBuffer.cpp" />
-    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.cpp" />     
-    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.cpp" /> 
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.cpp" />
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\GachiBasePass.cpp" />
     <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsPassConstBuffer.cpp" />
     <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsPassProvider.cpp" />
     <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.cpp" />
-    <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.cpp">
+    </ClCompile>
     <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\KtripEngine\EngineCore\x64\Debug\GachiRenderSystem.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\GachiRenderSystem.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\GachiRen.5EFFD051.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_LIB;GACHI;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
-      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>x64\Debug\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>P:\KtripEngine\EngineCore\x64\Debug\GachiRenderSystem.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>x64\Debug\GachiRenderSystem.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>x64\Debug\GachiRen.5EFFD051.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>_DEBUG;_LIB;GACHI;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="source\RendererPasses\PBR\GBuffer.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\PassLighting.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\PassOpaque.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\PassToneMap.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\RenderingSystemPBR.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders.cpp" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\PBRFillGBuffer.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\PBRLighting.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\PBRToneMapping.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\SkyRenderingPS.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\SkyRenderingVS.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\Shaders\SkyUpdatePS.hlsl" />
-    <ClCompile Include="source\RendererPasses\PBR\SkyRenderer.cpp" />
+    <ClCompile Include="source\RendererPasses\PBR\GBuffer.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassLighting.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassOpaque.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassToneMap.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\RenderingSystemPBR.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\Shaders.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\SkyRenderer.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\RendererPasses\TAARenderPass\halton.cpp" />
     <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.cpp" />

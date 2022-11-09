@@ -1,29 +1,8 @@
+#define HLSL
+#define GACHI
 
-struct ConstantData
-{
-	float4x4 World;
-	float4x4 ViewProj;//todo
-};
-
-
-
-struct MaterialInfo {
-	float MetallicMult;
-	float RoughnessMult;
-};
-
-
-cbuffer ConstBuf : register(b0)
-{
-	ConstantData ConstData;
-}
-
-
-cbuffer ConstBuf : register(b1)
-{
-	MaterialInfo MatInfo;
-}
-
+#include "../DX11RenderEngine/DX11RenderEngine/include/CoreRenderSystem/CoreShaderInclude.h"
+#include "../DX11RenderEngine/GachiRenderSystem/source/RendererPasses/PBRPasses/OpaqueRenderPass/OpaquePassConstBuffer.h"
 
 struct VS_IN
 {
@@ -57,12 +36,6 @@ struct PS_IN
 	float2 tex : TEXCOORD0;
 	float4 worldPos : TEXCOORD1;
 };
-
-Texture2D DiffuseMap : register(t0);
-Texture2D NormalMap : register(t1);
-Texture2D RoughnessMap : register(t2);
-Texture2D MetallicMap : register(t3);
-
 //StructuredBuffer<float4x4> AnimFrame : register(t0);
 
 
@@ -75,12 +48,12 @@ PS_IN VSMain(VS_IN input)
 {
 	PS_IN output = (PS_IN) 0;
 	
-	output.worldPos = mul(float4(input.pos.xyz, 1.0f), ConstData.World);
-	output.pos = mul(output.worldPos, ConstData.ViewProj);
+	output.worldPos = mul(float4(input.pos.xyz, 1.0f), opaqueCosntBuffer.world);
+	output.pos = mul(output.worldPos, coreConstants.currentMatrices.viewProjection);
     
-	output.normal	= normalize(mul(float4(input.normal.xyz, 0.0f), ConstData.World));
-	output.binormal	= normalize(mul(float4(input.binormal.xyz, 0.0f), ConstData.World));
-	output.tangent	= normalize(mul(float4(input.tangent.xyz, 0.0f), ConstData.World));
+	output.normal	= normalize(mul(float4(input.normal.xyz, 0.0f),   opaqueCosntBuffer.world));
+	output.binormal	= normalize(mul(float4(input.binormal.xyz, 0.0f), opaqueCosntBuffer.world));
+	output.tangent	= normalize(mul(float4(input.tangent.xyz, 0.0f),  opaqueCosntBuffer.world));
 
 	output.color = input.color;
 
@@ -134,11 +107,17 @@ PS_IN VSMain(VS_IN input)
 struct PSOutput
 {
 	float4 Diffuse		: SV_Target0; // a - Specular
-	float4 Normal		: SV_Target1;
+	float3 Normal		: SV_Target1;
 	float4 MetRougAo	: SV_Target2;
 	float4 Emissive		: SV_Target3; // Emissive Color
-	float4 WorldPos		: SV_Target4;
+	float3 WorldPos		: SV_Target4;
 };
+
+
+Texture2D DiffuseMap : register(t0);
+Texture2D NormalMap : register(t1);
+Texture2D RoughnessMap : register(t2);
+Texture2D MetallicMap : register(t3);
 
 
 [earlydepthstencil]
@@ -151,16 +130,43 @@ PSOutput PSMain(PS_IN input)
 	float3 N = normalize(input.normal.xyz);
 	float3x3 TBN = float3x3(T, B, N);
 
+#ifdef DIFFUSE
 	ret.Diffuse.rgb = DiffuseMap.Sample(Sampler, input.tex.xy).rgb;
+#else
+	ret.Diffuse.rgb = opaqueCosntBuffer.diffuse.rgb;
+#endif
+	
+#ifdef RED
+	ret.Diffuse.rgb = float3(1,input.tex.x,input.tex.y);
+#endif
 	ret.Diffuse.a = 1.0f;
 	
-	ret.WorldPos = input.worldPos;
+	ret.WorldPos = (input.worldPos/input.worldPos.w).xyz;
 	ret.Emissive = input.color;
 	
-	float roughness	= RoughnessMap.Sample(Sampler, input.tex.xy).r;
-	float metallic	= MetallicMap.Sample(Sampler, input.tex.xy).r;
+	float roughness;
 
-	float3 normal = NormalMap.Sample(Sampler, input.tex.xy).xyz;
+#ifdef ROUGHNESS
+	roughness = RoughnessMap.Sample(Sampler, input.tex.xy).r;
+#else
+	roughness = opaqueCosntBuffer.roughness;
+#endif
+
+	float metallic;
+#ifdef METALIC
+	metallic	= MetallicMap.Sample(Sampler, input.tex.xy).r;
+#else
+	metallic = opaqueCosntBuffer.metallic;
+#endif
+	
+	float3 normal;
+
+#ifdef NORMAL
+	normal = NormalMap.Sample(Sampler, input.tex.xy).xyz;
+#else
+	normal = opaqueCosntBuffer.normal;
+#endif
+	
 	float3 unpackedNormal = normalize(normal * 2.0f - 1.0f);
 
 #ifdef INVERT_NORMAL
@@ -170,7 +176,7 @@ PSOutput PSMain(PS_IN input)
 	unpackedNormal = mul(unpackedNormal, TBN);
 	ret.Normal = float4(unpackedNormal, 0);
 	
-	ret.MetRougAo = float4(metallic * MatInfo.MetallicMult, roughness * MatInfo.RoughnessMult, 1.0f, 1.0f);
+	ret.MetRougAo = float4(metallic * opaqueCosntBuffer.MetallicMult, roughness * opaqueCosntBuffer.RoughnessMult, 1.0f, 1.0f);
 
 	return ret;
 }

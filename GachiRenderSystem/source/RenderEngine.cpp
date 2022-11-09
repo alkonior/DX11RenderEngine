@@ -100,8 +100,8 @@ void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
-void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data, bool mipmap) {
-	gfx->RegisterImg(id, width, height, data, mipmap);
+void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data) {
+	gfx->RegisterImg(id, width, height, data);
 }
 
 void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
@@ -112,7 +112,7 @@ void RenderDevice::UpdateTexture(const ImageUpdate& data) {
 	gfx->UpdateImg(data);
 }
 
-void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
+void RenderDevice::RegisterModel(size_t id, const ModelMesh& model) {
 	gfx->RegisterModel(id, model);
 }
 

@@ -43,6 +43,10 @@ Renderer::InputLayoutDescription OpaquePassProvider::GetInputLayoutDescription(u
 
 const Renderer::ShaderDefines ModelRendererDefines[] = {
     {"RED", "1"},
+    {"DIFFUSE", "1"},
+    {"METALIC", "1"},
+    {"ROUGHNESS", "1"},
+    {"NORMAL", "1"},
 };
 
 

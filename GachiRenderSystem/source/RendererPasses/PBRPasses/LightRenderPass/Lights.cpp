@@ -248,25 +248,25 @@ matrix DirectionalLight::GetTransformmatrix()
 	return matrix::Identity;
 }
 
-UniversalLight::UniversalLight(const AmbientLight ambientLight):
+UniversalLight::UniversalLight(const AmbientLight& ambientLight):
 LightType(LightTypes::Ambient),
 ambientLight(ambientLight)
 {
 }
 
-UniversalLight::UniversalLight(const DirectionalLight directionalLight):
+UniversalLight::UniversalLight(const DirectionalLight& directionalLight):
 LightType(LightTypes::Directional),
 directionalLight(directionalLight)
 {
 }
 
-UniversalLight::UniversalLight(const SpotLight spotLight):
+UniversalLight::UniversalLight(const SpotLight& spotLight):
 LightType(LightTypes::Spot),
 spotLight(spotLight)
 {
 }
 
-UniversalLight::UniversalLight(const PointLight pointLight):
+UniversalLight::UniversalLight(const PointLight& pointLight):
 LightType(LightTypes::Point),
 pointLight(pointLight)
 {

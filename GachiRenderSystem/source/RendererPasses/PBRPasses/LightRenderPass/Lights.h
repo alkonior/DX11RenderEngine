@@ -6,7 +6,7 @@
 #include <math.h>
 
 #include "TransformUtils.h"
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 #include "Utils/PBRFlags.h"
 
 
@@ -143,10 +143,10 @@ struct UniversalLight
 {
     LightTypes LightType;
 
-    UniversalLight(const AmbientLight ambientLight &);
-    UniversalLight(const DirectionalLight directionalLight &);
-    UniversalLight(const SpotLight spotLight &);
-    UniversalLight(const PointLight pointLight &);
+    UniversalLight(const AmbientLight& ambientLight);
+    UniversalLight(const DirectionalLight& directionalLight);
+    UniversalLight(const SpotLight& spotLight);
+    UniversalLight(const PointLight& pointLight );
 
     union
     {

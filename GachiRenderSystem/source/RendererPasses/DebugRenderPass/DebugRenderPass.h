@@ -4,7 +4,7 @@
 #include "ResourceManagers/TexturesManager.h"
 #include "DebugPassConstBuffer.h"
 #include "Utils/DrawData.h"
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 
 #include "DynamicMeshBuffer.h"
 #include "RendererPasses/GachiBasePass.h"

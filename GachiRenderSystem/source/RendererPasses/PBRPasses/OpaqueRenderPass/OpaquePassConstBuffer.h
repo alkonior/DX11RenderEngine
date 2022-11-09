@@ -8,6 +8,13 @@ struct OpaqueCosntBuffer {
     matrix world;
     matrix oldWorld;
 
+    float3 normal;
+    float roughness;
+    float4 diffuse;
+    float metallic;
+    
+    float MetallicMult;
+    float RoughnessMult;
     
 };
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils/DrawData.h"
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 #include "RenderFlags.h"
 #include "TextureData.h"
 #include "RenderSettings.h"
@@ -64,12 +64,12 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const TextureData&);
-	void RegisterTexture(size_t id, int width, int height, void* data, bool mipmap);
+	void RegisterTexture(size_t id, int width, int height, void* data);
 	void UpdateTexture(size_t id, const TextureData&);
 	void UpdateTexture(const ImageUpdate &);
 
 
-	void RegisterModel(size_t id, const ModelData&);
+	void RegisterModel(size_t id, const ModelMesh&);
 	void ReleaseTexture(size_t id);
 
 

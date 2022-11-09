@@ -6,13 +6,14 @@
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
 #include "RendererPasses/DebugRenderPass/DebugRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
+#include "RendererPasses/PBRPasses/OpaqueRenderPass/OpaqueRenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
 
 
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 
 namespace Renderer {
 struct ConstBuffer;
@@ -44,7 +45,7 @@ public:
 
 
 	void RegisterImg(size_t id, const TextureData& text);
-	void RegisterImg(size_t id, int width, int heights, void* data, bool mipmap);
+	void RegisterImg(size_t id, int width, int heights, void* data);
 
 	void UpdateImg(size_t id, const TextureData& text);
 	void UpdateImg(const ImageUpdate&);
@@ -53,7 +54,7 @@ public:
 	void DrawColor(const UIDrawData& data);
 	void DrawImg(size_t texId, const UIDrawData& data);
 
-	void RegisterModel(size_t id, const ModelData& model);
+	void RegisterModel(size_t id, const ModelMesh& model);
 	void ReleaseModel(size_t id);
 
 
@@ -91,6 +92,7 @@ private:
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
 	TAARenderPass	         renderPassTAA;
+	OpaqueRenderPass	     renderPassOpaque;
 	
 #if _DEBUG
 	DebugRenderPass	         renderPassDebug;

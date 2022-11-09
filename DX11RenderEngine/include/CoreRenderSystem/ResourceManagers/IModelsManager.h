@@ -19,7 +19,6 @@ public:
 		size_t primitiveCount;
 		size_t indexBufferElementSize;
 		Renderer::PrimitiveType pt;
-
 	};
 
 	

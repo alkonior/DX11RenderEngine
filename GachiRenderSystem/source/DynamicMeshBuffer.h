@@ -1,7 +1,7 @@
 #pragma once
 #include "IRenderer.h"
 #include "TransformUtils.h"
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 
 
 template<class VertexType>
@@ -110,9 +110,9 @@ public:
             cpuIndexes.push_back(model.indexes[i] + cpuVertices.size());
         }
 
-        for (size_t i = 0; i < model.vertixes.size(); i++)
+        for (size_t i = 0; i < model.vertices.size(); i++)
         {
-            cpuVertices.push_back(model.vertixes[i]);
+            cpuVertices.push_back(model.vertices[i]);
         }
 
         return res;
@@ -127,9 +127,9 @@ public:
             cpuIndexes[oldModel.indexOffset + i] = (newModel.indexes[i] + oldModel.vertexOffset);
         }
 
-        for (size_t i = 0; i < newModel.vertixes.size(); i++)
+        for (size_t i = 0; i < newModel.vertices.size(); i++)
         {
-            cpuVertices[oldModel.vertexOffset + i] = (newModel.vertixes[i]);
+            cpuVertices[oldModel.vertexOffset + i] = (newModel.vertices[i]);
         }
     }
 
