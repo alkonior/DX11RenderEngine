@@ -12,8 +12,11 @@ class OpaqueRenderPass : public GachiBasePass{
     struct DrawCall {
         DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const OpaqueModelDrawData&);
 
-       // ModelsManager::SavedModel model;
-       // TexturesManager::TextureCache texture;
+        ModelsManager::SavedModel model;
+        TexturesManager::TextureCache diffuse;
+        TexturesManager::TextureCache normal;
+        TexturesManager::TextureCache texture;
+        TexturesManager::TextureCache texture;
         OpaqueModelDrawData data;
     };	
 	

@@ -12,7 +12,7 @@ void OpaquePassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_
 {
     ModelsFlags flags;
     flags.flags = pipelineFlags;
-    refToPS->bs = &BlendStates::Alpha;
+    refToPS->bs = &BlendStates::Add;
 
     refToPS->dss = &DepthStencilStates::DSS;
 

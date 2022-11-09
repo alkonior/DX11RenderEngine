@@ -164,7 +164,7 @@ void TexturesManager::ReleaseFloatTexture(size_t id)
     pTexture.texture = nullptr;
 }
 
-ITexturesManager::TextureCache TexturesManager::GetFloatImg(size_t id)
+ITexturesManager::FloatTextureCache TexturesManager::GetFloatImg(size_t id)
 {
     if (floatTextures.contains(id))
         return floatTextures[id];
@@ -240,7 +240,7 @@ void TexturesManager::ReleaseFloat3Texture(size_t id)
     pTexture.texture = nullptr;
 }
 
-ITexturesManager::TextureCache TexturesManager::GetFloat3Img(size_t id)
+ITexturesManager::Float3TextureCache TexturesManager::GetFloat3Img(size_t id)
 {
     if (float3Textures.contains(id))
         return float3Textures[id];

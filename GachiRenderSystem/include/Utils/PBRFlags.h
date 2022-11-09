@@ -1,6 +1,18 @@
 #pragma once
 #include <cstdint>
 
+
+
+enum OpaqueDefines {
+	OZERO = 0,
+	ORED = 1,
+	ODIFFUSETEX = 4,
+	OBAD_UV = 4,
+	ONONORMAL = 8,
+	OCOLORED = 16,
+	OLIGHTED = 32
+};
+
 enum class PixelFlagsOpaque
 {
 	NONE = 1 << 0,

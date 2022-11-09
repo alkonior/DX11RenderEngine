@@ -1,13 +1,13 @@
-﻿#include "ModelsRenderPass.h"
+﻿#include "OpaqueRenderPass.h"
 
 #include "RenderFlags.h"
 #include "ResourceManagers/States/Samplers.h"
 
 using namespace Renderer;
-ModelsRenderPass::DrawCall::DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData& data) :
+OpaqueRenderPass::DrawCall::DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData& data) :
     model(model), texture(texture), data(data) {}
 
-PipelineFactoryFlags ModelsRenderPass::ParseFlags(const ModelsFlags& flags)
+PipelineFactoryFlags OpaqueRenderPass::ParseFlags(const ModelsFlags& flags)
 {
     PipelineFactoryFlags flagsOut;
     flagsOut.definesFlags = 0;
@@ -22,7 +22,7 @@ PipelineFactoryFlags ModelsRenderPass::ParseFlags(const ModelsFlags& flags)
 }
 
 
-ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : GachiBasePass({"ModelsShader.hlsl",renderSystem})
+OpaqueRenderPass::OpaqueRenderPass(BaseRenderSystem& renderSystem) : GachiBasePass({"ModelsShader.hlsl",renderSystem})
 {
     uint32_t width, height;
     renderDevice->GetMainViewportSize(width, height);
@@ -36,7 +36,7 @@ ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : GachiBasePa
     vp.maxDepth = 1.0f;
 }
 
-void ModelsRenderPass::Draw(const ModelDrawData& drawData)
+void OpaqueRenderPass::Draw(const ModelDrawData& drawData)
 {
     drawCalls.push_back(DrawCall(
             baseRendererParams.renderSystem.modelsManager->GetModel(drawData.modelId),
@@ -47,12 +47,12 @@ void ModelsRenderPass::Draw(const ModelDrawData& drawData)
 
 
 
-void ModelsRenderPass::Init(const char* dirr)
+void OpaqueRenderPass::Init(const char* dirr)
 {
     BaseRenderPass::Init(dirr, new ModelsPassProvider());
 }
 
-void ModelsRenderPass::PreRender()
+void OpaqueRenderPass::PreRender()
 {
     RenderTargetBinding* targets[5] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
@@ -67,7 +67,7 @@ void ModelsRenderPass::PreRender()
     renderDevice->Clear(CLEAROPTIONS_DEPTHBUFFER, {}, 1, 0);
 }
 
-void ModelsRenderPass::Resize()
+void OpaqueRenderPass::Resize()
 {
     
     uint32_t width, height;
@@ -77,7 +77,7 @@ void ModelsRenderPass::Resize()
     vp.h = height;
 }
 
-void ModelsRenderPass::Render()
+void OpaqueRenderPass::Render()
 {
 
     RenderTargetBinding* targets[] = {
@@ -129,17 +129,17 @@ void ModelsRenderPass::Render()
     }
 }
 
-void ModelsRenderPass::PostRender()
+void OpaqueRenderPass::PostRender()
 {
     drawCalls.clear();
 }
 
-ModelsRenderPass::~ModelsRenderPass()
+OpaqueRenderPass::~OpaqueRenderPass()
 {
     renderDevice->AddDisposeConstBuffer(pDataCB);
 }
 
-void ModelsRenderPass::SetupSettings(const RenderSettings& Settings)
+void OpaqueRenderPass::SetupSettings(const RenderSettings& Settings)
 {
     Init(Settings.shadersDirr);
 }

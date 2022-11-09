@@ -27,6 +27,11 @@ public:
 		uint32_t width = 0;
 		uint32_t height = 0;
 	};
+	struct Float3TextureCache {
+		Renderer::Texture* texture = nullptr;
+		uint32_t width = 0;
+		uint32_t height = 0;
+	};
 
 public:
 	ITexturesManager(Renderer::IRenderer* renderDevice): renderDevice(renderDevice){};
@@ -53,7 +58,7 @@ public:
 	
 	
 	virtual void ReleaseFloatTexture(size_t id) = 0;
-	virtual TextureCache GetFloatImg(size_t id) = 0;
+	virtual FloatTextureCache GetFloatImg(size_t id) = 0;
 #pragma endregion 
 
 #pragma region Float3Textures
@@ -64,7 +69,7 @@ public:
 	virtual void UpdateFloat3Texture(const Float3ImageUpdate& updateData) = 0;
 	
 	virtual void ReleaseFloat3Texture(size_t id) = 0;
-	virtual TextureCache GetFloat3Img(size_t id) = 0;
+	virtual Float3TextureCache GetFloat3Img(size_t id) = 0;
 #pragma endregion 
 
 	struct RenderTargetDescription{

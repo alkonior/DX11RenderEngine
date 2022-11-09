@@ -55,8 +55,8 @@ public:
     std::vector<const char*> GetRenderTargetsList() override;
 private:
     std::map<Renderer::string_id, TextureCache> textures;
-    std::map<Renderer::string_id, TextureCache> floatTextures;
-    std::map<Renderer::string_id, TextureCache> float3Textures;
+    std::map<Renderer::string_id, FloatTextureCache> floatTextures;
+    std::map<Renderer::string_id, Float3TextureCache> float3Textures;
     
     void ReleasePublicRenderTarget(Renderer::string_id id);
 public:
@@ -68,7 +68,7 @@ public:
     void UpdateFloatTexture(const FloatData& tx, size_t id) override;
     void UpdateFloatTexture(const FloatImageUpdate& updateData) override;
     void ReleaseFloatTexture(size_t id) override;
-    TextureCache GetFloatImg(size_t id) override;
+    FloatTextureCache GetFloatImg(size_t id) override;
 
     
 #pragma endregion 
@@ -80,7 +80,7 @@ public:
     void UpdateFloat3Texture(const Float3Data& tx, size_t id) override;
     void UpdateFloat3Texture(const Float3ImageUpdate& updateData) override;
     void ReleaseFloat3Texture(size_t id) override;
-    TextureCache GetFloat3Img(size_t id) override;
+    Float3TextureCache GetFloat3Img(size_t id) override;
     
 #pragma endregion 
     
