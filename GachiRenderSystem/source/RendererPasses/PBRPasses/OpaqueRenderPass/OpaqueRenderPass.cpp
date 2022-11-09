@@ -58,11 +58,11 @@ OpaqueRenderPass::OpaqueRenderPass(BaseRenderSystem& renderSystem) : GachiBasePa
 
     renderSystem.texturesManger->CreatePublicRenderTarget({"Diffuse"        , SurfaceFormat::SURFACEFORMAT_COLOR, false, true});
     renderSystem.texturesManger->CreatePublicRenderTarget({"Emissive"       , SurfaceFormat::SURFACEFORMAT_COLOR, false, true});
-    renderSystem.texturesManger->CreatePublicRenderTarget({"Normals"        , SurfaceFormat::SURFACEFORMAT_VECTOR3, false, true});
+    renderSystem.texturesManger->CreatePublicRenderTarget({"Normals"        , SurfaceFormat::SURFACEFORMAT_VECTOR4, false, true});
     renderSystem.texturesManger->CreatePublicRenderTarget({"MetRougAo"      , SurfaceFormat::SURFACEFORMAT_VECTOR4, false, true});
     renderSystem.texturesManger->CreatePublicRenderTarget({"WorldPosition"  , SurfaceFormat::SURFACEFORMAT_COLOR, false, true});
-    renderSystem.texturesManger->CreatePublicRenderTarget({"AccumulationBuf", SurfaceFormat::SURFACEFORMAT_VECTOR3, false, true});
-    renderSystem.texturesManger->CreatePublicRenderTarget({"Bloom"          , SurfaceFormat::SURFACEFORMAT_VECTOR3, false, true});
+    renderSystem.texturesManger->CreatePublicRenderTarget({"AccumulationBuf", SurfaceFormat::SURFACEFORMAT_VECTOR4, false, true});
+    renderSystem.texturesManger->CreatePublicRenderTarget({"Bloom"          , SurfaceFormat::SURFACEFORMAT_VECTOR4, false, true});
 }
 
 void OpaqueRenderPass::Draw(const OpaqueModelDrawData& drawData)
