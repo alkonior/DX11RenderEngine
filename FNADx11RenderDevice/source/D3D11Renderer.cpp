@@ -333,6 +333,7 @@ constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
     DXGI_FORMAT_BC3_UNORM_SRGB, /* SurfaceFormat.Dxt5SrgbEXT */
     DXGI_FORMAT_BC7_UNORM, /* SurfaceFormat.BC7EXT */
     DXGI_FORMAT_BC7_UNORM_SRGB, /* SurfaceFormat.BC7SrgbEXT */
+    DXGI_FORMAT_R32G32B32_FLOAT, /* SurfaceFormat.Vecror3 */
 };
 
 void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize)
@@ -1190,6 +1191,7 @@ constexpr GVM::EFormat ToGVM(SurfaceFormat format)
     case SURFACEFORMAT_DXT5SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
     case SURFACEFORMAT_BC7_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
     case SURFACEFORMAT_BC7SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_VECTOR3: return GVM::EFormat::FORMAT_R32G32B32_FLOAT; //todo
     }
 }
 

@@ -1,28 +1,28 @@
 ﻿#pragma once
 #include "CoreRenderSystem/RenderPasses/BaseRenderPass.h"
-#include "ModelsPassProvider.h"
+#include "OpaquePassProvider.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "ResourceManagers/TexturesManager.h"
-#include "ModelsPassConstBuffer.h"
+#include "OpaquePassConstBuffer.h"
 #include "RendererPasses/GachiBasePass.h"
-#include "Utils/DrawData.h"
+#include "Utils/OpaqueModelDrawData.h"
 
-class ModelsRenderPass : public GachiBasePass{
+class OpaqueRenderPass : public GachiBasePass{
 
     struct DrawCall {
-        DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const ModelDrawData&);
+        DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, const OpaqueModelDrawData&);
 
-        ModelsManager::SavedModel model;
-        TexturesManager::TextureCache texture;
-        ModelDrawData data;
+       // ModelsManager::SavedModel model;
+       // TexturesManager::TextureCache texture;
+        OpaqueModelDrawData data;
     };	
 	
-    PipelineFactoryFlags ParseFlags(const ModelsFlags& flags);
+    PipelineFactoryFlags ParseFlags(const OpaqueFlags& flags);
     
 public:
-    explicit ModelsRenderPass(BaseRenderSystem& in);
+    explicit OpaqueRenderPass(BaseRenderSystem& in);
     
-    void Draw(const ModelDrawData& drawData);
+    void Draw(const OpaqueModelDrawData& drawData);
     
     void Init(const char* dirr) override;
     void PreRender() override;
@@ -32,11 +32,11 @@ public:
     void Render();
     
     void PostRender() override;
-    ~ModelsRenderPass() override;
+    ~OpaqueRenderPass() override;
     void SetupSettings(const RenderSettings& Settings) override;
 
 private:
-    ModelsCosntBuffer dataBuffer;
+    OpaqueCosntBuffer dataBuffer;
 
     Renderer::ConstBuffer* pDataCB;
 

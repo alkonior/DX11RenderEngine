@@ -26,7 +26,7 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(("outTexture"), SURFACEFORMAT_COLOR, false, true, false, width, height);
 }
 
-void TexturesManager::RegTexture(void* data, int width, int height, bool mipmap, size_t id)
+void TexturesManager::RegTexture(void* data, int width, int height, size_t id)
 {
     auto& pTexture = textures[id];
     if (pTexture.texture != nullptr)
@@ -56,7 +56,7 @@ void TexturesManager::RegTexture(const TextureData& tx, size_t id)
     pTexture.height = tx.GetHeight();
 }
 
-void TexturesManager::UpdateTexture(const TextureData& tx, size_t id)
+void TexturesManager::UpdateFloatTexture(const TextureData& tx, size_t id)
 {
     auto& pTexture = textures[id];
     if (pTexture.texture == nullptr)
@@ -70,7 +70,7 @@ void TexturesManager::UpdateTexture(const TextureData& tx, size_t id)
     }
 }
 
-void TexturesManager::UpdateTexture(const ImageUpdate& updateData)
+void TexturesManager::UpdateFloatTexture(const ImageUpdate& updateData)
 {
     auto& pTexture = textures[updateData.id];
     if (pTexture.texture == nullptr)
@@ -92,6 +92,159 @@ void TexturesManager::ReleaseTexture(size_t id)
         renderDevice->AddDisposeTexture(pTexture.texture);
     pTexture.texture = nullptr;
     //textures.erase(id);
+}
+
+
+void TexturesManager::RegFloatTexture(float* tx, int width, int height, size_t id)
+{
+    auto& pTexture = floatTextures[id];
+    if (pTexture.texture != nullptr)
+    {
+        ReleaseFloatTexture(id);
+    }
+    //GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+    pTexture.texture = renderDevice->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_SINGLE, width, height,
+                                                     1, 0);
+    renderDevice->SetTextureData2D(pTexture.texture, 0, 0, width, height, 0, (void*)tx,
+                                   width * height * 4);
+    pTexture.width = width;
+    pTexture.height = height;
+}
+
+void TexturesManager::RegFloatTexture(const FloatData& tx, size_t id)
+{
+    
+    auto& pTexture = floatTextures[id];
+    if (pTexture.texture != nullptr)
+    {
+        ReleaseTexture(id);
+    }
+    //GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+    pTexture.texture = renderDevice->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_SINGLE, tx.GetWidth(), tx.GetHeight(),
+                                                     1, 0);
+    renderDevice->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0, (void*)tx.GetBufferPtr(),
+                                   tx.GetWidth() * tx.GetHeight() * 4);
+    pTexture.width = tx.GetWidth();
+    pTexture.height = tx.GetHeight();
+}
+
+void TexturesManager::UpdateFloatTexture(const FloatData& tx, size_t id)
+{
+    auto& pTexture = floatTextures[id];
+    if (pTexture.texture == nullptr)
+    {
+        RegFloatTexture(tx, id);
+    }
+    else
+    {
+        renderDevice->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0,
+                                       (void*)tx.GetBufferPtr(), tx.GetWidth() * tx.GetHeight() * 4);
+    }
+}
+void TexturesManager::UpdateFloatTexture(const FloatImageUpdate& updateData)
+{
+    auto& pTexture = floatTextures[updateData.id];
+    if (pTexture.texture == nullptr)
+    {
+        pTexture.texture = renderDevice->
+            CreateTexture2D(SURFACEFORMAT_SINGLE, updateData.width, updateData.height, 1, 0);
+        //return;
+    }
+    renderDevice->SetTextureData2D(pTexture.texture,
+        updateData.box.x, updateData.box.y,
+        updateData.box.w, updateData.box.h,
+        updateData.level, updateData.data, 0);
+}
+
+void TexturesManager::ReleaseFloatTexture(size_t id)
+{
+    auto& pTexture = floatTextures[id];
+    if (pTexture.texture != nullptr)
+        renderDevice->AddDisposeTexture(pTexture.texture);
+    pTexture.texture = nullptr;
+}
+
+ITexturesManager::TextureCache TexturesManager::GetFloatImg(size_t id)
+{
+    if (floatTextures.contains(id))
+        return floatTextures[id];
+    return {};
+}
+
+void TexturesManager::RegFloat3Texture(float3* tx, int width, int height, size_t id)
+{
+    auto& pTexture = float3Textures[id];
+    if (pTexture.texture != nullptr)
+    {
+        ReleaseFloatTexture(id);
+    }
+    //GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+    pTexture.texture = renderDevice->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_VECTOR3, width, height,
+                                                     1, 0);
+    renderDevice->SetTextureData2D(pTexture.texture, 0, 0, width, height, 0, (void*)tx,
+                                   width * height * 4);
+    pTexture.width = width;
+    pTexture.height = height;
+}
+
+void TexturesManager::RegFloat3Texture(const Float3Data& tx, size_t id)
+{
+    auto& pTexture = float3Textures[id];
+    if (pTexture.texture != nullptr)
+    {
+        ReleaseTexture(id);
+    }
+    //GFX_THROW_INFO(gfx.pDevice->CreateTexture2D(&textureDesc, &sd, &pTexture.texture));
+    pTexture.texture = renderDevice->CreateTexture2D(SurfaceFormat::SURFACEFORMAT_VECTOR3, tx.GetWidth(), tx.GetHeight(),
+                                                     1, 0);
+    renderDevice->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0, (void*)tx.GetBufferPtr(),
+                                   tx.GetWidth() * tx.GetHeight() * 4);
+    pTexture.width = tx.GetWidth();
+    pTexture.height = tx.GetHeight();
+}
+
+void TexturesManager::UpdateFloat3Texture(const Float3Data& tx, size_t id)
+{
+    auto& pTexture = float3Textures[id];
+    if (pTexture.texture == nullptr)
+    {
+        RegFloat3Texture(tx, id);
+    }
+    else
+    {
+        renderDevice->SetTextureData2D(pTexture.texture, 0, 0, tx.GetWidth(), tx.GetHeight(), 0,
+                                       (void*)tx.GetBufferPtr(), tx.GetWidth() * tx.GetHeight() * 4);
+    }  
+}
+
+void TexturesManager::UpdateFloat3Texture(const Float3ImageUpdate& updateData)
+{
+    auto& pTexture = float3Textures[updateData.id];
+    if (pTexture.texture == nullptr)
+    {
+        pTexture.texture = renderDevice->
+            CreateTexture2D(SURFACEFORMAT_SINGLE, updateData.width, updateData.height, 1, 0);
+        //return;
+    }
+    renderDevice->SetTextureData2D(pTexture.texture,
+        updateData.box.x, updateData.box.y,
+        updateData.box.w, updateData.box.h,
+        updateData.level, updateData.data, 0);
+}
+
+void TexturesManager::ReleaseFloat3Texture(size_t id)
+{
+    auto& pTexture = float3Textures[id];
+    if (pTexture.texture != nullptr)
+        renderDevice->AddDisposeTexture(pTexture.texture);
+    pTexture.texture = nullptr;
+}
+
+ITexturesManager::TextureCache TexturesManager::GetFloat3Img(size_t id)
+{
+    if (float3Textures.contains(id))
+        return float3Textures[id];
+    return {};
 }
 
 void TexturesManager::CreateRenderTarget(const char* name, SurfaceFormat format,
@@ -266,6 +419,7 @@ void TexturesManager::ReleasePublicRenderTarget(Renderer::string_id id)
     renderDevice->AddDisposeTexture(publicRenderTargets[id].texture);
     publicRenderTargets.erase(id);
 }
+
 
 
 TexturesManager::TextureCache TexturesManager::GetImg(size_t id)

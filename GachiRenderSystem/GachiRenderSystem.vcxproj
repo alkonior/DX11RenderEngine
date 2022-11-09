@@ -24,6 +24,7 @@
     <ClInclude Include="include\RenderSettings.h" />
     <ClInclude Include="include\Utils\DrawData.h" />
     <ClInclude Include="include\Utils\ModelData.h" />
+    <ClInclude Include="include\Utils\OpaqueModelDrawData.h" />
     <ClInclude Include="include\Utils\PBRFlags.h" />
     <ClInclude Include="include\Utils\VertexesData.h" />
     <ClInclude Include="source\DynamicMeshBuffer.h" />
@@ -291,7 +292,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="source\RendererPasses\PBRPasses\ToneMapPass" />
+    <Folder Include="source\RendererPasses\PBRPasses\TeneMapRenderPass" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

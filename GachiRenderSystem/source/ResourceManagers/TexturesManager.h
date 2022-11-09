@@ -11,10 +11,10 @@ public:
 public:
     TexturesManager(Renderer::IRenderer* renderDevice);
 
-    virtual void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
+    virtual void RegTexture(void* tx, int width, int height, size_t id);
     virtual void RegTexture(const TextureData& tx, size_t id);
-    virtual void UpdateTexture(const TextureData& tx, size_t id);
-    virtual void UpdateTexture(const ImageUpdate& updateData);
+    virtual void UpdateFloatTexture(const TextureData& tx, size_t id);
+    virtual void UpdateFloatTexture(const ImageUpdate& updateData);
     virtual void ResizeTextures() override; 
 
     uint32_t depthWidth;
@@ -55,9 +55,35 @@ public:
     std::vector<const char*> GetRenderTargetsList() override;
 private:
     std::map<Renderer::string_id, TextureCache> textures;
+    std::map<Renderer::string_id, TextureCache> floatTextures;
+    std::map<Renderer::string_id, TextureCache> float3Textures;
     
     void ReleasePublicRenderTarget(Renderer::string_id id);
 public:
+
+#pragma region FloatTextres
+    
+    void RegFloatTexture(float* tx, int width, int height, size_t id) override;
+    void RegFloatTexture(const FloatData& tx, size_t id) override;
+    void UpdateFloatTexture(const FloatData& tx, size_t id) override;
+    void UpdateFloatTexture(const FloatImageUpdate& updateData) override;
+    void ReleaseFloatTexture(size_t id) override;
+    TextureCache GetFloatImg(size_t id) override;
+
+    
+#pragma endregion 
+
+#pragma region Float3Textres
+    
+    void RegFloat3Texture(float3* tx, int width, int height, size_t id) override;
+    void RegFloat3Texture(const Float3Data& tx, size_t id) override;
+    void UpdateFloat3Texture(const Float3Data& tx, size_t id) override;
+    void UpdateFloat3Texture(const Float3ImageUpdate& updateData) override;
+    void ReleaseFloat3Texture(size_t id) override;
+    TextureCache GetFloat3Img(size_t id) override;
+    
+#pragma endregion 
+    
 private:
     std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> publicRenderTargets;
     std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> privateRenderTargets;

@@ -37,3 +37,4 @@ typedef  MeshData<UPVertex> UPModelMesh;
 
 
 typedef size_t StaticMeshId;
+typedef size_t OpaqueMeshId;
