@@ -240,11 +240,18 @@ UATargetView* VirtualMachine::CreateUATargetView(const UATargetViewDesc& desc)
 
 void VirtualMachine::AddDisposeResource(const Resource* resource)
 {
+    auto& gpuResource = resourcesManager.Resources[(uintptr_t)resource];
+    for (auto& resourceView : gpuResource.views )
+    {
+        RenderDevice->DestroyResource(resourcesManager.GetRealResourceView(resourceView));
+    }
+    RenderDevice->DestroyResource(resourcesManager.GetRealResource(resource));
     resourcesManager.AddDisposeResource(resource);
 }
 
 void VirtualMachine::AddDisposeResourceView(const ResourceView* resourceView)
 {
+    RenderDevice->DestroyResource(resourcesManager.GetRealResourceView(resourceView));
     resourcesManager.AddDisposeResourceView(resourceView);
 }
 
@@ -263,8 +270,10 @@ InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDe
     return reinterpret_cast<InputLayout*>(inputLayout.id);
 }
 
+
+
 void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource, const UBox& rect,
-    const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+                                     const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
     PushCommand(EMachineCommands::SET_RESOURCE_DATA);
     PushData((void*)resource);

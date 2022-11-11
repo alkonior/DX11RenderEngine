@@ -187,3 +187,9 @@ void VirtualMachine::Present()
     dataQueue.clear();
     drawCallsQueue.clear();
 }
+
+
+void VirtualMachine::ResizeBackbuffer(int32_t width, int32_t height)
+{
+    RenderDevice->ResizeBackbuffer(width, height);
+}

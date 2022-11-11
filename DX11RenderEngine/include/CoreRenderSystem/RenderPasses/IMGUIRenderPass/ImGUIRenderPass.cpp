@@ -6,6 +6,10 @@ ImGUIRenderPass::ImGUIRenderPass(const BaseRendererParams& in): BaseRenderPass(i
 
 void ImGUIRenderPass::Init(const char*) {}
 
+void ImGUIRenderPass::Resize()
+{
+}
+
 void ImGUIRenderPass::PreRender() {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -18,7 +22,8 @@ void ImGUIRenderPass::Render() {
 
 void ImGUIRenderPass::PostRender()
 {
-
+	renderDevice->SetRenderTargets(nullptr, 0,nullptr,
+{});  
 	static bool show = true;
 	ImGui::ShowDemoWindow(&show);
 	

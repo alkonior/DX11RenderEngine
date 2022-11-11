@@ -1,8 +1,9 @@
 #pragma once
 #include "Utils/DrawData.h"
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 #include "RenderFlags.h"
 #include "TextureData.h"
+#include "RenderSettings.h"
 #include "imgui/imgui.h"
 
 class RenderSystem;
@@ -19,7 +20,7 @@ struct RenderDevice {
 	/* Init */
 
 	
-	void InitDevice(RenderEngineInitStruct);
+	void CreateDevice(RenderEngineCoreSettings);
 
 	/* Quit */
 
@@ -43,10 +44,10 @@ struct RenderDevice {
 		uint8_t* data;
 		size_t dataSize;
 	};
-
-	void InitShaders(const char* dirr);
+	std::string shadersDir;
+	void InitDevice(const RenderSettings& Settings);
 	//void ReloadShaders(LPCWSTR);
-	void ReloadShader(ShaderData shD);
+	void ReloadShaders();
 
 	/* Presentation */
 
@@ -63,13 +64,12 @@ struct RenderDevice {
 #endif
 	void RegisterTexture(size_t id, const char* file);
 	void RegisterTexture(size_t id, const TextureData&);
-	void RegisterTexture(size_t id, int width, int height, void* data, bool mipmap);
+	void RegisterTexture(size_t id, int width, int height, void* data);
 	void UpdateTexture(size_t id, const TextureData&);
 	void UpdateTexture(const ImageUpdate &);
 
 
-	void RegisterModel(size_t id, const ModelData&);
-	void RegisterFramedModel(size_t id, const FramedModelData&);
+	void RegisterModel(size_t id, const ModelMesh&);
 	void ReleaseTexture(size_t id);
 
 
@@ -80,8 +80,7 @@ struct RenderDevice {
 	
 	
 	
-	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
-	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
+	void DrawModel(const ModelDrawData& drawData);
 	
 	
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
@@ -93,8 +92,24 @@ struct RenderDevice {
 	
 
 
+	void DrawDebug(const DebugDraw3DData& drawData);
+	void DrawDebug(const DebugDraw2DData& drawData);
+	
 	void SetSky(size_t side, const TextureData& data);
 	void SetSkyFlags(uint64_t flags);
+
+	struct Texture
+	{
+		void* texture;
+		uint32_t width;
+		uint32_t height;
+	};
+	Texture GetTexture(size_t textureId);
+	Texture GetRenderTargetTexture(const char*);
+
+	void ResizeBackBuffer(uint32_t width, uint32_t height);
+	void ResizeViewport(uint32_t width, uint32_t height);
+	std::vector<const char*> GetRenderTargetsList();
 
 	void Flush();
 	/* Debug staff */

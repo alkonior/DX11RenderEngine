@@ -6,7 +6,6 @@
 #include "D3D11Renderer.h"
 
 #include <filesystem>
-#include <resource.h>
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
@@ -16,13 +15,16 @@
 
 using namespace Renderer;
 
-RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemInitStruct& bInit,
-    ModelsManager* modelsManager,
-    TexturesManager* texturesManager) :
+RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystemInitStruct& bInit,
+                           ModelsManager* modelsManager,
+                           TexturesManager* texturesManager) :
     BaseRenderSystem(bInit),
     renderPassUI(*this),
     renderPassModels(*this),
-    renderPassIMGUI({"",*this}),
+    renderPassIMGUI({"", *this}),
+    renderPassTAA(*this),
+    renderPassDebug(*this),
+    renderPassOpaque(*this),
     modelsManager(modelsManager),
     texturesManager(texturesManager)
 {
@@ -34,44 +36,112 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     ImGui_ImplWin32_Init(init.hWnd1);
     ImGui_ImplDX11_Init(((D3D11Renderer*)pRenderer)->device.Get(), ((D3D11Renderer*)pRenderer)->context.Get());
 
-    renderPasses.push_back(&renderPassUI);
-    renderPasses.push_back(&renderPassIMGUI);
-    renderPasses.push_back(&renderPassModels);
+    baseRenderPasses.push_back(&renderPassIMGUI);
+
+    gachRenderPasses.push_back(&renderPassUI);
+    gachRenderPasses.push_back(&renderPassModels);
+    gachRenderPasses.push_back(&renderPassTAA);
+    gachRenderPasses.push_back(&renderPassDebug);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
     //pLocalConstants = pRenderer->CreateConstBuffer(sizeof(taaConstants));
     //taaConstants.taaStrength = 1;
     //pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
-////
-//	//renderPasses.push_back(&managerSkybox);
-//	//renderPasses.push_back(&managerUI);
-//	//renderPasses.push_back(&managerModels);
-//	//renderPasses.push_back(&managerMB);
-//	//renderPasses.push_back(&managerUP);
-//	//renderPasses.push_back(&managerPostProcess);
-//	//renderPasses.push_back(&managerParticles);
-//	//renderPasses.push_back(&managerBloom);
-//	//renderPasses.push_back(&managerFXAA);
-//	//renderPasses.push_back(&managerTAA);
-//	//renderPasses.push_back(&managerSSAO);
-//
+    ////
+    //	//renderPasses.push_back(&managerSkybox);
+    //	//renderPasses.push_back(&managerUI);
+    //	//renderPasses.push_back(&managerModels);
+    //	//renderPasses.push_back(&managerMB);
+    //	//renderPasses.push_back(&managerUP);
+    //	//renderPasses.push_back(&managerPostProcess);
+    //	//renderPasses.push_back(&managerParticles);
+    //	//renderPasses.push_back(&managerBloom);
+    //	//renderPasses.push_back(&managerFXAA);
+    //	//renderPasses.push_back(&managerTAA);
+    //	//renderPasses.push_back(&managerSSAO);
+    //
 }
 
-void RenderSystem::ReinitShaders(const char* dirr)
+void RenderSystem::SetupSettings(const RenderSettings& Settings)
 {
-    for (auto pass : renderPasses)
+    for (auto pass : baseRenderPasses)
     {
-        pass->Init(dirr);
+        pass->Init(Settings.shadersDirr);
+    }
+
+    for (auto pass : gachRenderPasses)
+    {
+        pass->SetupSettings(Settings);
+    }
+}
+
+void RenderSystem::ReloadShaders(const char* shadersDirr)
+{
+    for (auto pass : baseRenderPasses)
+    {
+        pass->Init(shadersDirr);
+    }
+
+    for (auto pass : gachRenderPasses)
+    {
+        pass->Init(shadersDirr);
+    }
+}
+
+void RenderSystem::DrawDebug(const DebugDraw3DData& drawData)
+{
+#if _DEBUG
+    renderPassDebug.Draw(drawData);
+#endif
+}
+
+void RenderSystem::DrawDebug(const DebugDraw2DData& drawData)
+{
+#if _DEBUG
+    renderPassDebug.Draw(drawData);
+#endif
+}
+
+void RenderSystem::ResizeBackBuffer(uint32_t width, uint32_t height)
+{
+    pRenderer->ResizeBackbuffer(Size2D(width, height));
+    texturesManager->ResizeTextures();
+    Resize();
+}
+
+void RenderSystem::ResizeViewport(uint32_t width, uint32_t height)
+{
+    pRenderer->ResizeMainViewport(Size2D(width, height));
+    texturesManager->ResizeTextures();
+    Resize();
+}
+
+void RenderSystem::Resize()
+{
+    for (auto pass : baseRenderPasses)
+    {
+        pass->Resize();
+    }
+
+    for (auto pass : gachRenderPasses)
+    {
+        pass->Resize();
     }
 };
 
-RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
+RenderSystem* RenderSystem::Initialise(RenderEngineCoreSettings init)
 {
     auto renderDevice = new Renderer::D3D11Renderer{
         {
-            (int32_t)init.width,
-            (int32_t)init.height,
+            {
+                (int32_t)init.windowSettings.windowWidth,
+                (int32_t)init.windowSettings.windowHeight
+            },
+            {
+                (int32_t)init.windowSettings.windowWidth,
+                (int32_t)init.windowSettings.windowHeight
+            },
             0,
             init.hWnd1,
             init.hWnd2,
@@ -87,16 +157,21 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
     return new RenderSystem{
         init,
         {
-            renderDevice,t,m
+            renderDevice, t, m
         },
-        m,t
+        m, t
     };
     //todo
 }
 
 void RenderSystem::BeginFrame()
 {
-    for (auto pass : renderPasses)
+    pRenderer->ClearState();
+    for (auto pass : baseRenderPasses)
+    {
+        pass->PreRender();
+    }
+    for (auto pass : gachRenderPasses)
     {
         pass->PreRender();
     }
@@ -107,12 +182,40 @@ void RenderSystem::BeginFrame()
 
 bool RenderSystem::RenderFrame()
 {
-    pRenderer->ClearState();
 
-    //managerTAA.UpdateHaltonSequence();
-    //taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
+    
+//#if _DEBUG
+//    renderPassDebug.Draw(
+//        DebugDraw3DData
+//        {
+//            {
+//                EPrimitiveType::PRIMITIVETYPE_LINESTRIP,
+//                4,
+//                {
+//                    DebugVertex3D{{0, 0, -10}},
+//                    DebugVertex3D{{3, 0, -10}},
+//                    DebugVertex3D{{6, 0, -10}},
+//                    DebugVertex3D{{20, 40, -10}},
+//                    DebugVertex3D{{100, 100, -10}}
+//                },
+//                {(uint32_t)0, (uint32_t)1, (uint32_t)2, (uint32_t)3, (uint32_t)4},
+//            },
+//            Transform(),
+//            float3(0, 1, 0),
+//            {}
+//        }
+//    );
+//
+//#endif
+
+
+    pRenderer->ClearState();
+    BaseRenderSystem::Present();
+
+    //re.UpdateHaltonSequence();
+
     //pRenderer->SetConstBuffer(pLocalConstants, &taaConstants);
-    //pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
+    // pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
 
     BaseRenderSystem::Present();
 
@@ -167,18 +270,25 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    //GFX_CATCH_RENDER(managerTAA.Render(*this););
+    GFX_CATCH_RENDER(renderPassTAA.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
     GFX_CATCH_RENDER(renderPassUI.Render(););
     pRenderer->EndEvent();
 
+    BaseRenderSystem::Present();
+#if _DEBUG
+    pRenderer->BeginEvent("Debug draw.");
+    GFX_CATCH_RENDER(renderPassDebug.Render(););
+    pRenderer->EndEvent();
+#endif
+
     pRenderer->BeginEvent("IMGUI draw.");
     renderPassIMGUI.Render();
     pRenderer->EndEvent();
 
-
+    pRenderer->ClearState();
     return success;
 }
 
@@ -192,7 +302,7 @@ void RenderSystem::EndFrame()
 void RenderSystem::ClearBuffer(sm::Vector4 color) noexcept
 {
     pRenderer->SetRenderTargets(nullptr, 0, texturesManger->depthBuffer, Viewport());
-    pRenderer->Clear((ClearOptions)7, {color.x,color.y,color.z,color.w}, 1, 0u);
+    pRenderer->Clear((ClearOptions)7, {color.x, color.y, color.z, color.w}, 1, 0u);
     //pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
     //pContext->ClearDepthStencilView(pDSV.Get(), DModels11_CLEAR_DEPTH, 1.0f, 0u);
 }
@@ -201,12 +311,15 @@ void RenderSystem::PostRender()
 {
     //managerUP.Flush();
 
-    for (auto pass : renderPasses)
+    for (auto pass : baseRenderPasses)
+    {
+        pass->PostRender();
+    }
+    for (auto pass : gachRenderPasses)
     {
         pass->PostRender();
     }
 }
-
 
 
 void RenderSystem::DrawImg(size_t texId, const UIDrawData& data)
@@ -228,12 +341,12 @@ void RenderSystem::RegisterImg(size_t id, const TextureData& text)
 
 void RenderSystem::UpdateImg(size_t id, const TextureData& text)
 {
-    texturesManger->UpdateTexture(text, id);
+    texturesManger->UpdateFloatTexture(text, id);
 }
 
 void RenderSystem::UpdateImg(const ImageUpdate& data)
 {
-    texturesManger->UpdateTexture(data);
+    texturesManger->UpdateFloatTexture(data);
 }
 
 void RenderSystem::ReleaseImg(size_t id)
@@ -241,12 +354,7 @@ void RenderSystem::ReleaseImg(size_t id)
     texturesManger->ReleaseTexture(id);
 }
 
-void RenderSystem::RegisterModel(size_t id, const ModelData& model)
-{
-    modelsManager->RegisterModel(id, model);
-}
-
-void RenderSystem::RegisterFramedModel(size_t id, const FramedModelData& model)
+void RenderSystem::RegisterModel(size_t id, const ModelMesh& model)
 {
     modelsManager->RegisterModel(id, model);
 }
@@ -256,22 +364,21 @@ void RenderSystem::ReleaseModel(size_t id)
     modelsManager->ReleaseModel(id);
 }
 
-void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, bool mipmap)
+void RenderSystem::RegisterImg(size_t id, int width, int height, void* data)
 {
-    texturesManger->RegTexture(data, width, height, mipmap, id);
+    texturesManger->RegTexture(data, width, height, id);
 }
 
-void RenderSystem::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
+void RenderSystem::DrawModel(const ModelDrawData& drawData)
 {
-    renderPassModels.Draw(modelsManager->GetModel(modelId),
-        texturesManger->GetImg(textureId),
-        position, flags);
+    renderPassModels.Draw(drawData);
 }
 
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data)
 {
     //managerUP.Draw(model, texturesManger->GetImg(textureId), data);
 }
+
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data)
 {
     //managerUP.Draw(model, texturesManger->GetImg(textureId), texturesManger->GetImg(lightmapId), data);
@@ -282,15 +389,10 @@ void RenderSystem::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, 
     //managerUP.DrawSet(model, newModel, texturesManger->GetImg(textureId), data);
 }
 
-MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic)
+MeshHashData RenderSystem::RegisterStaticPolygon(UPModelMesh model, bool dynamic)
 {
     return {};
     //return managerUP.Register(model, dynamic);
-}
-
-void RenderSystem::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data)
-{
-    renderPassModels.DrawLerp(modelsManager->GetModel(modelId), texturesManger->GetImg(textureId), data);
 }
 
 void RenderSystem::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data)

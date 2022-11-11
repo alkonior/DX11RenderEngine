@@ -3,7 +3,7 @@
 #include "RenderSystem.h"
 
 
-void RenderDevice::InitDevice(RenderEngineInitStruct init) {
+void RenderDevice::CreateDevice(RenderEngineCoreSettings init) {
 	if (gfx != nullptr) DestroyDevice();
 	gfx =  RenderSystem::Initialise(init);
 	//gfx->skyFlags = SKYNOTHING;
@@ -14,65 +14,14 @@ void RenderDevice::InitDevice(RenderEngineInitStruct init) {
 
 }
 
-void RenderDevice::InitShaders(const char* dirr) {
-	gfx->ReinitShaders(dirr);
+void RenderDevice::InitDevice(const RenderSettings& Settings) {
+	shadersDir = Settings.shadersDirr;
+	gfx->SetupSettings(Settings);
+	
 }
-
-void RenderDevice::ReloadShader(ShaderData shD) {
-	/*
-	switch (shD.type) {
-	case ShaderType::UIShader:
-	{
-		gfx->manager2D.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::ModelsShader:
-	{
-		gfx->manager3D.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::UPShader:
-	{
-		gfx->managerUP.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::ParticlesShader:
-	{
-		gfx->managerParticles.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::SkyShader:
-	{
-		gfx->managerSkybox.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::EndBSPShader:
-	{
-		gfx->managerPostProcess.Init(shD.data, shD.dataSize);
-		break;
-	}
-	case ShaderType::BloomShader:
-	{
-		gfx->managerBloom.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	case ShaderType::FXAAShader:
-	{
-		gfx->managerFXAA.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	case ShaderType::MBShader:
-	{
-		gfx->managerMB.Init(shD.data, shD.dataSize);
-		break;
-	}
-
-	default:
-		break;
-	}
-	*/
+void RenderDevice::ReloadShaders()
+{
+	gfx->ReloadShaders(shadersDir.c_str());
 }
 
 
@@ -101,6 +50,34 @@ void RenderDevice::SetSkyFlags(uint64_t flags) {
 	//gfx->skyFlags = flags;
 }
 
+RenderDevice::Texture RenderDevice::GetTexture(size_t textureId)
+{
+	auto hTexture  = gfx->texturesManger->GetImg(textureId);
+	return {gfx->pRenderer->GetNativeTexture(hTexture.texture), hTexture.width, hTexture.height};
+}
+
+RenderDevice::Texture RenderDevice::GetRenderTargetTexture(const char* name)
+{
+	auto hRT  = gfx->texturesManger->GetRenderTarget(SIDRT(name));
+	auto hDesc  = gfx->texturesManger->GetRenderTargetDescription(SIDRT(name));
+	return {gfx->pRenderer->GetNativeTexture(hRT->texture), hDesc.width, hDesc.height};
+}
+
+void RenderDevice::ResizeBackBuffer(uint32_t width, uint32_t height)
+{
+	gfx->ResizeBackBuffer(width, height);
+}
+
+void RenderDevice::ResizeViewport(uint32_t width, uint32_t height)
+{
+	gfx->ResizeViewport(width, height);
+}
+
+std::vector<const char*> RenderDevice::GetRenderTargetsList()
+{
+	return  gfx->texturesManger->GetRenderTargetsList();
+}
+
 void RenderDevice::Flush() {
 	//gfx->PostRender();
 }
@@ -123,8 +100,8 @@ void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
 
-void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data, bool mipmap) {
-	gfx->RegisterImg(id, width, height, data, mipmap);
+void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data) {
+	gfx->RegisterImg(id, width, height, data);
 }
 
 void RenderDevice::UpdateTexture(size_t id, const TextureData& tex) {
@@ -135,12 +112,8 @@ void RenderDevice::UpdateTexture(const ImageUpdate& data) {
 	gfx->UpdateImg(data);
 }
 
-void RenderDevice::RegisterModel(size_t id, const ModelData& model) {
+void RenderDevice::RegisterModel(size_t id, const ModelMesh& model) {
 	gfx->RegisterModel(id, model);
-}
-
-void RenderDevice::RegisterFramedModel(size_t id, const FramedModelData& model) {
-	gfx->RegisterFramedModel(id, model);
 }
 
 void RenderDevice::ReleaseTexture(size_t id) {
@@ -157,13 +130,9 @@ void RenderDevice::DrawImg(size_t texId, const UIDrawData& data) {
 	gfx->DrawImg(texId, data);
 }
 
-void RenderDevice::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
+void RenderDevice::DrawModel(const ModelDrawData& drawData)
 {
-	gfx->DrawModel(modelId, textureId, position, flags);
-}
-
-void RenderDevice::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data) {
-	gfx->DrawFramedModel(modelId, textureId, data);
+	gfx->DrawModel(drawData);
 }
 
 void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
@@ -179,11 +148,21 @@ void RenderDevice::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, 
 }
 
 MeshHashData RenderDevice::RegisterUserPolygon(UPModelMesh model, bool dynamic) {
-	return gfx->RegisterhUserPolygon(model, dynamic);
+	return gfx->RegisterStaticPolygon(model, dynamic);
 }
 
 void RenderDevice::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data) {
 	gfx->DrawParticles(particles, data);
+}
+
+void RenderDevice::DrawDebug(const DebugDraw3DData& drawData)
+{
+	gfx->DrawDebug(drawData);
+}
+
+void RenderDevice::DrawDebug(const DebugDraw2DData& drawData)
+{
+	gfx->DrawDebug(drawData);
 }
 
 

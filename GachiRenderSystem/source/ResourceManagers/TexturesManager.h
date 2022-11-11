@@ -5,90 +5,88 @@
 
 #include "CoreRenderSystem/ResourceManagers/ITexturesManager.h"
 
-class TexturesManager : public ITexturesManager {
+class TexturesManager : public ITexturesManager
+{
 public:
-
-
 public:
-	TexturesManager(Renderer::IRenderer* renderDevice);
+    TexturesManager(Renderer::IRenderer* renderDevice);
 
-	virtual void RegTexture(void* tx, int width, int height, bool mipmap, size_t id);
-	virtual void RegTexture(const TextureData& tx, size_t id);
-	virtual void UpdateTexture(const TextureData& tx, size_t id);
-	virtual void UpdateTexture(const ImageUpdate& updateData);
+    virtual void RegTexture(void* tx, int width, int height, size_t id);
+    virtual void RegTexture(const TextureData& tx, size_t id);
+    virtual void UpdateFloatTexture(const TextureData& tx, size_t id);
+    virtual void UpdateFloatTexture(const ImageUpdate& updateData);
+    virtual void ResizeTextures() override; 
 
-	
-	
-	virtual void ReleaseTexture(size_t id);
-	virtual TextureCache GetImg(size_t id);
-	//void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
+    uint32_t depthWidth;
+    uint32_t depthHeigh;
+    
+    virtual void ReleaseTexture(size_t id);
+    virtual TextureCache GetImg(size_t id);
+    //void RegImgFromFile(GraphicsBase gfx, size_t width, size_t height, LPCSTR file, LPCSTR name);
 
-	//RenderTeargets::
+    //RenderTeargets::
 
-	Renderer::Renderbuffer* depthBuffer;
-	
+    //Renderer::Renderbuffer* depthBuffer;
 
-	Renderer::Texture* diffuseColor;
-	Renderer::RenderTargetBinding diffuseColorRT;
-	
-	Renderer::Texture* lightColor;
-	Renderer::RenderTargetBinding lightColorRT;
-	
-	Renderer::Texture* alphaSurfaces;
-	Renderer::RenderTargetBinding alphaSurfacesRT;
-	
-	Renderer::Texture* bloomMask;
-	Renderer::RenderTargetBinding bloomMaskRT;
-	
-	Renderer::Texture* velocityField;
-	Renderer::RenderTargetBinding velocityFieldRT;
-	
-	Renderer::Texture* blurMask;
-	Renderer::RenderTargetBinding blurMaskRT;
-	
-	Renderer::Texture* preAAcolor;
-	Renderer::RenderTargetBinding preAAcolorRT;
-	
-	Renderer::Texture* pastColor;
-	Renderer::RenderTargetBinding pastColorRT;
-	Renderer::Texture* pastDepth;
-	Renderer::RenderTargetBinding pastDepthRT;
 
-	
-	Renderer::Texture* normalsField;
-	Renderer::RenderTargetBinding normalsFieldRT;
-	
-	Renderer::Texture* oclusionField;
-	Renderer::RenderTargetBinding oclusionFieldRT;
-	
 private:
-	void CreateRenderTarget(Renderer::string_id name, Renderer::SurfaceFormat format, bool isUA, size_t width, size_t height, Renderer::Texture*& texture, Renderer::RenderTargetBinding& renderTarget);
-//
+    void CreateRenderTarget(const char* name,
+                            Renderer::SurfaceFormat format,
+                            bool isUA,
+                            bool isVS,
+                            bool isSS,
+                            uint32_t width, uint32_t height);
+    //
+public:
+    virtual ~TexturesManager();
+
+    virtual const Renderer::RenderTargetBinding& CreatePublicRenderTarget(
+        const RenderTargetDescription& description) override;
+
+    virtual const Renderer::RenderTargetBinding& CreatePrivateRenderTarget(
+        const RenderTargetDescription& description,
+        Renderer::Texture*& pTexture,
+        Renderer::RenderTargetBinding& pRT
+    ) override;
+
+    virtual Renderer::RenderTargetBinding* GetRenderTarget(Renderer::string_id id) override;
+    virtual RenderTargetDescription GetRenderTargetDescription(Renderer::string_id id) override;
+
+    std::vector<const char*> GetRenderTargetsList() override;
+private:
+    std::map<Renderer::string_id, TextureCache> textures;
+    std::map<Renderer::string_id, FloatTextureCache> floatTextures;
+    std::map<Renderer::string_id, Float3TextureCache> float3Textures;
+    
+    void ReleasePublicRenderTarget(Renderer::string_id id);
 public:
 
+#pragma region FloatTextres
+    
+    void RegFloatTexture(float* tx, int width, int height, size_t id) override;
+    void RegFloatTexture(const FloatData& tx, size_t id) override;
+    void UpdateFloatTexture(const FloatData& tx, size_t id) override;
+    void UpdateFloatTexture(const FloatImageUpdate& updateData) override;
+    void ReleaseFloatTexture(size_t id) override;
+    FloatTextureCache GetFloatImg(size_t id) override;
 
-		
-	virtual ~TexturesManager();
+    
+#pragma endregion 
 
-	virtual const Renderer::RenderTargetBinding& CreatePublicRenderTarget(
-			Renderer::string_id id,
-			const RenderTargetDescription& description) override;
-
-	virtual const Renderer::RenderTargetBinding& CreatePrivateRenderTarget(
-		Renderer::string_id id,
-		const RenderTargetDescription& description,
-		Renderer::Texture*& diffuseColor,
-		Renderer::RenderTargetBinding& diffuseColorRT
-	) override;
-
-	virtual Renderer::RenderTargetBinding* GetRenderTarget(Renderer::string_id id) override;
-	
+#pragma region Float3Textres
+    
+    void RegFloat3Texture(float3* tx, int width, int height, size_t id) override;
+    void RegFloat3Texture(const Float3Data& tx, size_t id) override;
+    void UpdateFloat3Texture(const Float3Data& tx, size_t id) override;
+    void UpdateFloat3Texture(const Float3ImageUpdate& updateData) override;
+    void ReleaseFloat3Texture(size_t id) override;
+    Float3TextureCache GetFloat3Img(size_t id) override;
+    
+#pragma endregion 
+    
 private:
-	std::map<Renderer::string_id, TextureCache> textures;
-	
-	std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> publicRenderTargets;
-	std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> privateRenderTargets;
-
-	
+    std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> publicRenderTargets;
+    std::unordered_map<Renderer::string_id, Renderer::RenderTargetBinding> privateRenderTargets;
+    std::unordered_map<Renderer::string_id, RenderTargetDescription> publicRenderTargetsDescriptions;
 };
 

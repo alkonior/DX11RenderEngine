@@ -27,7 +27,7 @@ size_t dataSize):
 }
 
 
-std::vector<ShaderDefines> PipelineFactory::GetDefines(size_t definesFlags)
+std::vector<ShaderDefines> PipelineFactory::GetDefines(uint32_t definesFlags)
 {
     std::vector<ShaderDefines> result;
 
@@ -44,19 +44,20 @@ std::vector<ShaderDefines> PipelineFactory::GetDefines(size_t definesFlags)
     return result;
 }
 
-PipelineState* PipelineFactory::GetState(size_t definesFlags)
+PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
 {
-    PipelineState* ps;
-    if (dictinary.count(definesFlags /*int*/))
+    
+    PipelineState ps;
+    if (dictinaryShaders.count(definesFlags.definesFlags /*int*/))
     {
-        return dictinary[definesFlags];
-    }
+        ps.shaders = dictinaryShaders[definesFlags.definesFlags];
+    }else
     {
-        ps = new PipelineState();
+        PipelineShaders* sh = new PipelineShaders();
 
-        auto definesArray = GetDefines(definesFlags);
+        auto definesArray = GetDefines(definesFlags.definesFlags);
         const char* name = provider->GetShaderName();
-        ps->ps = renderDevice->CompilePixelShader(
+        sh->ps = renderDevice->CompilePixelShader(
             IRenderer::ShaderData{
                 shaderData,dataSize,
                 definesArray.data(),
@@ -69,8 +70,8 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
             }
         );
 
-        auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags);
-        ps->vs = renderDevice->CompileVertexShader(
+        auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags.definesFlags);
+        sh->vs = renderDevice->CompileVertexShader(
             IRenderer::ShaderData{
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -82,7 +83,7 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
         );
 
         if (useShaders & Renderer::UseGeometryShader)
-            ps->gs = renderDevice->CompileGeometryShader(
+            sh->gs = renderDevice->CompileGeometryShader(
                 IRenderer::ShaderData{
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -93,10 +94,10 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
                 }
             );
         else
-            ps->gs = nullptr;
+            sh->gs = nullptr;
 
         if (useShaders & Renderer::UseComputeShader)
-            ps->cs = renderDevice->CompileComputeShader(
+            sh->cs = renderDevice->CompileComputeShader(
                 IRenderer::ShaderData{
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -107,28 +108,39 @@ PipelineState* PipelineFactory::GetState(size_t definesFlags)
                 }
             );
         else
-            ps->cs = nullptr;
+            sh->cs = nullptr;
 
 
 
 
-        provider->PatchPipelineState(ps, definesFlags);
 
-        dictinary.insert({definesFlags,ps});
-        return ps;
+        dictinaryShaders.insert({definesFlags.definesFlags,sh});
+        ps.shaders = sh;
     }
+    if (dictinaryPipeline.contains(definesFlags.pipelineFlags))
+    {
+        ps.pipeline = dictinaryPipeline[definesFlags.pipelineFlags];
+    }else
+    {
+        Pipeline* p = new Pipeline();
+        provider->PatchPipelineState(p, definesFlags.pipelineFlags);
+        dictinaryPipeline[definesFlags.pipelineFlags] = p;
+        ps.pipeline = p;
+    }
+    
+    return ps;
 }
 
-PipelineState* PipelineFactory::GetComputeState(size_t definesFlags, const char* nameShader)
+PipelineState PipelineFactory::GetComputeState(uint32_t definesFlags, const char* nameShader)
 {
-    PipelineState* ps;
+    PipelineShaders* ps;
     auto id = std::make_pair(definesFlags, nameShader);
     if (computeDictinary.count(id))
     {
-        return computeDictinary[id];
+        return {computeDictinary[id], nullptr};
     }
     {
-        ps = new PipelineState();
+        ps = new PipelineShaders();
 
         auto definesArray = GetDefines(definesFlags);
         const char* name = provider->GetShaderName();
@@ -145,17 +157,19 @@ PipelineState* PipelineFactory::GetComputeState(size_t definesFlags, const char*
         );
 
         computeDictinary.insert({id,ps});
-        return ps;
+        return {ps};
     }
 }
 
 PipelineFactory::~PipelineFactory()
 {
     delete provider;
-    for (auto& [key, ps] : dictinary)
+    for (auto& [key, ps] : dictinaryShaders)
     {
         renderDevice->AddDisposeVertexShader(ps->vs);
         renderDevice->AddDisposePixelShader(ps->ps);
+        renderDevice->AddDisposeGeometryShader(ps->gs);
+        renderDevice->AddDisposeComputeShader(ps->cs);
         delete ps;
     }
     free(shaderData);

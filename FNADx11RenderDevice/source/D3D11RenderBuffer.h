@@ -34,10 +34,10 @@ struct D3D11Renderbuffer : Renderbuffer {
 
 
 	~D3D11Renderbuffer() {
-		if (type == RENDERBUFFER_COLOR)
-			color.rtView->Release();
-		if (type == RENDERBUFFER_DEPTH)
-			depth.dsView->Release();
+		//if (type == RENDERBUFFER_COLOR)
+		//	color.rtView->Release();
+		//if (type == RENDERBUFFER_DEPTH)
+		//	depth.dsView->Release();
 	};
 };
 

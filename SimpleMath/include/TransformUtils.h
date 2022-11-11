@@ -6,6 +6,14 @@ typedef DirectX::SimpleMath::Matrix   matrix;
 typedef DirectX::SimpleMath::Matrix   float4x4;
 typedef DirectX::SimpleMath::Vector3  float3;
 typedef DirectX::SimpleMath::Vector2  float2;
+typedef DirectX::SimpleMath::Color    color;
+typedef uint32_t uint;
+
+typedef DirectX::SimpleMath::Vector4 Vector4;
+typedef DirectX::SimpleMath::Matrix  Matrix ;
+typedef DirectX::SimpleMath::Vector3 Vector3;
+typedef DirectX::SimpleMath::Vector2 Vector2;
+typedef DirectX::SimpleMath::Color   Color;
 typedef uint32_t uint;
 
 

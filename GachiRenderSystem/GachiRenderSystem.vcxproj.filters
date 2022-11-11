@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="PBR">
+      <UniqueIdentifier>{beec320a-434c-4a85-8f92-01056bb2d5ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{3a207dcc-7ec9-4484-afd5-b016e13a95f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="QuakeRenderEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ModelData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,9 +37,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp">
@@ -66,6 +63,57 @@
     <ClCompile Include="source\ResourceManagers\TexturesManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassConstBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\GachiBasePass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\halton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\GBuffer.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassOpaque.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassToneMap.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\RenderingSystemPBR.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\Shaders.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\SkyRenderer.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBR\PassLighting.cpp">
+      <Filter>PBR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RenderEngine.h">
@@ -75,9 +123,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Utils\DrawData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utils\ModelData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Utils\VertexesData.h">
@@ -125,19 +170,114 @@
     <ClInclude Include="source\ResourceManagers\TexturesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\RenderSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DynamicMeshBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugPassConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugPassProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\DebugRenderPass\DebugRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\GachiBasePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\halton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPassConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBR\GBuffer.h">
+      <Filter>PBR</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\ModelMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\OpaqueModelDrawData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBR\SkyRenderer.h">
+      <Filter>PBR</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\PBRFlags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBR\RenderingSystemPBR.h">
+      <Filter>PBR</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\BloomShader.hlsl" />
-    <None Include="Shaders\BSPShader.hlsl" />
-    <None Include="Shaders\FXAAShader.hlsl" />
-    <None Include="Shaders\ModelsShader.hlsl" />
-    <None Include="Shaders\MotionBlurShader.hlsl" />
-    <None Include="Shaders\ParticlesShader.hlsl" />
-    <None Include="Shaders\PixelPacking_Velocity.hlsl" />
-    <None Include="Shaders\PostProcessShader.hlsl" />
-    <None Include="Shaders\SkyShader.hlsl" />
-    <None Include="Shaders\SSAOShader.hlsl" />
-    <None Include="Shaders\TAAShader.hlsl" />
-    <None Include="Shaders\UIShader.hlsl" />
+    <None Include="Shaders\BloomShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BSPShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\DebugShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FXAAShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ModelsShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\MotionBlurShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ParticlesShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PixelPacking_Velocity.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PostProcessShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SkyShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SSAOShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\TAAShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\UIShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRFillGBuffer.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="source\RendererPasses\PBR\Shaders\PBRLighting.hlsl" />
+    <None Include="source\RendererPasses\PBR\Shaders\PBRToneMapping.hlsl" />
+    <None Include="source\RendererPasses\PBR\Shaders\SkyRenderingPS.hlsl" />
+    <None Include="source\RendererPasses\PBR\Shaders\SkyRenderingVS.hlsl" />
+    <None Include="source\RendererPasses\PBR\Shaders\SkyUpdatePS.hlsl" />
   </ItemGroup>
 </Project>

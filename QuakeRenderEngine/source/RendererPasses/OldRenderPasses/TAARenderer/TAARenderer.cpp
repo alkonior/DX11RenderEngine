@@ -13,7 +13,7 @@ const char* TAARenderer::TAARendererProvider::GetShaderName()
 {
 	return "TAA";
 }
-void TAARenderer::TAARendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
+void TAARenderer::TAARendererProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) {
 
 	refToPS->bs = &BlendStates::NoAlpha;
 	refToPS->dss = &DepthStencilStates::NoDSS;
@@ -45,21 +45,11 @@ void TAARenderer::Init(void* shaderData, size_t dataSize) {
 		return;
 	}
 	QuadRenderer::Init();
-	
-	int32_t width, height;
-	renderer->GetBackbufferSize(&width, &height);
 	provider = new TAARendererProvider(width, height);
 	factory = new TAARendererFactory(provider, shaderData, dataSize);
 	
 
-	TAAHistory = renderer->CreateUATexture2D(SURFACEFORMAT_VECTOR4,width, height,1);
 
-	
-	localBuffer.numSamples		= 10;
-	UpdateHaltonSequence();
-	localBuffer.Jitter = HaltonSequence[HaltonIndex];
-	localBuffer.Resolution = float4(width, height, 1.f/width, 1.f/height);
-	localBuffer.FrameNumber = HaltonIndex;
 	
 	/*
 	localBuffer.depthThreshold  = 0.0001;
@@ -72,75 +62,7 @@ void TAARenderer::Init(void* shaderData, size_t dataSize) {
 }
 
 void TAARenderer::Render(GraphicsBase& gfx) {
-	QuadRenderer::Render();
-	int32_t width, height;
-	renderer->GetBackbufferSize(&width, &height);
-
-	RenderIMGUI(gfx);
 	
-
-	size_t flags = TAAZERO;
-	localBuffer.DebugFlags = 0;
-	if (markNoHistoryPixels)
-		localBuffer.DebugFlags |= MarkNoHistoryPixels;
-	
-	if (allowBicubicFilter)
-		localBuffer.DebugFlags |= AllowBicubicFilter;
-	
-	if (allowDepthThreshold)
-		localBuffer.DebugFlags |= AllowDepthThreshold;
-	
-	if (allowNeighbourhoodSampling)
-		localBuffer.DebugFlags |= AllowNeighbourhoodSampling;
-	
-	if (allowVarianceClipping)
-		localBuffer.DebugFlags |= AllowVarianceClipping;
-	
-	if (allowLongestVelocityVector)
-		localBuffer.DebugFlags |= AllowLongestVelocityVector;
-	
-	if (allowYCoCg)
-		localBuffer.DebugFlags |= allowYCoCg;
-	
-	
-	renderer->SetConstBuffer(constBuffer, &localBuffer);
-	renderer->VerifyConstBuffer(constBuffer, CBData.slot);
-	
-	renderer->VerifyUATexture(0, TAAHistory);
-	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
-	renderer->VerifyPixelSampler(1, Samplers::linearClamp);
-	
-	renderer->SetRenderTargets(nullptr, 0, nullptr, vp);
-	
-	renderer->VerifyPixelTexture(0, gfx.texturesManger.velocityField);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.preAAcolor);
-	renderer->VerifyPixelTexture(2, gfx.texturesManger.pastColor);
-	renderer->VerifyPixelTexture(3, gfx.texturesManger.pastDepth);
-	renderer->VerifyPixelTexture(4, gfx.texturesManger.depthBuffer->texture);
-	
-	renderer->ApplyPipelineState(factory->GetComputeState(flags, "main"));
-	renderer->Dispatch((width + TAA_NUM_THREADS_X -1) / (TAA_NUM_THREADS_X),
-		(height + TAA_NUM_THREADS_Y -1) / (TAA_NUM_THREADS_Y));
-	renderer->VerifyUATexture(0, nullptr);
-	renderer->VerifyPixelTexture(0, nullptr);
-	renderer->VerifyPixelTexture(1, nullptr);
-	renderer->VerifyPixelTexture(2, nullptr);
-	renderer->VerifyPixelTexture(3, nullptr);
-	renderer->VerifyPixelTexture(4, nullptr);
-	RenderTargetBinding* target[3] = {
-		nullptr,
-		&gfx.texturesManger.pastColorRT,
-		&gfx.texturesManger.pastDepthRT,
-	};
-	//target[0] = nullptr;
-	renderer->SetRenderTargets(target, 3, nullptr, vp);
-	renderer->VerifyPixelSampler(0, Samplers::pointClamp);
-	renderer->VerifyPixelTexture(0, TAAHistory);
-	renderer->VerifyPixelTexture(1, gfx.texturesManger.depthBuffer->texture);
-	renderer->ApplyPipelineState(factory->GetState(TAACOPY));
-	renderer->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-
-	renderer->VerifyPixelTexture(1, nullptr);
 }
 
 
@@ -172,23 +94,7 @@ void TAARenderer::UpdateHaltonSequence()
 
 void TAARenderer::RenderIMGUI(GraphicsBase& gfx)
 {	
-	ImGui::Begin("TAA settings.");                          // Create a window called "Hello, world!" and append into it.
-//
-	//ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
-	ImGui::SliderInt("NumSamples",				&localBuffer.numSamples , 1, 20 , "%.3f");
-	ImGui::SliderFloat("TAAShiftStrength",     &gfx.taaConstants.taaStrength, 0.0, 100.0  , "%.3f");
-	ImGui::Checkbox("markNoHistoryPixels	    ", &markNoHistoryPixels		    );
-	ImGui::Checkbox("allowBicubicFilter		    ", &allowBicubicFilter		    );
-	ImGui::Checkbox("allowDepthThreshold	 	", &allowDepthThreshold		    );
-	ImGui::Checkbox("allowVarianceClipping	    ", &allowVarianceClipping		);
-	ImGui::Checkbox("allowNeighbourhoodSampling", &allowNeighbourhoodSampling	);
-	ImGui::Checkbox("allowYCoCg				    ", &allowYCoCg					);
-	ImGui::Checkbox("allowLongestVelocityVector", &allowLongestVelocityVector	);
 
-	
-
-
-	ImGui::End();
 }
 
 

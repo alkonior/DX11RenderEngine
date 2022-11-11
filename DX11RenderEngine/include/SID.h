@@ -2,11 +2,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-namespace Renderer {
 
 static constexpr unsigned int crc_table[256] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
-    0xe963a535, 0x9e6495a3,    0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
+    0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
     0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
     0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
     0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9,
@@ -51,25 +50,42 @@ static constexpr unsigned int crc_table[256] = {
 };
 
 
-template<int size, int idx = 0, class dummy = void>
-struct MM{
-  static constexpr unsigned int crc32(const char * str, unsigned int prev_crc = 0xFFFFFFFF)
-  {
-      return MM<size, idx+1>::crc32(str, (prev_crc >> 8) ^ crc_table[(prev_crc ^ str[idx]) & 0xFF] );
-  }
+template <int size, int idx = 0, class dummy = void>
+struct MM
+{
+    static constexpr unsigned int crc32(const char* str, unsigned int prev_crc = 0xFFFFFFFF)
+    {
+        return MM<size, idx + 1>::crc32(str, (prev_crc >> 8) ^ crc_table[(prev_crc ^ str[idx]) & 0xFF]);
+    }
 };
 
 // This is the stop-recursion function
-template<int size, class dummy>
-struct MM<size, size, dummy>{
-  static constexpr unsigned int crc32(const char * str, unsigned int prev_crc = 0xFFFFFFFF)
-  {
-      return prev_crc^ 0xFFFFFFFF;
-  }
+template <int size, class dummy>
+struct MM<size, size, dummy>
+{
+    static constexpr unsigned int crc32(const char* str, unsigned int prev_crc = 0xFFFFFFFF)
+    {
+        return prev_crc ^ 0xFFFFFFFF;
+    }
 };
 
 typedef unsigned int string_id;
+
+namespace Renderer
+{
+    typedef unsigned int string_id;
+};
+
 // This don't take into account the nul char
 #define SID(x) (MM<sizeof(x)-1>::crc32(x))
 
+
+inline string_id SIDRT(const char* str)
+{
+    unsigned int crc = 0xFFFFFFFF;
+    for (uint8_t idx = 0; idx < std::strlen(str); idx++)
+    {
+        crc = (crc >> 8) ^ crc_table[(crc ^ str[idx]) & 0xFF];
+    }
+    return crc ^ 0xFFFFFFFF;
 }

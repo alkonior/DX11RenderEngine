@@ -122,9 +122,6 @@
     <ClInclude Include="include\CoreRenderSystem\CoreShaderInclude.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="include\CoreRenderSystem\DynamicMeshBuffer.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="include\CoreRenderSystem\GraphicsExceptions\DxgiInfoManager.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -178,48 +175,11 @@
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\BloomShader.hlsl" />
-    <None Include="Shaders\BSPShader.hlsl" />
-    <None Include="Shaders\FXAAShader.hlsl" />
-    <None Include="Shaders\ModelsShader.hlsl" />
-    <None Include="Shaders\MotionBlurShader.hlsl" />
-    <None Include="Shaders\ParticlesShader.hlsl" />
     <None Include="Shaders\PixelPacking_Velocity.hlsl" />
-    <None Include="Shaders\PostProcessShader.hlsl" />
-    <None Include="Shaders\SkyShader.hlsl" />
-    <None Include="Shaders\SSAOShader.hlsl" />
-    <None Include="Shaders\TAAShader.hlsl" />
-    <None Include="Shaders\UIShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">
       <Filter>Файлы ресурсов</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\..\baseq2\ModelsShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\UIShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\BSPShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\ParticlesShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\SkyShader.hlsl">
-      <Filter>RenderEngine\Core\Rendereres\Q2Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\BloomShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\FXAAShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\baseq2\PostProcessShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

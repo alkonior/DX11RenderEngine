@@ -1,15 +1,19 @@
 #pragma once
+#include "RenderSettings.h"
 #include "CoreRenderSystem/BaseRenderSystem.h"
 #include "SimpleMath.h"
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
+#include "RendererPasses/DebugRenderPass/DebugRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
+#include "RendererPasses/PBRPasses/OpaqueRenderPass/OpaqueRenderPass.h"
+#include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
 
 
-#include "Utils/ModelData.h"
+#include "Utils/ModelMesh.h"
 
 namespace Renderer {
 struct ConstBuffer;
@@ -21,14 +25,14 @@ class RenderSystem: public BaseRenderSystem{
 
 
 
-	RenderSystem(RenderEngineInitStruct,
+	RenderSystem(RenderEngineCoreSettings,
 		const BaseRenderSystemInitStruct&,
 		ModelsManager* modelsManager,
 		TexturesManager* texturesManager);
 	RenderSystem(const RenderSystem&) = delete;
 	RenderSystem& operator=(const RenderSystem&) = delete;
 public:
-	static RenderSystem* Initialise(RenderEngineInitStruct);
+	static RenderSystem* Initialise(RenderEngineCoreSettings);
 	~RenderSystem() = default;
 
 
@@ -41,7 +45,7 @@ public:
 
 
 	void RegisterImg(size_t id, const TextureData& text);
-	void RegisterImg(size_t id, int width, int heights, void* data, bool mipmap);
+	void RegisterImg(size_t id, int width, int heights, void* data);
 
 	void UpdateImg(size_t id, const TextureData& text);
 	void UpdateImg(const ImageUpdate&);
@@ -50,51 +54,56 @@ public:
 	void DrawColor(const UIDrawData& data);
 	void DrawImg(size_t texId, const UIDrawData& data);
 
-
-	void RegisterModel(size_t id, const ModelData& model);
-	void RegisterFramedModel(size_t id, const FramedModelData& model);
+	void RegisterModel(size_t id, const ModelMesh& model);
 	void ReleaseModel(size_t id);
 
 
 
 
-	void DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags);
-
-
+	void DrawModel(const ModelDrawData& drawData);
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);
 	void DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data);
 	void DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, size_t textureId, UPDrawData data);
-	MeshHashData RegisterhUserPolygon(UPModelMesh model, bool dynamic);
-
-
-
-	void DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data);
-
-
+	MeshHashData RegisterStaticPolygon(UPModelMesh model, bool dynamic);
+	
+	
 	void DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data);
 
 	
-	void ReinitShaders(const char *);
-	
+	void SetupSettings(const RenderSettings& Settings);
+	void ReloadShaders(const char* dirr);
+	void DrawDebug(const DebugDraw3DData& drawData);
+	void DrawDebug(const DebugDraw2DData& drawData);
+	void ResizeBackBuffer(uint32_t width, uint32_t height);
+	void ResizeViewport(uint32_t width, uint32_t height);
+
 	//SkyboxRenderer	     managerSkybox;
 private:
 
+	void Resize();
+	
 	ModelsManager* modelsManager;
 	TexturesManager* texturesManager;
 	
-	std::vector<BaseRenderPass*> renderPasses;
+	std::vector<GachiBasePass*> gachRenderPasses;
+	std::vector<BaseRenderPass*> baseRenderPasses;
 	
 	UIRenderPass			 renderPassUI;
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
+	TAARenderPass	         renderPassTAA;
+	OpaqueRenderPass	     renderPassOpaque;
 	
+#if _DEBUG
+	DebugRenderPass	         renderPassDebug;
+
+#endif
 	//MotionBlurRenderer	 managerMB;
 	//UPRenderer			 managerUP;
 	//PPRenderer			 managerPostProcess;
 	//ParticlesRenderer	 managerParticles;
 	//BloomRenderer	     managerBloom;
 	//FXAARenderer	     managerFXAA;
-	//TAARenderer	         managerTAA;
 	//SSAORenderer	     managerSSAO;
 
 

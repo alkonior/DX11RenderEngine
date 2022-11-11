@@ -57,8 +57,8 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     auto ppppp = new GVM::Dx11PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle2;
     GVM::RenderDeviceInitParams init{
-        presentationParameters.backBufferWidth,
-        presentationParameters.backBufferHeight,
+        presentationParameters.BackBufferSize.Width,
+        presentationParameters.BackBufferSize.Height,
         ppppp,
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
@@ -173,6 +173,45 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
 
     CreateBackbuffer(presentationParameters);
+}
+
+void D3D11Renderer::ResizeBackbuffer(const Size2D& parameters)
+{
+    backBufferWidth = parameters.Width;
+    backBufferHeight = parameters.Height;
+    
+    context->OMSetRenderTargets(0, 0, 0);
+
+    // Release all outstanding references to the swap chain's buffers.
+    swapchainRTView->Release();
+    swapchainUAView->Release();
+    
+    // Preserve the existing buffer count and format.
+    // Automatically choose the width and height to match the client rect for HWNDs.
+    hr = swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+                                            
+    // Perform error handling here!
+
+    // Get buffer and create a render-target-view.
+    ID3D11Texture2D* pBuffer;
+    hr = swapchain->GetBuffer(0, __uuidof( ID3D11Texture2D),
+                                 (void**) &pBuffer );
+    // Perform error handling here!
+
+    hr = device->CreateRenderTargetView(pBuffer, NULL,
+                                             &swapchainRTView);
+    hr = device->CreateUnorderedAccessView(pBuffer, NULL,
+                                             &swapchainUAView);
+    // Perform error handling here!
+    pBuffer->Release();
+    testApi->ResizeBackbuffer(parameters.Width, parameters.Height);
+
+}
+
+void D3D11Renderer::ResizeMainViewport(const Size2D& parameters)
+{
+    mainViewportWidth = parameters.Width;
+    mainViewportHeight = parameters.Height;
 }
 
 D3D11Renderer::~D3D11Renderer()
@@ -294,6 +333,7 @@ constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
     DXGI_FORMAT_BC3_UNORM_SRGB, /* SurfaceFormat.Dxt5SrgbEXT */
     DXGI_FORMAT_BC7_UNORM, /* SurfaceFormat.BC7EXT */
     DXGI_FORMAT_BC7_UNORM_SRGB, /* SurfaceFormat.BC7SrgbEXT */
+    DXGI_FORMAT_R32G32B32_FLOAT, /* SurfaceFormat.Vecror3 */
 };
 
 void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t indexElementSize)
@@ -943,9 +983,11 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
             renderTargetViewsTest[0] = nullptr;
             depthStencilBufferTest =  this->depthStencilBuffer->depth.nDsView;
         }
-        this->SetViewport(viewport, 0);
-        testApi->SetupViewport(ToGVM(viewport), 0);
-
+        if (viewport != Viewport{})
+        {
+            this->SetViewport(viewport, 0);
+            testApi->SetupViewport(ToGVM(viewport), 0);
+        }
         renderTargetViews[0] = comViews[0];
 
         i = 1;
@@ -1102,10 +1144,16 @@ void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, v
     delete backbufferTexture;
 }
 
-void D3D11Renderer::GetBackbufferSize(int32_t* w, int32_t* h)
+void D3D11Renderer::GetBackbufferSize(uint32_t& w, uint32_t& h)
 {
-    *w = static_cast<int32_t>(backBufferWidth);
-    *h = static_cast<int32_t>(backBufferHeight);
+    w = static_cast<int32_t>(backBufferWidth);
+    h = static_cast<int32_t>(backBufferHeight);
+}
+
+void D3D11Renderer::GetMainViewportSize(uint32_t& w, uint32_t& h)
+{
+    w = static_cast<int32_t>(mainViewportWidth);
+    h = static_cast<int32_t>(mainViewportHeight);
 }
 
 DepthFormat D3D11Renderer::GetBackbufferDepthFormat()
@@ -1143,6 +1191,7 @@ constexpr GVM::EFormat ToGVM(SurfaceFormat format)
     case SURFACEFORMAT_DXT5SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
     case SURFACEFORMAT_BC7_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
     case SURFACEFORMAT_BC7SRGB_EXT: return GVM::EFormat::FORMAT_UNKNOWN; //todo
+    case SURFACEFORMAT_VECTOR3: return GVM::EFormat::FORMAT_R32G32B32_FLOAT; //todo
     }
 }
 
@@ -1452,6 +1501,11 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     );
 }
 
+void* Renderer::D3D11Renderer::GetNativeTexture(Texture* texture)
+{
+    return ((D3D11Texture*)texture)->shaderView.Get();
+}
+
 
 void D3D11Renderer::AddDisposeTexture(Texture* texture)
 {
@@ -1478,7 +1532,8 @@ void D3D11Renderer::AddDisposeTexture(Texture* texture)
                 renderTargetViews[i] = nullptr;
             }
         }
-        tex->rtView->Release();
+        tex->rtView = nullptr;
+        tex->uaView = nullptr;
     }
 
     /* Release the shader resource view and texture */
@@ -1858,6 +1913,7 @@ void D3D11Renderer::AddDisposeRenderbuffer(Renderbuffer* renderbuffer)
     }
 
     d3dRenderbuffer->handle = nullptr;
+    testApi->AddDisposeResource(d3dRenderbuffer->resource);
     delete d3dRenderbuffer;
 }
 
@@ -2227,8 +2283,10 @@ void D3D11Renderer::CreateBackbuffer(const PresentationParameters& parameters)
     wrl::ComPtr<ID3D11Texture2D> swapchainTexture;
 
 
-    backBufferWidth = parameters.backBufferWidth;
-    backBufferHeight = parameters.backBufferHeight;
+    backBufferWidth = parameters.BackBufferSize.Width;
+    backBufferHeight = parameters.BackBufferSize.Height;
+    mainViewportWidth = parameters.ViewPortBufferSize.Width;
+    mainViewportHeight = parameters.ViewPortBufferSize.Height;
 
     /* Create a render target view for the swapchain */
     swapchainViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -3218,18 +3276,21 @@ void D3D11Renderer::AddDisposeConstBuffer(ConstBuffer* constBuffers)
     delete buffer;
 }
 
-void D3D11Renderer::ApplyPipelineState(PipelineState* piplineState)
+void D3D11Renderer::ApplyPipelineState(PipelineState piplineState)
 {
-    ApplyPixelShader(piplineState->ps);
-    ApplyVertexShader(piplineState->vs);
-    ApplyComputeShader(piplineState->cs);
-    ApplyGeometryShader(piplineState->gs);
-    if (piplineState->bs)
-        SetBlendState(*piplineState->bs);
-    if (piplineState->dss)
-        SetDepthStencilState(*piplineState->dss);
-    if (piplineState->rs)
-        ApplyRasterizerState(*piplineState->rs);
+    ApplyPixelShader(piplineState.shaders->ps);
+    ApplyVertexShader(piplineState.shaders->vs);
+    ApplyComputeShader(piplineState.shaders->cs);
+    ApplyGeometryShader(piplineState.shaders->gs);
+    if (piplineState.pipeline)
+    {
+        if (piplineState.pipeline->bs)
+            SetBlendState(*piplineState.pipeline->bs);
+        if (piplineState.pipeline->dss)
+            SetDepthStencilState(*piplineState.pipeline->dss);
+        if (piplineState.pipeline->rs)
+            ApplyRasterizerState(*piplineState.pipeline->rs);
+    }
 }
 
 void D3D11Renderer::Flush()
@@ -3334,11 +3395,13 @@ void D3D11Renderer::Dispatch(size_t x, size_t y, size_t z)
 void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader)
 {
     D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
+    if(shader)
     delete shader;
 }
 
 void D3D11Renderer::AddDisposeComputeShader(ComputeShader* computeShader)
 {
     D3D11PixelShader* shader = (D3D11PixelShader*)computeShader;
+    if(shader)
     delete shader;
 }

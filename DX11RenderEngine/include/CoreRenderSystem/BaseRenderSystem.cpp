@@ -6,7 +6,7 @@ using namespace Renderer;
 
 
 BaseRenderSystem::BaseRenderSystem(const BaseRenderSystemInitStruct& init):
-pRenderer(init.pRenderer), texturesManger(init.texturesManger), modelsManager(modelsManager)
+pRenderer(init.pRenderer), texturesManger(init.texturesManger), modelsManager(init.modelsManager)
 {
 
 	pLocalConstants = pRenderer->CreateConstBuffer(sizeof(viewConstants));
@@ -27,7 +27,7 @@ void BaseRenderSystem::SetRenderData(const RenderData& data){
 	viewConstants.dt = data.time - viewConstants.time; 
 	viewConstants.time = data.time;
 	
-	viewConstants.currentMatrices = viewConstants.pastMatrices;
+	viewConstants.pastMatrices = viewConstants.currentMatrices;
 	
 	auto& currentMatrices = viewConstants.currentMatrices;
 	

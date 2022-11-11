@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "BaseRenderPass.h"
-#include "ref_dx11/render/IStateProvider.h"
 
 template<size_t Id>
 class QuadRenderPass
@@ -32,8 +31,6 @@ public:
 			return;
 
 		renderDevice = renderer;
-		int32_t width, height;
-		renderer->GetBackbufferSize(&width, &height);
 
 
 		QuadRendererVertex vertices[] =
@@ -63,6 +60,11 @@ public:
 		};
 		indexBuffer = renderer->GenIndexBuffer(0, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(indices));
 		renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, sizeof(indices), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);		
+	}
+
+	void Render()
+	{
+		renderDevice->ApplyMeshBuffersBinding({vertexBuffer,indexBuffer, 16});
 	}
 	
     ~QuadRenderPass() {

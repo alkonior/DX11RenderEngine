@@ -432,3 +432,8 @@ void GraphicsApi::EndEvent()
 
 void GraphicsApi::SetMarker(const char* name)
 {}
+
+void GraphicsApi::ResizeBackbuffer(int32_t width, int32_t height)
+{
+    graphicsMachine->ResizeBackbuffer(width, height);
+}

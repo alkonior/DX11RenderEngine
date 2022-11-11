@@ -4,11 +4,17 @@
 enum ModelDefines {
     MZERO = 0,
     MRED = 1,
-    MLERP = 2,
     MBAD_UV = 4,
     MNONORMAL = 8,
     MCOLORED = 16,
     MLIGHTED = 32
+};
+
+enum DebugPassDefines {
+    DZERO = 0,
+    DRED = 1,
+    D2D = 2,
+    D3D = 4,
 };
 
 enum  UIDefines : std::uint32_t {

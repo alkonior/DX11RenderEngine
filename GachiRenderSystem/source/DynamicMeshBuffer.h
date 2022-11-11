@@ -1,16 +1,20 @@
 #pragma once
 #include "IRenderer.h"
 #include "TransformUtils.h"
-#include "DrawData.h"
+#include "Utils/ModelMesh.h"
 
 
-template<class VertexType, class Mesh = MeshData<VertexType>>
+template<class VertexType>
 class DynamicMeshBuffer {
+
+    using Mesh = MeshData<VertexType>;
 
     size_t vertexBuffSize = 0;
     size_t indexBuffSize = 0;
     size_t vertexBuffCapacity = 20000;
     size_t indexBuffCapacity = 20000;
+
+    Renderer::IRenderer* renderer;
 
 
     std::vector<VertexType> cpuVertices;
@@ -41,7 +45,11 @@ public:
 
 
 
-    DynamicMeshBuffer(size_t vertexBuffCapacity, size_t indexBuffCapacity) : vertexBuffCapacity(vertexBuffCapacity), indexBuffCapacity(indexBuffCapacity)
+    DynamicMeshBuffer(Renderer::IRenderer* renderer,
+        size_t vertexBuffCapacity, size_t indexBuffCapacity) :
+    renderer(renderer),
+    vertexBuffCapacity(vertexBuffCapacity),
+    indexBuffCapacity(indexBuffCapacity)
     {
         mesh.vertexBuffer.buffersCount = 1;
         mesh.vertexBuffer.vertexBuffers = new Renderer::Buffer*[1]();
@@ -91,16 +99,20 @@ public:
 
     MeshHashData AddMesh(const Mesh& model)
     {
-        MeshHashData res{cpuVertices.size(),cpuIndexes.size(),model.primitiveCount,model.pt};
-
+        MeshHashData res;
+        res.vertexOffset = cpuVertices.size();
+        res.indexOffset = cpuIndexes.size();
+        res.numElem = model.primitiveCount;
+        res.pt = (uint8_t)model.pt;
+        
         for (size_t i = 0; i < model.indexes.size(); i++)
         {
             cpuIndexes.push_back(model.indexes[i] + cpuVertices.size());
         }
 
-        for (size_t i = 0; i < model.vertixes.size(); i++)
+        for (size_t i = 0; i < model.vertices.size(); i++)
         {
-            cpuVertices.push_back(model.vertixes[i]);
+            cpuVertices.push_back(model.vertices[i]);
         }
 
         return res;
@@ -115,9 +127,9 @@ public:
             cpuIndexes[oldModel.indexOffset + i] = (newModel.indexes[i] + oldModel.vertexOffset);
         }
 
-        for (size_t i = 0; i < newModel.vertixes.size(); i++)
+        for (size_t i = 0; i < newModel.vertices.size(); i++)
         {
-            cpuVertices[oldModel.vertexOffset + i] = (newModel.vertixes[i]);
+            cpuVertices[oldModel.vertexOffset + i] = (newModel.vertices[i]);
         }
     }
 

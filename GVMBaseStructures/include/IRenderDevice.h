@@ -20,7 +20,6 @@ public:
     IRenderDevice(const IRenderDevice&&) = delete;
     virtual ~IRenderDevice() = 0 {}
 
-
     struct IPlaceable {
     public:
         //virtual void Place(void* ptr) const = 0;
@@ -55,7 +54,7 @@ protected:
 
 
     virtual IResource* CreateResource(const GpuResource& resource) = 0;
-    virtual void DestroyResource(IResource* resource) = 0;
+    virtual void DestroyResource(IPlaceable* resource) = 0;
     virtual IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) = 0;
 
 
@@ -101,6 +100,8 @@ protected:
 
 #pragma endregion
 
+
+    virtual void ResizeBackbuffer(int32_t width, int32_t height) = 0;
 
     /*
     virtual ~IRenderDevice() = default;

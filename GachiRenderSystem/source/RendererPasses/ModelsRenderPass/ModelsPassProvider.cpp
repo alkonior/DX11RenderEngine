@@ -7,13 +7,21 @@
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"
 #include "ResourceManagers/States/RasterizerStates.h"
-void ModelsPassProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags)
+#include "Utils/DrawData.h"
+void ModelsPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t pipelineFlags)
 {
+    ModelsFlags flags;
+    flags.flags = pipelineFlags;
     refToPS->bs = &BlendStates::NoAlpha;
 
     refToPS->dss = &DepthStencilStates::DSS;
 
     refToPS->rs = &RasterizerStates::CClockWise;
+
+    if (flags.isWireframe)
+    {
+        refToPS->rs = &RasterizerStates::Wireframe;
+    }
 }
 
 const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
@@ -40,15 +48,9 @@ const D3D11_INPUT_ELEMENT_DESC  SingleFrameInputElements[] =
     { "TEXCOORD",           0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
-Renderer::InputLayoutDescription ModelsPassProvider::GetInputLayoutDescription(size_t definesFlags)
+Renderer::InputLayoutDescription ModelsPassProvider::GetInputLayoutDescription(uint32_t definesFlags)
 {
-    if (definesFlags & ModelDefines::MLERP) {
-        return Renderer::InputLayoutDescription{ (void*)LerpInputElements, std::size(LerpInputElements) };
-    }
-    else {
-        return Renderer::InputLayoutDescription{ (void*)SingleFrameInputElements, std::size(SingleFrameInputElements) };
-    }
-
+        return Renderer::InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
 

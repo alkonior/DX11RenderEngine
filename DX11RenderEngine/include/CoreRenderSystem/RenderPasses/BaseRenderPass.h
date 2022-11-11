@@ -5,7 +5,6 @@
 #include "IRenderer.h"
 #include "CoreRenderSystem/BaseRenderSystem.h"
 #include "CoreRenderSystem/PipelineFactory.h"
-#include "ref_dx11/render/IStateProvider.h"
 
 
 class BaseRenderPass {
@@ -49,6 +48,7 @@ protected:
     
 public:
     
+    virtual void Resize() = 0;
     virtual void Init(const char* dirr) = 0;
     
     virtual void PreRender() = 0;

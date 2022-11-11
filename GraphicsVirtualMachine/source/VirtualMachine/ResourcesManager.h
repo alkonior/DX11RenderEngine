@@ -15,8 +15,8 @@ struct PipelineSnapshot;
 class ResourcesManager {
 
     uintptr_t freeIndex = 1;
-    std::unordered_map<uint32_t, GpuResource> Resources = {{0,{}}};
-    std::unordered_map<uint32_t, GpuResourceView> ResourceViews = {{0,{}}};
+    std::unordered_map<uintptr_t, GpuResource> Resources = {{0,{}}};
+    std::unordered_map<uintptr_t, GpuResourceView> ResourceViews = {{0,{}}};
 
     uint32_t dataSize = 0;
     std::vector<uint8_t> savedData;
@@ -73,9 +73,6 @@ class ResourcesManager {
 #pragma endregion
 
     //void UpdateResources();
-
-    void AddDisposeResource(const Resource* resource);
-    void AddDisposeResourceView(const ResourceView* resourceView);
     
     GpuResource& GetResource(const Resource* resource);
     GpuResourceView& GetResourceView(const ResourceView* resourceView);
@@ -88,7 +85,9 @@ public:
 
     IRenderDevice::IShader* GetRealShader(const Shader* shader);
     IRenderDevice::IInputLayout* GetRealInputLayout(const InputLayout* inputLayout);
-
+    
+    void AddDisposeResource(const Resource* resource);
+    void AddDisposeResourceView(const ResourceView* resourceView);
 };
 
 }

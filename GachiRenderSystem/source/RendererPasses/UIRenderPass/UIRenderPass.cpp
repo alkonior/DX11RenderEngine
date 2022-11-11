@@ -9,11 +9,18 @@
 using namespace Renderer;
 
 
-UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"UIShader.hlsl", renderSystem}) {
+PipelineFactoryFlags UIRenderPass::ParseFlags(size_t flag)
+{
+    PipelineFactoryFlags f;
+    f.definesFlags = flag;
+    f.pipelineFlags = flag;
+    return f;
+}
+UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : GachiBasePass({"UIShader.hlsl", renderSystem}) {
 
     //renderDevice = in.renderSystem.pRenderer;
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetMainViewportSize(width, height);
 
     Vertex2D vertices[] =
     {
@@ -61,6 +68,15 @@ UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"UI
 
 }
 
+void UIRenderPass::Resize()
+{
+    uint32_t width, height;
+    renderDevice->GetMainViewportSize(width, height);
+    
+    vp.w = width;
+    vp.h = height;
+}
+
 UIRenderPass::DrawCall::DrawCall(TexturesManager::TextureCache texture, const UIDrawData& data) :data(data), texture(texture) {}
 UIRenderPass::DrawCall::DrawCall(const UIDrawData& data) : data(data) {}
 matrix UIRenderPass::DrawCall::getTransform(size_t screenW, size_t screenH)  {
@@ -93,8 +109,8 @@ void UIRenderPass::PreRender()
 
 void UIRenderPass::Render()
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetMainViewportSize(width, height);
     uint64_t lastFlag = -1;
     //renderDevice->ApplyPipelineState(factory->GetState(0));
 
@@ -109,7 +125,9 @@ void UIRenderPass::Render()
         if (drawCalls[i].data.flag != lastFlag) {
             if (drawCalls[i].data.flag & UICHAR) { renderDevice->BeginEvent("Chars"); }
             if (lastFlag & UICHAR) { renderDevice->EndEvent(); }
-            renderDevice->ApplyPipelineState(factory->GetState(drawCalls[i].data.flag));
+
+            PipelineFactoryFlags flags = ParseFlags(drawCalls[i].data.flag);
+            renderDevice->ApplyPipelineState(factory->GetState(flags));
             lastFlag = drawCalls[i].data.flag;
         }
 
@@ -161,5 +179,10 @@ UIRenderPass::~UIRenderPass()
     //delete provider;
     delete factory;
     
+}
+
+void UIRenderPass::SetupSettings(const RenderSettings& Settings)
+{
+    Init(Settings.shadersDirr);
 }
 
