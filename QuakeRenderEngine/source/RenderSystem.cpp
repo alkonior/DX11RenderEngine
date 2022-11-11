@@ -24,7 +24,8 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPassModels(*this),
     renderPassIMGUI({"",*this}),
     modelsManager(modelsManager),
-    texturesManager(texturesManager)
+    texturesManager(texturesManager),
+    renderPassTAA(*this)
 {
     ImGui::CreateContext();
 
@@ -37,6 +38,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPasses.push_back(&renderPassUI);
     renderPasses.push_back(&renderPassIMGUI);
     renderPasses.push_back(&renderPassModels);
+    renderPasses.push_back(&renderPassTAA);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -96,6 +98,7 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
 
 void RenderSystem::BeginFrame()
 {
+    pRenderer->ClearState();
     for (auto pass : renderPasses)
     {
         pass->PreRender();
@@ -167,7 +170,15 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    //GFX_CATCH_RENDER(managerTAA.Render(*this););
+    try { renderPassTAA.Render();; }
+    catch (const std::exception& exe)
+    {
+        printf_s(exe.what());
+        printf_s("\n");
+        static char c[100];
+        scanf_s("%s", c, 1);
+        success = false;
+    };
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");

@@ -4,6 +4,7 @@
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
+#include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
@@ -87,6 +88,7 @@ private:
 	UIRenderPass			 renderPassUI;
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
+	TAARenderPass			 renderPassTAA;
 	
 	//MotionBlurRenderer	 managerMB;
 	//UPRenderer			 managerUP;

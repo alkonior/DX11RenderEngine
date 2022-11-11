@@ -165,13 +165,7 @@ public:
 
 #pragma region SetResourcesData
 
-    struct ResourceUpdateData {
-        UBox rect = {};
-        uint16_t dstSubresource = 0;
-        int32_t srcRowPitch = 0;
-        int32_t srcDepthPitch = 0;
-        uint32_t dataSize = 0;
-    };
+ 
 
     void SetResourceData(
         Resource* resource,

@@ -130,11 +130,15 @@ void VirtualMachine::Present()
             
         case EMachineCommands::SET_RESOURCE_DATA:
         {
-            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            const ResourceUpdateData& params = PullData<ResourceUpdateData>();
-            const void* data = PullPointer(params.dataSize);
-            RenderDevice->SetResourceData(resource,params.dstSubresource,
-                params.rect,data, params.srcRowPitch,params.srcDepthPitch);
+           // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+            auto& description = PullData<SetResourceDataDesc>();
+            const void* data = PullPointer(description.params.dataSize);
+            RenderDevice->SetResourceData( resourcesManager.GetResource(description.resource),
+                description.params.dstSubresource,
+                description.params.rect,
+                dataQueue.data()+description.shift,
+                description.params.srcRowPitch,
+                description.params.srcDepthPitch);
             break;
         }
             
@@ -152,25 +156,25 @@ void VirtualMachine::Present()
         }
         case EMachineCommands::CLEAR_PIPELINE:
         {
-            RenderDevice->ClearState();
+            //RenderDevice->ClearState();
             break;
         }
         case EMachineCommands::CLEAR_RT:
         {
-            auto& resource = PullData<RenderTargetView*>();
-            auto& color = PullData<FColor>();
-            RenderDevice->ClearRenderTarget((IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(resource), color);
+            auto& desc = PullData<ClearRenderTargetDesc>();
+            RenderDevice->ClearRenderTarget((IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(desc.resource), desc.color);
             break;
         }
         case EMachineCommands::CLEAR_DS:
         {
-            auto& resource = PullData<DepthStencilView*>();
-            auto& depth = PullData<float>();
-            auto& stencil = PullData<uint8_t>();
+            auto& desc = PullData<ClearDepthStencilDesc>();
+           //auto& resource = PullData<DepthStencilView*>();
+           //auto& depth = PullData<float>();
+           //auto& stencil = PullData<uint8_t>();
             RenderDevice->ClearDepthStencil(
-            (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(resource),
-            depth,
-            stencil
+            (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(desc.resource),
+            desc.depth,
+            desc.stencil
             );
             break;
         }

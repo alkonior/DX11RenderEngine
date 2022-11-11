@@ -14,7 +14,7 @@ const Renderer::ShaderDefines UIRendererDefines[] = {
 };
 
 
-void UIRenderPassProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags)
+void UIRenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags)
 {
     refToPS->bs = &BlendStates::Alpha;
     refToPS->dss = &DepthStencilStates::NoDSS;

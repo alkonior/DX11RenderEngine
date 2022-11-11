@@ -25,7 +25,7 @@ public:
 
 	//RenderTeargets::
 
-	Renderer::Renderbuffer* depthBuffer;
+	//Renderer::Renderbuffer* depthBuffer;
 	
 
 	Renderer::Texture* diffuseColor;
