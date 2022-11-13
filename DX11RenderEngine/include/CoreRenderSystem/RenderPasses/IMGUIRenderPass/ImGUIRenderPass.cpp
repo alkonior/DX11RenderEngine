@@ -25,6 +25,7 @@ void ImGUIRenderPass::PostRender()
 	renderDevice->SetRenderTargets(nullptr, 0,nullptr,
 {});  
 	static bool show = true;
+	show = true;
 	ImGui::ShowDemoWindow(&show);
 	
 	ImGuiIO& io = ImGui::GetIO();

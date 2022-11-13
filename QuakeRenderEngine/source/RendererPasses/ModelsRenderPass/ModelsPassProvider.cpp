@@ -7,7 +7,7 @@
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"
 #include "ResourceManagers/States/RasterizerStates.h"
-void ModelsPassProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags)
+void ModelsPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags)
 {
     refToPS->bs = &BlendStates::NoAlpha;
 

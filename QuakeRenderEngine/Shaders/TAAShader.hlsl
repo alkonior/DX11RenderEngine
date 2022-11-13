@@ -24,8 +24,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define HLSL
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/CoreShaderInclude.h"
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include/CoreRenderSystem/CoreShaderInclude.h"
+#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\QuakeRenderEngine/source/RendererPasses/TAARenderPass\TAARenderPassConstBuffer.h"
 
 // Whether to use real 16-bit floats
 // Use only with DXIL with SM6.2 and "-enable-16bit-types" as a compiler option
@@ -450,7 +450,7 @@ fp16_t3 GetCurrentColour( FRAME_COLOUR_ST inST )
 #if 1 == USE_TGSM
     return fp16_t3( Unpack_R11G11B10_FLOAT( TGSM_Colour[ inST ] ) );
 #else
-    inST = clamp( inST, i16_t2( 0, 0 ), i16_t2( CBData.Resolution.xy ) );
+    inST = clamp( inST, i16_t2( 0, 0 ), i16_t2( taaCosntBuffer.Resolution.xy ) );
     const fp16_t3 colour = ColourTexture.Load( ui16_t3( inST, 0 ) ).rgb;
 #if 0 == USE_TONE_MAPPED_COLOUR_ONLY_IN_FINAL
     return Reinhard( colour );
@@ -535,7 +535,7 @@ fp16_t3 ClipHistoryColour( fp16_t3 inCurrentColour, fp16_t3 inHistoryColour, FRA
 // 5-tap bicubic sampling - taken from MiniEngine by MSFT, few things changed (minor) to fit my approach
 fp16_t4 BicubicSampling5( fp32_t2 inHistoryST )
 {
-    const fp32_t2 rcpResolution = CBData.Resolution.zw;
+    const fp32_t2 rcpResolution = taaCosntBuffer.Resolution.zw;
     const fp32_t2 fractional = frac( inHistoryST );
     const fp32_t2 uv = ( floor( inHistoryST ) + fp32_t2( 0.5f, 0.5f ) ) * rcpResolution;
 
@@ -595,6 +595,7 @@ fp16_t3 GetVelocity( i16_t2 inScreenST )
 {
     fp32_t3 toReturn = UnpackVelocity( VelocityBuffer[ inScreenST ] );
 
+    toReturn.xy *= taaCosntBuffer.Resolution.xy;
     if ( AllowLongestVelocityVector() )
     {
 #if LONGEST_VELOCITY_VECTOR_SAMPLES == USE_SAMPLES_9
@@ -668,7 +669,7 @@ fp16_t GetPreviousDepth( fp32_t2 inUV )
 // Helper to convert ST coords to UV
 float2 GetUV( float2 inST )
 {
-    return ( inST + 0.5f ) * CBData.Resolution.zw;
+    return ( inST + 0.5f ) * taaCosntBuffer.Resolution.zw;
 }
 
 // Calculate depth confidence factor using the current and previous depth buffers
@@ -679,7 +680,7 @@ fp16_t GetDepthConfidenceFactor( ui16_t2 inST, fp16_t3 inVelocity, fp16_t inCurr
     fp16_t depthDiffFactor = fp16_t( 1.f );
     if ( AllowDepthThreshold() )
     {
-        const fp16_t prevDepth = GetPreviousDepth( GetUV( inST + inVelocity.xy + CBData.Jitter.xy ) );
+        const fp16_t prevDepth = GetPreviousDepth( GetUV( inST + inVelocity.xy + taaCosntBuffer.Jitter.xy ) );
         const fp16_t currentDepth = inCurrentFrameDepth + inVelocity.z;
 #if 1 == NEEDS_EDGE_DETECTION
         depthDiffFactor = false == inIsOnEdge ? step( currentDepth, prevDepth ) : depthDiffFactor;
@@ -719,7 +720,7 @@ fp16_t4 GetFinalColour( fp16_t3 inCurrentColour, fp16_t3 inHistoryColour, fp16_t
 float3 DebugColourNoHistory()
 {
 #if 1 == ENABLE_DEBUG
-    const bool markColours = 1 == ( CBData.DebugFlags & 0x1 )?true:false;
+    const bool markColours = 1 == ( taaCosntBuffer.DebugFlags & 0x1 )?true:false;
 #else
     const bool markColours = false;
 #endif
@@ -738,7 +739,7 @@ float3 DebugColourNoHistory()
 bool AllowDepthThreshold()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useDepthThreshold = 2 == ( CBData.DebugFlags & 0x2 )?true:false;
+    const bool useDepthThreshold = 2 == ( taaCosntBuffer.DebugFlags & 0x2 )?true:false;
 #elif 1 == USE_DEPTH_THRESHOLD
     const bool useDepthThreshold = true;
 #else
@@ -750,7 +751,7 @@ bool AllowDepthThreshold()
 bool AllowBicubicFilter()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useBicubicFilter = 4 == ( CBData.DebugFlags & 0x4 )?true:false;
+    const bool useBicubicFilter = 4 == ( taaCosntBuffer.DebugFlags & 0x4 )?true:false;
 #elif 1 == USE_BICUBIC_FILTER
     const bool useBicubicFilter = true;
 #else
@@ -762,7 +763,7 @@ bool AllowBicubicFilter()
 bool AllowVarianceClipping()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useVarianceClipping = 8 == ( CBData.DebugFlags & 0x8 )?true:false;
+    const bool useVarianceClipping = 8 == ( taaCosntBuffer.DebugFlags & 0x8 )?true:false;
 #elif USE_VARIANCE_CLIPPING != 0
     const bool useVarianceClipping = true;
 #else
@@ -774,7 +775,7 @@ bool AllowVarianceClipping()
 bool AllowYCoCg()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useYCoCgSpace = 16 == ( CBData.DebugFlags & 0x10 )?true:false;
+    const bool useYCoCgSpace = 16 == ( taaCosntBuffer.DebugFlags & 0x10 )?true:false;
 #elif 1 == USE_YCOCG_SPACE
     const bool useYCoCgSpace = true;
 #else
@@ -786,7 +787,7 @@ bool AllowYCoCg()
 bool AllowNeighbourhoodSampling()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useNeighbourhoodSampling = 32 == ( CBData.DebugFlags & 0x20 )?true:false;
+    const bool useNeighbourhoodSampling = 32 == ( taaCosntBuffer.DebugFlags & 0x20 )?true:false;
 #elif 1 == ALLOW_NEIGHBOURHOOD_SAMPLING
     const bool useNeighbourhoodSampling = true;
 #else
@@ -798,7 +799,7 @@ bool AllowNeighbourhoodSampling()
 bool AllowLongestVelocityVector()
 {
 #if 1 == ENABLE_DEBUG
-    const bool useLongestVelocityVector = 64 == ( CBData.DebugFlags & 0x40 )?true:false;
+    const bool useLongestVelocityVector = 64 == ( taaCosntBuffer.DebugFlags & 0x40 )?true:false;
 #elif 1 == USE_LONGEST_VELOCITY_VECTOR
     const bool useLongestVelocityVector = true;
 #else

@@ -109,7 +109,7 @@ void UIRenderPass::Render()
         if (drawCalls[i].data.flag != lastFlag) {
             if (drawCalls[i].data.flag & UICHAR) { renderDevice->BeginEvent("Chars"); }
             if (lastFlag & UICHAR) { renderDevice->EndEvent(); }
-            renderDevice->ApplyPipelineState(factory->GetState(drawCalls[i].data.flag));
+            renderDevice->ApplyPipelineState(factory->GetState({(uint32_t)drawCalls[i].data.flag}));
             lastFlag = drawCalls[i].data.flag;
         }
 

@@ -1,6 +1,7 @@
 ﻿#include "ModelsRenderPass.h"
 
 #include "ResourceManagers/States/Samplers.h"
+
 using namespace Renderer;
 ModelsRenderPass::DrawCall::DrawCall(ModelsManager::SavedModel model, TexturesManager::TextureCache texture, Transform position, size_t flags) :
     model(model), texture(texture), position(position), flags(flags) {}
@@ -42,8 +43,7 @@ void ModelsRenderPass::Init(const char* dirr)
 void ModelsRenderPass::PreRender()
 {
     RenderTargetBinding* targets[5] = {
-        nullptr,
-        // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
@@ -61,8 +61,7 @@ void ModelsRenderPass::Render()
     renderDevice->GetBackbufferSize(&width, &height);
 
     RenderTargetBinding* targets[5] = {
-        nullptr,
-        //baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
@@ -84,7 +83,7 @@ void ModelsRenderPass::Render()
     {
         if (drawCalls[i].flags != lastFlags)
         {
-            renderDevice->ApplyPipelineState(factory->GetState(drawCalls[i].flags));
+            renderDevice->ApplyPipelineState(factory->GetState({drawCalls[i].flags}));
             lastFlags = drawCalls[i].flags;
         }
 
@@ -103,7 +102,7 @@ void ModelsRenderPass::Render()
     {
         if (drawLerpCalls[i].data.flags != lastFlags)
         {
-            renderDevice->ApplyPipelineState(factory->GetState(drawLerpCalls[i].data.flags));
+            renderDevice->ApplyPipelineState(factory->GetState((uint32_t)drawLerpCalls[i].data.flags));
             lastFlags = drawLerpCalls[i].data.flags;
         }
 

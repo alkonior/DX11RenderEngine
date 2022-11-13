@@ -137,5 +137,28 @@ namespace Compressed {
 
 }
 
+struct SetResourceDataDesc{
+    Resource* resource;
+    struct ResourceUpdateData {
+        UBox rect = {};
+        uint16_t dstSubresource = 0;
+        int32_t srcRowPitch = 0;
+        int32_t srcDepthPitch = 0;
+        uint32_t dataSize = 0;
+    } params;
+    uint32_t shift;
+};
+
+struct ClearRenderTargetDesc{
+    ResourceView* resource;
+    FColor color;
+};
+
+struct ClearDepthStencilDesc{
+    ResourceView* resource;
+    float depth;
+    int8_t stencil;
+};
+
 
 }

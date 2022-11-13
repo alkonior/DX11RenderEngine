@@ -276,37 +276,43 @@ void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource
                                      const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
     PushCommand(EMachineCommands::SET_RESOURCE_DATA);
-    PushData((void*)resource);
+
+    //PushData((void*)resource);
     auto& Resource = resourcesManager.GetResource(resource);
+
+    uint32_t dataSize = (rect.Back - rect.Front) * (rect.Right - rect.Left) * (rect.Bottom - rect.Top)
+        * (FormatByteSize[to_underlying(Resource.resourceDescription.Format)]);
+    //+  ((Resource.resourceDescription.Dimension == EResourceDimension::RESOURCE_DIMENSION_BUFFER) ? 1 : 0));
+
+    SetResourceDataDesc description =
+    {
+        resource,
+        {rect,dstSubresource,srcRowPitch,srcDepthPitch,dataSize},
+        dataQueue.size()+sizeof(SetResourceDataDesc)
+    };
     
-    uint32_t dataSize = (rect.Back-rect.Front)*(rect.Right-rect.Left)*(rect.Bottom-rect.Top)
-    *(FormatByteSize[to_underlying(Resource.resourceDescription.Format)]);
-        //+  ((Resource.resourceDescription.Dimension == EResourceDimension::RESOURCE_DIMENSION_BUFFER) ? 1 : 0));
-    
-    ResourceUpdateData rud = {rect, dstSubresource, srcRowPitch,srcDepthPitch, dataSize};
-    PushData(rud);
-    //
+    PushData(description);
     PushData(pSrcData, dataSize);
-    
+    //
 }
 
 void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0,0,offset+dataLength,1,1};
+    UBox rect{offset,0,0,offset + dataLength,1,1};
     SetResourceData(vertexBuffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
 void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0,0,offset+dataLength,1,1};
+    UBox rect{offset,0,0,offset + dataLength,1,1};
     SetResourceData(buffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
 void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize, uint32_t offset)
 {
-    UBox rect{offset,0,0,offset+dataSize,1,1};
+    UBox rect{offset,0,0,offset + dataSize,1,1};
     SetResourceData(constBuffer, 0, rect, data, 0, 0);
 }
 void VirtualMachine::ClearState()
@@ -315,14 +321,11 @@ void VirtualMachine::ClearState()
 }
 void VirtualMachine::ClearRenderTarget(RenderTargetView* rtView, FColor color)
 {
-    PushData((void*)rtView);
-    PushData(color);
+    PushData(ClearRenderTargetDesc{rtView, color});
     PushCommand(EMachineCommands::CLEAR_RT);
 }
-void VirtualMachine::ClearDepthStencil(DepthStencilView*dsView, float depth, int8_t stencil)
-{
-    PushData((void*)dsView);
-    PushData(depth);
-    PushData(stencil);
+void VirtualMachine::ClearDepthStencil(DepthStencilView* dsView, float depth, int8_t stencil)
+{ 
+    PushData(ClearDepthStencilDesc{dsView, depth, stencil});
     PushCommand(EMachineCommands::CLEAR_DS);
 }
