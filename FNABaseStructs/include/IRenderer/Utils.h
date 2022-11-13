@@ -159,6 +159,7 @@ enum ClearOptions {
 
 
 struct RenderTargetBinding {
+	static RenderTargetBinding BackBufferRT;
 
 	/* If this is >1, you MUST call ResolveTarget after rendering! */
 	int32_t levelCount;

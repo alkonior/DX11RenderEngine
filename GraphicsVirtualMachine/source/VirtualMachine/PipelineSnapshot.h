@@ -160,5 +160,9 @@ struct ClearDepthStencilDesc{
     int8_t stencil;
 };
 
+struct BeginEventDesc{
+    const char* name;
+};
+
 
 }

@@ -19,6 +19,7 @@ public:
     IRenderDevice(const IRenderDevice&) = delete;
     IRenderDevice(const IRenderDevice&&) = delete;
     virtual ~IRenderDevice() = 0 {}
+    virtual void GetBackbufferSize(uint32_t& w, uint32_t& h) = 0;
 
     struct IPlaceable {
     public:
@@ -64,7 +65,11 @@ protected:
     virtual void ClearState() = 0;
 
 
+    virtual void BeginEvent(const char* name) = 0;
+    virtual void EndEvent() = 0;
 
+    
+    virtual void* GetNativeTexture(const IResourceView* view) = 0;
 
     virtual void SetResourceData(
         const GpuResource& resource,

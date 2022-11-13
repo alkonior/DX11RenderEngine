@@ -1,6 +1,6 @@
 #pragma once
 
-#include "winHandler.h"
+//#include "winHandler.h"
 #include "IRenderer/Utils.h"
 
 namespace Renderer {
@@ -8,7 +8,7 @@ namespace Renderer {
 
 struct D3D11Buffer : Buffer
 {
-	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
+	//wrl::ComPtr<ID3D11Buffer> handle = nullptr;
 	union {
 		GVM::Resource* handleTest = nullptr;
 		GVM::VertexBuffer* vertexTest;
@@ -24,7 +24,7 @@ struct D3D11ConstBuffer : ConstBuffer
 {
 	GVM::ConstBuffer* buffer;
 	GVM::ConstBufferView* bufferView;
-	wrl::ComPtr<ID3D11Buffer> handle = nullptr;
+	//wrl::ComPtr<ID3D11Buffer> handle = nullptr;
 	int32_t size = 0;
 };
 }

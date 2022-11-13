@@ -18,6 +18,8 @@ class VirtualMachine {
         CLEAR_DS,
 
         DRAW,
+        BEGIN_EVENT,
+        END_EVENT,
 
         CREATE_RESOURCE,
         CREATE_RESOURCE_VIEW,
@@ -114,13 +116,16 @@ public:
     VirtualMachine(IRenderDevice* RenderDevice);
     VirtualMachine(const VirtualMachine&) = delete;
     VirtualMachine(const VirtualMachine&&) = delete;
-    ~VirtualMachine() = default;
+    ~VirtualMachine();
 
     void Present();
 
 
     void PushPSC(const PipelineSnapshot& pipelineSnapshot);
     void PushDrawCall(const DrawCall& drawCall);
+
+    void BeginEvent(const char* name);
+    void EndEvent();
 
 
 #pragma region Resources
@@ -199,6 +204,8 @@ public:
         const void* data,
         uint32_t dataSize,
         uint32_t offset);
+    
+    void* GetNativeTexture(const ShaderResourceView* shView);
 
 #pragma endregion
 

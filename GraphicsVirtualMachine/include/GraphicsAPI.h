@@ -13,6 +13,7 @@ class GraphicsApi {
     PipelineSnapshot* ps;
     bool wasPSUpdated = true;
     VirtualMachine* graphicsMachine;
+    IRenderDevice* rd;
 
 #pragma endregion
 
@@ -20,7 +21,7 @@ public:
     GraphicsApi(IRenderDevice* RenderDevice);
     GraphicsApi(const GraphicsApi&) = delete;
     GraphicsApi(const GraphicsApi&&) = delete;
-    ~GraphicsApi() = default;
+    ~GraphicsApi();
 
     /* Presentation */
 
@@ -187,5 +188,7 @@ public:
     void EndEvent();
     void SetMarker(const char* name);
     void ResizeBackbuffer(int32_t width, int32_t height);
+    void GetBackBufferSize(uint32_t& w, uint32_t& h);
+    void* GetNativeTexture(const ShaderResourceView* shView);
 };
 }

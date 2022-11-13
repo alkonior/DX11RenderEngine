@@ -614,6 +614,8 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
     int32_t srcDepthPitch)
 {
     D3D11_BOX dstBox;
+    
+       
 
     //int32_t blockSize = Texture_GetBlockSize(d3dTexture->format);
 
@@ -1163,6 +1165,23 @@ void RenderDeviceDX11::ResizeBackbuffer(int32_t width, int32_t height)
     // Perform error handling here!
     pBuffer->Release();
 
+}
+
+void RenderDeviceDX11::BeginEvent(const char* name)
+{
+    std::wstring wc(strlen(name), L'#');
+    mbstowcs(&wc[0], name, strlen(name));
+    perf->BeginEvent(wc.c_str());
+}
+
+void RenderDeviceDX11::EndEvent()
+{
+    perf->EndEvent();
+}
+
+void* RenderDeviceDX11::GetNativeTexture(const IResourceView* view)
+{
+    return view;
 }
 
 void RenderDeviceDX11::Draw(DrawCall call)

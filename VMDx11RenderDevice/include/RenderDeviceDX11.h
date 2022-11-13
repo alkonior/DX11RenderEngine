@@ -175,7 +175,11 @@ protected:
 #pragma endregion
 
     void ResizeBackbuffer(int32_t width, int32_t height) override;
-    
+
+    void BeginEvent(const char* name) override;
+    void EndEvent() override;
+
+    void* GetNativeTexture(const IResourceView* view) override;
 };
 
 }

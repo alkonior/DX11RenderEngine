@@ -315,6 +315,9 @@ void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* da
     UBox rect{offset,0,0,offset + dataSize,1,1};
     SetResourceData(constBuffer, 0, rect, data, 0, 0);
 }
+
+
+
 void VirtualMachine::ClearState()
 {
     PushCommand(EMachineCommands::CLEAR_PIPELINE);
@@ -328,4 +331,11 @@ void VirtualMachine::ClearDepthStencil(DepthStencilView* dsView, float depth, in
 { 
     PushData(ClearDepthStencilDesc{dsView, depth, stencil});
     PushCommand(EMachineCommands::CLEAR_DS);
+}
+
+
+void* VirtualMachine::GetNativeTexture(const ShaderResourceView* shView)
+{
+    auto& view = resourcesManager.GetRealResourceView(shView);
+    return RenderDevice->GetNativeTexture(view);
 }

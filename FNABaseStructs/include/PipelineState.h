@@ -50,7 +50,20 @@ struct PipelineFactoryDescription {
 #endif
 };
 	
-
+struct ShaderCompileData
+{
+	void* shaderData;
+	size_t dataSize;
+	ShaderDefines* defines;
+	size_t definesSize;
+	void* includes;
+	const char* enteryPoint;
+	const char* target;
+	uint16_t flags;
+#ifdef _DEBUG
+	const char* name;
+#endif
+};
 
 struct IStateProvider {
 	virtual void PatchPipelineState(Pipeline* refToPS, uint32_t definesFlags) = 0;
