@@ -24,6 +24,7 @@ public:
 	
 	virtual void ReleaseModel(size_t id) = 0;
 	virtual SavedModel GetModel(size_t id) = 0;
+	virtual bool WasIdUsed(size_t id) = 0;
 	
 	virtual ~IModelsManager() = default;
 };

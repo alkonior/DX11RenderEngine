@@ -71,6 +71,7 @@ struct RenderDevice {
 
 	void RegisterModel(size_t id, const ModelMesh&);
 	void ReleaseTexture(size_t id);
+	bool WasIdUsed(size_t id);
 
 
 	/* Drawing */

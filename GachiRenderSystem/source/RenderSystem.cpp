@@ -369,6 +369,11 @@ void RenderSystem::RegisterImg(size_t id, int width, int height, void* data)
     texturesManger->RegTexture(data, width, height, id);
 }
 
+bool RenderSystem::WasIdUsed(size_t id)
+{
+    return (texturesManger->WasIdUsed(id) || modelsManager->WasIdUsed(id));
+}
+
 void RenderSystem::DrawModel(const ModelDrawData& drawData)
 {
     renderPassModels.Draw(drawData);

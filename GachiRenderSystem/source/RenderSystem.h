@@ -46,6 +46,7 @@ public:
 
 	void RegisterImg(size_t id, const TextureData& text);
 	void RegisterImg(size_t id, int width, int heights, void* data);
+	bool WasIdUsed(size_t id);
 
 	void UpdateImg(size_t id, const TextureData& text);
 	void UpdateImg(const ImageUpdate&);

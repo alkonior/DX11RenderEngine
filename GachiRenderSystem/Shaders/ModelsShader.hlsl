@@ -77,6 +77,7 @@ struct PSOut {
 	packed_velocity_t velocity   : SV_Target2;
 	//float  blurMask   : SV_Target3;
 	float4  normal   : SV_Target4;
+	float4  worlpos   : SV_Target4;
 };
 
 PSOut psIn(PSIn input) : SV_Target
@@ -86,6 +87,8 @@ PSOut psIn(PSIn input) : SV_Target
 	
 	if (dot(input.normal, input.normal) > 0.00001)
 		pso.normal.xyz = input.normal;
+	pso.worlpos.xyz = input.worldPos.xyz;
+	pso.worlpos.w = 1;
 	
 	//pso.blurMask = modelsCosntBuffer.blurSwitch;
 

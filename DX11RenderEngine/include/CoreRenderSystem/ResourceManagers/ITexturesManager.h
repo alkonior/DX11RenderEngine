@@ -98,6 +98,8 @@ public:
 	Renderer::Renderbuffer* depthBuffer = nullptr;
 	
 	
+	virtual bool WasIdUsed(size_t id) = 0;
+	
 	virtual ~ITexturesManager() = default;
 
 	

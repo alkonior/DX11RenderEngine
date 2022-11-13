@@ -55,12 +55,13 @@ void ModelsRenderPass::Init(const char* dirr)
 
 void ModelsRenderPass::PreRender()
 {
-    RenderTargetBinding* targets[5] = {
+    RenderTargetBinding* targets[] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
-        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
+       // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition")),
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
@@ -87,6 +88,7 @@ void ModelsRenderPass::Render()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         // baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition")),
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);

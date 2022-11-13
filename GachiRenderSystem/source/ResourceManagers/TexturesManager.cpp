@@ -28,7 +28,7 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
 
 void TexturesManager::RegTexture(void* data, int width, int height, size_t id)
 {
-    auto& pTexture = textures[id];
+    auto& pTexture = colorTextures[id];
     if (pTexture.texture != nullptr)
     {
         ReleaseTexture(id);
@@ -42,7 +42,7 @@ void TexturesManager::RegTexture(void* data, int width, int height, size_t id)
 
 void TexturesManager::RegTexture(const TextureData& tx, size_t id)
 {
-    auto& pTexture = textures[id];
+    auto& pTexture = colorTextures[id];
     if (pTexture.texture != nullptr)
     {
         ReleaseTexture(id);
@@ -58,7 +58,7 @@ void TexturesManager::RegTexture(const TextureData& tx, size_t id)
 
 void TexturesManager::UpdateFloatTexture(const TextureData& tx, size_t id)
 {
-    auto& pTexture = textures[id];
+    auto& pTexture = colorTextures[id];
     if (pTexture.texture == nullptr)
     {
         RegTexture(tx, id);
@@ -72,7 +72,7 @@ void TexturesManager::UpdateFloatTexture(const TextureData& tx, size_t id)
 
 void TexturesManager::UpdateFloatTexture(const ImageUpdate& updateData)
 {
-    auto& pTexture = textures[updateData.id];
+    auto& pTexture = colorTextures[updateData.id];
     if (pTexture.texture == nullptr)
     {
         pTexture.texture = renderDevice->
@@ -87,7 +87,7 @@ void TexturesManager::UpdateFloatTexture(const ImageUpdate& updateData)
 
 void TexturesManager::ReleaseTexture(size_t id)
 {
-    auto& pTexture = textures[id];
+    auto& pTexture = colorTextures[id];
     if (pTexture.texture != nullptr)
         renderDevice->AddDisposeTexture(pTexture.texture);
     pTexture.texture = nullptr;
@@ -247,6 +247,14 @@ ITexturesManager::Float3TextureCache TexturesManager::GetFloat3Img(size_t id)
     return {};
 }
 
+bool TexturesManager::WasIdUsed(size_t id)
+{
+    return
+    (float3Textures[id].texture != nullptr) ||
+    (floatTextures[id].texture != nullptr) ||
+    (colorTextures[id].texture != nullptr);
+}
+
 void TexturesManager::CreateRenderTarget(const char* name, SurfaceFormat format,
                                          bool isUA,
                                          bool isVS,
@@ -265,9 +273,9 @@ void TexturesManager::CreateRenderTarget(const char* name, SurfaceFormat format,
 
 TexturesManager::~TexturesManager()
 {
-    for (auto& [key, texture] : textures)
+    for (auto& [key, texture] : colorTextures)
     {
-        auto& pTexture = textures[key];
+        auto& pTexture = colorTextures[key];
         if (pTexture.texture != nullptr)
             renderDevice->AddDisposeTexture(pTexture.texture);
         pTexture.texture = nullptr;
@@ -424,7 +432,7 @@ void TexturesManager::ReleasePublicRenderTarget(Renderer::string_id id)
 
 TexturesManager::TextureCache TexturesManager::GetImg(size_t id)
 {
-    if (textures.contains(id))
-        return textures[id];
+    if (colorTextures.contains(id))
+        return colorTextures[id];
     return {};
 }
