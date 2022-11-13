@@ -40,3 +40,8 @@ void ModelsManager::RegisterModel(size_t id, const OpaqueMesh& model)
 
 	UniversalRegisterModel(id, model);
 }
+
+bool ModelsManager::WasIdUsed(size_t id)
+{
+	return models[id].vertexBuffer.buffersCount != 0;
+}

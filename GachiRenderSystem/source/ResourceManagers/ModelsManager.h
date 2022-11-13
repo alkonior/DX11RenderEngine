@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "IRenderer.h"
 #include "CoreRenderSystem/ResourceManagers/IModelsManager.h"
+#include "CoreRenderSystem/ResourceManagers/ITexturesManager.h"
 #include "Utils/ModelMesh.h"
 
 
@@ -46,12 +47,14 @@ public:
 		pModel.pt = (Renderer::PrimitiveType)model.pt;
 		pModel.primitiveCount = model.primitiveCount;
 		pModel.indexBufferElementSize = sizeof(uint32_t) * 8;
-	};
+	}
+
 	
 	void RegisterModel(size_t id, const ModelMesh& model) override;
 	void RegisterModel(size_t id, const OpaqueMesh& model) override;
 	
-
+	virtual bool WasIdUsed(size_t id) override;
+	
 	virtual ~ModelsManager() override;
 private:
 	std::unordered_map<size_t, SavedModel> models = {};

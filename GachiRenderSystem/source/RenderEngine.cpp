@@ -120,6 +120,11 @@ void RenderDevice::ReleaseTexture(size_t id) {
 	gfx->ReleaseImg(id);
 }
 
+bool RenderDevice::WasIdUsed(size_t id)
+{
+	return gfx->WasIdUsed(id);
+}
+
 void RenderDevice::DrawColor(const UIDrawData& data) {
 	UIDrawData buff(data);
 	buff.flag |= UICOLORED;
