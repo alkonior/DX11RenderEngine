@@ -3,7 +3,7 @@
 #include "D3D11Shaders.h"
 #include "winHandler.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
-
+#include "GVMBaseStructures.h"
 
 namespace Renderer
 {
@@ -23,9 +23,9 @@ public:
     D3D11GeometryShader* CompileGeometryShader(
         const ShaderCompileData& shaderData) ;
     D3D11VertexShader* CompileVertexShader(
-        const ShaderCompileData& shaderData,
-        void* inpitLayout,
-        size_t inputLayoutSize) ;
+        const ShaderCompileData& shaderData) ;
+    
+    GVM::InputAssemblerDeclarationDesc ToGVM(const void* inputLayout, uint32_t inputLayoutSize);
 };
 
 }

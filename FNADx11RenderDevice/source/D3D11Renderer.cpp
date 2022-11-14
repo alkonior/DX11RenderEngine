@@ -6,7 +6,7 @@
 #include "D3D11Shaders.h"
 #include "D3D11RenderBuffer.h"
 
-//#include "RenderDeviceDX11.h"
+#include "RenderDeviceDX11.h"
 
 
 #include "DX11ShadersCompiler.h"
@@ -46,19 +46,28 @@ D3D11Texture D3D11Texture::NullTexture = D3D11Texture
 void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h)
 {}
 
+void* D3D11Renderer::GetDevice()
+{
+  return  ((GVM::RenderDeviceDX11*)testRD)->device.Get();
+}
+void* D3D11Renderer::GetContext()
+{
+  return  ((GVM::RenderDeviceDX11*)testRD)->context.Get();
+}
+
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
-   //auto ppppp = new GVM::Dx11PlatformHandle();
-   //ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle1;
-   //GVM::RenderDeviceInitParams init{
-   //    presentationParameters.BackBufferSize.Width,
-   //    presentationParameters.BackBufferSize.Height,
-   //    ppppp,
-   //    GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
-   //};
+    auto ppppp = new GVM::Dx11PlatformHandle();
+    ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle1;
+    GVM::RenderDeviceInitParams init{
+        presentationParameters.BackBufferSize.Width,
+        presentationParameters.BackBufferSize.Height,
+        ppppp,
+        GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
+    };
 
-   //testRD = new GVM::RenderDeviceDX11(init, debugMode);
+    testRD = new GVM::RenderDeviceDX11(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
 
     shaderCompiler = new DX11ShadersCompiler();
@@ -94,20 +103,17 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
 
 
+    testApi->GetBackBufferSize(mainViewportWidth, mainViewportHeight);;
+    testApi->GetBackBufferSize(backBufferWidth, backBufferWidth);;
     /* Set presentation interval */
-    SetPresentationInterval(presentationParameters.presentationInterval);
-
-
-    CreateBackbuffer(presentationParameters);
 }
 
 void D3D11Renderer::ResizeBackbuffer(const Size2D& parameters)
 {
     backBufferWidth = parameters.Width;
     backBufferHeight = parameters.Height;
-    
-    testApi->ResizeBackbuffer(parameters.Width, parameters.Height);
 
+    testApi->ResizeBackbuffer(parameters.Width, parameters.Height);
 }
 
 void D3D11Renderer::ResizeMainViewport(const Size2D& parameters)
@@ -115,6 +121,7 @@ void D3D11Renderer::ResizeMainViewport(const Size2D& parameters)
     mainViewportWidth = parameters.Width;
     mainViewportHeight = parameters.Height;
 }
+
 
 D3D11Renderer::~D3D11Renderer()
 {
@@ -181,7 +188,17 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
 {
     D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
     /* Bind index buffer */
- 
+
+
+   if (!d3dIndices->indexViewTest)
+   {
+       d3dIndices->indexViewTest = testApi->CreateIndexBufferView({
+           (GVM::IndexBuffer*)d3dIndices->handleTest,GVMIndexType[indexElementSize / 16 - 1],(uint32_t)d3dIndices->size
+       });
+   }
+    
+
+
     testApi->SetupIndexBuffer((GVM::IndexBufferView*)d3dIndices->indexViewTest);
 }
 
@@ -226,8 +243,7 @@ void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexSt
 
     /* Bind draw state */
     if (topology != primitiveType)
-    {
-    }
+    { }
 
     /* Draw! */
     testApi->DrawPrimitives(vertexStart, primitiveCount);
@@ -257,7 +273,6 @@ void D3D11Renderer::SetBackBufferViewport(const Viewport& viewport)
 
 void D3D11Renderer::SetScissorRect(Rect scissor)
 {
-
     //testApi->SetupScissorRect(ToGVM(scissor)); todo
 }
 
@@ -277,7 +292,7 @@ void D3D11Renderer::SetBlendFactor(Color blendFactor)
         factor[3] = blendFactor.a / 255.0f;
         this->blendFactor = blendFactor;
         //std::lock_guard<std::mutex> guard(ctxLock);
-    
+
         testApi->SetupCoreBlendState({0xffffffff,{factor[0],factor[1],factor[2],factor[3]}});
     }
 }
@@ -410,7 +425,6 @@ GVM::DepthStencilStateDesc ToGVM(const DepthStencilState& dsState)
 
 void D3D11Renderer::SetDepthStencilState(const DepthStencilState& depthStencilState)
 {
-
     testApi->SetupDepthStencilState(ToGVM(depthStencilState));
 }
 
@@ -455,20 +469,19 @@ void D3D11Renderer::ApplyRasterizerState(const RasterizerState& rasterizerState)
 
 void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
 {
-        D3D11Texture* d3dTexture = (D3D11Texture*)texture;
-        if (texture == nullptr)
-        {
-            testApi->SetupTexture(nullptr, index);
-            return;
-        }
+    D3D11Texture* d3dTexture = (D3D11Texture*)texture;
+    if (texture == nullptr)
+    {
+        testApi->SetupTexture(nullptr, index);
+        return;
+    }
 
-        /* Bind the correct texture */
-        if (!pixelTextures[index] || d3dTexture != pixelTextures[index])
-        {
-            pixelTextures[index] = d3dTexture;
-            testApi->SetupTexture(d3dTexture->shView, index);
-        }
-    
+    /* Bind the correct texture */
+    if (!pixelTextures[index] || d3dTexture != pixelTextures[index])
+    {
+        pixelTextures[index] = d3dTexture;
+        testApi->SetupTexture(d3dTexture->shView, index);
+    }
 }
 
 void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)
@@ -481,7 +494,7 @@ void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)
             testApi->SetupUATexture(nullptr, index);
             return;
         }
-        testApi->SetupUATexture(d3dTexture->uaTestView, index); 
+        testApi->SetupUATexture(d3dTexture->uaTestView, index);
     }
 }
 
@@ -543,40 +556,38 @@ void D3D11Renderer::VerifyPixelSampler(int32_t index, const SamplerState& sample
 
 void D3D11Renderer::VerifyVertexTexture(int32_t index, const Texture* texture)
 {
-        D3D11Texture* d3dTexture = (D3D11Texture*)texture;
+    D3D11Texture* d3dTexture = (D3D11Texture*)texture;
 
-        if (d3dTexture->levelCount == -1)
-        {
-            
-            return;
-        }
-
-        /* Bind the correct texture */
-        if (d3dTexture != vertexTextures[index])
-        {
-            vertexTextures[index] = d3dTexture;
-            testApi->SetupTexture(d3dTexture->shView, index);
-        }
+    if (d3dTexture->levelCount == -1)
+    {
+        return;
     }
+
+    /* Bind the correct texture */
+    if (d3dTexture != vertexTextures[index])
+    {
+        vertexTextures[index] = d3dTexture;
+        testApi->SetupTexture(d3dTexture->shView, index);
+    }
+}
 
 
 
 void D3D11Renderer::VerifyVertexSampler(int32_t index, const SamplerState& sampler)
 {
-        /* Update the sampler state, if needed */
-        //if (d3dSamplerState != renderer->samplers[index]) 
-        
-            testApi->SetupSampler(ToGVM(sampler), index);
-    
+    /* Update the sampler state, if needed */
+    //if (d3dSamplerState != renderer->samplers[index]) 
+
+    testApi->SetupSampler(ToGVM(sampler), index);
 }
 
-RenderTargetBinding RenderTargetBinding::BackBufferRT {
-1,
+RenderTargetBinding RenderTargetBinding::BackBufferRT{
+    1,
     0,
     nullptr,
     nullptr,
     {}
-    
+
 };
 
 void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets,
@@ -587,7 +598,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     this->depthStencilBuffer = (D3D11Renderbuffer*)depthStencilBuffer;
     static GVM::RenderTargetView* nviews[MAX_RENDERTARGET_BINDINGS];
     int32_t i;
-    
+
     /* Update color buffers */
     for (i = 0; i < std::min(numRenderTargets, MAX_RENDERTARGET_BINDINGS); i += 1)
     {
@@ -627,6 +638,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     while (i < MAX_RENDERTARGET_BINDINGS)
     {
         renderTargetViewsTest[i] = nullptr;
+        i++;
     }
 
 
@@ -636,32 +648,30 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     if (depthStencilBuffer == nullptr)
     {
         testApi->SetupRenderTargets(nviews, numRenderTargets, 0, nullptr);
-            depthStencilBufferTest =  nullptr;
+        depthStencilBufferTest = nullptr;
     }
     else
     {
         testApi->SetupRenderTargets(nviews, numRenderTargets, 0, this->depthStencilBuffer->depth.nDsView);
-        depthStencilBufferTest =  this->depthStencilBuffer->depth.nDsView;
+        depthStencilBufferTest = this->depthStencilBuffer->depth.nDsView;
     }
     //RestoreTargetTextures();
 
 
     /* Remember color attachments */
     this->numRenderTargets = numRenderTargets;
-}
-
-void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target)
-{
     
 }
 
+void D3D11Renderer::ResolveTarget(const RenderTargetBinding& target)
+{ }
+
 void D3D11Renderer::ReadBackbuffer(int32_t x, int32_t y, int32_t w, int32_t h, void* data, int32_t dataLength)
-{
-}
+{}
 
 void D3D11Renderer::GetBackbufferSize(uint32_t& w, uint32_t& h)
 {
-    testApi->GetBackBufferSize(w,h);
+    testApi->GetBackBufferSize(w, h);
 }
 
 void D3D11Renderer::GetMainViewportSize(uint32_t& w, uint32_t& h)
@@ -722,7 +732,7 @@ Texture* D3D11Renderer::CreateTexture2D(SurfaceFormat format, int32_t width, int
     resourceDesc.Format = ToGVM(format);
     resourceDesc.Array = 1;
     resourceDesc.initialData = nullptr;
-    
+
     result->resource = testApi->CreateTexture2D(resourceDesc);
 
     /* Initialize D3D11Texture */
@@ -835,9 +845,9 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
     testApi->SetResourceData(d3dTexture->resource,
         cubeMapFace,
         GVM::UBox{
-             x,
-             y,
-             0,
+            x,
+            y,
+            0,
             x + w,
             y + h,
             1
@@ -848,7 +858,7 @@ void D3D11Renderer::SetTextureDataCube(Texture* texture, int32_t x, int32_t y, i
 
 void* Renderer::D3D11Renderer::GetNativeTexture(Texture* texture)
 {
-    return  testApi->GetNativeTexture(((D3D11Texture*)texture)->shView);
+    return testApi->GetNativeTexture(((D3D11Texture*)texture)->shView);
 }
 
 
@@ -889,8 +899,8 @@ void D3D11Renderer::SetTextureData2D(Texture* texture, int32_t x, int32_t y, int
             x,
             y,
             0,
-            x+w,
-            y+h,
+            x + w,
+            y + h,
             1
         }, data, w * byteLength,
         w * byteLength * h);
@@ -909,8 +919,6 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
     uint8_t* dataPtr = (uint8_t*)data;
 
     int32_t formatSize = 4;
-
-
 }
 
 #pragma warning(pop)
@@ -919,7 +927,6 @@ void D3D11Renderer::GetTextureData2D(const Texture* texture, int32_t x, int32_t 
 Renderbuffer* D3D11Renderer::GenColorRenderbuffer(int32_t width, int32_t height, SurfaceFormat format,
     int32_t multiSampleCount, Texture* texture)
 {
- 
     return nullptr;
 }
 
@@ -989,10 +996,10 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     shDesc.T2Desc.PlaneSlice = 0;
     shDesc.T2Desc.ResourceMinLODClamp = 0;
     result->depth.nShView = testApi->CreateShaderResourceView(shDesc);
-    
+
 
     result->texture = texture;
-    
+
 
     GVM::DepthStencilViewDesc view_desc;
     view_desc.Resource = result->resource;
@@ -1043,15 +1050,13 @@ void D3D11Renderer::SetVertexBufferData(Buffer* buffer, int32_t offsetInBytes, v
 {
     D3D11Buffer* d3dBuffer = (D3D11Buffer*)buffer;
     int32_t dataLen = vertexStride * elementCount;
-  
+
     testApi->SetVertexBufferData((GVM::VertexBuffer*)d3dBuffer->handleTest, data, dataLen, offsetInBytes);
 }
 
 void D3D11Renderer::GetVertexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data,
     int32_t elementCount, int32_t elementSizeInBytes, int32_t vertexStride)
-{
-   
-}
+{ }
 
 Buffer* D3D11Renderer::GenIndexBuffer(uint8_t dynamic, BufferUsage usage, int32_t sizeInBytes)
 {
@@ -1083,20 +1088,11 @@ void D3D11Renderer::SetIndexBufferData(Buffer* buffer, int32_t offsetInBytes, vo
 }
 
 void D3D11Renderer::GetIndexBufferData(const Buffer* buffer, int32_t offsetInBytes, void* data, int32_t dataLength)
-{
-    
-}
+{ }
 
 
 void D3D11Renderer::ResetBackbuffer(const PresentationParameters& presentationParameters)
-{
-    CreateBackbuffer(
-        presentationParameters
-    );
-    SetPresentationInterval(
-        presentationParameters.presentationInterval
-    );
-}
+{ }
 
 
 
@@ -1136,338 +1132,92 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
             //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
             //vb.vertexOffset[0] = vertexBuffer.vertexOffset[0];
         }
-       // this->vertexBuffer = buffers[0];
+        // this->vertexBuffer = buffers[0];
         //std::lock_guard<std::mutex> guard(ctxLock);
     }
     testApi->SetupVertexBuffer(vb);
 }
 
-    PixelShader* D3D11Renderer::CompilePixelShader(const ShaderCompileData& shaderData)
-    {
-        D3D11PixelShader* result = new D3D11PixelShader();
-        std::vector<D3D_SHADER_MACRO> d3ddefines(shaderData.definesSize + 1);
-        for (size_t i = 0; i < shaderData.definesSize; i++)
-        {
-            d3ddefines[i].Definition = shaderData.defines[i].defenition;
-            d3ddefines[i].Name = shaderData.defines[i].name;
-        }
-        d3ddefines[shaderData.definesSize].Definition = NULL;
-        d3ddefines[shaderData.definesSize].Name = NULL;
+PixelShader* D3D11Renderer::CompilePixelShader(const ShaderCompileData& shaderData)
+{
+    auto result = shaderCompiler->CompilePixelShader(shaderData);
 
-        wrl::ComPtr<ID3D10Blob> pPSData;
-        wrl::ComPtr<ID3D10Blob> psErrorBlob;
-#if _DEBUG
-        bool compiled = false;
-        try
-        {
-            GFX_THROW_INFO(
-                D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
-                    d3ddefines.data(), (ID3DInclude*)shaderData.includes,
-                    shaderData.enteryPoint, shaderData.target,
-                    shaderData.flags, shaderData.flags << 8u, &pPSData, &psErrorBlob));
-            GFX_THROW_INFO(
-                device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
-                    pPixelShader));
-            GVM::ShaderDesc desc;
-            desc.type = GVM::EShaderType::PIXEL_SHADER;
-            desc.name = shaderData.name;
-            desc.bytecode = pPSData->GetBufferPointer();
-            desc.byteCodeSize = pPSData->GetBufferSize();
-            result->testShader = testApi->CreateShader(desc);
-            compiled = true;
-        }
-        catch (HrException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name, "PixelShader", d3ddefines
-            };
-            throw ce;
-        }
-        catch (InfoException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name, "PixelShader", d3ddefines
-            };
-            throw ce;
-        }
-#else
-        GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
-        GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
+    GVM::ShaderDesc desc;
+    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    desc.name = shaderData.name;
+    desc.bytecode = result->data;
+    desc.byteCodeSize = result->dataSize;
+    result->testShader = testApi->CreateShader(desc);
 
-        GVM::ShaderDesc desc;
-        desc.type = GVM::EShaderType::PIXEL_SHADER;
-        //desc.name = shaderData.name;
-        desc.bytecode = pPSData->GetBufferPointer();
-        desc.byteCodeSize = pPSData->GetBufferSize();
-        result->testShader = testApi->CreateShader(desc);
-
-#endif
-        return result;
-    }
+    return result;
+}
 
 
-    ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderCompileData& shaderData)
-    {
-        D3D11ComputeShader* result = new D3D11ComputeShader();
-        std::vector<D3D_SHADER_MACRO> d3ddefines(shaderData.definesSize + 1);
-        for (size_t i = 0; i < shaderData.definesSize; i++)
-        {
-            d3ddefines[i].Definition = shaderData.defines[i].defenition;
-            d3ddefines[i].Name = shaderData.defines[i].name;
-        }
-        d3ddefines[shaderData.definesSize].Definition = NULL;
-        d3ddefines[shaderData.definesSize].Name = NULL;
+ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderCompileData& shaderData)
+{
+    auto result = shaderCompiler->CompileComputeShader(shaderData);
 
-        wrl::ComPtr<ID3D10Blob> pPSData;
-        wrl::ComPtr<ID3D10Blob> psErrorBlob;
-#if _DEBUG
-        try
-        {
-            GFX_THROW_INFO(
-                D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
-                    d3ddefines.data(), (ID3DInclude*)shaderData.includes, shaderData.enteryPoint,
-                    shaderData.target, shaderData.flags, shaderData.flags << 8u, &pPSData, &psErrorBlob));
-            GFX_THROW_INFO(
-                device->CreateComputeShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
-                    pComputeShader));
+    GVM::ShaderDesc desc;
+    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    desc.name = shaderData.name;
+    desc.bytecode = result->data;
+    desc.byteCodeSize = result->dataSize;
+    result->testShader = testApi->CreateShader(desc);
 
-            GVM::ShaderDesc desc;
-            desc.type = GVM::EShaderType::COMPUTE_SHADER;
-            desc.name = shaderData.name;
-            desc.bytecode = pPSData->GetBufferPointer();
-            desc.byteCodeSize = pPSData->GetBufferSize();
-            result->testShader = testApi->CreateShader(desc);
-        }
-        catch (HrException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),
-                (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name, "Compute Shader", d3ddefines
-            };
-            throw ce;
-        }
-        catch (InfoException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),
-                (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name, "ComputeShader", d3ddefines
-            };
-            throw ce;
-        }
-#else
-        GFX_THROW_INFO(
-                       D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
-                           d3ddefines.data(), (ID3DInclude*)shaderData.includes,
-                           shaderData.enteryPoint,shaderData.target, shaderData.flags,
-                           shaderData.flags << 8u, &pPSData, &psErrorBlob));
-        GFX_THROW_INFO(
-            device->CreateComputeShader(pPSData->GetBufferPointer(),
-                pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
+    return result;
+}
 
-#endif
-        return result;
-    }
+GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderCompileData& shaderData)
+{
+    auto result = shaderCompiler->CompileGeometryShader(shaderData);
 
-    GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderData& shaderData)
-    {
-        D3D11GeometryShader* result = new D3D11GeometryShader();
-        std::vector<D3D_SHADER_MACRO> d3ddefines(shaderData.definesSize + 1);
-        for (size_t i = 0; i < shaderData.definesSize; i++)
-        {
-            d3ddefines[i].Definition = shaderData.defines[i].defenition;
-            d3ddefines[i].Name = shaderData.defines[i].name;
-        }
-        d3ddefines[shaderData.definesSize].Definition = NULL;
-        d3ddefines[shaderData.definesSize].Name = NULL;
+    GVM::ShaderDesc desc;
+    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    desc.name = shaderData.name;
+    desc.bytecode = result->data;
+    desc.byteCodeSize = result->dataSize;
+    result->testShader = testApi->CreateShader(desc);
 
-        wrl::ComPtr<ID3D10Blob> pPSData;
-        wrl::ComPtr<ID3D10Blob> psErrorBlob;
-#if _DEBUG
-        try
-        {
-            GFX_THROW_INFO(
-                D3DCompile(shaderData.shaderData, shaderData.dataSize,
-                    NULL, d3ddefines.data(), (ID3DInclude*)shaderData.includes,
-                    shaderData.enteryPoint, shaderData.target, shaderData.flags,
-                    shaderData.flags << 8u, &pPSData, &psErrorBlob));
-            GFX_THROW_INFO(
-                device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
-                    pGeometryShader));
+    return result;
+}
 
 
-            GVM::ShaderDesc desc;
-            desc.type = GVM::EShaderType::GEOMETRY_SHADER;
-            desc.name = shaderData.name;
-            desc.bytecode = pPSData->GetBufferPointer();
-            desc.byteCodeSize = pPSData->GetBufferSize();
-            result->testShader = testApi->CreateShader(desc);
-        }
-        catch (HrException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
-            };
-            throw ce;
-        }
-        catch (InfoException exe)
-        {
-            CompileException ce{
-                __LINE__, __FILE__,(hr),infoManager->GetMessages(),(char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
-            };
-            throw ce;
-        }
-#else
-        GFX_THROW_INFO(
-                       D3DCompile(shaderData.shaderData, shaderData.dataSize,
-                           NULL, d3ddefines.data(), (ID3DInclude*)shaderData.includes,
-                           shaderData.enteryPoint, shaderData.target, shaderData.flags,
-                           shaderData.flags << 8u, &pPSData, &psErrorBlob));
-        GFX_THROW_INFO(
-            device->CreateGeometryShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->
-                pGeometryShader));
-#endif
-        return result;
-    }
 
-    GVM::EFormat ToGVM(const DXGI_FORMAT& format)
-    {
-        const std::unordered_map<DXGI_FORMAT, GVM::EFormat> formatMap = {
-            {DXGI_FORMAT_R32_FLOAT,GVM::EFormat::FORMAT_R32_FLOAT},
-            {DXGI_FORMAT_R32G32_FLOAT,GVM::EFormat::FORMAT_R32G32_FLOAT},
-            {DXGI_FORMAT_R32G32B32_FLOAT,GVM::EFormat::FORMAT_R32G32B32_FLOAT},
-            {DXGI_FORMAT_R32G32B32A32_FLOAT,GVM::EFormat::FORMAT_R32G32B32A32_FLOAT},
-        };
-        return formatMap.at(format);
-    }
+VertexShader* D3D11Renderer::CompileVertexShader(const ShaderCompileData& shaderData, void* inputLayout,
+    size_t inputLayoutSize)
+{
+    auto result = shaderCompiler->CompileVertexShader(shaderData);
 
-    GVM::InputAssemblerDeclarationDesc ToGVM(const D3D11_INPUT_ELEMENT_DESC* inputLayout, uint32_t inputLayoutSize)
-    {
-        GVM::InputAssemblerDeclarationDesc result;
-        for (int i = 0; i < inputLayoutSize; i++)
-        {
-            result.PushBack({
-                inputLayout[i].SemanticName,
-                ToGVM(inputLayout[i].Format),
-                uint8_t(inputLayout[i].InputSlot),
-                uint8_t(inputLayout[i].SemanticIndex),
-                inputLayout[i].AlignedByteOffset,
-                GVM::EInputClassification::INPUT_PER_VERTEX_DATA,
-                0
-            });
-        }
-        return result;
-    }
-
-    VertexShader* D3D11Renderer::CompileVertexShader(const ShaderData& shaderData, void* inputLayout,
-        size_t inputLayoutSize)
-    {
-        D3D11VertexShader* result = new D3D11VertexShader();
-
-        std::vector<D3D_SHADER_MACRO> d3ddefines(shaderData.definesSize + 1);
-        for (size_t i = 0; i < shaderData.definesSize; i++)
-        {
-            d3ddefines[i].Definition = shaderData.defines[i].defenition;
-            d3ddefines[i].Name = shaderData.defines[i].name;
-        }
-        d3ddefines[shaderData.definesSize].Definition = NULL;
-        d3ddefines[shaderData.definesSize].Name = NULL;
-
-        wrl::ComPtr<ID3D10Blob> pVSData;
-        wrl::ComPtr<ID3D10Blob> psErrorBlob;
-
-        const D3D11_INPUT_ELEMENT_DESC* d3dInputLayout = (const D3D11_INPUT_ELEMENT_DESC*)inputLayout;
-        //{
-        //		{"Position",  0, DXGI_FORMAT_R32G32_FLOAT,  0,                           0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        //		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,  0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        //};
-        #if _DEBUG
-        try
-        {
-            GFX_THROW_INFO(
-                D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
-                    d3ddefines.data(), (ID3DInclude*)shaderData.includes,
-                    shaderData.enteryPoint, shaderData.target,
-                    shaderData.flags, shaderData.flags << 8u, &pVSData, &psErrorBlob));
-
-            GFX_THROW_INFO(
-                device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->
-                    pVertexShader));
-            GFX_THROW_INFO(device->CreateInputLayout(
-                d3dInputLayout,
-                (UINT)inputLayoutSize,
-                pVSData->GetBufferPointer(),
-                pVSData->GetBufferSize(),
-                &result->pInputLayout));
-
-
-            GVM::ShaderDesc desc;
-            desc.type = GVM::EShaderType::VERTEX_SHADER;
-            desc.name = shaderData.name;
-            desc.bytecode = pVSData->GetBufferPointer();
-            desc.byteCodeSize = pVSData->GetBufferSize();
-            result->testShader = testApi->CreateShader(desc);
-            result->testIL = testApi->CreateInputLayout(ToGVM(d3dInputLayout, inputLayoutSize), desc);
-
-
-            //todo InputLayout
-        }
-        catch (HrException exe)
-        {
-            if (psErrorBlob != nullptr)
-            {
-                CompileException ce{
-                    __LINE__, __FILE__,(hr),infoManager->GetMessages(),
-                    (char*)psErrorBlob->GetBufferPointer(),
-                    shaderData.name, "VertexShader", d3ddefines
-                };
-                throw ce;
-            }
-            throw;
-        }
-        catch (InfoException exe)
-        {
-            if (psErrorBlob != nullptr)
-            {
-                CompileException ce{
-                    __LINE__, __FILE__,(hr),infoManager->GetMessages(),
-                    (char*)psErrorBlob->GetBufferPointer(),
-                    shaderData.name, "VertexShader", d3ddefines
-                };
-                throw ce;
-            }
-            throw;
-        }
-#else
-        GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
-
-        GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
-        GFX_THROW_INFO(device->CreateInputLayout(
-            d3dInputLayout,
-            (UINT)inputLayoutSize,
-            pVSData->GetBufferPointer(),
-            pVSData->GetBufferSize(),
-            &result->pInputLayout));
-#endif
-        return result;
-    }
+    GVM::ShaderDesc desc;
+    desc.type = GVM::EShaderType::VERTEX_SHADER;
+    desc.name = shaderData.name;
+    desc.bytecode = result->data;
+    desc.byteCodeSize = result->dataSize;
+    result->testShader = testApi->CreateShader(desc);
+    result->testIL = testApi->CreateInputLayout(shaderCompiler->ToGVM(inputLayout, inputLayoutSize), desc);
+    return result;
+}
 
 
 
 void D3D11Renderer::AddDisposePixelShader(PixelShader* pixelShader)
 {
     D3D11PixelShader* shader = (D3D11PixelShader*)pixelShader;
+    if (shader == nullptr)
+        return;
+    delete (char*)shader->data;
+    testApi->AddDisposeShader(shader->testShader);
     delete shader;
 }
 
 void D3D11Renderer::AddDisposeVertexShader(VertexShader* vertexShader)
 {
     D3D11VertexShader* shader = (D3D11VertexShader*)vertexShader;
+    if (shader == nullptr)
+        return;
+    delete (char*)shader->data;
+    testApi->AddDisposeShader(shader->testShader);
+    testApi->AddDisposeIL(shader->testIL);
     delete shader;
 }
 
@@ -1499,9 +1249,9 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
     rDesc.initialData = nullptr;
     rDesc.Size = ((size / 16 + (size % 16 != 0)) * 16);
 
-    
+
     result->buffer = testApi->CreateConstBuffer(rDesc);
-    result->bufferView = testApi->CreateConstBufferView({result->buffer, rDesc.Size});
+    result->bufferView = testApi->CreateConstBufferView({result->buffer,rDesc.Size});
 
     result->size = size;
 
@@ -1542,6 +1292,7 @@ void D3D11Renderer::SetConstBuffer(ConstBuffer* constBuffers, void* data)
 void D3D11Renderer::AddDisposeConstBuffer(ConstBuffer* constBuffers)
 {
     D3D11ConstBuffer* buffer = (D3D11ConstBuffer*)constBuffers;
+    testApi->AddDisposeResource(buffer->buffer);
     delete buffer;
 }
 
@@ -1563,8 +1314,7 @@ void D3D11Renderer::ApplyPipelineState(PipelineState piplineState)
 }
 
 void D3D11Renderer::Flush()
-{
-}
+{}
 
 Texture* D3D11Renderer::CreateTexture2D(int32_t width, int32_t height, int32_t levelCount, int32_t subCount,
     uint8_t isRenderTarget)
@@ -1636,19 +1386,25 @@ void D3D11Renderer::ApplyComputeShader(ComputeShader* computeShader)
 
 void D3D11Renderer::Dispatch(size_t x, size_t y, size_t z)
 {
-    testApi->Dispatch(x,y,z);
+    testApi->Dispatch(x, y, z);
 }
 
 void D3D11Renderer::AddDisposeGeometryShader(GeometryShader* geometryShader)
 {
     D3D11GeometryShader* shader = (D3D11GeometryShader*)geometryShader;
-    if(shader)
+    if (shader == nullptr)
+        return;
+    delete (char*)shader->data;
+    testApi->AddDisposeShader(shader->testShader);
     delete shader;
 }
 
 void D3D11Renderer::AddDisposeComputeShader(ComputeShader* computeShader)
 {
     D3D11PixelShader* shader = (D3D11PixelShader*)computeShader;
-    if(shader)
+    if (shader == nullptr)
+        return;
+    delete (char*)shader->data;
+    testApi->AddDisposeShader(shader->testShader);
     delete shader;
 }

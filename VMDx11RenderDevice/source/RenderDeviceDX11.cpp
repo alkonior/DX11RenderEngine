@@ -531,42 +531,42 @@ IRenderDevice::IShader* RenderDeviceDX11::CreateShader(const ShaderDesc& desc)
     case EShaderType::HULL_SHADER:
     {
         ID3D11HullShader* hs;
-        device->CreateHullShader(desc.bytecode, desc.byteCodeSize, nullptr, &hs);
+        GFX_THROW_INFO(device->CreateHullShader(desc.bytecode, desc.byteCodeSize, nullptr, &hs));
         result = hs;
         break;
     }
     case EShaderType::PIXEL_SHADER:
     {
         ID3D11PixelShader* ps;
-        device->CreatePixelShader(desc.bytecode, desc.byteCodeSize, nullptr, &ps);
+        GFX_THROW_INFO(device->CreatePixelShader(desc.bytecode, desc.byteCodeSize, nullptr, &ps));
         result = ps;
         break;
     }
     case EShaderType::DOMAIN_SHADER:
     {
         ID3D11DomainShader* ds;
-        device->CreateDomainShader(desc.bytecode, desc.byteCodeSize, nullptr, &ds);
+        GFX_THROW_INFO(device->CreateDomainShader(desc.bytecode, desc.byteCodeSize, nullptr, &ds));
         result = ds;
         break;
     }
     case EShaderType::VERTEX_SHADER:
     {
         ID3D11VertexShader* vs;
-        device->CreateVertexShader(desc.bytecode, desc.byteCodeSize, nullptr, &vs);
+        GFX_THROW_INFO(device->CreateVertexShader(desc.bytecode, desc.byteCodeSize, nullptr, &vs));
         result = vs;
         break;
     }
     case EShaderType::COMPUTE_SHADER:
     {
         ID3D11ComputeShader* cs;
-        device->CreateComputeShader(desc.bytecode, desc.byteCodeSize, nullptr, &cs);
+        GFX_THROW_INFO(device->CreateComputeShader(desc.bytecode, desc.byteCodeSize, nullptr, &cs));
         result = cs;
         break;
     }
     case EShaderType::GEOMETRY_SHADER:
     {
         ID3D11GeometryShader* gs;
-        device->CreateGeometryShader(desc.bytecode, desc.byteCodeSize, nullptr, &gs);
+        GFX_THROW_INFO(device->CreateGeometryShader(desc.bytecode, desc.byteCodeSize, nullptr, &gs));
         result = gs;
         break;
     }
@@ -1181,34 +1181,41 @@ void RenderDeviceDX11::EndEvent()
 
 void* RenderDeviceDX11::GetNativeTexture(const IResourceView* view)
 {
-    return view;
+    return (void*)view;
+}
+void RenderDeviceDX11::GetBackbufferSize(uint32_t& w, uint32_t& h)
+{
+    w = backBufferWidth;
+    h = backBufferHeight;
 }
 
 void RenderDeviceDX11::Draw(DrawCall call)
 {
-    switch (call.type)
-    {
-    case EDrawCallType::DRAW_INDEXED:
-    {
-        context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
-        break;
-    }
-    case EDrawCallType::DRAW:
-    {
-        context->Draw(call.get<0>(), call.get<1>());
-        break;
-    }
-    case EDrawCallType::DRAW_INDEXED_INSTANCED:
-    {
-        context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(), call.get<3>(), call.get<4>());
-        break;
-    }
-    case EDrawCallType::DISPATCH:
-    {
-        context->Dispatch(call.get<0>(), call.get<1>(), call.get<2>());
-        break;
-    }
-    }
+    GFX_THROW_INFO_ONLY(
+        switch (call.type)
+        {
+        case EDrawCallType::DRAW_INDEXED:
+        {
+            context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
+            break;
+        }
+        case EDrawCallType::DRAW:
+        {
+            context->Draw(call.get<0>(), call.get<1>());
+            break;
+        }
+        case EDrawCallType::DRAW_INDEXED_INSTANCED:
+        {
+            context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(), call.get<3>(), call.get<4>());
+            break;
+        }
+        case EDrawCallType::DISPATCH:
+        {
+            context->Dispatch(call.get<0>(), call.get<1>(), call.get<2>());
+            break;
+        }
+        }
+    );
 }
 void RenderDeviceDX11::Present()
 {

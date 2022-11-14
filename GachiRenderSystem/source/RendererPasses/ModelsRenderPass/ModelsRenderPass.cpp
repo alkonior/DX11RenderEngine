@@ -64,7 +64,7 @@ void ModelsRenderPass::PreRender()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition")),
     };
 
-    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
+    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
     renderDevice->Clear(CLEAROPTIONS_TARGET, {}, 0, 0);
     renderDevice->Clear(CLEAROPTIONS_DEPTHBUFFER, {}, 1, 0);
 }
@@ -91,7 +91,7 @@ void ModelsRenderPass::Render()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition")),
     };
 
-    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
+    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
 
 
     size_t lastFlags = -1;

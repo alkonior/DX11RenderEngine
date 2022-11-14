@@ -190,5 +190,7 @@ public:
     void ResizeBackbuffer(int32_t width, int32_t height);
     void GetBackBufferSize(uint32_t& w, uint32_t& h);
     void* GetNativeTexture(const ShaderResourceView* shView);
+    void AddDisposeShader(Shader* shader);
+    void AddDisposeIL(InputLayout* input_layout);
 };
 }

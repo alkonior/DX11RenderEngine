@@ -299,20 +299,20 @@ void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource
 void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0,0,offset + dataLength,1,1};
+    UBox rect{offset,0u,0u,offset + dataLength,1u,1u};
     SetResourceData(vertexBuffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
 void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0,0,offset + dataLength,1,1};
+    UBox rect{offset,0u,0u,offset + dataLength,1u,1u};
     SetResourceData(buffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
 }
 
 void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize, uint32_t offset)
 {
-    UBox rect{offset,0,0,offset + dataSize,1,1};
+    UBox rect{offset,0u,0u,offset + dataSize,1u,1u};
     SetResourceData(constBuffer, 0, rect, data, 0, 0);
 }
 
@@ -336,6 +336,6 @@ void VirtualMachine::ClearDepthStencil(DepthStencilView* dsView, float depth, in
 
 void* VirtualMachine::GetNativeTexture(const ShaderResourceView* shView)
 {
-    auto& view = resourcesManager.GetRealResourceView(shView);
+    auto view = resourcesManager.GetRealResourceView(shView);
     return RenderDevice->GetNativeTexture(view);
 }

@@ -86,7 +86,7 @@ void DebugRenderPass::PreRender()
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets),
-                                   baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
+                                   baseRendererParams.renderSystem.texturesManger->depthBuffer);
     renderDevice->Clear(CLEAROPTIONS_TARGET, {}, 0, 0);
     renderDevice->Clear(CLEAROPTIONS_DEPTHBUFFER, {}, 1, 0);
 }
@@ -100,7 +100,7 @@ void DebugRenderPass::Render()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("outTexture")),
     };
 
-    renderDevice->SetRenderTargets(targets, std::size(targets), nullptr, vp);
+    renderDevice->SetRenderTargets(targets, std::size(targets), nullptr);
 
     vetexBuffer2D.UpdateBuffers(true);
     vetexBuffer3D.UpdateBuffers(true);

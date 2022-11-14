@@ -462,3 +462,11 @@ void* GraphicsApi::GetNativeTexture(const ShaderResourceView* shView)
 {
    return  graphicsMachine->GetNativeTexture(shView);
 }
+void GraphicsApi::AddDisposeShader(Shader* shader)
+{
+    //todo
+}
+void GraphicsApi::AddDisposeIL(InputLayout* input_layout)
+{
+    //todo
+}

@@ -31,6 +31,9 @@ public:
 	GVM::GraphicsApi* testApi;
 	GVM::IRenderDevice* testRD;
 
+	void* GetDevice();
+	void* GetContext();
+
 private:
 	//wrl::ComPtr<ID3DUserDefinedAnnotation> annotation;
 	//SDL_mutex* ctxLock;
@@ -80,10 +83,10 @@ private:
 
 	/* Render Targets */
 	int32_t numRenderTargets;
-	size_t backBufferWidth;
-	size_t backBufferHeight;
-	size_t mainViewportWidth;
-	size_t mainViewportHeight;
+	uint32_t backBufferWidth;
+	uint32_t backBufferHeight;
+	uint32_t mainViewportWidth;
+	uint32_t mainViewportHeight;
 	std::vector<GVM::RenderTargetView*> renderTargetViewsTest;
 	
 	D3D11Renderbuffer* depthStencilBuffer;

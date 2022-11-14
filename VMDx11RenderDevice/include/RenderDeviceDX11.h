@@ -180,6 +180,9 @@ protected:
     void EndEvent() override;
 
     void* GetNativeTexture(const IResourceView* view) override;
+public:
+    
+    void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
 };
 
 }

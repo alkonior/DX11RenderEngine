@@ -29,7 +29,7 @@ PSIn vsIn(VSIn input) {
 	//vso.oldPos = oldWorlPos;
 	//vso.newPos = worlPos;
 	float4 worldPos = mul(float4(input.pos, 1.0f), modelsCosntBuffer.world);
-	vso.worldPos = worldPos/worldPos.w;
+	vso.worldPos.xyz = (worldPos.xyz/worldPos.w).xyz;
 	vso.pos = mul(worldPos, coreConstants.currentMatrices.viewProjection);
 	float4 oldWorldSV =  mul(mul(float4(input.pos, 1.0f), modelsCosntBuffer.oldWorld), coreConstants.pastMatrices.viewProjection);
 	
@@ -53,7 +53,7 @@ PSIn vsIn(VSIn input) {
 
 	//vso.normal = input.normal;
 
-	vso.normal = mul(float4(vso.normal, 0.0f), modelsCosntBuffer.world);
+	vso.normal = mul(float4(vso.normal, 0.0f), modelsCosntBuffer.world).xyz;
 
 #ifdef BAD_UV
 	vso.uv = input.uv / modelsCosntBuffer.wh;
@@ -77,10 +77,10 @@ struct PSOut {
 	packed_velocity_t velocity   : SV_Target2;
 	//float  blurMask   : SV_Target3;
 	float4  normal   : SV_Target4;
-	float4  worlpos   : SV_Target4;
+	float4  worlpos   : SV_Target5;
 };
 
-PSOut psIn(PSIn input) : SV_Target
+PSOut psIn(PSIn input)
 {
 	PSOut pso = (PSOut)0;
 	pso.velocity = PackVelocity(float3(input.velocity, 0));

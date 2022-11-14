@@ -47,6 +47,20 @@ struct UBox
         Right(Right),
         Bottom(Bottom),
         Back(Back){};
+
+    UBox(uint32_t Left,
+         uint32_t Top,
+         uint32_t Front,
+         uint32_t Right,
+         uint32_t Bottom,
+         uint32_t Back):
+        Left(Left),
+        Top(Top),
+        Front(Front),
+        Right(Right),
+        Bottom(Bottom),
+        Back(Back){};
+    
     uint32_t Left;
     uint32_t Top;
     uint32_t Front;

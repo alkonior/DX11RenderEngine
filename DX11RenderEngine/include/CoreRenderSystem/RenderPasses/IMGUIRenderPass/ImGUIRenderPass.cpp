@@ -22,8 +22,7 @@ void ImGUIRenderPass::Render() {
 
 void ImGUIRenderPass::PostRender()
 {
-	renderDevice->SetRenderTargets(nullptr, 0,nullptr,
-{});  
+	renderDevice->SetRenderTargets(nullptr, 0,nullptr);  
 	static bool show = true;
 	show = true;
 	ImGui::ShowDemoWindow(&show);

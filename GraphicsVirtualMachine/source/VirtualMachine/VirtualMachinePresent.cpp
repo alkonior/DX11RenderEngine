@@ -1,4 +1,5 @@
 ﻿#include "VirtualMachine.h"
+#include <iostream>
 
 using namespace GVM;
 
@@ -107,8 +108,10 @@ VirtualMachine::~VirtualMachine()
 
 void VirtualMachine::Present()
 {
+    int comandIndex = 0;
     for (auto& command : commandQueue)
     {
+        comandIndex++;
         switch (command)
         {
         case EMachineCommands::CREATE_RESOURCE:
@@ -189,6 +192,7 @@ void VirtualMachine::Present()
         case EMachineCommands::BEGIN_EVENT:
             {
                 const char * name = (const char *)dataQueue.data() + queueShift;
+                std::cout << name << std::endl;
                 PullPointer(std::strlen(name)+1);
                 RenderDevice->BeginEvent(name);
                 break;

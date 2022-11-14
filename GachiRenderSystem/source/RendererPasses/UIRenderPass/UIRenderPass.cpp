@@ -118,7 +118,7 @@ void UIRenderPass::Render()
     renderDevice->ApplyIndexBufferBinding(indexBuffer, 16);
     renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
 
-    renderDevice->SetRenderTargets(nullptr, 0, nullptr, vp);
+    renderDevice->SetRenderTargets(nullptr, 0, nullptr);
     renderDevice->VerifyConstBuffer(constBuffer, uiTransformCB.slot);
 
     for (size_t i = 0; i < drawCalls.size(); i++) {
