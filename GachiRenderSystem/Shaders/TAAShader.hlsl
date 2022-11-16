@@ -597,7 +597,7 @@ fp16_t4 GetHistory( fp32_t2 inHistoryUV, fp32_t2 inHistoryST, bool inIsOnEdge )
 // get velocity and expected depth diff for the current pixel
 fp16_t3 GetVelocity( i16_t2 inScreenST )
 {
-    fp32_t3 toReturn = UnpackVelocity( VelocityBuffer[ inScreenST ] ) * taaCosntBuffer.Resolution;
+    fp32_t3 toReturn = UnpackVelocity( VelocityBuffer[ inScreenST ] );// * taaCosntBuffer.Resolution;
 
     if ( AllowLongestVelocityVector() )
     {
@@ -825,16 +825,16 @@ struct VSIn
     float2 uv : TEXCOORD;
 };
 
-struct PSIn
+struct PSInStruct
 {
     float4 pos : SV_Position;
-    float2 uv : TEXCOORD;
+    float2 uv  : TEXCOORD;
 };
 
 
-PSIn vsIn(VSIn input)
+PSInStruct vsIn(VSIn input)
 {
-    PSIn output = (PSIn)0;
+    PSInStruct output = (PSInStruct)0;
 
     output.pos = float4(input.pos, 0.0f, 1.0f);
     output.uv = input.uv;
@@ -850,11 +850,11 @@ struct PSO
 {
     float4 newColor       : SV_Target0;
     float4 historyColor   : SV_Target1;
-    float historyDepth   : SV_Target2;
+    float historyDepth    : SV_Target2;
 };
 
 
-PSO psIn(PSIn input) : SV_Target
+PSO psIn(PSInStruct input) 
 {
 
     PSO pso = (PSO)0;

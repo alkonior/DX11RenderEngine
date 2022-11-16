@@ -28,8 +28,6 @@ void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
     pipelineSnapshot.Compress(
         PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager));
     PushCommand(EMachineCommands::SETUP_PIPELINE);
-   
-    
 }
 
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
@@ -37,3 +35,15 @@ void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
     PushCommand(EMachineCommands::DRAW);
     drawCallsQueue.push_back(drawCall);
 }
+
+void VirtualMachine::BeginEvent(const char* name)
+{
+    PushCommand(EMachineCommands::BEGIN_EVENT);
+    PushData(name, std::strlen(name)+1);
+}
+
+void VirtualMachine::EndEvent()
+{
+    PushCommand(EMachineCommands::END_EVENT);
+}
+

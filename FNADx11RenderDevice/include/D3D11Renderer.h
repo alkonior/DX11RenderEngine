@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "winHandler.h"
+//#include "winHandler.h"
 #include "IRenderer.h"
 #include "PipelineState.h"
 
@@ -20,24 +20,21 @@ class DepthStencilView;
 }
 
 namespace Renderer{
-struct D3D11Renderbuffer;
+	struct DX11ShadersCompiler;
+	struct D3D11Renderbuffer;
 struct D3D11Texture;
 
 
 class D3D11Renderer : public IRenderer {
 public:
 	/* Persistent D3D11 Objects */
-	wrl::ComPtr<ID3D11Device> device;
-	wrl::ComPtr<ID3D11DeviceContext> context;
-	wrl::ComPtr<IDXGISwapChain> swapchain;
 	GVM::GraphicsApi* testApi;
 	GVM::IRenderDevice* testRD;
 
+	void* GetDevice();
+	void* GetContext();
+
 private:
-	wrl::ComPtr<ID3DUserDefinedAnnotation> perf;
-	wrl::ComPtr<IDXGIAdapter> adapter;
-	wrl::ComPtr<IDXGIFactory> factory;
-	D3D_FEATURE_LEVEL featureLevel;
 	//wrl::ComPtr<ID3DUserDefinedAnnotation> annotation;
 	//SDL_mutex* ctxLock;
 
@@ -57,34 +54,24 @@ private:
 	//Rect prevDstRect;
 
 	/* Blend State */
-	wrl::ComPtr<ID3D11BlendState> blendState;
 	Color blendFactor;
 	uint32_t multiSampleMask;
 
 	/* Depth Stencil State */
-	wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
 	int32_t stencilRef;
 
 	/* Rasterizer State */
-	D3D11_VIEWPORT viewport[10];
 	int maxViewportSlot = 0;
 	Rect scissorRect;
-	wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
 
 	/* Textures */
 	std::vector<D3D11Texture*> vertexTextures;
 	std::vector<D3D11Texture*> pixelTextures;
-	std::vector<wrl::ComPtr<ID3D11SamplerState>> vertexSamplers;
-	std::vector<wrl::ComPtr<ID3D11SamplerState>> pixelSamplers;
 
 	/* Input Assembly */
-	wrl::ComPtr<ID3D11InputLayout> inputLayout;
 	PrimitiveType topology;
-	std::vector<wrl::ComPtr<ID3D11Buffer>> vertexBuffers;
 	std::vector<uint32_t> vertexBufferOffsets;
 	std::vector<uint32_t> vertexBufferStrides;
-	ID3D11Buffer* indexBuffer;
-	ID3D11Buffer* vertexBuffer;
 	size_t indexElementSize;
 
 	///* Resource Caches */
@@ -96,25 +83,16 @@ private:
 
 	/* Render Targets */
 	int32_t numRenderTargets;
-	size_t backBufferWidth;
-	size_t backBufferHeight;
-	size_t mainViewportWidth;
-	size_t mainViewportHeight;
-	wrl::ComPtr<ID3D11RenderTargetView> swapchainRTView;
-	wrl::ComPtr<ID3D11UnorderedAccessView> swapchainUAView;
-	std::vector<wrl::ComPtr<ID3D11RenderTargetView>> renderTargetViews;
+	uint32_t backBufferWidth;
+	uint32_t backBufferHeight;
+	uint32_t mainViewportWidth;
+	uint32_t mainViewportHeight;
 	std::vector<GVM::RenderTargetView*> renderTargetViewsTest;
 	
 	D3D11Renderbuffer* depthStencilBuffer;
 	GVM::DepthStencilView* depthStencilBufferTest;
 
 
-	std::mutex ctxLock;
-
-#ifdef _DEBUG
-	DxgiInfoManager* infoManager;
-#endif
-	HRESULT hr;
 
 public:
 
@@ -126,6 +104,7 @@ public:
 
 	// Унаследовано через IRenderer
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
+	virtual void RunVM() override;
 	virtual void SwapBuffers() override;
 	virtual void Clear(ClearOptions options, FColor color, float depth, int32_t stencil) override;
 
@@ -134,6 +113,7 @@ public:
 	virtual void DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount) override;
 
 	virtual void SetViewport(const Viewport& viewport, uint32_t slot) override;
+	virtual void SetBackBufferViewport(const Viewport& viewport) override;
 	virtual void SetScissorRect(Rect scissor) override;
 	virtual void GetBlendFactor(Color& blendFactor) override;
 	virtual void SetBlendFactor(Color blendFactor) override;
@@ -150,7 +130,7 @@ public:
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;
 	virtual void VerifyVertexSampler(int32_t index, const SamplerState& sampler) override;
 
-	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer, const Viewport viewports) override;
+	virtual void SetRenderTargets(RenderTargetBinding** renderTargets, int32_t numRenderTargets, Renderbuffer* depthStencilBuffer) override;
 	virtual void ResolveTarget(const RenderTargetBinding& target) override;
 	virtual void ResetBackbuffer(const PresentationParameters& presentationParameters) override;
 
@@ -183,41 +163,27 @@ public:
 
 	/* Private Stuff*/
 private:
-	void SetPresentationInterval(PresentInterval presentInterval);
-	void CreateBackbuffer(const PresentationParameters& parameters);
-	void ResizeSwapChain(const PresentationParameters& pp);
 
-	std::unordered_map<const BlendState*, wrl::ComPtr<ID3D11BlendState>>				hashBS;
-	std::unordered_map<const DepthStencilState*, wrl::ComPtr<ID3D11DepthStencilState>>  hashDSS;
-	std::unordered_map<const RasterizerState*, wrl::ComPtr<ID3D11RasterizerState>>		hashRS;
-	std::unordered_map<const SamplerState*, wrl::ComPtr<ID3D11SamplerState>>			hashSS;
-
-	wrl::ComPtr<ID3D11BlendState> FetchBlendState(const BlendState& state);
-	wrl::ComPtr<ID3D11DepthStencilState> FetchDepthStencilState(const DepthStencilState& state);
-	wrl::ComPtr<ID3D11RasterizerState> FetchRasterizerState(const RasterizerState& state);
-	wrl::ComPtr<ID3D11SamplerState> FetchSamplerState(const SamplerState& state);
-
-
-	void DiscardTargetTextures(ID3D11RenderTargetView** views, int32_t numViews);
-	void RestoreTargetTextures();
+	DX11ShadersCompiler* shaderCompiler;
+	
 public:
 
-	virtual PixelShader* CompilePixelShader(const ShaderData& shaderData) override;
+	virtual PixelShader* CompilePixelShader(const ShaderCompileData& shaderData) override;
 	virtual void ApplyPixelShader(PixelShader* pixelShader) override;
 	virtual void AddDisposePixelShader(PixelShader* pixelShader) override;
 
-	virtual VertexShader* CompileVertexShader(const ShaderData& shaderData, void* inpitLayout, size_t inputLayoutSize) override;
+	virtual VertexShader* CompileVertexShader(const ShaderCompileData& shaderData, void* inpitLayout, size_t inputLayoutSize) override;
 	virtual void AddDisposeVertexShader(VertexShader* vertexShader) override;
 	virtual void ApplyVertexShader(VertexShader* vertexShader) override;
 
 
 
-	virtual GeometryShader* CompileGeometryShader(const ShaderData& shaderData) override;
+	virtual GeometryShader* CompileGeometryShader(const ShaderCompileData& shaderData) override;
 	virtual void AddDisposeGeometryShader(GeometryShader* pixelShader) override;
 	virtual void ApplyGeometryShader(GeometryShader* vertexShader) override;
 	
 
-	virtual ComputeShader* CompileComputeShader(const ShaderData& shaderData) override;
+	virtual ComputeShader* CompileComputeShader(const ShaderCompileData& shaderData) override;
 	virtual void AddDisposeComputeShader(ComputeShader* vertexShader) override;
 	virtual void ApplyComputeShader(ComputeShader* vertexShader) override;
 	virtual void Dispatch(size_t x, size_t y, size_t z = 1) override;

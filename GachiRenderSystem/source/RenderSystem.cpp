@@ -34,8 +34,13 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 
     ImGui_ImplWin32_Init(init.hWnd1);
-    ImGui_ImplDX11_Init(((D3D11Renderer*)pRenderer)->device.Get(), ((D3D11Renderer*)pRenderer)->context.Get());
+    ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(),(ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
 
+    uint32_t w,h;
+    pRenderer->GetBackbufferSize(w,h);
+    Viewport vp {0,0,(int32_t)w,(int32_t)h, 0,1};
+    pRenderer->SetBackBufferViewport(vp);
+    
     baseRenderPasses.push_back(&renderPassIMGUI);
 
     gachRenderPasses.push_back(&renderPassUI);
@@ -233,15 +238,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
-    try { renderPassModels.Render(); }
-    catch (const std::exception& exe)
-    {
-        printf_s(exe.what());
-        printf_s("\n");
-        static char c[100];
-        scanf_s("%s", c, 1);
-        success = false;
-    };
+    renderPassModels.Render(); 
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Dynamic motion blur draw.");
@@ -270,17 +267,17 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    GFX_CATCH_RENDER(renderPassTAA.Render(););
+    renderPassTAA.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
-    GFX_CATCH_RENDER(renderPassUI.Render(););
+    renderPassUI.Render();
     pRenderer->EndEvent();
 
     BaseRenderSystem::Present();
 #if _DEBUG
     pRenderer->BeginEvent("Debug draw.");
-    GFX_CATCH_RENDER(renderPassDebug.Render(););
+    renderPassDebug.Render();;
     pRenderer->EndEvent();
 #endif
 
@@ -289,6 +286,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->ClearState();
+    
+
+    GFX_CATCH_RENDER(pRenderer->RunVM());
+
+    
     return success;
 }
 
@@ -301,7 +303,7 @@ void RenderSystem::EndFrame()
 
 void RenderSystem::ClearBuffer(sm::Vector4 color) noexcept
 {
-    pRenderer->SetRenderTargets(nullptr, 0, texturesManger->depthBuffer, Viewport());
+    pRenderer->SetRenderTargets(nullptr, 0, texturesManger->depthBuffer);
     pRenderer->Clear((ClearOptions)7, {color.x, color.y, color.z, color.w}, 1, 0u);
     //pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
     //pContext->ClearDepthStencilView(pDSV.Get(), DModels11_CLEAR_DEPTH, 1.0f, 0u);

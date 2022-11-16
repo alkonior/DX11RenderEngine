@@ -132,7 +132,7 @@ void TAARenderPass::Render()
 		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastDepth")),
 	};
 	//target[0] = nullptr;
-	renderDevice->SetRenderTargets(target, 3, nullptr, {0,0,(int32_t)width,(int32_t)height,0,1});
+	renderDevice->SetRenderTargets(target, 3, nullptr);
 	renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderDevice->VerifyPixelTexture(0, TAAHistory);
 	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture);
@@ -150,6 +150,7 @@ void TAARenderPass::Render()
 
 void TAARenderPass::RenderImGUI()
 {
+	return;
     static bool opened = true;
     ImGui::Begin("TAA settings.", &opened);                          // Create a window called "Hello, world!" and append into it.
     //

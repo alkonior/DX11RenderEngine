@@ -48,7 +48,7 @@ public:
         VertexBufferViewDesc vbViewDescription;
         IndexBufferViewDesc ibViewDescription;
         uint64_t data[3];
-    };
+    } ;
 
 
 

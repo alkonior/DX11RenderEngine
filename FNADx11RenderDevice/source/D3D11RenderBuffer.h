@@ -1,12 +1,10 @@
 #pragma once
 #include "IRenderer/Utils.h"
-#include "winHandler.h"
 #include "GVMBaseStructures/IRenderClasses.h"
 
 
 namespace Renderer {
 struct D3D11Renderbuffer : Renderbuffer {
-	wrl::ComPtr<ID3D11Texture2D> handle = nullptr;
 	GVM::Resource* resource = nullptr;
 	int32_t multiSampleCount = 0;
 
@@ -21,12 +19,10 @@ struct D3D11Renderbuffer : Renderbuffer {
 	union {
 		struct {
 			SurfaceFormat format;
-			wrl::ComPtr<ID3D11RenderTargetView> rtView = nullptr;
 			GVM::RenderTargetView* nRsView = nullptr;
 		} color;
 		struct {
 			DepthFormat format = DepthFormat::DEPTHFORMAT_D16;
-			wrl::ComPtr<ID3D11DepthStencilView> dsView = nullptr;
 			GVM::DepthStencilView* nDsView = nullptr;
 			GVM::ShaderResourceView* nShView = nullptr;
 		} depth;

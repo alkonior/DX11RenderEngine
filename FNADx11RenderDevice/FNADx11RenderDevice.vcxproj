@@ -204,11 +204,13 @@
     <ClInclude Include="source\D3D11RenderBuffer.h" />
     <ClInclude Include="source\D3D11Shaders.h" />
     <ClInclude Include="source\D3D11Texture.h" />
+    <ClInclude Include="source\DX11ShadersCompiler.h" />
     <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h" />
     <ClInclude Include="source\GraphicsExceptions\GraphicsException.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\D3D11Renderer.cpp" />
+    <ClCompile Include="source\DX11ShadersCompiler.cpp" />
     <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp" />
     <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp" />
   </ItemGroup>

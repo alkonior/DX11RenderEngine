@@ -58,7 +58,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
         auto definesArray = GetDefines(definesFlags.definesFlags);
         const char* name = provider->GetShaderName();
         sh->ps = renderDevice->CompilePixelShader(
-            IRenderer::ShaderData{
+            {
                 shaderData,dataSize,
                 definesArray.data(),
                 definesArray.size(),
@@ -72,7 +72,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
 
         auto inputDescriptor = provider->GetInputLayoutDescription(definesFlags.definesFlags);
         sh->vs = renderDevice->CompileVertexShader(
-            IRenderer::ShaderData{
+            {
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
                 "vsIn","vs_4_0",compileFlags,
@@ -84,7 +84,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
 
         if (useShaders & Renderer::UseGeometryShader)
             sh->gs = renderDevice->CompileGeometryShader(
-                IRenderer::ShaderData{
+                {
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
                     "gsIn","gs_4_0",compileFlags,
@@ -98,7 +98,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
 
         if (useShaders & Renderer::UseComputeShader)
             sh->cs = renderDevice->CompileComputeShader(
-                IRenderer::ShaderData{
+                {
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
                     "csIn","cs_4_0",compileFlags,
@@ -146,7 +146,7 @@ PipelineState PipelineFactory::GetComputeState(uint32_t definesFlags, const char
         const char* name = provider->GetShaderName();
 
         ps->cs = renderDevice->CompileComputeShader(
-            IRenderer::ShaderData{
+          {
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
                 nameShader,"cs_5_0",compileFlags,

@@ -5,8 +5,22 @@
 using namespace GVM;
 
 GraphicsApi::GraphicsApi(IRenderDevice* RenderDevice):
-    ps(new PipelineSnapshot()), graphicsMachine(new VirtualMachine(RenderDevice))
-{ }
+    ps(new PipelineSnapshot()), graphicsMachine(new VirtualMachine(RenderDevice)),
+    rd(RenderDevice)
+{
+    
+}
+
+GraphicsApi::~GraphicsApi()
+{
+    delete ps;
+    delete graphicsMachine;
+}
+
+void GraphicsApi::RunVM()
+{
+    graphicsMachine->RunVM();
+}
 
 void GraphicsApi::Present()
 {
@@ -425,15 +439,39 @@ Shader* GraphicsApi::CreateShader(const ShaderDesc& desc)
 }
 
 void GraphicsApi::BeginEvent(const char* name)
-{}
+{
+    graphicsMachine->BeginEvent(name);
+}
 
 void GraphicsApi::EndEvent()
-{}
+{
+    graphicsMachine->EndEvent();
+}
 
 void GraphicsApi::SetMarker(const char* name)
-{}
+{
+    
+}
 
 void GraphicsApi::ResizeBackbuffer(int32_t width, int32_t height)
 {
     graphicsMachine->ResizeBackbuffer(width, height);
+}
+
+void GraphicsApi::GetBackBufferSize(uint32_t& w, uint32_t& h)
+{
+    rd->GetBackbufferSize(w,h);
+}
+
+void* GraphicsApi::GetNativeTexture(const ShaderResourceView* shView)
+{
+   return  graphicsMachine->GetNativeTexture(shView);
+}
+void GraphicsApi::AddDisposeShader(Shader* shader)
+{
+    //todo
+}
+void GraphicsApi::AddDisposeIL(InputLayout* input_layout)
+{
+    //todo
 }
