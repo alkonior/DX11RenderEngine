@@ -25,6 +25,7 @@ public:
 
     /* Presentation */
 
+    void RunVM();
     void Present();
 
 #pragma region Clear

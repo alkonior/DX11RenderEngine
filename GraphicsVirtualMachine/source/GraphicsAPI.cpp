@@ -17,6 +17,11 @@ GraphicsApi::~GraphicsApi()
     delete graphicsMachine;
 }
 
+void GraphicsApi::RunVM()
+{
+    graphicsMachine->RunVM();
+}
+
 void GraphicsApi::Present()
 {
     graphicsMachine->Present();

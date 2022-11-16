@@ -128,6 +128,11 @@ D3D11Renderer::~D3D11Renderer()
     delete testApi;
 }
 
+void D3D11Renderer::RunVM()
+{
+    testApi->RunVM();
+}
+
 void D3D11Renderer::SwapBuffers()
 {
     testApi->Present();
@@ -598,6 +603,13 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     this->depthStencilBuffer = (D3D11Renderbuffer*)depthStencilBuffer;
     static GVM::RenderTargetView* nviews[MAX_RENDERTARGET_BINDINGS];
     int32_t i;
+    if (numRenderTargets == 0)
+    {
+        nviews[0] = nullptr;
+        testApi->SetupRenderTargets(nviews, 1, 0, nullptr);
+        testApi->SetupNumRenderTargets(1);
+        return;
+    }
 
     /* Update color buffers */
     for (i = 0; i < std::min(numRenderTargets, MAX_RENDERTARGET_BINDINGS); i += 1)
@@ -1158,7 +1170,7 @@ ComputeShader* D3D11Renderer::CompileComputeShader(const ShaderCompileData& shad
     auto result = shaderCompiler->CompileComputeShader(shaderData);
 
     GVM::ShaderDesc desc;
-    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    desc.type = GVM::EShaderType::COMPUTE_SHADER;
     desc.name = shaderData.name;
     desc.bytecode = result->data;
     desc.byteCodeSize = result->dataSize;
@@ -1172,7 +1184,7 @@ GeometryShader* D3D11Renderer::CompileGeometryShader(const ShaderCompileData& sh
     auto result = shaderCompiler->CompileGeometryShader(shaderData);
 
     GVM::ShaderDesc desc;
-    desc.type = GVM::EShaderType::PIXEL_SHADER;
+    desc.type = GVM::EShaderType::GEOMETRY_SHADER;
     desc.name = shaderData.name;
     desc.bytecode = result->data;
     desc.byteCodeSize = result->dataSize;

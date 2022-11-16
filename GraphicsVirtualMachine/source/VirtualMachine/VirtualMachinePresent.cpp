@@ -106,7 +106,7 @@ VirtualMachine::~VirtualMachine()
     delete RenderDevice;
 }
 
-void VirtualMachine::Present()
+void VirtualMachine::RunVM()
 {
     int comandIndex = 0;
     for (auto& command : commandQueue)
@@ -205,8 +205,11 @@ void VirtualMachine::Present()
             }
         }
     }
-    RenderDevice->Present();
 
+    
+    static IRenderDevice::IRenderTargetView* renderTargets[1] = {nullptr};
+    RenderDevice->SetupRenderTargets((const IRenderDevice::IRenderTargetView**)renderTargets, 1, nullptr);
+    
     queueShift = 0;
     pipelinesQueueShift = 0;
     drawCallsQueueShift = 0;
@@ -214,6 +217,11 @@ void VirtualMachine::Present()
     commandQueue.clear();
     dataQueue.clear();
     drawCallsQueue.clear();
+}
+
+void VirtualMachine::Present()
+{
+    RenderDevice->Present();
 }
 
 

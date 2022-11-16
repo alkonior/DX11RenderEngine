@@ -76,8 +76,8 @@ struct PSOut {
 	float4 light      : SV_Target1;
 	packed_velocity_t velocity   : SV_Target2;
 	//float  blurMask   : SV_Target3;
-	float4  normal   : SV_Target4;
-	float4  worlpos   : SV_Target5;
+	float4  normal   : SV_Target3;
+	float4  worlpos   : SV_Target4;
 };
 
 PSOut psIn(PSIn input)

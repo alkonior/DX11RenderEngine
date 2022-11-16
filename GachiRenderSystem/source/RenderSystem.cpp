@@ -238,15 +238,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
-    try { renderPassModels.Render(); }
-    catch (const std::exception& exe)
-    {
-        printf_s(exe.what());
-        printf_s("\n");
-        static char c[100];
-        scanf_s("%s", c, 1);
-        success = false;
-    };
+    renderPassModels.Render(); 
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Dynamic motion blur draw.");
@@ -275,17 +267,17 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    GFX_CATCH_RENDER(renderPassTAA.Render(););
+    renderPassTAA.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
-    GFX_CATCH_RENDER(renderPassUI.Render(););
+    renderPassUI.Render();
     pRenderer->EndEvent();
 
     BaseRenderSystem::Present();
 #if _DEBUG
     pRenderer->BeginEvent("Debug draw.");
-    GFX_CATCH_RENDER(renderPassDebug.Render(););
+    renderPassDebug.Render();;
     pRenderer->EndEvent();
 #endif
 
@@ -294,6 +286,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->ClearState();
+    
+
+    GFX_CATCH_RENDER(pRenderer->RunVM());
+
+    
     return success;
 }
 

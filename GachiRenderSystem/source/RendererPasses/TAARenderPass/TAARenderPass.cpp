@@ -150,6 +150,7 @@ void TAARenderPass::Render()
 
 void TAARenderPass::RenderImGUI()
 {
+	return;
     static bool opened = true;
     ImGui::Begin("TAA settings.", &opened);                          // Create a window called "Hello, world!" and append into it.
     //

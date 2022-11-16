@@ -118,6 +118,7 @@ public:
     VirtualMachine(const VirtualMachine&&) = delete;
     ~VirtualMachine();
 
+    void RunVM();
     void Present();
 
 

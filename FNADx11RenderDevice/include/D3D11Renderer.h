@@ -104,6 +104,7 @@ public:
 
 	// Унаследовано через IRenderer
 	virtual void GetDrawableSize(void* window, int32_t* w, int32_t* h) override;
+	virtual void RunVM() override;
 	virtual void SwapBuffers() override;
 	virtual void Clear(ClearOptions options, FColor color, float depth, int32_t stencil) override;
 
