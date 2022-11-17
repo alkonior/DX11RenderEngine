@@ -137,6 +137,26 @@ namespace Compressed {
 
 }
 
+enum class EMachineCommands : uint8_t {
+    UNKNOWN,
+
+    SETUP_PIPELINE,
+    CLEAR_PIPELINE,
+    CLEAR_RT,
+    CLEAR_DS,
+
+    DRAW,
+    BEGIN_EVENT,
+    END_EVENT,
+
+    CREATE_RESOURCE,
+    CREATE_RESOURCE_VIEW,
+    CREATE_SHADER,
+    UPDATE_RESOURCE,
+    SET_RESOURCE_DATA,
+    COPY_RESOURCE_DATA,
+};
+
 struct SetResourceDataDesc{
     Resource* resource;
     struct ResourceUpdateData {

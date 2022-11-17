@@ -23,15 +23,44 @@ HWND                                hwnd;
 
 };
 
-class RenderDeviceDX11 final : public IRenderDevice {
+class RenderDeviceDX12 final : public IRenderDevice {
 public:
+    RenderDeviceDX12(const RenderDeviceInitParams& initParams, bool debugMode);
+    RenderDeviceDX12(const IRenderDevice& render_device) = delete;
+    RenderDeviceDX12(const IRenderDevice&& render_device) = delete;
+    ~RenderDeviceDX12() override;
 
-    RenderDeviceDX11(const RenderDeviceInitParams& initParams, bool debugMode);
-    RenderDeviceDX11(const IRenderDevice& render_device) = delete;
-    RenderDeviceDX11(const IRenderDevice&& render_device) = delete;
-    ~RenderDeviceDX11() override;
+    Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
+    Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
+    Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
 
+    Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
+    UINT64 mCurrentFence = 0;
+	
+    Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mDirectCmdListAlloc;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
 
+    static const int SwapChainBufferCount = 2;
+    int mCurrBackBuffer = 0;
+    Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
+    Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
+
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+
+    D3D12_VIEWPORT mScreenViewport; 
+    D3D12_RECT mScissorRect;
+
+    UINT mRtvDescriptorSize = 0;
+    UINT mDsvDescriptorSize = 0;
+    UINT mCbvSrvUavDescriptorSize = 0;
+
+    // Derived class should set these in derived constructor to customize starting values.
+    D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
+    DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
 
 #pragma region Fields
 
@@ -42,9 +71,7 @@ public:
     HRESULT hr;
     
     
-    wrl::ComPtr<ID3D11Device> device;
-    wrl::ComPtr<ID3D11DeviceContext> context;
-    wrl::ComPtr<IDXGISwapChain> swapchain;
+    wrl::ComPtr<ID3D12Device> device;
     bool CS = false;
     bool PS = false;
     bool VS = false;
@@ -53,84 +80,14 @@ public:
     bool DS = false;
 
 private:
-    wrl::ComPtr<ID3DUserDefinedAnnotation> perf;
-    wrl::ComPtr<IDXGIAdapter> adapter;
-    wrl::ComPtr<IDXGIFactory> factory;
-    D3D_FEATURE_LEVEL featureLevel;
-
-    /* Capabilities */
-    uint8_t debugMode;
-    //uint32_t supportsDxt1;
-    //uint32_t supportsS3tc;
-    //int32_t maxMultiSampleCount;
-    //D3D_FEATURE_LEVEL featureLevel;
-
-    /* Presentation */
-    uint8_t syncInterval;
-
-    //D3D11Backbuffer backbuffer;
-    //uint8_t backbufferSizeChanged;
-    //Rect prevSrcRect;
-    //Rect prevDstRect;
-
-    /* Blend State */
-    wrl::ComPtr<ID3D11BlendState> blendState;
-    FColor blendFactor;
-    uint32_t multiSampleMask;
-
-    /* Depth Stencil State */
-    wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
-    int32_t stencilRef;
-
-    /* Rasterizer State */
-    D3D11_VIEWPORT viewport[10];
-    int maxViewportSlot;
-    Rect scissorRect;
-    wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
-
-    /* Textures */
-    std::vector<ID3D11ShaderResourceView*> Textures;
-
-    /* Input Assembly */
-    EPrimitiveTopology topology;
-    std::vector<ID3D11Buffer*> vertexBuffers;
-    std::vector<uint32_t> vertexBufferOffsets;
-    std::vector<uint32_t> vertexBufferStrides;
-    ResourceViewDX12* indexBuffer;
-    ResourceViewDX12* vertexBuffer;
-    size_t indexElementSize;
-
-    ///* Resource Caches */
-    //PackedStateArray blendStateCache;
-    //PackedStateArray depthStencilStateCache;
-    //PackedStateArray rasterizerStateCache;
-    //PackedStateArray samplerStateCache;
-    //PackedVertexBufferBindingsArray inputLayoutCache;
-
-    /* Render Targets */
-    int32_t numRenderTargets;
-    size_t backBufferWidth;
-    size_t backBufferHeight;
-    ID3D11RenderTargetView* swapchainRTView;
-    ID3D11UnorderedAccessView* swapchainUAView;
-    std::vector<ID3D11RenderTargetView*> renderTargetViews;
-    std::vector<ID3D11UnorderedAccessView*> uaViews;
-	
-    ID3D11DepthStencilView* depthStencilBuffer;
-
-
-    std::mutex ctxLock;
-
-    std::unordered_map<uint64_t, ID3D11BlendState*>		    hashBS;
-    std::unordered_map<uint64_t, ID3D11DepthStencilState*>  hashDSS;
-    std::unordered_map<uint64_t, ID3D11RasterizerState*>	hashRS;
-    std::unordered_map<uint64_t, ID3D11SamplerState*>	    hashSS;
-
-    ID3D11BlendState* FetchBlendState(const Compressed::CoreBlendDesc& blendState);
-    ID3D11DepthStencilState* FetchDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
-    ID3D11RasterizerState*FetchRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
-    ID3D11SamplerState* FetchSamplerState(const Compressed::SamplerStateDesc& state);
-
+    
+#ifdef _DEBUG
+    void LogAdapters();
+#endif
+    
+    void CreateCommandObjects(const RenderDeviceInitParams& initParams);
+    void CreateSwapChain(const RenderDeviceInitParams& initParams);
+    void CreateRtvAndDsvDescriptorHeaps();
 #pragma endregion 
 
     

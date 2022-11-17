@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "IRenderDevice.h"
 #include "VirtualMachine/PipelineSnapshot.h"
+#include "RenderGraphParser/RenderGraph.h"
 
 namespace GVM {
 template<class T>
@@ -9,25 +10,7 @@ using VMStack = std::vector<T>;
 typedef typename PipelineSnapshot::CompressedType PSC;
 
 class VirtualMachine {
-    enum class EMachineCommands : uint8_t {
-        UNKNOWN,
-
-        SETUP_PIPELINE,
-        CLEAR_PIPELINE,
-        CLEAR_RT,
-        CLEAR_DS,
-
-        DRAW,
-        BEGIN_EVENT,
-        END_EVENT,
-
-        CREATE_RESOURCE,
-        CREATE_RESOURCE_VIEW,
-        CREATE_SHADER,
-        UPDATE_RESOURCE,
-        SET_RESOURCE_DATA,
-        COPY_RESOURCE_DATA,
-    };
+    
 
     constexpr static EMachineCommands ToCommand(EDrawCallType drawCall);
 
@@ -40,6 +23,7 @@ class VirtualMachine {
     VMStack<uint8_t> pipelinesQueue;
     ResourcesManager resourcesManager;
     PSC* LastSnapshot = nullptr;
+    RenderGraph renderGraph;
 
     //uint32_t PushData(void* data, uint32_t dataLength);
 
@@ -107,7 +91,11 @@ class VirtualMachine {
 
 #pragma Commands
 
-    void ExecuteSetupPipeline();
+    void ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps);
+    void GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps,
+    std::vector<Resource*>& ReadDependencies,
+    std::vector<Resource*>& WrightDependencies
+    );
 
 #pragma endregion
 
