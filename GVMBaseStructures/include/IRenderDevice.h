@@ -50,7 +50,7 @@ protected:
 
     IRenderDevice(const RenderDeviceInitParams& initParams, bool debugMode = true) {}
 
-    virtual void Draw(DrawCall call) = 0;
+    virtual void Draw(const DrawCall& call) = 0;
     virtual void Present() = 0;
 
 
@@ -80,6 +80,11 @@ protected:
         int32_t srcDepthPitch = 0
     ) = 0;
 
+
+    virtual void SyncBlockExecutionStart() = 0;
+    virtual void SyncResourcesRead(IResource** data, size_t size) = 0;
+    virtual void SyncResourcesWrite(IResource** data, size_t size) = 0;
+    virtual void SyncBlockExecutionEnd() = 0;
 
 #pragma region SetupPipeline
 

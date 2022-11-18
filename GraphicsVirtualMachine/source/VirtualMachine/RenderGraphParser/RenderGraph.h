@@ -6,26 +6,39 @@ namespace GVM {
 
 
 
-struct RenderGraphNode {
+struct RenderGraphNode : public std::tuple<EMachineCommands, void*> {
     RenderGraphNode(
     EMachineCommands Command,
-    void* Description,
-    std::vector<Resource*>&& ReadDependencies,
-    std::vector<Resource*>&& WrightDependencies
+    void* Description
+    //std::vector<Resource*>&& ReadDependencies,
+    //std::vector<Resource*>&& WrightDependencies
     );
 
+    auto& Command() const
+    {
+        return std::get<0>(*this);
+    }
+    auto& Description() const
+    {
+        return std::get<1>(*this);
+    }
     
-    EMachineCommands Command;
-    void* Description;
 
-    std::vector<Resource*> ReadDependencies;
-    std::vector<Resource*> WrightDependencies;
+    
+    //EMachineCommands Command;
+    //void* Description;
+
+    //std::vector<Resource*> ReadDependencies;
+    //std::vector<Resource*> WrightDependencies;
 };
 
 struct SyncThreadBlock {
-    std::vector<RenderGraphNode> Nodes;
+    std::vector<std::tuple<EMachineCommands, void*>> Nodes;
 
-    bool TryAdd(const RenderGraphNode& Node);
+    bool TryAdd(const RenderGraphNode&,
+    const std::vector<Resource*>& ReadDependencies,
+    const std::vector<Resource*>& WrightDependencies
+    );
         
     std::set<Resource*> ReadDependencies;
     std::set<Resource*> WrightDependencies;
@@ -39,6 +52,7 @@ class RenderGraph {
 
 
     int lasrAddPS = -1;
+    int lasrLockedBlock = 0;
 
 
     
@@ -48,7 +62,11 @@ public:
 
     RenderGraph(IRenderDevice* Device): RenderDevice(Device) { }
     
-    void AddCommand(RenderGraphNode Node);
+    void AddCommand(
+        RenderGraphNode Node,
+        const std::vector<Resource*>& ReadDependencies,
+        const std::vector<Resource*>& WrightDependencies
+    );
     
     void Clear();
 

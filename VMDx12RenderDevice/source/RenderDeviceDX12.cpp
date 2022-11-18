@@ -1,5 +1,7 @@
 #include "RenderDeviceDX12.h"
 #include "../DX12Helpers/d3dUtil.h"
+#include "GPUResourcesDescription/GPUResource.h"
+#include "GVMToDx12.h"
 
 template<class T>
 using ComPtr = wrl::ComPtr<T>;
@@ -63,8 +65,8 @@ GVM::RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams
     LogAdapters();
 #endif
 
-	CreateCommandObjects();
-    CreateSwapChain();
+	CreateCommandObjects(initParams);
+    CreateSwapChain(initParams);
     CreateRtvAndDsvDescriptorHeaps();
 
 	return;
@@ -95,9 +97,79 @@ GVM::RenderDeviceDX12::~RenderDeviceDX12()
 	mCommandList->Close();
 }
 
+void GVM::RenderDeviceDX12::LogAdapterOutput(IDXGIAdapter* adapter)
+{
+	UINT i = 0;
+	IDXGIOutput* output = nullptr;
+	while(adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_OUTPUT_DESC desc;
+		output->GetDesc(&desc);
+        
+		std::wstring text = L"***Output: ";
+		text += desc.DeviceName;
+		text += L"\n";
+		OutputDebugString(text.c_str());
+
+		LogOutputDisplayModes(output, mBackBufferFormat);
+
+		ReleaseCom(output);
+
+		++i;
+	}
+}
+
+void GVM::RenderDeviceDX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
+{
+	UINT count = 0;
+	UINT flags = 0;
+
+	// Call with nullptr to get list count.
+	output->GetDisplayModeList(format, flags, &count, nullptr);
+
+	std::vector<DXGI_MODE_DESC> modeList(count);
+	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
+
+	for(auto& x : modeList)
+	{
+		UINT n = x.RefreshRate.Numerator;
+		UINT d = x.RefreshRate.Denominator;
+		std::wstring text =
+			L"Width = " + std::to_wstring(x.Width) + L" " +
+			L"Height = " + std::to_wstring(x.Height) + L" " +
+			L"Refresh = " + std::to_wstring(n) + L"/" + std::to_wstring(d) +
+			L"\n";
+
+		::OutputDebugString(text.c_str());
+	}
+}
 
 void GVM::RenderDeviceDX12::LogAdapters()
 {
+	UINT i = 0;
+	IDXGIAdapter* adapter = nullptr;
+	std::vector<IDXGIAdapter*> adapterList;
+	while(mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC desc;
+		adapter->GetDesc(&desc);
+
+		std::wstring text = L"***Adapter: ";
+		text += desc.Description;
+		text += L"\n";
+
+		OutputDebugString(text.c_str());
+
+		adapterList.push_back(adapter);
+        
+		++i;
+	}
+
+	for(size_t i = 0; i < adapterList.size(); ++i)
+	{
+		LogAdapterOutput(adapterList[i]);
+		ReleaseCom(adapterList[i]);
+	}
 	
 }
 
@@ -173,4 +245,122 @@ void GVM::RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
 		dsvHeapDesc.NodeMask = 0;
 		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 			&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
+}
+
+
+GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
+{
+	switch (ResourceDesc.resourceDescription.Dimension)
+	{
+	case EResourceDimension::RESOURCE_DIMENSION_BUFFER :
+	{
+		ID3D12Resource* defaultBuffer;
+
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(ResourceDesc.resourceDescription.Width),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&defaultBuffer)));
+
+		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+	}
+	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE1D:
+	{
+		ID3D12Resource* defaultBuffer;
+
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Tex1D(
+			ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
+			ResourceDesc.resourceDescription.Width,
+			ResourceDesc.resourceDescription.DepthOrArraySize
+			),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&defaultBuffer)));
+
+		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+		
+	}
+	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE2D:
+	{
+		
+		ID3D12Resource* defaultBuffer;
+
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Tex2D(
+			ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
+			ResourceDesc.resourceDescription.Width,
+			ResourceDesc.resourceDescription.Height,
+			ResourceDesc.resourceDescription.DepthOrArraySize
+			),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&defaultBuffer)));
+
+		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+	}
+	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE3D:
+	{
+		
+		
+		ID3D12Resource* defaultBuffer;
+
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Tex3D(
+			ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
+			ResourceDesc.resourceDescription.Width,
+			ResourceDesc.resourceDescription.Height,
+			ResourceDesc.resourceDescription.DepthOrArraySize
+			),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&defaultBuffer)));
+
+		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+	}
+		
+	}
+	
+}
+GVM::IRenderDevice::IResourceView* GVM::RenderDeviceDX12::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
+{
+	switch (desc.type)
+	{
+	case GpuResourceView::EViewType::CB:
+		{
+		
+		
+		D3D12_CPU_DESCRIPTOR_HANDLE defaultBuffer;
+
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateConstantBufferView(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Tex3D(
+			ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
+			ResourceDesc.resourceDescription.Width,
+			ResourceDesc.resourceDescription.Height,
+			ResourceDesc.resourceDescription.DepthOrArraySize
+			),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&defaultBuffer)));
+
+		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+
+		}
+	}
+	
 }

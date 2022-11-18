@@ -145,7 +145,7 @@ protected:
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
-     virtual void Draw(DrawCall call) override;
+     virtual void Draw(const DrawCall& call) override;
     void Present() override;
 
 #pragma region SetupPipeline
@@ -183,6 +183,11 @@ protected:
 public:
     
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
+protected:
+    void SyncBlockExecutionStart() override;
+    void SyncResourcesRead(IResource** data, size_t size) override;
+    void SyncResourcesWrite(IResource** data, size_t size) override;
+    void SyncBlockExecutionEnd() override;
 };
 
 }

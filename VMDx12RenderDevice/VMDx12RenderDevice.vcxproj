@@ -325,6 +325,9 @@
     <ClInclude Include="source\GraphicsExceptions\GraphicsException.h" />
     <ClInclude Include="source\GraphicsExceptions\GraphicsExceptionsDefines.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\GVMToDx12.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

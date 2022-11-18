@@ -109,7 +109,7 @@ struct DrawCall
     std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> args;
 
     template <size_t index>
-    uint32_t get()
+    uint32_t get() const
     {
         return std::get<index>(args);
     }

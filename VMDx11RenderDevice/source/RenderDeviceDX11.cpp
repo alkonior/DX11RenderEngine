@@ -1188,8 +1188,12 @@ void RenderDeviceDX11::GetBackbufferSize(uint32_t& w, uint32_t& h)
     w = backBufferWidth;
     h = backBufferHeight;
 }
+void RenderDeviceDX11::SyncBlockExecutionStart() {}
+void RenderDeviceDX11::SyncResourcesRead(IResource** data, size_t size) {}
+void RenderDeviceDX11::SyncResourcesWrite(IResource** data, size_t size) {}
+void RenderDeviceDX11::SyncBlockExecutionEnd() {}
 
-void RenderDeviceDX11::Draw(DrawCall call)
+void RenderDeviceDX11::Draw(const DrawCall& call)
 {
     GFX_THROW_INFO_ONLY(
         switch (call.type)

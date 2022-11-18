@@ -14,7 +14,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     static IRenderDevice::IResourceView* textures[128];
     static IRenderDevice::IConstBufferView* constBuffers[32];
 
-    
+
     pipelinesQueueShift += ps->SnapshotByteSize;
 
     cBS.desc = ps->blendDesc;
@@ -106,7 +106,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps, std::vector<Resource*>& ReadDependencies, std::vector<Resource*>& WrightDependencies)
 {
     std::unordered_set<Resource*> readDependencies, wrightDependencies;
-    
+
     auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data + ps->RenderTargetsShift);
     auto UATargets = (UATargetView**)(ps->Data + ps->UATargetsShift);
 
@@ -114,7 +114,7 @@ void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapsho
     for (int i = 0; i < ps->renderTargetsNum; i++)
     {
         wrightDependencies.insert(resourcesManager.
-            GetResourceView(RenderTargets[i].rtv).resource);
+                                  GetResourceView(RenderTargets[i].rtv).resource);
     }
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
@@ -143,10 +143,10 @@ void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapsho
         readDependencies.insert(
             resourcesManager.GetResourceView(ConstBuffers[i]).resource);
     }
-   
+
     readDependencies.insert(
-       resourcesManager.GetResourceView(ps->indexBuffer).resource);
-    
+        resourcesManager.GetResourceView(ps->indexBuffer).resource);
+
     for (auto& readDep : readDependencies)
     {
         ReadDependencies.push_back(readDep);
@@ -179,10 +179,10 @@ void VirtualMachine::RunVM()
             renderGraph.AddCommand(
                 {
                     EMachineCommands::CREATE_RESOURCE,
-                    (void*)&resource,
-                    {},
-                    {resource.id}
-                }
+                    (void*)resource.id
+                },
+                {},
+                {resource.id}
             );
             break;
         }
@@ -193,10 +193,10 @@ void VirtualMachine::RunVM()
             renderGraph.AddCommand(
                 {
                     EMachineCommands::UPDATE_RESOURCE,
-                    (void*)&resource,
-                    {},
-                    {resource.id}
-                }
+                    (void*)resource.id
+                },
+                {},
+                {resource.id}
             );
             break;
         }
@@ -206,11 +206,11 @@ void VirtualMachine::RunVM()
             auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
             renderGraph.AddCommand(
                 {
-                    EMachineCommands::UPDATE_RESOURCE,
-                    (void*)&resourceView,
-                    {},
-                    {resourceView.resource}
-                }
+                    EMachineCommands::CREATE_RESOURCE_VIEW,
+                    (void*)resourceView.id
+                },
+                {},
+                {resourceView.resource}
             );
             break;
         }
@@ -219,35 +219,39 @@ void VirtualMachine::RunVM()
         {
             // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
             auto& description = PullData<SetResourceDataDesc>();
+            PullPointer(description.params.dataSize);
             renderGraph.AddCommand(
-                  {
-                      EMachineCommands::UPDATE_RESOURCE,
-                      (void*)&description,
-                      {},
-                      {description.resource}
-                  }
-              );
+                {
+                    EMachineCommands::SET_RESOURCE_DATA,
+                    (void*)&description
+                },
+                {},
+                {description.resource}
+            );
             break;
         }
 
         case EMachineCommands::SETUP_PIPELINE:
         {
             auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
-            
-            static std::vector<Resource*>ReadDep;
-            static std::vector<Resource*>WriteDep;
-            
+
+            static std::vector<Resource*> ReadDep;
+            static std::vector<Resource*> WriteDep;
+            ReadDep.clear();
+            WriteDep.clear();
+
+
             GetPipelineResourceDependencies(ps, ReadDep, WriteDep);
-            
+
             renderGraph.AddCommand(
-                 {
-                     EMachineCommands::SETUP_PIPELINE,
-                     (void*)ps,
-                     std::move(ReadDep),
-                     std::move(WriteDep),
-                 }
-             );
-            
+                {
+                    EMachineCommands::SETUP_PIPELINE,
+                    (void*)ps
+                },
+                ReadDep,
+                WriteDep
+            );
+
             pipelinesQueueShift += ps->SnapshotByteSize;
             break;
         }
@@ -255,13 +259,13 @@ void VirtualMachine::RunVM()
         case EMachineCommands::DRAW:
         {
             renderGraph.AddCommand(
-                   {
-                       EMachineCommands::DRAW,
-                       (void*)&drawCallsQueue[drawCallsQueueShift],
-                       {},
-                       {}
-                   }
-               );
+                {
+                    EMachineCommands::DRAW,
+                    (void*)&drawCallsQueue[drawCallsQueueShift]
+                },
+                {},
+                {}
+            );
             drawCallsQueueShift++;
             break;
         }
@@ -273,28 +277,28 @@ void VirtualMachine::RunVM()
         case EMachineCommands::CLEAR_RT:
         {
             auto& desc = PullData<ClearRenderTargetDesc>();
-            
+
             renderGraph.AddCommand(
-                  {
-                      EMachineCommands::CLEAR_RT,
-                      (void*)&desc,
-                      {},
-                      {resourcesManager.GetResourceView(desc.resource).resource}
-                  }
-                  );
+                {
+                    EMachineCommands::CLEAR_RT,
+                    (void*)&desc
+                },
+                {},
+                {resourcesManager.GetResourceView(desc.resource).resource}
+            );
             break;
         }
         case EMachineCommands::CLEAR_DS:
         {
             auto& desc = PullData<ClearDepthStencilDesc>();
             renderGraph.AddCommand(
-                  {
-                      EMachineCommands::CLEAR_DS,
-                      (void*)&desc,
-                      {},
-                      {resourcesManager.GetResourceView(desc.resource).resource}
-                  }
-                  );
+                {
+                    EMachineCommands::CLEAR_DS,
+                    (void*)&desc
+                },
+                {},
+                {resourcesManager.GetResourceView(desc.resource).resource}
+            );
             break;
         }
         case EMachineCommands::BEGIN_EVENT:
@@ -302,141 +306,150 @@ void VirtualMachine::RunVM()
             const char* name = (const char*)dataQueue.data() + queueShift;
             std::cout << name << std::endl;
             PullPointer(std::strlen(name) + 1);
-            
+
             renderGraph.AddCommand(
                 {
                     EMachineCommands::BEGIN_EVENT,
-                    (void*)&name,
-                    {},
-                    {}
-                }
-                );
+                    (void*)&name
+                },
+                {},
+                {}
+            );
             break;
         }
         case EMachineCommands::END_EVENT:
         {
-            renderGraph.AddCommand(
-              {
-                  EMachineCommands::END_EVENT,
-                  nullptr,
-                  {},
-                  {}
-              }
-              );
-
-            break;
-        }
-        }
-    }
-
-/*
-    for (auto& command : commandQueue)
-    {
-        comandIndex++;
-
-        switch (command)
-        {
-        case EMachineCommands::CREATE_RESOURCE:
-        {
-            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-
             renderGraph.AddCommand(
                 {
-                    EMachineCommands::CREATE_RESOURCE,
-                    (void*)&resource,
-                    {},
-                    {resource.id}
-                }
+                    EMachineCommands::END_EVENT,
+                    nullptr
+                },
+                {},
+                {}
             );
-            resource.resource = RenderDevice->CreateResource(resource);
-            break;
-        }
-
-        case EMachineCommands::UPDATE_RESOURCE:
-        {
-            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            RenderDevice->DestroyResource(resource.resource);
-            resource.resource = RenderDevice->CreateResource(resource);
-            break;
-        }
-
-        case EMachineCommands::CREATE_RESOURCE_VIEW:
-        {
-            auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
-            resourceView.view = RenderDevice->CreateResourceView(resourceView,
-                resourcesManager.
-                GetResource(resourceView.resource));
-            break;
-        }
-
-        case EMachineCommands::SET_RESOURCE_DATA:
-        {
-            // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            auto& description = PullData<SetResourceDataDesc>();
-            const void* data = PullPointer(description.params.dataSize);
-            RenderDevice->SetResourceData(resourcesManager.GetResource(description.resource),
-                description.params.dstSubresource,
-                description.params.rect,
-                dataQueue.data() + description.shift,
-                description.params.srcRowPitch,
-                description.params.srcDepthPitch);
-            break;
-        }
-
-        case EMachineCommands::SETUP_PIPELINE:
-        {
-            ExecuteSetupPipeline();
-            break;
-        }
-
-        case EMachineCommands::DRAW:
-        {
-            RenderDevice->Draw(drawCallsQueue[drawCallsQueueShift]);
-            drawCallsQueueShift++;
-            break;
-        }
-        case EMachineCommands::CLEAR_PIPELINE:
-        {
-            //RenderDevice->ClearState();
-            break;
-        }
-        case EMachineCommands::CLEAR_RT:
-        {
-            auto& desc = PullData<ClearRenderTargetDesc>();
-            RenderDevice->ClearRenderTarget(
-                (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(desc.resource), desc.color);
-            break;
-        }
-        case EMachineCommands::CLEAR_DS:
-        {
-            auto& desc = PullData<ClearDepthStencilDesc>();
-            //auto& resource = PullData<DepthStencilView*>();
-            //auto& depth = PullData<float>();
-            //auto& stencil = PullData<uint8_t>();
-            RenderDevice->ClearDepthStencil(
-                (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(desc.resource),
-                desc.depth,
-                desc.stencil
-            );
-            break;
-        }
-        case EMachineCommands::BEGIN_EVENT:
-        {
-            const char* name = (const char*)dataQueue.data() + queueShift;
-            std::cout << name << std::endl;
-            PullPointer(std::strlen(name) + 1);
-            RenderDevice->BeginEvent(name);
-            break;
-        }
-        case EMachineCommands::END_EVENT:
-        {
-            RenderDevice->EndEvent();
 
             break;
         }
         }
     }
-*/
+
+
+
+    for (auto& block : renderGraph.Blocks)
+    {
+        static std::vector<IRenderDevice::IResource*> ReadDep;
+        static std::vector<IRenderDevice::IResource*> WriteDep;
+        ReadDep.clear();
+        WriteDep.clear();
+        for (auto* r :  block.ReadDependencies)
+        {
+            ReadDep.push_back(resourcesManager.GetRealResource(r));
+        }
+        for (auto* w :  block.WrightDependencies)
+        {
+            WriteDep.push_back(resourcesManager.GetRealResource(w));
+        }
+        RenderDevice->SyncResourcesRead(ReadDep.data(), ReadDep.size());
+        RenderDevice->SyncResourcesWrite(WriteDep.data(), WriteDep.size());
+        
+        for (auto& [command, description] : block.Nodes)
+        {
+            comandIndex++;
+            switch (command)
+            {
+            case EMachineCommands::CREATE_RESOURCE:
+            {
+                auto& resource = resourcesManager.GetResource((Resource*)description);
+                resource.resource = RenderDevice->CreateResource(resource);//todo
+                break;
+            }
+
+            case EMachineCommands::UPDATE_RESOURCE:
+            {
+                auto& resource = resourcesManager.GetResource((Resource*)description);
+                RenderDevice->DestroyResource(resource.resource);
+                resource.resource = RenderDevice->CreateResource(resource);
+                break;
+            }
+
+            case EMachineCommands::CREATE_RESOURCE_VIEW:
+            {
+                auto& resourceView = resourcesManager.GetResourceView((ResourceView*)description);
+                resourceView.view = RenderDevice->CreateResourceView(resourceView,
+                    resourcesManager.GetResource(resourceView.resource));
+                break;
+            }
+
+            case EMachineCommands::SET_RESOURCE_DATA:
+            {
+                // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                auto& desc = *(SetResourceDataDesc*)description;
+                RenderDevice->SetResourceData(resourcesManager.GetResource(desc.resource),
+                    desc.params.dstSubresource,
+                    desc.params.rect,
+                    dataQueue.data() + desc.shift,
+                    desc.params.srcRowPitch,
+                    desc.params.srcDepthPitch);
+                break;
+            }
+
+            case EMachineCommands::SETUP_PIPELINE:
+            {
+                auto* ps = (Compressed::PipelineSnapshot*)description;
+                ExecuteSetupPipeline(ps);
+                break;
+            }
+
+            case EMachineCommands::DRAW:
+            {
+                //auto drawData = *(DrawCall*)description;
+                RenderDevice->Draw(*(DrawCall*)description);
+                drawCallsQueueShift++;
+                break;
+            }
+            case EMachineCommands::CLEAR_PIPELINE:
+            {
+                RenderDevice->ClearState();
+                break;
+            }
+            case EMachineCommands::CLEAR_RT:
+            {
+                auto& desc =*(ClearRenderTargetDesc*)description;
+                RenderDevice->ClearRenderTarget(
+                    (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(desc.resource), desc.color);
+                break;
+            }
+            case EMachineCommands::CLEAR_DS:
+            {
+                auto& desc = *(ClearDepthStencilDesc*)description;
+                //auto& resource = PullData<DepthStencilView*>();
+                //auto& depth = PullData<float>();
+                //auto& stencil = PullData<uint8_t>();
+                RenderDevice->ClearDepthStencil(
+                    (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(desc.resource),
+                    desc.depth,
+                    desc.stencil
+                );
+                break;
+            }
+            case EMachineCommands::BEGIN_EVENT:
+            {
+                const char* name = (char*)description;
+                std::cout << name << std::endl;
+               // PullPointer(std::strlen(name) + 1);
+                RenderDevice->BeginEvent(name);
+                break;
+            }
+            case EMachineCommands::END_EVENT:
+            {
+                RenderDevice->EndEvent();
+
+                break;
+            }
+            }
+        }
+    }
+
     static IRenderDevice::IRenderTargetView* renderTargets[1] = {nullptr};
     RenderDevice->SetupRenderTargets((const IRenderDevice::IRenderTargetView**)renderTargets, 1, nullptr);
 

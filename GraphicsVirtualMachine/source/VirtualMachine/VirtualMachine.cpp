@@ -16,7 +16,7 @@ void VirtualMachine::PushData(const void* data, uint32_t dataSize)
 }
 
 VirtualMachine::VirtualMachine(IRenderDevice* RenderDevice):
-resourcesManager(), RenderDevice(RenderDevice)
+resourcesManager(), RenderDevice(RenderDevice), renderGraph(RenderDevice)
 {}
 
 

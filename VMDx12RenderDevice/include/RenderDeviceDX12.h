@@ -83,6 +83,8 @@ private:
     
 #ifdef _DEBUG
     void LogAdapters();
+    void LogAdapterOutput(IDXGIAdapter* Adapter);
+    void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 #endif
     
     void CreateCommandObjects(const RenderDeviceInitParams& initParams);
@@ -102,7 +104,7 @@ protected:
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
-     virtual void Draw(DrawCall call) override;
+     virtual void Draw(const DrawCall& call) override;
     void Present() override;
 
 #pragma region SetupPipeline
