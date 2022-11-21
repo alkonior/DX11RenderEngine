@@ -12,8 +12,8 @@ using namespace Renderer;
 UIRenderPass::UIRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"UIShader.hlsl", renderSystem}) {
 
     //renderDevice = in.renderSystem.pRenderer;
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
 
     Vertex2D vertices[] =
     {
@@ -93,8 +93,8 @@ void UIRenderPass::PreRender()
 
 void UIRenderPass::Render()
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
     uint64_t lastFlag = -1;
     //renderDevice->ApplyPipelineState(factory->GetState(0));
 
@@ -102,9 +102,16 @@ void UIRenderPass::Render()
     renderDevice->ApplyIndexBufferBinding(indexBuffer, 16);
     renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
 
-    renderDevice->SetRenderTargets(nullptr, 0, nullptr, vp);
+    
+    Renderer::RenderTargetBinding* targets[] = {
+        &Renderer::RenderTargetBinding::BackBufferRT
+
+    };
+    
+    renderDevice->SetRenderTargets(targets, 1, nullptr);
     renderDevice->VerifyConstBuffer(constBuffer, uiTransformCB.slot);
 
+    for (int j =0; j<6 ; j++)
     for (size_t i = 0; i < drawCalls.size(); i++) {
         if (drawCalls[i].data.flag != lastFlag) {
             if (drawCalls[i].data.flag & UICHAR) { renderDevice->BeginEvent("Chars"); }

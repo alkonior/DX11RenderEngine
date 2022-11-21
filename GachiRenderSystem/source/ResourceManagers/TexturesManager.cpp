@@ -56,7 +56,7 @@ void TexturesManager::RegTexture(const TextureData& tx, size_t id)
     pTexture.height = tx.GetHeight();
 }
 
-void TexturesManager::UpdateFloatTexture(const TextureData& tx, size_t id)
+void TexturesManager::UpdateTexture(const TextureData& tx, size_t id)
 {
     auto& pTexture = colorTextures[id];
     if (pTexture.texture == nullptr)
@@ -70,7 +70,7 @@ void TexturesManager::UpdateFloatTexture(const TextureData& tx, size_t id)
     }
 }
 
-void TexturesManager::UpdateFloatTexture(const ImageUpdate& updateData)
+void TexturesManager::UpdateTexture(const ImageUpdate& updateData)
 {
     auto& pTexture = colorTextures[updateData.id];
     if (pTexture.texture == nullptr)

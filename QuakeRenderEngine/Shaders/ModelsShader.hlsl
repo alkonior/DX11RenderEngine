@@ -90,7 +90,7 @@ PSIn vsIn(VSIn input) {
 	vso.normal = input.normal;
 #endif
 
-	vso.normal = mul(float4(vso.normal, 0.0f), worldMat);
+	vso.normal = mul(float4(vso.normal, 0.0f), worldMat).xyz;
 
 #ifdef BAD_UV
 	vso.uv = input.uv / modelsCosntBuffer.wh;
@@ -117,13 +117,13 @@ struct PSOut {
 	float4  normal   : SV_Target4;
 };
 
-PSOut psIn(PSIn input) : SV_Target
+PSOut psIn(PSIn input) 
 {
 	PSOut pso = (PSOut)0;
 	
 	float4 curPixelPos = mul(input.worldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
 	float4 oldPixelPos = mul(input.oldWorldPos, coreConstants.currentMatrices.viewProjection)*0.5+0.5;
-	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
+	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w).xyz);
 	
 	if (dot(input.normal, input.normal) > 0.00001)
 		pso.normal.xyz = input.normal;

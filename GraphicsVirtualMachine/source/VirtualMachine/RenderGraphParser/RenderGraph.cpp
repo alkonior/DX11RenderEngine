@@ -31,24 +31,60 @@ const std::vector<Resource*>& wrightDependencies
     NewReadDep.clear();
     NewWrightDep.clear();
 
+    bool result = true;
+
     for (auto& readDep : readDependencies)
     {
         if (ReadDependencies.contains(readDep))
             continue;
         if (WrightDependencies.contains(readDep))
-            return false;
+        {
+            result = false;
+            break;
+        }
+        if (ForwardWrightDependencies.contains(readDep))
+        {
+            result = false;
+            break;
+        }
         NewReadDep.push_back(readDep);
+        NewWrightDep.push_back(readDep);
     }
-
-    for (auto& wrightDep : wrightDependencies)
+    if (result)
     {
-        if (ReadDependencies.contains(wrightDep))
-            return false;
-        if (WrightDependencies.contains(wrightDep))
-            continue;
-        NewWrightDep.push_back(wrightDep);
+        for (auto& wrightDep : wrightDependencies)
+        {
+            if (ReadDependencies.contains(wrightDep))
+            {
+                result = false;
+                break;
+            }
+            if (ForwardReadDependencies.contains(wrightDep))
+            {
+                result = false;
+                break;
+            }
+            if (WrightDependencies.contains(wrightDep))
+                continue;
+
+            NewWrightDep.push_back(wrightDep);
+        }
     }
 
+    if (!result)
+    {
+        for (auto& readDep : readDependencies)
+        {
+            ForwardReadDependencies.insert(readDep);
+        }
+        for (auto& wrightDep : wrightDependencies)
+        {
+            ForwardWrightDependencies.insert(wrightDep);
+        }
+        return false;
+    }
+
+    
     for (auto& readDep : NewReadDep)
     {
         ReadDependencies.insert(readDep);
@@ -94,7 +130,7 @@ const std::vector<Resource*>& WrightDependencies
 
 
     bool CreateBlocFlag = true;
-    for (int i = lasrLockedBlock; i < Blocks.size(); i++)
+    for (int i = lasrLockedBlock >= 0 ? lasrLockedBlock : 0; i < Blocks.size(); i++)
     {
         if (Blocks[i].TryAdd(Node, ReadDependencies, WrightDependencies))
         {
@@ -119,4 +155,5 @@ void GVM::RenderGraph::Clear()
 {
     Blocks.clear();
     lasrAddPS = -1;
+    lasrLockedBlock = 0;
 }

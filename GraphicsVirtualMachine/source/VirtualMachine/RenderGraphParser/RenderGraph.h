@@ -42,6 +42,8 @@ struct SyncThreadBlock {
         
     std::set<Resource*> ReadDependencies;
     std::set<Resource*> WrightDependencies;
+    std::set<Resource*> ForwardReadDependencies;
+    std::set<Resource*> ForwardWrightDependencies;
 };
 
 

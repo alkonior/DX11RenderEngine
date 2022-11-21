@@ -13,8 +13,8 @@ public:
 
     virtual void RegTexture(void* tx, int width, int height, size_t id);
     virtual void RegTexture(const TextureData& tx, size_t id);
-    virtual void UpdateFloatTexture(const TextureData& tx, size_t id);
-    virtual void UpdateFloatTexture(const ImageUpdate& updateData);
+    virtual void UpdateTexture(const TextureData& tx, size_t id);
+    virtual void UpdateTexture(const ImageUpdate& updateData);
     virtual void ResizeTextures() override; 
 
     uint32_t depthWidth;

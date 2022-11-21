@@ -10,8 +10,8 @@ void TAARenderPass::Init(const char* dirr)
 {
     BaseRenderPass::Init(dirr, new TAARenderPassProvider());
     
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
     
     TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
 	constBuffer = renderDevice->CreateConstBuffer(sizeof(localBuffer));
@@ -29,8 +29,8 @@ void TAARenderPass::UpdateHaltonSequence()
 
     if (HaltonSequence.size() < localBuffer.numSamples)
     {
-        int32_t width, height;
-        renderDevice->GetBackbufferSize(&width, &height);
+        uint32_t width, height;
+        renderDevice->GetBackbufferSize(width, height);
 		
         HaltonSequence.resize(localBuffer.numSamples);
         auto left = halton_sequence(20, 20 + localBuffer.numSamples-1, 2);
@@ -49,8 +49,8 @@ void TAARenderPass::UpdateHaltonSequence()
 
 void TAARenderPass::PreRender()
 {	
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
 	
     UpdateHaltonSequence();
     
@@ -64,8 +64,8 @@ void TAARenderPass::PreRender()
 
 void TAARenderPass::Render()
 {
-	int32_t width, height;
-	renderDevice->GetBackbufferSize(&width, &height);
+	uint32_t width, height;
+	renderDevice->GetBackbufferSize(width, height);
 	renderDevice->ClearState();
 	baseRendererParams.renderSystem.Present();
 	
@@ -119,13 +119,13 @@ void TAARenderPass::Render()
 	QuadHelper.Render();
 	
 	Renderer::RenderTargetBinding* target[] = {
-		nullptr,
+		&Renderer::RenderTargetBinding::BackBufferRT,
 	//	baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("outTexture")),
 		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastColor")),
 		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastDepth")),
 	};
 	//target[0] = nullptr;
-	renderDevice->SetRenderTargets(target, 3, nullptr, {0,0,width,height,0,1});
+	renderDevice->SetRenderTargets(target, 3, nullptr);
 	renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
 	renderDevice->VerifyPixelTexture(0, TAAHistory);
 	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture);

@@ -343,12 +343,12 @@ void RenderSystem::RegisterImg(size_t id, const TextureData& text)
 
 void RenderSystem::UpdateImg(size_t id, const TextureData& text)
 {
-    texturesManger->UpdateFloatTexture(text, id);
+    texturesManger->UpdateTexture(text, id);
 }
 
 void RenderSystem::UpdateImg(const ImageUpdate& data)
 {
-    texturesManger->UpdateFloatTexture(data);
+    texturesManger->UpdateTexture(data);
 }
 
 void RenderSystem::ReleaseImg(size_t id)

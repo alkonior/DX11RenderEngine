@@ -304,13 +304,13 @@ void VirtualMachine::RunVM()
         case EMachineCommands::BEGIN_EVENT:
         {
             const char* name = (const char*)dataQueue.data() + queueShift;
-            std::cout << name << std::endl;
+            //std::cout << name << std::endl;
             PullPointer(std::strlen(name) + 1);
 
             renderGraph.AddCommand(
                 {
                     EMachineCommands::BEGIN_EVENT,
-                    (void*)&name
+                    (void*)name
                 },
                 {},
                 {}

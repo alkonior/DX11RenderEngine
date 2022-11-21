@@ -1,30 +1,17 @@
 #include "pch.h"
 #include "UPRenderer.h"
 
+#include "ResourceManagers/States/Samplers.h"
+
 
 using namespace Renderer;
 
 
-UPRenderer::UPRenderer() : BaseRenderer("BSPShader.hlsl"),
-staticMeshes(20000, 20000), dynamicMeshes(2000, 2000) {}
-
-void UPRenderer::Init(void* shaderData, size_t dataSize) {
-	if (provider != nullptr) {
-		//delete provider;
-		delete factory;
-		int32_t width, height;
-		renderer->GetBackbufferSize(&width, &height);
-		provider = new UPRendererProvider(width, height);
-		factory = new UPRendererFactory(provider, shaderData, dataSize);
-		return;
-	}
-
-	int32_t width, height;
-	renderer->GetBackbufferSize(&width, &height);
-	provider = new UPRendererProvider(width, height);
-	factory = new UPRendererFactory(provider, shaderData, dataSize);
-
-	pDataCB = renderer->CreateConstBuffer(sizeof(dataBuffer));
+UPRenderer::UPRenderer(BaseRenderSystem& renderSystem) :
+BaseRenderPass({"BSPShader.hlsl", renderSystem}),
+staticMeshes(renderSystem.pRenderer, 20000, 20000), dynamicMeshes(renderSystem.pRenderer, 2000, 2000)
+{
+	pDataCB = renderDevice->CreateConstBuffer(sizeof(dataBuffer));
 
 
 	sampler.filter = TextureFilter::TEXTUREFILTER_POINT;
@@ -39,6 +26,10 @@ void UPRenderer::Init(void* shaderData, size_t dataSize) {
 	lightSampler.addressW = TextureAddressMode::TEXTUREADDRESSMODE_WRAP;
 	lightSampler.mipMapLevelOfDetailBias = 0;
 	lightSampler.maxAnisotropy = 16;
+}
+
+void UPRenderer::Init(const char* dirr) {
+    BaseRenderPass::Init(dirr, new UPRendererProvider());
 }
 
 MeshHashData UPRenderer::Register(UPModelMesh model, bool dynamic) {
@@ -70,68 +61,69 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelMesh newModel, TexturesManag
 	drawCalls.emplace_back(model, texture, data);
 }
 
-void UPRenderer::Render(GraphicsBase& gfx) {
+void UPRenderer::Render() {
 	
 	RenderTargetBinding* targets[] = {
-		 &gfx.texturesManger.diffuseColorRT,
-		 &gfx.texturesManger.lightColorRT,
-		 &gfx.texturesManger.alphaSurfacesRT,
-		 &gfx.texturesManger.velocityFieldRT,
-		 &gfx.texturesManger.normalsFieldRT,
+		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
+		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
+		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
 	};
 
-	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, gfx.texturesManger.velocityFieldRT.viewport);
+	renderDevice->SetRenderTargets(targets, std::size(targets),
+		baseRendererParams.renderSystem.texturesManger->depthBuffer);
 
 	staticMeshes.UpdateBuffers();
 	dynamicMeshes.UpdateBuffers(true);
 
 
 
-	int32_t width, height;
-	renderer->GetBackbufferSize(&width, &height);
+	uint32_t width, height;
+	renderDevice->GetBackbufferSize(width, height);
 	size_t lastFlags = -1;
 
-	renderer->VerifyConstBuffer(pDataCB, upCosntBuffer.slot);
+	renderDevice->VerifyConstBuffer(pDataCB, upCosntBuffer.slot);
 
-	renderer->VerifyPixelSampler(0, Samplers::anisotropic16);
-	renderer->VerifyPixelSampler(1, Samplers::anisotropic16);
+	renderDevice->VerifyPixelSampler(0, Samplers::anisotropic16);
+	renderDevice->VerifyPixelSampler(1, Samplers::anisotropic16);
 
 
 
 	for (size_t i = 0; i < drawCalls.size(); i++) {
 		if (drawCalls[i].data.flags != lastFlags) {
-			renderer->ApplyPipelineState(factory->GetState(drawCalls[i].data.flags));
+			renderDevice->ApplyPipelineState(factory->GetState(drawCalls[i].data.flags));
 		}
 		lastFlags = drawCalls[i].data.flags;
 
 
 
 		auto  pTexture = drawCalls[i].texture.texture;
-		renderer->VerifyPixelTexture(0, pTexture);
+		renderDevice->VerifyPixelTexture(0, pTexture);
 		auto  pLightMap = drawCalls[i].lightMap.texture;
-		renderer->VerifyPixelTexture(1, pLightMap);
+		renderDevice->VerifyPixelTexture(1, pLightMap);
 	
 
 		dataBuffer.world = drawCalls[i].data.position.GetTransform();
 		dataBuffer.texOffset = drawCalls[i].data.texOffset;
 		dataBuffer.color = drawCalls[i].data.light;
-		renderer->SetConstBuffer(pDataCB, &dataBuffer);
+		renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
 
 		if (drawCalls[i].data.dynamicLight)
 		{
-			gfx.texturesManger.UpdateTexture(*drawCalls[i].data.lightUpdate);
+			baseRendererParams.renderSystem.texturesManger->UpdateTexture(*drawCalls[i].data.lightUpdate);
 		}
 
 		if (drawCalls[i].data.dynamic) {
-			renderer->ApplyMeshBuffersBinding(dynamicMeshes.mesh);
-			renderer->DrawIndexedPrimitives(
+			renderDevice->ApplyMeshBuffersBinding(dynamicMeshes.mesh);
+			renderDevice->DrawIndexedPrimitives(
 				(Renderer::PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
 				drawCalls[i].model.numElem);
 		}
 		else {
-			renderer->ApplyMeshBuffersBinding(staticMeshes.mesh);
-			renderer->DrawIndexedPrimitives(
+			renderDevice->ApplyMeshBuffersBinding(staticMeshes.mesh);
+			renderDevice->DrawIndexedPrimitives(
 				(Renderer::PrimitiveType)drawCalls[i].model.pt, 0, 0, 0, drawCalls[i].model.indexOffset,
 				drawCalls[i].model.numElem);
 		}
@@ -144,7 +136,8 @@ void UPRenderer::Flush() {
 	dynamicMeshes.Flush();
 }
 
-void UPRenderer::Clear(GraphicsBase& gfx) {
+void UPRenderer::PostRender()
+{
 	for (auto& drawCall: drawCalls)
 	{
 		if (drawCall.data.dynamicLight)
@@ -155,24 +148,26 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 	}
 
 	drawCalls.clear();
-	
 
-
-	RenderTargetBinding* targets[] = {
-		 &gfx.texturesManger.diffuseColorRT,
-		 &gfx.texturesManger.lightColorRT,
-		 &gfx.texturesManger.alphaSurfacesRT,
-		 &gfx.texturesManger.normalsFieldRT,
-	};
-
-	renderer->SetRenderTargets(targets, std::size(targets), gfx.texturesManger.depthBuffer, Viewport());
-	renderer->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 
 void UPRenderer::Destroy() {
 
-	renderer->AddDisposeConstBuffer(pDataCB);
+	renderDevice->AddDisposeConstBuffer(pDataCB);
 	delete factory;
+}
+void UPRenderer::PreRender()
+{
+	
+	RenderTargetBinding* targets[] = {
+		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
+		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
+		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces")),
+		baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField"))
+	};
+
+	renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
+	renderDevice->Clear(ClearOptions::CLEAROPTIONS_TARGET, { 0, 0, 0, 0 }, 0, 0);
 }
 
 

@@ -31,7 +31,8 @@ public:
 
     void RenderImGUI();
     void PostRender() override;
-    
+    void Resize() override {};
+
     size_t HaltonIndex;
     std::vector<float2> HaltonSequence;
 

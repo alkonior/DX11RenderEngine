@@ -44,6 +44,8 @@ public:
     void Draw(const UIDrawData& data);
     
     ~UIRenderPass() override;
+    
+    void Resize() override {};
 private:
     Renderer::Viewport vp;
 

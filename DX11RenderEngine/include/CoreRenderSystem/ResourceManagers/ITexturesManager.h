@@ -40,8 +40,8 @@ public:
 	virtual void RegTexture(void* tx, int width, int height, size_t id) = 0;
 	virtual void RegTexture(const TextureData& tx, size_t id) = 0;
 	
-	virtual void UpdateFloatTexture(const TextureData& tx, size_t id) = 0;
-	virtual void UpdateFloatTexture(const ImageUpdate& updateData) = 0;
+	virtual void UpdateTexture(const TextureData& tx, size_t id) = 0;
+	virtual void UpdateTexture(const ImageUpdate& updateData) = 0;
 	
 	
 	virtual void ReleaseTexture(size_t id) = 0;
