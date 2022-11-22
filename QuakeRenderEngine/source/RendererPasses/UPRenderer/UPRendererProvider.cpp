@@ -40,10 +40,17 @@ Renderer::InputLayoutDescription UPRenderer::UPRendererProvider::GetInputLayoutD
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
+const ShaderDefines UPRendererDefines[] = {
+	ShaderDefines("RED"),
+	ShaderDefines("ALPHA"),
+	ShaderDefines("LIGHTMAPPED")
+};
+
 const char* UPRenderer::UPRendererProvider::GetShaderName()
 {
 	return "BSP shader";
 }
+
 Renderer::PipelineFactoryDescription UPRenderer::UPRendererProvider::GetFactoryDescription()
 {
 	return {

@@ -1,5 +1,4 @@
 #pragma once
-#include "UPRendererFactory.h"
 #include "UPConstBuffers.h"
 #include "CoreRenderSystem/RenderPasses/BaseRenderPass.h"
 #include "ResourceManagers/TexturesManager.h"

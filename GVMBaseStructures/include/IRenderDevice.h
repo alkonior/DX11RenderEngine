@@ -20,6 +20,7 @@ enum RenderDeviceLimitations {
 #ifndef DX12
 #define DX11
 #endif
+
 class IRenderDevice {
 
 
@@ -93,12 +94,7 @@ public:
     struct DX1ShaderResourceView :  DX12ResourceView{};
     struct DX1UATargetView       :  DX12ResourceView{};
 
-
-    
-    friend class VirtualMachine;
-    friend class ResourcesManager;
-    friend class GpuResource;
-    friend class GpuResourceView;
+#endif
 
     
     //friend class VirtualMachine;
