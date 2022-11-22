@@ -6,59 +6,62 @@ namespace GVM {
 
 
 
+struct RenderGraphNode : public std::tuple<EMachineCommands, void*> {
+    RenderGraphNode(
+    EMachineCommands Command,
+    void* Description
+    //std::vector<Resource*>&& ReadDependencies,
+    //std::vector<Resource*>&& WrightDependencies
+    );
+
+    auto& Command() const
+    {
+        return std::get<0>(*this);
+    }
+    auto& Description() const
+    {
+        return std::get<1>(*this);
+    }
+    
+
+    
+    //EMachineCommands Command;
+    //void* Description;
+
+    //std::vector<Resource*> ReadDependencies;
+    //std::vector<Resource*> WrightDependencies;
+};
+
+struct SyncThreadBlock {
+    std::vector<std::tuple<EMachineCommands, void*>> Nodes;
+
+    bool TryAdd(const RenderGraphNode&,
+    const std::vector<Resource*>& ReadDependencies,
+    const std::vector<Resource*>& WrightDependencies
+    );
+        
+    std::vector<Resource*> ReadDependencies;
+    std::vector<Resource*> WrightDependencies;
+};
+
 
 class RenderGraph {
-    IRenderDevice* Device;
+    IRenderDevice* RenderDevice;
 
-    struct RenderGraphNode {
-        enum Type { };
-        union {
-            struct PipelineSnapshotNode {
-                Compressed::PipelineSnapshot* ps;
-            } PSNode;
 
-            struct SetResourceNode {
-                SetResourceDataDesc* srd;
-            } SRNode;
-
-            struct ClearRenderTargetNode {
-                ClearRenderTargetDesc* crt;
-            } CRTNode;
-
-            struct ClearDepthStencilNode {
-                ClearDepthStencilDesc* cds;
-            } CDSNode;
-        };
-
-        RenderGraphNode(Compressed::PipelineSnapshot* ps);
-        RenderGraphNode(SetResourceDataDesc* srd);
-        RenderGraphNode(ClearRenderTargetDesc* crt);
-        RenderGraphNode(ClearDepthStencilDesc* cds);
-
-        Resource** ReadDependencies;
-        Resource** WrightDependencies;
-    };
-
-    struct SyncReadBlock {
-        std::set<Resource*> ReadDependencies;
-        
-    };
-
-    struct SyncThreadBlock {
-        std::set<Resource*> WrightDependencies;
-        std::vector<RenderGraphNode> Nodes;
-    };
 public:
-
-    RenderGraph(IRenderDevice* Device):Device(Device) {}
     
-    void AddPipelineSnapshotNode(Compressed::PipelineSnapshot* ps);
-    void AddSetResourceNode(SetResourceDataDesc* srd);
-    void AddClearRenderTargetNode(ClearRenderTargetDesc* crt);
-    void AddClearDepthStencilNode(ClearDepthStencilDesc* cds);
-    //void  AddClearPipelineNode   (Compressed::PipelineSnapshot* ps);
+    std::vector<SyncThreadBlock> Blocks;
 
-
+    RenderGraph(IRenderDevice* Device): RenderDevice(Device) {
+    Blocks.push_back({}); }
+    
+    void AddCommand(
+        RenderGraphNode Node,
+        const std::vector<Resource*>& ReadDependencies = {},
+        const std::vector<Resource*>& WrightDependencies = {}
+    );
+    
     void Clear();
 
 };

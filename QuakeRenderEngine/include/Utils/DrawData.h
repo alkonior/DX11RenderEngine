@@ -3,8 +3,7 @@
 #include "TextureData.h"
 
 struct  RenderEngineInitStruct {
-    void* hWnd1;
-    void* hWnd2;
+    void* hWnd;
     size_t width; size_t height;
 };
 

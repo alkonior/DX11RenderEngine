@@ -6,6 +6,7 @@
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
+#include "RendererPasses/UPRenderer/UPRenderer.h"
 #include "ResourceManagers/ModelsManager.h"
 #include "Utils/DrawData.h"
 
@@ -89,9 +90,9 @@ private:
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
 	TAARenderPass			 renderPassTAA;
+	UPRenderer				 renderPassUP;
 	
 	//MotionBlurRenderer	 managerMB;
-	//UPRenderer			 managerUP;
 	//PPRenderer			 managerPostProcess;
 	//ParticlesRenderer	 managerParticles;
 	//BloomRenderer	     managerBloom;

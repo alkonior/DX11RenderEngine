@@ -3,20 +3,23 @@
 
 using namespace GVM;
 
-void VirtualMachine::PushCommand(EMachineCommands command)
+VirtualMachine::~VirtualMachine()
 {
-    commandQueue.push_back(command);
+    delete RenderDevice;
 }
+
+
+
 
 void VirtualMachine::PushData(const void* data, uint32_t dataSize)
 {
     uint32_t position = dataQueue.size();
-    dataQueue.resize(position+dataSize);
-    memcpy_s(dataQueue.data()+position,dataSize,data,dataSize);
+    dataQueue.resize(position + dataSize);
+    memcpy_s(dataQueue.data() + position, dataSize, data, dataSize);
 }
 
 VirtualMachine::VirtualMachine(IRenderDevice* RenderDevice):
-resourcesManager(), RenderDevice(RenderDevice)
+    resourcesManager(), RenderDevice(RenderDevice), renderGraph(RenderDevice)
 {}
 
 
@@ -32,18 +35,17 @@ void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
 
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
 {
-    PushCommand(EMachineCommands::DRAW);
     drawCallsQueue.push_back(drawCall);
+    PushCommand(EMachineCommands::DRAW);
 }
 
 void VirtualMachine::BeginEvent(const char* name)
 {
+    PushData(name, std::strlen(name) + 1);
     PushCommand(EMachineCommands::BEGIN_EVENT);
-    PushData(name, std::strlen(name)+1);
 }
 
 void VirtualMachine::EndEvent()
 {
     PushCommand(EMachineCommands::END_EVENT);
 }
-

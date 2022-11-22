@@ -152,6 +152,12 @@
     <ClInclude Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
+    <ClInclude Include="include\Float3Data.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FloatData.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\GDIPlusManager.cpp">
@@ -173,6 +179,8 @@
     <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
+    <ClCompile Include="source\Float3Data.cpp" />
+    <ClCompile Include="source\FloatData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\PixelPacking_Velocity.hlsl" />

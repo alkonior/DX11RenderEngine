@@ -142,8 +142,7 @@ struct PresentationParameters {
 	Size2D ViewPortBufferSize;
 	
 	int32_t multiSampleCount;
-	void* deviceWindowHandle1;
-	void* deviceWindowHandle2;
+	void* deviceWindowHandle;
 	uint8_t isFullScreen;
 	DepthFormat depthStencilFormat;
 	PresentInterval presentationInterval;

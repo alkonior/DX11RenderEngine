@@ -24,6 +24,9 @@
     <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\DX11ShadersCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\D3D11Renderer.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\GraphicsExceptions\GraphicsException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX11ShadersCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,14 +3,18 @@
 
 #include <d3d11.h>
 
+#include "RenderFlags.h"
+#include "ResourceManagers/States/BlendStates.h"
+#include "ResourceManagers/States/DSStates.h"
+#include "ResourceManagers/States/RasterizerStates.h"
+
 
 
 using namespace Renderer;
 
-UPRenderer::UPRendererProvider::UPRendererProvider(int32_t width, int32_t height) :
-	width(width), height(height) {}
+UPRenderer::UPRendererProvider::UPRendererProvider()  {}
 
-void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) {
+void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) {
 
 	
 	refToPS->bs = &BlendStates::NoAlpha;
@@ -39,5 +43,13 @@ Renderer::InputLayoutDescription UPRenderer::UPRendererProvider::GetInputLayoutD
 const char* UPRenderer::UPRendererProvider::GetShaderName()
 {
 	return "BSP shader";
+}
+Renderer::PipelineFactoryDescription UPRenderer::UPRendererProvider::GetFactoryDescription()
+{
+	return {
+		UPRendererDefines,
+		std::size(UPRendererDefines),
+		
+	};
 }
 

@@ -845,7 +845,7 @@ struct PSO
 };
 
 
-PSO psIn(PSIn input) : SV_Target
+PSO psIn(PSIn input)
 {
 
     PSO pso = (PSO)0;
@@ -853,7 +853,7 @@ PSO psIn(PSIn input) : SV_Target
     float2 texCords = input.uv;
     pso.historyColor = curColor.Sample(basicSampler, texCords);
     pso.newColor = pso.historyColor;
-    pso.historyDepth = curDepth.Sample(basicSampler, texCords);
+    pso.historyDepth = curDepth.Sample(basicSampler, texCords).x;
 
     return  pso;
 }

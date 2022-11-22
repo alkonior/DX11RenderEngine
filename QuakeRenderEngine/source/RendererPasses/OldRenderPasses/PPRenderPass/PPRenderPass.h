@@ -1,12 +1,10 @@
 #pragma 
-#include "../../GraphicsBase.h"
-#include "../../ResourceManagers/TexturesManager.h"
+#include "CoreRenderSystem/RenderPasses/BaseRenderPass.h"
 #include "PPRendererFactory.h"
 #include "PPConstBuffer.h"
-#include "..\QuadRenderer.h"
 
 
-class PPRenderer : public QuadRenderer {
+class PPRenderer : public BaseRenderPass {
 	struct PPRendererProvider;
 	PPRendererFactory* factory = nullptr;
 	PPRendererProvider* provider = nullptr;
@@ -27,10 +25,9 @@ public:
 
 	PPRenderer();
 
-	virtual void Init(void* shaderData, size_t dataSize) override;
 	void Init(LPCWSTR dirr);
 
-	void Render(GraphicsBase& gfx);
+	void Render();
 	
 	virtual void Clear() override {}; 
 
@@ -53,5 +50,10 @@ private:
 
 	
 	void RenderIMGUI(GraphicsBase& gfx);
+public:
+	void Resize() override;
+	void Init(const char* dirr) override;
+	void PreRender() override;
+	void PostRender() override;
 };
 

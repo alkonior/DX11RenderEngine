@@ -10,8 +10,7 @@ class TAARenderPass : public GachiBasePass {
 
 
 public:
-    TAARenderPass(BaseRenderSystem& System)
-        : GachiBasePass({"TAAShader.hlsl", System}), QuadHelper(System.pRenderer) {}
+    TAARenderPass(BaseRenderSystem& System);
     void Init(const char* dirr) override;
     void SetupSettings(TAASettings Settings);
     void UpdateHaltonSequence();

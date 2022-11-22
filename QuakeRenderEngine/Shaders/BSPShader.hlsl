@@ -1,6 +1,6 @@
 #define HLSL
-#include "../Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/source/CoreRenderSystem/CoreShaderInclude.h"
-#include "../Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/source/CoreRenderSystem/Renderers/UPRenderer/UPConstBuffers.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include\CoreRenderSystem\CoreShaderInclude.h"
+#include "../Quake-2/ref_dx11rg/DX11RenderEngine/QuakeRenderEngine/source/RendererPasses/UPRenderer/UPConstBuffers.h"
 
 struct VSIn {
 	float3 pos     : Position;
@@ -33,17 +33,17 @@ PSIn vsIn(VSIn input) {
 	PSIn vso = (PSIn)0;
 	
 	vso.worldPos = mul(float4(input.pos, 1.0f), upCosntBuffer.world);
-	vso.pos =    mul(vso.worldPos, mainConstants.viewProjection);
+	vso.pos =    mul(vso.worldPos, coreConstants.currentMatrices.viewProjection);
 	
-	vso.pos.xy += taaShiftBuffer.taaStrength*
-		taaShiftBuffer.taaPixelShift*
+	vso.pos.xy += coreConstants.taaBuffer.taaStrength*
+		coreConstants.taaBuffer.taaPixelShift*
 		vso.pos.w;
 	//float4 oldPos = mul(mul(float4(input.pos, 1.0f), upCosntBuffer.world), mainConstants.past_viewProjection);
 	//vso.velocity = (vso.pos/vso.pos.w - oldPos/oldPos.w)/2.f;
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
-	vso.normal = mul(float4(input.normal, 0), upCosntBuffer.world);
+	vso.normal = mul(float4(input.normal, 0), upCosntBuffer.world).xyz;
 	return vso;
 }
 
@@ -69,9 +69,9 @@ PSOut psIn(PSIn input)
 {
 	PSOut pso = (PSOut)0;
 	
-	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection)*0.5+0.5;
-	float4 oldPixelPos = mul(input.worldPos, mainConstants.past_viewProjection)*0.5+0.5;
-	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w));
+	float4 curPixelPos = mul(input.worldPos,  coreConstants.currentMatrices.viewProjection)*0.5+0.5;
+	float4 oldPixelPos = mul(input.worldPos,  coreConstants.pastMatrices.viewProjection)*0.5+0.5;
+	pso.velocity = PackVelocity((curPixelPos/curPixelPos.w - oldPixelPos/oldPixelPos.w).xyz);
 	if (dot(input.normal, input.normal) > 0.00001)
 		pso.normal.xyz = input.normal;
 
@@ -109,7 +109,7 @@ struct PSOut {
 PSOut psIn(PSIn input) {
 	PSOut pso = (PSOut)0;
 	
-	float4 curPixelPos = mul(input.worldPos, mainConstants.viewProjection);
+	float4 curPixelPos = mul(input.worldPos, coreConstants.currentMatrices.viewProjection);
 	pso.alpha = tex.Sample(basicSampler, input.uv);
 #ifdef LIGHTMAPPED
 	pso.alpha *= lightMapText.Sample(lightSampler, input.luv);

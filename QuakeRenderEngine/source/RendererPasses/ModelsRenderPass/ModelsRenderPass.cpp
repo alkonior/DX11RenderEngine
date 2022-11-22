@@ -12,8 +12,8 @@ ModelsRenderPass::DrawLerpCall::DrawLerpCall(ModelsManager::SavedModel model, Te
 
 ModelsRenderPass::ModelsRenderPass(BaseRenderSystem& renderSystem) : BaseRenderPass({"ModelsShader.hlsl",renderSystem})
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
     pDataCB = renderDevice->CreateConstBuffer(sizeof(dataBuffer));
 
     vp.x = 0;
@@ -50,15 +50,15 @@ void ModelsRenderPass::PreRender()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
     };
 
-    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
+    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
     renderDevice->Clear(CLEAROPTIONS_TARGET, {}, 0, 0);
     renderDevice->Clear(CLEAROPTIONS_DEPTHBUFFER, {}, 0, 0);
 }
 
 void ModelsRenderPass::Render()
 {
-    int32_t width, height;
-    renderDevice->GetBackbufferSize(&width, &height);
+    uint32_t width, height;
+    renderDevice->GetBackbufferSize(width, height);
 
     RenderTargetBinding* targets[5] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
@@ -68,7 +68,7 @@ void ModelsRenderPass::Render()
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
     };
 
-    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer, vp);
+    renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
 
 
     size_t lastFlags = -1;

@@ -25,20 +25,29 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPassIMGUI({"",*this}),
     modelsManager(modelsManager),
     texturesManager(texturesManager),
-    renderPassTAA(*this)
+    renderPassTAA(*this),
+    renderPassUP(*this)
 {
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 
-    ImGui_ImplWin32_Init(init.hWnd1);
-    ImGui_ImplDX11_Init(((D3D11Renderer*)pRenderer)->device.Get(), ((D3D11Renderer*)pRenderer)->context.Get());
+    ImGui_ImplWin32_Init(init.hWnd);
+    ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(), (ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
 
+
+
+    uint32_t w,h;
+    pRenderer->GetBackbufferSize(w,h);
+    Viewport vp {0,0,(int32_t)w,(int32_t)h, 0,1};
+    pRenderer->SetBackBufferViewport(vp);
+    
     renderPasses.push_back(&renderPassUI);
     renderPasses.push_back(&renderPassIMGUI);
     renderPasses.push_back(&renderPassModels);
     renderPasses.push_back(&renderPassTAA);
+    renderPasses.push_back(&renderPassUP);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -50,7 +59,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
 //	//renderPasses.push_back(&managerUI);
 //	//renderPasses.push_back(&managerModels);
 //	//renderPasses.push_back(&managerMB);
-//	//renderPasses.push_back(&managerUP);
+//	//renderPasses.push_back(&renderPassUP);
 //	//renderPasses.push_back(&managerPostProcess);
 //	//renderPasses.push_back(&managerParticles);
 //	//renderPasses.push_back(&managerBloom);
@@ -72,11 +81,16 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
 {
     auto renderDevice = new Renderer::D3D11Renderer{
         {
-            (int32_t)init.width,
-            (int32_t)init.height,
+            {
+                (int32_t)init.width,
+                (int32_t)init.height
+            },
+            {
+                (int32_t)init.width,
+                (int32_t)init.height
+            },
             0,
-            init.hWnd1,
-            init.hWnd2,
+            init.hWnd,
             false,
             DepthFormat::DEPTHFORMAT_D32,
             PresentInterval::PRESENTINTERVAL_DEFAULT
@@ -98,7 +112,6 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
 
 void RenderSystem::BeginFrame()
 {
-    pRenderer->ClearState();
     for (auto pass : renderPasses)
     {
         pass->PreRender();
@@ -121,7 +134,7 @@ bool RenderSystem::RenderFrame()
 
     bool success = true;
     pRenderer->BeginEvent("BSP draw.");
-    //GFX_CATCH_RENDER(managerUP.Render(*this););
+    GFX_CATCH_RENDER(renderPassUP.Render());
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("BloomMask draw.");
@@ -133,15 +146,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
-    try { renderPassModels.Render(); }
-    catch (const std::exception& exe)
-    {
-        printf_s(exe.what());
-        printf_s("\n");
-        static char c[100];
-        scanf_s("%s", c, 1);
-        success = false;
-    };
+    renderPassModels.Render(); 
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Dynamic motion blur draw.");
@@ -170,19 +175,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    try { renderPassTAA.Render();; }
-    catch (const std::exception& exe)
-    {
-        printf_s(exe.what());
-        printf_s("\n");
-        static char c[100];
-        scanf_s("%s", c, 1);
-        success = false;
-    };
+    renderPassTAA.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
-    GFX_CATCH_RENDER(renderPassUI.Render(););
+    renderPassUI.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("IMGUI draw.");
@@ -190,6 +187,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
 
+    GFX_CATCH_RENDER(pRenderer->RunVM(););
     return success;
 }
 
@@ -202,7 +200,7 @@ void RenderSystem::EndFrame()
 
 void RenderSystem::ClearBuffer(sm::Vector4 color) noexcept
 {
-    pRenderer->SetRenderTargets(nullptr, 0, texturesManger->depthBuffer, Viewport());
+    pRenderer->SetRenderTargets(nullptr, 0, texturesManger->depthBuffer);
     pRenderer->Clear((ClearOptions)7, {color.x,color.y,color.z,color.w}, 1, 0u);
     //pContext->ClearRenderTargetView(pTarget.Get(), reinterpret_cast<float*>(&color));
     //pContext->ClearDepthStencilView(pDSV.Get(), DModels11_CLEAR_DEPTH, 1.0f, 0u);
@@ -210,7 +208,7 @@ void RenderSystem::ClearBuffer(sm::Vector4 color) noexcept
 
 void RenderSystem::PostRender()
 {
-    //managerUP.Flush();
+    //renderPassUP.Flush();
 
     for (auto pass : renderPasses)
     {
@@ -269,7 +267,7 @@ void RenderSystem::ReleaseModel(size_t id)
 
 void RenderSystem::RegisterImg(size_t id, int width, int height, void* data, bool mipmap)
 {
-    texturesManger->RegTexture(data, width, height, mipmap, id);
+    texturesManger->RegTexture(data, width, height, id);
 }
 
 void RenderSystem::DrawModel(size_t modelId, size_t textureId, Transform position, size_t flags)
@@ -281,22 +279,21 @@ void RenderSystem::DrawModel(size_t modelId, size_t textureId, Transform positio
 
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data)
 {
-    //managerUP.Draw(model, texturesManger->GetImg(textureId), data);
+    renderPassUP.Draw(model, texturesManger->GetImg(textureId), data);
 }
 void RenderSystem::DrawUserPolygon(MeshHashData model, size_t textureId, size_t lightmapId, UPDrawData data)
 {
-    //managerUP.Draw(model, texturesManger->GetImg(textureId), texturesManger->GetImg(lightmapId), data);
+    renderPassUP.Draw(model, texturesManger->GetImg(textureId), texturesManger->GetImg(lightmapId), data);
 }
 
 void RenderSystem::DrawSetUserPolygon(MeshHashData model, UPModelMesh newModel, size_t textureId, UPDrawData data)
 {
-    //managerUP.DrawSet(model, newModel, texturesManger->GetImg(textureId), data);
+    renderPassUP.DrawSet(model, newModel, texturesManger->GetImg(textureId), data);
 }
 
 MeshHashData RenderSystem::RegisterhUserPolygon(UPModelMesh model, bool dynamic)
 {
-    return {};
-    //return managerUP.Register(model, dynamic);
+    return renderPassUP.Register(model, dynamic);
 }
 
 void RenderSystem::DrawFramedModel(size_t modelId, size_t textureId, const LerpModelDrawData& data)

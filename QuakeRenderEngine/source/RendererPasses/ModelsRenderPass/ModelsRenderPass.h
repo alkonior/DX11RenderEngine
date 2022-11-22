@@ -36,6 +36,7 @@ public:
     
     void PostRender() override;
     ~ModelsRenderPass() override;
+    void Resize() override {};
 
 private:
     ModelsCosntBuffer dataBuffer;

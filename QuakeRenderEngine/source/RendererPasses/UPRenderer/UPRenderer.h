@@ -1,24 +1,26 @@
 #pragma once
-#include "DynamicMeshBuffer.h"
 #include "UPRendererFactory.h"
 #include "UPConstBuffers.h"
-#include "CoreRenderSystem/Renderers/BaseRenderer.h"
-#include "CoreRenderSystem/ResourceManagers/TexturesManager.h"
+#include "CoreRenderSystem/RenderPasses/BaseRenderPass.h"
+#include "ResourceManagers/TexturesManager.h"
+#include "Utils/DrawData.h"
+#include "DynamicMeshBuffer.h"
 
 
 
-class UPRenderer : public BaseRenderer {
+class UPRenderer : public BaseRenderPass {
 	struct UPRendererProvider;
 
-	UPRendererFactory* factory = nullptr;
 	UPRendererProvider* provider = nullptr;
 
 	struct UPRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
-		UPRendererProvider(int32_t width, int32_t  height);
-		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
+		UPRendererProvider();
+		virtual void PatchPipelineState(Renderer::Pipeline* refToPS, size_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
 		virtual const char* GetShaderName() override;
+		virtual Renderer::PipelineFactoryDescription GetFactoryDescription() override;
+		
 	};
 	
 
@@ -33,27 +35,28 @@ class UPRenderer : public BaseRenderer {
 
 public:
 
-	UPRenderer();
+	UPRenderer(BaseRenderSystem& renderSystem);
 
-	virtual void Init(void* shaderData, size_t dataSize) override;
+	virtual void Init(const char* dirr) override;
 
 	MeshHashData Register(UPModelMesh model, bool dynamic);
 	void Draw(MeshHashData model, TexturesManager::TextureCache texture, UPDrawData data);
 	void Draw(MeshHashData model, TexturesManager::TextureCache texture, TexturesManager::TextureCache lightMap, UPDrawData data);
 	void DrawSet(MeshHashData model, UPModelMesh newModel, TexturesManager::TextureCache texture, UPDrawData data);
 
-	void Render(GraphicsBase& gfx);
+	void Render();
 	void Flush();
-	virtual void Clear(GraphicsBase& gfx) override;
-	virtual void Clear() override {}; 
+	virtual void PostRender() override;
 
 	~UPRenderer() override;
 
 private:
 
 	void Destroy();
-
-
+public:
+	void Resize() override{};
+	void PreRender() override ;
+private:
 	DynamicMeshBuffer<UPVertex> staticMeshes;
 	DynamicMeshBuffer<UPVertex> dynamicMeshes;
 

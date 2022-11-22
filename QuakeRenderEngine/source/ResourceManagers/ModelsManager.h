@@ -19,6 +19,7 @@ public:
 	
 
 	virtual ~ModelsManager() override;
+	bool WasIdUsed(size_t id) override {return true;};
 private:
 	std::unordered_map<size_t, SavedModel> models = {};
 };
