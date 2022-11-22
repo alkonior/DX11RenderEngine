@@ -134,7 +134,7 @@ void GraphicsApi::SetupViewport(const ViewportDesc& viewport, uint8_t slot)
 {
     wasPSUpdated = true;
     ps->Viewports[slot] = viewport;
-    ps->viewportsNum = std::max<uint8_t>(ps->viewportsNum + 1, slot);
+    ps->viewportsNum = std::max<uint8_t>(ps->viewportsNum, slot);
 }
 void GraphicsApi::SetupCoreBlendState(const CoreBlendDesc& blendState)
 {

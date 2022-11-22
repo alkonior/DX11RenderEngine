@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)debug\</OutDir>
     <IncludePath>$(ProjectDir)include\</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>

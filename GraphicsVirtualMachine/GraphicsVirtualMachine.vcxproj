@@ -77,6 +77,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)..\GVMBaseStructures\include\</IncludePath>
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <OutDir>$(SolutionDir)debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

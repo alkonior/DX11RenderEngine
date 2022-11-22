@@ -40,34 +40,26 @@ struct SyncThreadBlock {
     const std::vector<Resource*>& WrightDependencies
     );
         
-    std::set<Resource*> ReadDependencies;
-    std::set<Resource*> WrightDependencies;
-    std::set<Resource*> ForwardReadDependencies;
-    std::set<Resource*> ForwardWrightDependencies;
+    std::vector<Resource*> ReadDependencies;
+    std::vector<Resource*> WrightDependencies;
 };
 
 
 class RenderGraph {
     IRenderDevice* RenderDevice;
 
-    
 
-
-    int lasrAddPS = -1;
-    int lasrLockedBlock = 0;
-
-
-    
 public:
     
     std::vector<SyncThreadBlock> Blocks;
 
-    RenderGraph(IRenderDevice* Device): RenderDevice(Device) { }
+    RenderGraph(IRenderDevice* Device): RenderDevice(Device) {
+    Blocks.push_back({}); }
     
     void AddCommand(
         RenderGraphNode Node,
-        const std::vector<Resource*>& ReadDependencies,
-        const std::vector<Resource*>& WrightDependencies
+        const std::vector<Resource*>& ReadDependencies = {},
+        const std::vector<Resource*>& WrightDependencies = {}
     );
     
     void Clear();

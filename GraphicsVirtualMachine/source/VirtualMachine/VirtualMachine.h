@@ -24,6 +24,10 @@ class VirtualMachine {
     ResourcesManager resourcesManager;
     PSC* LastSnapshot = nullptr;
     RenderGraph renderGraph;
+    
+    
+    std::vector<Resource*> LastPsReadDep;
+    std::vector<Resource*> LastPsWriteDep;
 
     //uint32_t PushData(void* data, uint32_t dataLength);
 
@@ -92,10 +96,7 @@ class VirtualMachine {
 #pragma Commands
 
     void ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps);
-    void GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps,
-    std::vector<Resource*>& ReadDependencies,
-    std::vector<Resource*>& WrightDependencies
-    );
+    void GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps);
 
 #pragma endregion
 
@@ -107,6 +108,7 @@ public:
     ~VirtualMachine();
 
     void RunVM();
+    void AddComand();
     void Present();
 
 

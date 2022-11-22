@@ -64,7 +64,7 @@ void UPRenderer::DrawSet(MeshHashData model, UPModelMesh newModel, TexturesManag
 void UPRenderer::Render() {
 	
 	RenderTargetBinding* targets[] = {
-		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
+		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
 		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
 		 baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),

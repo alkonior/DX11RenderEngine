@@ -6,6 +6,8 @@
 #include "ResourceManagers/States/Samplers.h"
 
 
+TAARenderPass::TAARenderPass(BaseRenderSystem& System)
+        : GachiBasePass({"TAAShader.hlsl", System}), QuadHelper(System.pRenderer) {}
 void TAARenderPass::Init(const char* dirr)
 {
     BaseRenderPass::Init(dirr, new TAARenderPassProvider());
@@ -112,7 +114,7 @@ void TAARenderPass::Render()
 	//renderDevice->SetRenderTargets(nullptr, 0, nullptr, vp);
 	
 	renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField"		 ))->texture);
-	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor"			 ))->texture);
+	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseTexture"		 ))->texture);
 	renderDevice->VerifyPixelTexture(2, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastColor"			 ))->texture);
 	renderDevice->VerifyPixelTexture(3, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("pastDepth"		     ))->texture);
 	renderDevice->VerifyPixelTexture(4, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture					     );
@@ -150,10 +152,9 @@ void TAARenderPass::Render()
 
 void TAARenderPass::RenderImGUI()
 {
-	return;
     static bool opened = true;
     ImGui::Begin("TAA settings.", &opened);                          // Create a window called "Hello, world!" and append into it.
-    //
+    
     //ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
     ImGui::SliderInt("NumSamples",				    &Settings.numSamples , 1, 20 , "%.3f");
     ImGui::SliderFloat("TAAShiftStrength",          &Settings.taaStrength, 0.0, 100.0  , "%.3f");
@@ -167,12 +168,7 @@ void TAARenderPass::RenderImGUI()
     
     ImGui::End();
 }
+
 void TAARenderPass::PostRender()
 {
-}
-
-void TAARenderPass::SetupSettings(const RenderSettings& settings)
-{
-	Settings = settings.taaSettings;
-    Init(settings.shadersDirr);
 }

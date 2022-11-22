@@ -77,6 +77,7 @@
     <LinkIncremental>true</LinkIncremental>
     <ExternalIncludePath>$(ProjectDir)..\DX11RenderEngine\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ExternalIncludePath);$(ProjectDir)include\;$(ProjectDir)source\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <OutDir>$(SolutionDir)debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -515,6 +516,7 @@
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <ExceptionHandling>Sync</ExceptionHandling>
       <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
@@ -589,6 +591,7 @@
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <ExceptionHandling>Sync</ExceptionHandling>
       <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
@@ -663,6 +666,7 @@
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <ExceptionHandling>Sync</ExceptionHandling>
       <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>

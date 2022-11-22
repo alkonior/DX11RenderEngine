@@ -59,7 +59,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
     IRenderer(presentationParameters, debugMode)
 {
     auto ppppp = new GVM::Dx11PlatformHandle();
-    ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle1;
+    ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle;
     GVM::RenderDeviceInitParams init{
         presentationParameters.BackBufferSize.Width,
         presentationParameters.BackBufferSize.Height,
@@ -69,6 +69,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
 
     testRD = new GVM::RenderDeviceDX11(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
+    delete ppppp;
 
     shaderCompiler = new DX11ShadersCompiler();
     /* Initialize texture and sampler collections */
@@ -659,14 +660,14 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     //DiscardTargetTextures(views, numRenderTargets);
     if (depthStencilBuffer == nullptr)
     {
-        testApi->SetupRenderTargets(nviews, numRenderTargets, 0, nullptr);
         depthStencilBufferTest = nullptr;
     }
     else
     {
-        testApi->SetupRenderTargets(nviews, numRenderTargets, 0, this->depthStencilBuffer->depth.nDsView);
         depthStencilBufferTest = this->depthStencilBuffer->depth.nDsView;
     }
+
+    testApi->SetupRenderTargets(nviews, numRenderTargets, 0, depthStencilBufferTest);
     //RestoreTargetTextures();
 
 

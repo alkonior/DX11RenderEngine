@@ -14,32 +14,30 @@ struct TAASettings {
     float taaStrength;
 };
 
+
 class TAARenderPass : public BaseRenderPass {
 
     QuadRenderPass<0> QuadHelper;
 
 
 public:
-    TAARenderPass(BaseRenderSystem& System)
-        : BaseRenderPass({"TAAShader.hlsl", System}), QuadHelper(System.pRenderer) {}
+    TAARenderPass(BaseRenderSystem& System);
     void Init(const char* dirr) override;
-    void SetupSettings(TAASettings Settings);
     void UpdateHaltonSequence();
     void PreRender() override;
 
+    void Resize() override;
     void Render();
 
     void RenderImGUI();
     void PostRender() override;
-    void Resize() override {};
 
     size_t HaltonIndex;
     std::vector<float2> HaltonSequence;
-
+    TAASettings Settings;
 private:
     TAAConstBuffer localBuffer;
     Renderer::Texture* TAAHistory;
 
-    TAASettings Settings;
     Renderer::ConstBuffer* constBuffer;
 };

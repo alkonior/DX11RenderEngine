@@ -33,7 +33,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 
-    ImGui_ImplWin32_Init(init.hWnd1);
+    ImGui_ImplWin32_Init(init.hWnd);
     ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(), (ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
 
 
@@ -90,8 +90,7 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
                 (int32_t)init.height
             },
             0,
-            init.hWnd1,
-            init.hWnd2,
+            init.hWnd,
             false,
             DepthFormat::DEPTHFORMAT_D32,
             PresentInterval::PRESENTINTERVAL_DEFAULT
@@ -113,7 +112,6 @@ RenderSystem* RenderSystem::Initialise(RenderEngineInitStruct init)
 
 void RenderSystem::BeginFrame()
 {
-    pRenderer->ClearState();
     for (auto pass : renderPasses)
     {
         pass->PreRender();
@@ -136,7 +134,7 @@ bool RenderSystem::RenderFrame()
 
     bool success = true;
     pRenderer->BeginEvent("BSP draw.");
-    //renderPassUP.Render();
+    GFX_CATCH_RENDER(renderPassUP.Render());
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("BloomMask draw.");

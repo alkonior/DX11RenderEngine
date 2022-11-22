@@ -3,27 +3,14 @@
 #include <cassert>
 
 GVM::RenderGraphNode::RenderGraphNode(EMachineCommands Command, void* Description):
-tuple<GVM::EMachineCommands, void*>(Command, Description)
+    tuple<GVM::EMachineCommands, void*>(Command, Description)
 {}
 
-//GVM::RenderGraphNode::RenderGraphNode(EMachineCommands Command, void* Description, std::vector<Resource*>&& readDependencies, std::vector<Resource*>&& wrightDependencies):
-//    Command(Command), Description(Description),
-//    ReadDependencies(std::forward<std::vector<Resource*>>(readDependencies)),
-//    WrightDependencies(std::forward<std::vector<Resource*>>(wrightDependencies))
-//{
-//    for (auto& readDep : ReadDependencies)
-//    {
-//        for (auto& wrightDep : WrightDependencies)
-//        {
-//            assert(readDep != wrightDep);
-//        }
-//    }
-//}
 
 
 bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
-const std::vector<Resource*>& readDependencies,
-const std::vector<Resource*>& wrightDependencies
+    const std::vector<Resource*>& readDependencies,
+    const std::vector<Resource*>& wrightDependencies
 )
 {
     static std::vector<Resource*> NewReadDep;
@@ -35,63 +22,37 @@ const std::vector<Resource*>& wrightDependencies
 
     for (auto& readDep : readDependencies)
     {
-        if (ReadDependencies.contains(readDep))
-            continue;
-        if (WrightDependencies.contains(readDep))
+        if (std::find(WrightDependencies.rbegin(), WrightDependencies.rend(), readDep) != WrightDependencies.rend())
         {
-            result = false;
-            break;
+            return false;
         }
-        if (ForwardWrightDependencies.contains(readDep))
+        if (std::find(ReadDependencies.rbegin(), ReadDependencies.rend(), readDep) != ReadDependencies.rend())
         {
-            result = false;
-            break;
+            continue;
         }
         NewReadDep.push_back(readDep);
-        NewWrightDep.push_back(readDep);
+        //NewWrightDep.push_back(readDep);
     }
-    if (result)
+    for (auto& wrightDep : wrightDependencies)
     {
-        for (auto& wrightDep : wrightDependencies)
+        if (std::find(ReadDependencies.rbegin(), ReadDependencies.rend(), wrightDep) != ReadDependencies.rend())
         {
-            if (ReadDependencies.contains(wrightDep))
-            {
-                result = false;
-                break;
-            }
-            if (ForwardReadDependencies.contains(wrightDep))
-            {
-                result = false;
-                break;
-            }
-            if (WrightDependencies.contains(wrightDep))
-                continue;
-
-            NewWrightDep.push_back(wrightDep);
+            return false;
         }
+        if (std::find(WrightDependencies.rbegin(), WrightDependencies.rend(), wrightDep) != WrightDependencies.rend())
+        {
+            continue;
+        }
+        NewWrightDep.push_back(wrightDep);
     }
-
-    if (!result)
-    {
-        for (auto& readDep : readDependencies)
-        {
-            ForwardReadDependencies.insert(readDep);
-        }
-        for (auto& wrightDep : wrightDependencies)
-        {
-            ForwardWrightDependencies.insert(wrightDep);
-        }
-        return false;
-    }
-
     
     for (auto& readDep : NewReadDep)
     {
-        ReadDependencies.insert(readDep);
+        ReadDependencies.push_back(readDep);
     }
     for (auto& wrightDep : NewWrightDep)
     {
-        WrightDependencies.insert(wrightDep);
+        WrightDependencies.push_back(wrightDep);
     }
 
     Nodes.push_back(Node);
@@ -100,53 +61,32 @@ const std::vector<Resource*>& wrightDependencies
 
 
 void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
-const std::vector<Resource*>& ReadDependencies,
-const std::vector<Resource*>& WrightDependencies
-)
+    const std::vector<Resource*>& ReadDependencies,
+    const std::vector<Resource*>& WrightDependencies)
 {
-    switch (Node.Command())
-    {
-    case EMachineCommands::DRAW:
-    {
-        assert(lasrAddPS != -1);
-        assert(Blocks[lasrAddPS].TryAdd(Node, ReadDependencies, WrightDependencies), "Draw could not be added.");
-        return;
-    }
-    case EMachineCommands::BEGIN_EVENT:
-    case EMachineCommands::END_EVENT:
-    case EMachineCommands::CLEAR_PIPELINE:
-    {
-        if (lasrLockedBlock == Blocks.size() - 1 )
-        {
-            assert(Blocks[lasrLockedBlock].TryAdd(Node, ReadDependencies, WrightDependencies), "Draw could not be added.");
-            return;
-        }
-        lasrLockedBlock = Blocks.size();
-        Blocks.push_back({});
-        assert(Blocks[lasrLockedBlock].TryAdd(Node, ReadDependencies, WrightDependencies), "Draw could not be added.");
-        return;
-    }
-    }
+    //switch (Node.Command())
+    //{
+    //case EMachineCommands::BEGIN_EVENT:
+    //case EMachineCommands::END_EVENT:
+    //case EMachineCommands::CLEAR_PIPELINE:
+    //{
+    //    if (lasrLockedBlock == Blocks.size() - 1)
+    //    {
+    //        assert(Blocks[lasrLockedBlock].TryAdd(Node, ReadDependencies, WrightDependencies), "Draw could not be added.");
+    //        return;
+    //    }
+    //    lasrLockedBlock = Blocks.size();
+    //    Blocks.push_back({});
+    //    assert(Blocks[lasrLockedBlock].TryAdd(Node, ReadDependencies, WrightDependencies), "Draw could not be added.");
+    //    return;
+    //}
+    //}
 
 
-    bool CreateBlocFlag = true;
-    for (int i = lasrLockedBlock >= 0 ? lasrLockedBlock : 0; i < Blocks.size(); i++)
-    {
-        if (Blocks[i].TryAdd(Node, ReadDependencies, WrightDependencies))
-        {
-            if (Node.Command() == EMachineCommands::SETUP_PIPELINE)
-                lasrAddPS = i;
-            CreateBlocFlag = false;
-            break;
-        }
-    }
-
-    if (CreateBlocFlag)
+    if (!Blocks.rbegin()->TryAdd(Node, ReadDependencies, WrightDependencies))
     {
         Blocks.push_back({});
         assert(Blocks[Blocks.size() - 1].TryAdd(Node, ReadDependencies, WrightDependencies));
-        if (Node.Command() == EMachineCommands::SETUP_PIPELINE)
-            lasrAddPS = Blocks.size() - 1;
     }
 }
 
@@ -154,6 +94,5 @@ const std::vector<Resource*>& WrightDependencies
 void GVM::RenderGraph::Clear()
 {
     Blocks.clear();
-    lasrAddPS = -1;
-    lasrLockedBlock = 0;
+    Blocks.push_back({});
 }
