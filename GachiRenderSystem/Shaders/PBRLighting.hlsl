@@ -1,33 +1,10 @@
+#define HLSL
+#define GACHI
 
-struct ConstantData
-{
-	float4x4 World;
-	float4x4 View;
-	float4x4 Proj;
-	float4x4 WorldViewProj;
-	float4x4 InvertTransposeWorld;
-	float4 ViewerPos;
-};
+#include "../DX11RenderEngine/DX11RenderEngine/include/CoreRenderSystem/CoreShaderInclude.h"
+#include "../DX11RenderEngine/GachiRenderSystem/source/RendererPasses/PBRPasses/LightRenderPass/LightPassConstBuffer.h"
 
-struct LightData
-{
-	float4 Pos;
-	float4 Dir;
-	float4 Params;
-	float4 Color;
-};
-
-
-cbuffer ConstBuf : register(b0)
-{
-	ConstantData ConstData;
-}
-
-cbuffer LightsBuf : register(b1)
-{
-	LightData Light;
-}
-
+#define 
 
 struct VS_IN
 {
@@ -60,7 +37,7 @@ PS_IN VSMain(
 	output.pos = float4(inds * float2(2, -2) + float2(-1, 1), 0, 1);
 #else
 	PS_IN output = (PS_IN) 0;
-	output.pos = mul(float4(input.pos.xyz, 1.0f), ConstData.WorldViewProj);
+	output.pos = mul(mul(float4(input.pos.xyz, 1.0f), lightCosntBuffer.world), coreConstants.currentMatrices.viewProjection);
 #endif
 	
 	return output;
@@ -85,7 +62,7 @@ TextureCube PreFiltEnvMap : register(t5);
 TextureCube ConMap : register(t6);
 Texture2D IntegratedMap : register(t7);
 
-//Texture2D ShadowMap : register(t4);
+Texture2D ShadowMap : register(t4);
 
 
 struct GBufferData
@@ -264,11 +241,11 @@ PSOutput PSMain(PS_IN input)
 #ifdef DirectionalLight
 	float3 L = normalize(Light.Pos.xyz);
 #else
-	float3 L = normalize(Light.Pos.xyz - buf.WorldPos);
+	float3 L = normalize(lightCosntBuffer.Light.Pos.xyz - buf.WorldPos);
 #endif
 	
 	float3 N = normalize(buf.Normal);
-	float3 V = normalize(ConstData.ViewerPos.xyz - buf.WorldPos);
+	float3 V = normalize(lightCosntBuffer.ViewerPos.xyz - buf.WorldPos);
 	float3 R = reflect(-V, N);
 	float3 H = normalize(V + L);
 	float3 albedo = buf.Diffuse.rgb;
@@ -313,7 +290,7 @@ PSOutput PSMain(PS_IN input)
 	attenuation *= attenuation;
 	float3 radiance = attenuation * Light.Params.z;
 #else
-	float3 radiance = Light.Params.xxx;
+	float3 radiance = lightCosntBuffer.Light.Params.xxx;
 #endif
 
 	// cook-torrance brdf

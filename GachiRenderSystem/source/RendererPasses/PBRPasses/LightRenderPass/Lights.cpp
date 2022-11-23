@@ -1,4 +1,4 @@
-#include "Lights.h"
+#include "Utils/Lights.h"
 
 
 #pragma region SpotLight
@@ -42,10 +42,10 @@ SpotLight::SpotLight(float3 position, float3 direction, float length,
 	//	LoadFbxStaticMesh<VertexPositionColor>("./Content/Lights/spot0.fbx");
 	//todo LoadStaticModel
 
-	MeshRep = Spot;
+	//MeshRep = Spot;
 }
 
-matrix SpotLight::CalcTransformmatrix() const
+matrix SpotLight::CalcTransformMatrix() const
 {
 	float3 forward;
 	Direction.Normalize(forward);
@@ -84,7 +84,7 @@ void SpotLight::DrawDebugData()
 	}
 }
 
-LightData SpotLight::GetLightData()
+LightData SpotLight::GetLightData() const 
 {
 	return LightData{
 		Vector4(PosDir.x, PosDir.y, PosDir.z, 1.0f),
@@ -99,9 +99,9 @@ PixelFlagsLighting SpotLight::GetLightFlags()
 	return PixelFlagsLighting::SpotLight;
 }
 
-matrix SpotLight::GetTransformmatrix()
+matrix SpotLight::GetTransformMatrix()
 {
-	return CalcTransformmatrix();
+	return CalcTransformMatrix();
 }
 
 #pragma endregion SpotLight
@@ -123,7 +123,7 @@ PointLight::PointLight(float3 position, float radius, float attenRadius, float i
 
 	//if (Sphere == nullptr) Sphere = LoadFbxStaticMesh<VertexPositionColor>("./Content/Lights/point0.fbx");
 
-	MeshRep = SphereId;
+	//MeshRep = SphereId;
 }
 
 
@@ -137,7 +137,7 @@ void PointLight::DrawDebugData()
 }
 
 
-LightData PointLight::GetLightData()
+LightData PointLight::GetLightData() const 
 {
 	return LightData
 	{
@@ -154,7 +154,7 @@ void PointLight::Update(float dt)
 }
 
 
-matrix PointLight::GetTransformmatrix()
+matrix PointLight::GetTransformMatrix()
 {
 	float scale = 1.0f;
 	return matrix::CreateScale(Radius * scale, Radius * scale, Radius * scale) * matrix::CreateTranslation(PosDir);
@@ -183,7 +183,7 @@ void AmbientLight::DrawDebugData()
 	// how?
 }
 
-LightData AmbientLight::GetLightData()
+LightData AmbientLight::GetLightData() const
 {
 	return LightData
 	{
@@ -199,7 +199,7 @@ PixelFlagsLighting AmbientLight::GetLightFlags()
 	return PixelFlagsLighting::AmbientLight;
 }
 
-matrix AmbientLight::GetTransformmatrix()
+matrix AmbientLight::GetTransformMatrix()
 {
 	return matrix::Identity;
 }
@@ -227,7 +227,7 @@ void DirectionalLight::DrawDebugData()
 	//                                                        Color(1.0f, 0.0f, 0.0f, 1.0f), float3::Up);
 }
 
-LightData DirectionalLight::GetLightData()
+LightData DirectionalLight::GetLightData() const
 {
 	return LightData
 	{
@@ -243,7 +243,7 @@ PixelFlagsLighting DirectionalLight::GetLightFlags()
 	return PixelFlagsLighting::DirectionalLight;
 }
 
-matrix DirectionalLight::GetTransformmatrix()
+matrix DirectionalLight::GetTransformMatrix()
 {
 	return matrix::Identity;
 }
@@ -270,6 +270,20 @@ UniversalLight::UniversalLight(const PointLight& pointLight):
 LightType(LightTypes::Point),
 pointLight(pointLight)
 {
+}
+LightData UniversalLight::GetLightData() const 
+{
+	switch (LightType)
+	{
+	case LightTypes::Ambient:
+		return ambientLight.GetLightData();
+	case LightTypes::Directional:
+		return directionalLight.GetLightData();
+	case LightTypes::Point:
+		return pointLight.GetLightData();
+	case LightTypes::Spot:
+		return spotLight.GetLightData();
+	}
 }
 
 

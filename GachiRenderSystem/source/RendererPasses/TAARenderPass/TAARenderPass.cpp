@@ -7,16 +7,21 @@
 
 
 TAARenderPass::TAARenderPass(BaseRenderSystem& System)
-        : GachiBasePass({"TAAShader.hlsl", System}), QuadHelper(System.pRenderer) {}
-void TAARenderPass::Init(const char* dirr)
+        : GachiBasePass({"TAAShader.hlsl", System}), QuadHelper(System.pRenderer)
 {
-    BaseRenderPass::Init(dirr, new TAARenderPassProvider());
-    
+	
 	uint32_t width, height;
 	renderDevice->GetMainViewportSize(width, height);
     
     TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
 	constBuffer = renderDevice->CreateConstBuffer(sizeof(localBuffer));
+}
+
+
+void TAARenderPass::Init(const char* dirr)
+{
+    BaseRenderPass::Init(dirr, new TAARenderPassProvider());
+    
 }
 void TAARenderPass::SetupSettings(TAASettings Settings)
 {
@@ -171,4 +176,8 @@ void TAARenderPass::RenderImGUI()
 
 void TAARenderPass::PostRender()
 {
+}
+void TAARenderPass::SetupSettings(const RenderSettings& inSettings)
+{
+	this->Settings = inSettings.taaSettings;
 }

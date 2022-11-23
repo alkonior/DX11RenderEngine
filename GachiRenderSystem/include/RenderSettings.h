@@ -9,8 +9,7 @@ struct WindowSettings
 };
 
 struct  RenderEngineCoreSettings {
-    void* hWnd1;
-    void* hWnd2;
+    void* hWnd;
     WindowSettings windowSettings;
 };
 
@@ -26,9 +25,15 @@ struct TAASettings {
     float taaStrength;
 };
 
+struct PostProcessSettings {
+    float lum;
+    uint8_t mode = 2;
+};
+
 struct RenderSettings
 {
     const char* shadersDirr;
     WindowSettings windowSettings;
     TAASettings taaSettings;
+    PostProcessSettings ppSettings;
 };

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "GVMBaseStructures.h"
 #include "GVMBaseStructures/RenderDeviceInitParams.h"
 
@@ -42,7 +42,17 @@ protected:
     class IShaderResourceView : public IResourceView {};
     class IUATargetView : public IResourceView {};
 
+#ifdef DX11
+#define VERTEXBUFFERHANDLE IVertexBufferView*
+#elif defined(DX12)
+struct DX12vertexBuffer {
+    uint64_t data;
+};
+#define VERTEXBUFFERHANDLE DX12vertexBuffer
+#endif
 
+
+    
     friend class VirtualMachine;
     friend class ResourcesManager;
     friend class GpuResource;

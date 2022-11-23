@@ -25,6 +25,7 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     renderPassTAA(*this),
     renderPassDebug(*this),
     renderPassOpaque(*this),
+    renderPassLight(*this),
     modelsManager(modelsManager),
     texturesManager(texturesManager)
 {
@@ -33,7 +34,7 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 
-    ImGui_ImplWin32_Init(init.hWnd1);
+    ImGui_ImplWin32_Init(init.hWnd);
     ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(),(ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
 
     uint32_t w,h;
@@ -47,6 +48,8 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     gachRenderPasses.push_back(&renderPassModels);
     gachRenderPasses.push_back(&renderPassTAA);
     gachRenderPasses.push_back(&renderPassDebug);
+    gachRenderPasses.push_back(&renderPassOpaque);
+    gachRenderPasses.push_back(&renderPassLight);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -70,11 +73,6 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
 
 void RenderSystem::SetupSettings(const RenderSettings& Settings)
 {
-    for (auto pass : baseRenderPasses)
-    {
-        pass->Init(Settings.shadersDirr);
-    }
-
     for (auto pass : gachRenderPasses)
     {
         pass->SetupSettings(Settings);
@@ -148,8 +146,7 @@ RenderSystem* RenderSystem::Initialise(RenderEngineCoreSettings init)
                 (int32_t)init.windowSettings.windowHeight
             },
             0,
-            init.hWnd1,
-            init.hWnd2,
+            init.hWnd,
             false,
             DepthFormat::DEPTHFORMAT_D32,
             PresentInterval::PRESENTINTERVAL_DEFAULT

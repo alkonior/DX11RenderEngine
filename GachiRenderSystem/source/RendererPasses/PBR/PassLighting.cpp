@@ -10,27 +10,27 @@ void RenderingSystemPBR::LightingPass(float deltaTime)
 {
 	auto context = game->Context;
 
-	context->ClearState();
-
-	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(game->Display->ClientWidth);
-	viewport.Height = static_cast<float>(game->Display->ClientHeight);
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0;
-	viewport.MaxDepth = 1.0f;
-
-	context->RSSetViewports(1, &viewport);
-
-	context->ClearRenderTargetView(gBuffer.AccumulationRTV, Color(0.0f, 0.0f, 0.0f, 1.0f));
-	context->ClearRenderTargetView(gBuffer.BloomRTV, Color(0.0f, 0.0f, 0.0f, 1.0f));
-
-	ID3D11RenderTargetView* views[] = { gBuffer.AccumulationRTV, gBuffer.BloomRTV, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	context->OMSetRenderTargets(8, views, game->DepthView);
-
-
-	//skyBox->Draw(deltaTime);
-	skyRend->Draw(deltaTime);
+	//context->ClearState();
+//
+	//D3D11_VIEWPORT viewport = {};
+	//viewport.Width = static_cast<float>(game->Display->ClientWidth);
+	//viewport.Height = static_cast<float>(game->Display->ClientHeight);
+	//viewport.TopLeftX = 0;
+	//viewport.TopLeftY = 0;
+	//viewport.MinDepth = 0;
+	//viewport.MaxDepth = 1.0f;
+//
+	//context->RSSetViewports(1, &viewport);
+//
+	//context->ClearRenderTargetView(gBuffer.AccumulationRTV, Color(0.0f, 0.0f, 0.0f, 1.0f));
+	//context->ClearRenderTargetView(gBuffer.BloomRTV, Color(0.0f, 0.0f, 0.0f, 1.0f));
+//
+	//ID3D11RenderTargetView* views[] = { gBuffer.AccumulationRTV, gBuffer.BloomRTV, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+	//context->OMSetRenderTargets(8, views, game->DepthView);
+//
+//
+	////skyBox->Draw(deltaTime);
+	//skyRend->Draw(deltaTime);
 
 	//float blendFactor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	context->OMSetBlendState(blendStateLight, nullptr, 0xffffffff);

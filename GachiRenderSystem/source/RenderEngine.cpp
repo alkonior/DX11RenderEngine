@@ -17,6 +17,7 @@ void RenderDevice::CreateDevice(RenderEngineCoreSettings init) {
 void RenderDevice::InitDevice(const RenderSettings& Settings) {
 	shadersDir = Settings.shadersDirr;
 	gfx->SetupSettings(Settings);
+	gfx->ReloadShaders(shadersDir.c_str());
 	
 }
 void RenderDevice::ReloadShaders()

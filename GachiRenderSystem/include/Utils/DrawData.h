@@ -2,6 +2,7 @@
 #include "TransformUtils.h"
 #include "TextureData.h"
 #include "ModelMesh.h"
+#include "Lights.h"
 
 
 
@@ -111,6 +112,28 @@ struct UPDrawData {
     ImageUpdate* lightUpdate = nullptr;
 
     uint64_t flags;
+};
+
+
+
+union LightFlags{
+    LightFlags() {isVisible = 1;}
+    uint32_t flags;
+    struct {
+        uint8_t isRed : 1 ;  
+        uint8_t isVisible : 1;  
+        uint8_t isDebug : 1;  
+    } ;
+};
+
+
+struct LightDrawData {
+    //UPModelData model;
+    Transform world;
+
+    UniversalLight Light;
+    
+    LightFlags flags;
 };
 
 

@@ -7,6 +7,7 @@
 #include "RendererPasses/DebugRenderPass/DebugRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
 #include "RendererPasses/PBRPasses/OpaqueRenderPass/OpaqueRenderPass.h"
+#include "RendererPasses/PBRPasses/LightRenderPass/LightRenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
@@ -93,7 +94,8 @@ private:
 	ModelsRenderPass		 renderPassModels;
 	ImGUIRenderPass			 renderPassIMGUI;
 	TAARenderPass	         renderPassTAA;
-	OpaqueRenderPass	     renderPassOpaque;
+	OpaqueRenderPass		 renderPassOpaque;
+	LightRenderPass			 renderPassLight;
 	
 #if _DEBUG
 	DebugRenderPass	         renderPassDebug;

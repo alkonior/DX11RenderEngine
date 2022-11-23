@@ -18,6 +18,7 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(("velocityField"), SURFACEFORMAT_HALFVECTOR4, false, true, false, width, height);
     CreateRenderTarget(("blurMask"), SURFACEFORMAT_SINGLE, false, true, false, width, height);
     CreateRenderTarget(("normalsField"), SURFACEFORMAT_VECTOR4, false, true, false, width, height);
+    CreateRenderTarget(("worldPosition"), SURFACEFORMAT_VECTOR4, false, true, false, width, height);
     CreateRenderTarget(("oclusionField"), SURFACEFORMAT_SINGLE, true, true, false, width, height);
 
     CreateRenderTarget(("pastColor"), SURFACEFORMAT_COLOR, false, true, false, width, height);

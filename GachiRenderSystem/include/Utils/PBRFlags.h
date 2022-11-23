@@ -32,7 +32,7 @@ enum class VertexFlagsLighting
 };
 
 
-enum class PixelFlagsLighting : int
+enum class PixelFlagsLighting : uint
 {
 	AmbientLight = 1 << 0,
 	DirectionalLight = 1 << 1,
