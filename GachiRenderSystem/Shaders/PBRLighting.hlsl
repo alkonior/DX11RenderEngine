@@ -3,14 +3,28 @@
 
 #include "../DX11RenderEngine/DX11RenderEngine/include/CoreRenderSystem/CoreShaderInclude.h"
 #include "../DX11RenderEngine/GachiRenderSystem/source/RendererPasses/PBRPasses/LightRenderPass/LightPassConstBuffer.h"
+struct PSInStruct
+{
+	float4 pos : SV_Position;
+	float2 uv  : TEXCOORD;
+};
 
-#define 
 
+#ifdef SCREEN_QUAD
+struct VS_IN
+{
+	float2 pos : Position;
+	float2 uv : TEXCOORD;
+};
+
+#else
 struct VS_IN
 {
 	float4 pos : POSITION0;
 	float4 color : COLOR0;
 };
+#endif
+
 
 struct PS_IN
 {
@@ -23,9 +37,10 @@ SamplerState SamplerClamp : register(s1);
 SamplerComparisonState ShadowCompSampler : register(s2);
 
 
-PS_IN VSMain(
+PS_IN vsIn(
 #ifdef SCREEN_QUAD
-	uint id: SV_VertexID
+	uint id: SV_VertexID,
+	VS_IN input
 #else
 	VS_IN input
 #endif
@@ -33,8 +48,7 @@ PS_IN VSMain(
 {
 #ifdef SCREEN_QUAD
 	PS_IN output = (PS_IN)0;
-	float2 inds = float2(id & 1, (id & 2) >> 1);
-	output.pos = float4(inds * float2(2, -2) + float2(-1, 1), 0, 1);
+	output.pos = float4(input.pos, 0.0f, 1.0f);
 #else
 	PS_IN output = (PS_IN) 0;
 	output.pos = mul(mul(float4(input.pos.xyz, 1.0f), lightCosntBuffer.world), coreConstants.currentMatrices.viewProjection);
@@ -88,7 +102,6 @@ GBufferData ReadGBuffer(float2 screenPos)
 	return buf;
 }
 
-
 float4 CalculateLight(GBufferData buf, float4 ViewerPos)
 {
 	float4 color = float4(0, 0, 0, 0);
@@ -96,7 +109,7 @@ float4 CalculateLight(GBufferData buf, float4 ViewerPos)
 	color = float4(buf.Diffuse.rgb * Light.Params.x * Light.Color.rgb, 1.0f);
 #elif DirectionalLight
 	float3 viewDir	= normalize(ViewerPos.xyz - buf.WorldPos);
-	float3 lightDir = normalize(Light.Dir.xyz);
+	float3 lightDir = normalize(lightCosntBuffer.Light.Dir.xyz);
 	float3 refVec	= normalize(reflect(-lightDir, buf.Normal));
 
 	float NdotL = saturate(dot(buf.Normal, -lightDir));
@@ -106,9 +119,9 @@ float4 CalculateLight(GBufferData buf, float4 ViewerPos)
 	float3 diffuse	= NdotL * buf.Diffuse.rgb;
 	float3 spec		= pow(max(0, dot(-viewDir, refVec)), 50) * buf.Diffuse.a;
 
-	color = float4(Light.Color.rgb * (diffuse + spec) * Light.Params.x, 1.0f);
+	color = float4(lightCosntBuffer.Light.Color.rgb * (diffuse + spec) * lightCosntBuffer.Light.Params.x, 1.0f);
 #else
-	float3 lightRadVec = Light.Pos.xyz - buf.WorldPos;
+	float3 lightRadVec = lightCosntBuffer.Light.Pos.xyz - buf.WorldPos;
 	float distanceToLight = length(lightRadVec);
 
 	float3 viewDir = normalize(ViewerPos.xyz - buf.WorldPos);
@@ -229,8 +242,7 @@ float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
 
 
 
-[earlydepthstencil]
-PSOutput PSMain(PS_IN input)
+PSOutput psIn(PS_IN input)
 {
 	PSOutput ret = (PSOutput) 0;
 
@@ -239,7 +251,7 @@ PSOutput PSMain(PS_IN input)
 	clip(length(buf.Normal) - 0.001f);
 
 #ifdef DirectionalLight
-	float3 L = normalize(Light.Pos.xyz);
+	float3 L = normalize(lightCosntBuffer.Light.Pos.xyz);
 #else
 	float3 L = normalize(lightCosntBuffer.Light.Pos.xyz - buf.WorldPos);
 #endif

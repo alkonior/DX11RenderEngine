@@ -86,7 +86,8 @@ struct RenderDevice {
 	
 	
 	void DrawModel(const ModelDrawData& drawData);
-	void DrawOpaqueModel(const OpaqueModelDrawData& drawData);
+	void DrawOpaqueModel(const OpaqueModelDrawData& drawData);;
+	void DrawLight(const LightDrawData& drawData);;
 	
 	
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);

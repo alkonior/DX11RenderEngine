@@ -24,21 +24,23 @@ PipelineFactoryFlags LightRenderPass::ParseFlags(const LightDrawData& flags)
     case LightTypes::Ambient:
     {
         flagsOut.definesFlags |= (uint)PixelFlagsLighting::AmbientLight;
+        flagsOut.definesFlags |= (uint)PixelFlagsLighting::SCREEN_QUAD;
         break;
     }
     case LightTypes::Directional:
     {
         flagsOut.definesFlags |= (uint)PixelFlagsLighting::DirectionalLight;
+        flagsOut.definesFlags |= (uint)PixelFlagsLighting::SCREEN_QUAD;
         break;
     }
     case LightTypes::Point:
     {
-        flagsOut.definesFlags |= (uint)PixelFlagsLighting::AmbientLight;
+        flagsOut.definesFlags |= (uint)PixelFlagsLighting::PointLight;
         break;
     }
     case LightTypes::Spot:
     {
-        flagsOut.definesFlags |= (uint)PixelFlagsLighting::AmbientLight;
+        flagsOut.definesFlags |= (uint)PixelFlagsLighting::SpotLight;
         break;
     }
         
@@ -51,7 +53,7 @@ PipelineFactoryFlags LightRenderPass::ParseFlags(const LightDrawData& flags)
 
 
 LightRenderPass::LightRenderPass(BaseRenderSystem& renderSystem) :
-    GachiBasePass({"PBRFillGBuffer.hlsl",renderSystem}),
+    GachiBasePass({"PBRLighting.hlsl",renderSystem}),
     quad(renderSystem.pRenderer)
 {
     uint32_t width, height;
@@ -125,7 +127,7 @@ void LightRenderPass::Render()
     renderDevice->VerifyConstBuffer(pDataCB, lightCosntBuffer.slot);
     
     renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Diffuse"))->texture);
-    renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Normal"))->texture);
+    renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Normals"))->texture);
     renderDevice->VerifyPixelTexture(2, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("MetRougAo"))->texture);
     renderDevice->VerifyPixelTexture(3, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Emissive"))->texture);
     renderDevice->VerifyPixelTexture(4, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition"))->texture);
@@ -159,7 +161,7 @@ void LightRenderPass::Render()
         
         if (light.LightType == LightTypes::Ambient || light.LightType == LightTypes::Directional)
         {
-            renderDevice->ApplyRasterizerState(RasterizerStates::CClockWise);
+            renderDevice->ApplyRasterizerState(RasterizerStates::ClockWise);
             renderDevice->SetDepthStencilState(DepthStencilStates::DSS);
 
             //context->VSSetShader(LightingVSs[VertexFlagsLighting::SCREEN_QUAD], nullptr, 0);
@@ -172,7 +174,7 @@ void LightRenderPass::Render()
             //context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
 
             quad.Render();
-
+            
             renderDevice->DrawIndexedPrimitives(PrimitiveType::PRIMITIVETYPE_TRIANGLELIST,
                 0,0,6,0,2);
 
@@ -194,19 +196,19 @@ void LightRenderPass::Render()
             //context->DrawIndexed(light->MeshRep->IndexCount, 0, 0);
         }
 
-        renderDevice->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
-        renderDevice->ApplyIndexBufferBinding(drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
-
-
-        dataBuffer.world = drawCalls[i].data.world.GetTransform();
-
-        //if (drawCalls[i].data.isGun)
-        //	dataBuffer.blurSwitch = 1.f;
-        renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
-
-        renderDevice->DrawIndexedPrimitives(
-            drawCalls[i].model.pt, 0, 0, 0, 0,
-            drawCalls[i].model.primitiveCount);
+      // renderDevice->ApplyVertexBufferBinding(drawCalls[i].model.vertexBuffer);
+      // renderDevice->ApplyIndexBufferBinding(drawCalls[i].model.indexBuffer, drawCalls[i].model.indexBufferElementSize);
+      //
+      //
+      // dataBuffer.world = drawCalls[i].data.world.GetTransform();
+      //
+      // //if (drawCalls[i].data.isGun)
+      // //	dataBuffer.blurSwitch = 1.f;
+      // renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
+      //
+      // renderDevice->DrawIndexedPrimitives(
+      //     drawCalls[i].model.pt, 0, 0, 0, 0,
+      //     drawCalls[i].model.primitiveCount);
     }
 }
 

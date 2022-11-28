@@ -157,6 +157,10 @@ void RenderDevice::DrawOpaqueModel(const OpaqueModelDrawData& drawData)
 {
 	gfx->DrawOpaqueModel(drawData);
 }
+void RenderDevice::DrawLight(const LightDrawData& drawData)
+{
+	gfx->DrawLight(drawData);
+}
 
 void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {
 	gfx->DrawUserPolygon(model, textureId, data);

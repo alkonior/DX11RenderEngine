@@ -125,6 +125,10 @@ void RenderSystem::DrawOpaqueModel(const OpaqueModelDrawData& drawData)
 {
     renderPassOpaque.Draw(drawData);
 }
+void RenderSystem::DrawLight(const LightDrawData& light)
+{
+    renderPassLight.Draw(light);
+}
 
 void RenderSystem::Resize()
 {
@@ -241,7 +245,17 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
-    renderPassModels.Render(); 
+    GFX_CATCH_RENDER(renderPassModels.Render());
+    pRenderer->EndEvent();
+
+    
+    pRenderer->BeginEvent("Opaque models draw.");
+    renderPassOpaque.Render(); 
+    pRenderer->EndEvent();
+
+
+    pRenderer->BeginEvent("Light draw.");
+    GFX_CATCH_RENDER(renderPassLight.Render());
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Dynamic motion blur draw.");

@@ -38,6 +38,7 @@ enum class PixelFlagsLighting : uint
 	DirectionalLight = 1 << 1,
 	PointLight = 1 << 2,
 	SpotLight = 1 << 3,
+	SCREEN_QUAD = 1 << 4,
 };
 
 

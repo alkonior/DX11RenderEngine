@@ -46,7 +46,7 @@ const Renderer::ShaderDefines ModelRendererDefines[] = {
     {"DIFFUSE", "1"},
     {"METALIC", "1"},
     {"ROUGHNESS", "1"},
-    {"NORMAL", "1"},
+    {"NORMALLL", "1"},
 };
 
 

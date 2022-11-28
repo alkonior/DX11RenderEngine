@@ -313,7 +313,8 @@ const Renderer::RenderTargetBinding& TexturesManager::CreatePublicRenderTarget(
         renderDevice->GetBackbufferSize(width, height); //todo
     if (description.isVS)
         renderDevice->GetMainViewportSize(width, height);
-
+    
+    
     if (description.isUA)
         texture = renderDevice->CreateUATexture2D(description.format, width, height, 1);
     else
@@ -329,7 +330,7 @@ const Renderer::RenderTargetBinding& TexturesManager::CreatePublicRenderTarget(
         texture,
         nullptr,
         {
-            0, 0, (int32_t)description.width, (int32_t)description.height, 0.0, 1.0
+            0, 0, (int32_t)width, (int32_t)height, 0.0, 1.0
         }
     };
 

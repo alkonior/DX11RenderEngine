@@ -56,7 +56,7 @@ public:
 		// create index buffer
 		const uint16_t indices[] =
 		{
-			0,1,2,3,4,5
+			0,1,2,3,2,1
 		};
 		indexBuffer = renderer->GenIndexBuffer(0, Renderer::BufferUsage::BUFFERUSAGE_WRITEONLY, sizeof(indices));
 		renderer->SetIndexBufferData(indexBuffer, 0, (void*)indices, sizeof(indices), Renderer::SetDataOptions::SETDATAOPTIONS_DISCARD);		

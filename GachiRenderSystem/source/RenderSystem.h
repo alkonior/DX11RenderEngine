@@ -83,6 +83,7 @@ public:
 	void ResizeBackBuffer(uint32_t width, uint32_t height);
 	void ResizeViewport(uint32_t width, uint32_t height);
 	void DrawOpaqueModel(const OpaqueModelDrawData& draw_data);
+	void DrawLight(const LightDrawData& light);
 
 	//SkyboxRenderer	     managerSkybox;
 private:

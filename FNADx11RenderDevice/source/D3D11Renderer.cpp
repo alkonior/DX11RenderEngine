@@ -195,7 +195,11 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
     D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
     /* Bind index buffer */
 
-
+   if (!d3dIndices)
+   {
+       testApi->SetupIndexBuffer(nullptr);
+       return;
+   }
    if (!d3dIndices->indexViewTest)
    {
        d3dIndices->indexViewTest = testApi->CreateIndexBufferView({

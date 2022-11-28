@@ -117,7 +117,7 @@ void OpaqueRenderPass::Render()
 
     RenderTargetBinding* targets[] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Diffuse"        )),
-        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Normal"         )),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Normals"         )),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("MetRougAo"      )),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Emissive"       )),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("WorldPosition"  )),
@@ -155,6 +155,8 @@ void OpaqueRenderPass::Render()
         dataBuffer.diffuse = material.diffuseData.color.ToFloat4();
         dataBuffer.metallic = material.metallicData.metallic;
         dataBuffer.roughness = material.roughnessData.roughness;
+        dataBuffer.MetallicMult = drawCalls[i].data.MetallicMult;
+        dataBuffer.RoughnessMult = drawCalls[i].data.RoughnessMult;
         dataBuffer.normal = material.normalData.normal;
         
         //if (drawCalls[i].data.isGun)

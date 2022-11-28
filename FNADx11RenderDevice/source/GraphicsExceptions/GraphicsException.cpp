@@ -146,6 +146,7 @@ CompileException(line, file,  hr, infoMsgs, compileError,  shaderName)
 		defines.append(def.Name);
 		defines.append(": ");
 		defines.append(def.Definition);
+		defines.append("\n");
 	}
 }
 
