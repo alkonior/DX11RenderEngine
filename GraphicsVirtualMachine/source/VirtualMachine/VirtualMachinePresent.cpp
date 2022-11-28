@@ -8,11 +8,11 @@ using namespace GVM;
 void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 {
     static Compressed::CoreBlendDesc cBS;
-    static IRenderDevice::IRenderTargetView* renderTargets[MAX_RENDERTARGET_ATTACHMENTS];
-    static IRenderDevice::IUATargetView* uaTargets[MAX_RENDERTARGET_ATTACHMENTS];
-    static IRenderDevice::IVertexBufferView* vertexBuffers[32];
-    static IRenderDevice::IResourceView* textures[128];
-    static IRenderDevice::IConstBufferView* constBuffers[32];
+    static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[MAX_RENDERTARGET_ATTACHMENTS];
+    static IRenderDevice::UATARGETVIEWHANDLE uaTargets[MAX_RENDERTARGET_ATTACHMENTS];
+    static IRenderDevice::VERTEXBUFFERVIEWHANDLE vertexBuffers[32];
+    static IRenderDevice::RESOURCEVIEWHANDLE textures[128];
+    static IRenderDevice::CONSTBUFFERVIEWHANDLE constBuffers[32];
 
 
     pipelinesQueueShift += ps->SnapshotByteSize;
@@ -27,7 +27,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     for (int i = 0; i < ps->renderTargetsNum; i++)
     {
         cBS.BlendStates[i] = RenderTargets[i].BlendState;
-        renderTargets[i] = (IRenderDevice::IRenderTargetView*)resourcesManager.
+        renderTargets[i] = (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.
             GetRealResourceView(RenderTargets[i].rtv);
     }
     for (int i = ps->renderTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
@@ -38,7 +38,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
     {
-        uaTargets[i] = (IRenderDevice::IUATargetView*)resourcesManager.GetRealResourceView(UATargets[i]);
+        uaTargets[i] = (IRenderDevice::UATARGETVIEWHANDLE)resourcesManager.GetRealResourceView(UATargets[i]);
     }
     for (int i = ps->uaTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
     {
@@ -52,15 +52,15 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 
     for (int i = 0; i < ps->vertexBuffersNum; i++)
     {
-        vertexBuffers[i] = (IRenderDevice::IVertexBufferView*)resourcesManager.GetRealResourceView(VertexBuffers[i]);
+        vertexBuffers[i] = (IRenderDevice::VERTEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(VertexBuffers[i]);
     }
     for (int i = 0; i < ps->texturesNum; i++)
     {
-        textures[i] = (IRenderDevice::IResourceView*)resourcesManager.GetRealResourceView(Textures[i]);
+        textures[i] = (IRenderDevice::RESOURCEVIEWHANDLE)resourcesManager.GetRealResourceView(Textures[i]);
     }
     for (int i = 0; i < ps->constBuffersNum; i++)
     {
-        constBuffers[i] = (IRenderDevice::IConstBufferView*)resourcesManager.GetRealResourceView(ConstBuffers[i]);
+        constBuffers[i] = (IRenderDevice::CONSTBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ConstBuffers[i]);
     }
 
     auto Viewports = (Compressed::ViewportDesc*)(ps->Data + ps->ViewportsShift);
@@ -83,19 +83,19 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         RenderDevice->SetupDepthStencilState(ps->depthStencilState);
         RenderDevice->SetupRasterizerState(ps->rasterizerState);
         RenderDevice->SetupPrimitiveTopology(ps->primitiveTopology);
-        RenderDevice->SetupVertexBuffer((const IRenderDevice::IVertexBufferView**)vertexBuffers, ps->vertexBuffersNum);
+        RenderDevice->SetupVertexBuffer((const IRenderDevice::VERTEXBUFFERVIEWHANDLE*)vertexBuffers, ps->vertexBuffersNum);
         RenderDevice->SetupIndexBuffer(
-            (IRenderDevice::IIndexBufferView*)resourcesManager.GetRealResourceView(ps->indexBuffer));
+            (IRenderDevice::INDEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ps->indexBuffer));
         RenderDevice->SetupInputLayout(resourcesManager.GetRealInputLayout(ps->vertexDeclaration));
 
         RenderDevice->SetupRenderTargets(
-            (const IRenderDevice::IRenderTargetView**)renderTargets, ps->renderTargetsNum,
-            (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(ps->DepthBuffer));
+            (const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, ps->renderTargetsNum,
+            (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(ps->DepthBuffer));
     }
 
     if (ps->CS)
     {
-        RenderDevice->SetupUATargets((const IRenderDevice::IUATargetView**)uaTargets, ps->renderTargetsNum);
+        RenderDevice->SetupUATargets((IRenderDevice::UATARGETVIEWHANDLE*)uaTargets, ps->renderTargetsNum);
     }
 
     RenderDevice->SetupSamplers(Samplers, ps->samplersNum);
@@ -330,8 +330,8 @@ void VirtualMachine::RunVM()
     
     for (auto& block : renderGraph.Blocks)
     {
-        static std::vector<IRenderDevice::IResource*> ReadDep;
-        static std::vector<IRenderDevice::IResource*> WriteDep;
+        static std::vector<IRenderDevice::RESOURCEHANDLE> ReadDep;
+        static std::vector<IRenderDevice::RESOURCEHANDLE> WriteDep;
         ReadDep.clear();
         WriteDep.clear();
         for (auto* r :  block.ReadDependencies)
@@ -409,7 +409,7 @@ void VirtualMachine::RunVM()
             {
                 auto& desc =*(ClearRenderTargetDesc*)(dataQueue.data()+(uint32_t)description);
                 RenderDevice->ClearRenderTarget(
-                    (IRenderDevice::IRenderTargetView*)resourcesManager.GetRealResourceView(desc.resource), desc.color);
+                    (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resource), desc.color);
                 break;
             }
             case EMachineCommands::CLEAR_DS:
@@ -419,7 +419,7 @@ void VirtualMachine::RunVM()
                 //auto& depth = PullData<float>();
                 //auto& stencil = PullData<uint8_t>();
                 RenderDevice->ClearDepthStencil(
-                    (IRenderDevice::IDepthStencilView*)resourcesManager.GetRealResourceView(desc.resource),
+                    (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resource),
                     desc.depth,
                     desc.stencil
                 );
@@ -444,8 +444,8 @@ void VirtualMachine::RunVM()
         std::cout << std::flush;
     }
 
-    static IRenderDevice::IRenderTargetView* renderTargets[1] = {nullptr};
-    RenderDevice->SetupRenderTargets((const IRenderDevice::IRenderTargetView**)renderTargets, 1, nullptr);
+    static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[1] = {nullptr};
+    RenderDevice->SetupRenderTargets((const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, 1, nullptr);
 
     renderGraph.Clear();
     queueShift = 0;

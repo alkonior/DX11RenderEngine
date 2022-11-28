@@ -20,7 +20,7 @@ public:
     };
     
     ResourceView* id = nullptr;
-    IRenderDevice::IResourceView* view = nullptr;
+    IRenderDevice::RESOURCEVIEWHANDLE view = nullptr;
     Resource* resource = nullptr;
     EViewType type = EViewType::UNKNOWN;
     bool isRequiredUpdate = true;
@@ -60,7 +60,7 @@ class GpuResource {
 
 public:
     Resource* id = nullptr;
-    IRenderDevice::IResource* resource = nullptr;
+    IRenderDevice::RESOURCEHANDLE resource = nullptr;
     uint32_t resourceBindings = 0;
     bool isRequiredUpdate = true;
 

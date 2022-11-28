@@ -3,13 +3,15 @@
 #define GVM_MSW
 
 #include "winHandler.h"
+
+#define DX11
+
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 
 
 
 namespace GVM {
-class ResourceViewDX12;
 
 struct Dx11PlatformHandle : public PlatformHandle {
 
@@ -96,8 +98,8 @@ private:
     std::vector<ID3D11Buffer*> vertexBuffers;
     std::vector<uint32_t> vertexBufferOffsets;
     std::vector<uint32_t> vertexBufferStrides;
-    ResourceViewDX12* indexBuffer;
-    ResourceViewDX12* vertexBuffer;
+    //ResourceViewDX12* indexBuffer;
+    //ResourceViewDX12* vertexBuffer;
     size_t indexElementSize;
 
     ///* Resource Caches */
@@ -137,7 +139,8 @@ private:
 protected:
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
-    void DestroyResource(IPlaceable* resource) override;
+    void DestroyResource(IResource* const resource) override;
+    void DestroyResourceView(IResourceView* const resource) override;
     IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
 
     IShader* CreateShader(const ShaderDesc& desc) override;
@@ -150,26 +153,26 @@ protected:
 
 #pragma region SetupPipeline
     
-    virtual void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
-    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
-    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
-    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
-    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology);
+    virtual void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num) override;
+    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState) override;
+    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) override;
+    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState) override;
+    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num) override;
+    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology) override;
 
-    virtual void SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num);
-    virtual void SetupIndexBuffer(const IIndexBufferView* indices);
-    virtual void SetupTextures(IResourceView* textures[], uint8_t num);
-    virtual void SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);
-    virtual void SetupUATargets(const IUATargetView* uaTargets[], uint8_t num) override;
+    virtual void SetupVertexBuffer(IVertexBufferView* const vertexBuffers[], uint8_t num) override;
+    virtual void SetupIndexBuffer(IIndexBufferView* const indices) override;
+    virtual void SetupTextures(IResourceView* textures[], uint8_t num)  override;
+    virtual void SetupRenderTargets(IRenderTargetView* const renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)  override;
+    virtual void SetupUATargets(IUATargetView* uaTargets[], uint8_t num) override;
     
-    virtual void SetupShader(IShader* shader, EShaderType type);
-    virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num);
+    virtual void SetupShader(IShader* shader, EShaderType type) override;
+    virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) override;
     void SetupInputLayout(IInputLayout* layout) override;
     void ClearState() override;
     
-    void ClearRenderTarget(const IRenderTargetView* rtView, FColor color) override;
-    void ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil) override;
+    void ClearRenderTarget(IRenderTargetView* rtView, FColor color) override;
+    void ClearDepthStencil(IDepthStencilView* dsView, float depth, int8_t stencil) override;
 
 
 #pragma endregion
@@ -179,7 +182,7 @@ protected:
     void BeginEvent(const char* name) override;
     void EndEvent() override;
 
-    void* GetNativeTexture(const IResourceView* view) override;
+    void* GetNativeTexture(IResourceView* view) override;
 public:
     
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;

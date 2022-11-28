@@ -160,7 +160,6 @@
   <ItemGroup>
     <ClInclude Include="include\RenderDeviceDX11.h" />
     <ClInclude Include="include\winHandler.h" />
-    <ClInclude Include="source\BaseDX11Classes.h" />
     <ClInclude Include="source\BuffersViews\ConstBufferViewD3D11.h" />
     <ClInclude Include="source\BuffersViews\IndexBufferViewD3D11.h" />
     <ClInclude Include="source\BuffersViews\VertexBufferViewD3D11.h" />

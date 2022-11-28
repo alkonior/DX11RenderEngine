@@ -336,7 +336,15 @@ IRenderDevice::IResource* RenderDeviceDX11::CreateResource(const GpuResource& Re
     return nullptr;
 }
 
-void RenderDeviceDX11::DestroyResource(IPlaceable* resource)
+void RenderDeviceDX11::DestroyResource(IResource* const resource)
+{
+    IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
+    if (d3d11resource)
+        d3d11resource->Release();
+}
+
+
+void RenderDeviceDX11::DestroyResourceView(IResourceView* const resource)
 {
     IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
     if (d3d11resource)
@@ -952,7 +960,7 @@ void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
     context->IASetPrimitiveTopology(ToD3DPT[to_underlying(topology)]);
 }
 
-void RenderDeviceDX11::SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num)
+void RenderDeviceDX11::SetupVertexBuffer(IVertexBufferView* const vertexBuffers[], uint8_t num)
 {
     this->vertexBuffers.resize(32);
     this->vertexBufferOffsets.resize(32);
@@ -976,7 +984,7 @@ void RenderDeviceDX11::SetupVertexBuffer(const IVertexBufferView* vertexBuffers[
     context->IASetVertexBuffers(0, num, this->vertexBuffers.data(), vertexBufferStrides.data(), vertexBufferOffsets.data());
 }
 
-void RenderDeviceDX11::SetupIndexBuffer(const IIndexBufferView* indices)
+void RenderDeviceDX11::SetupIndexBuffer(IIndexBufferView* const indices)
 {
     const IndexBufferViewD3D11* indexBuffer = reinterpret_cast<const IndexBufferViewD3D11*>(indices);
     GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0));
@@ -1009,7 +1017,7 @@ void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
     if (VS) context->VSSetShaderResources(0, num, Textures.data());
 }
 
-void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)
+void RenderDeviceDX11::SetupRenderTargets(IRenderTargetView* const renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)
 {
     this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer;
     if (renderTargets == nullptr)
@@ -1030,7 +1038,7 @@ void RenderDeviceDX11::SetupRenderTargets(const IRenderTargetView* renderTargets
     context->OMSetRenderTargets(MAX_RENDERTARGET_ATTACHMENTS, renderTargetViews.data(), this->depthStencilBuffer);
 }
 
-void RenderDeviceDX11::SetupUATargets(const IUATargetView* uaTargets[], uint8_t num)
+void RenderDeviceDX11::SetupUATargets(IUATargetView* uaTargets[], uint8_t num)
 {
     static UINT arr[8];
     if (uaTargets == nullptr)
@@ -1128,12 +1136,12 @@ void RenderDeviceDX11::ClearState()
     HS = false; 
     VS = false; 
 }
-void RenderDeviceDX11::ClearRenderTarget(const IRenderTargetView* rtView, FColor color)
+void RenderDeviceDX11::ClearRenderTarget(IRenderTargetView* rtView, FColor color)
 {
     context->ClearRenderTargetView((ID3D11RenderTargetView*)rtView ? (ID3D11RenderTargetView*)rtView : swapchainRTView, color.Color);
 }
 
-void RenderDeviceDX11::ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil)
+void RenderDeviceDX11::ClearDepthStencil(IDepthStencilView* dsView, float depth, int8_t stencil)
 {
     context->ClearDepthStencilView((ID3D11DepthStencilView*)dsView, D3D11_CLEAR_DEPTH, depth, stencil);
 }
@@ -1181,10 +1189,11 @@ void RenderDeviceDX11::EndEvent()
     perf->EndEvent();
 }
 
-void* RenderDeviceDX11::GetNativeTexture(const IResourceView* view)
+void* RenderDeviceDX11::GetNativeTexture(IResourceView* view)
 {
     return (void*)view;
 }
+
 void RenderDeviceDX11::GetBackbufferSize(uint32_t& w, uint32_t& h)
 {
     w = backBufferWidth;
