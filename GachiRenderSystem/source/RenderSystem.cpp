@@ -26,6 +26,7 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     renderPassDebug(*this),
     renderPassOpaque(*this),
     renderPassLight(*this),
+    renderPassPP(*this),
     modelsManager(modelsManager),
     texturesManager(texturesManager)
 {
@@ -50,6 +51,7 @@ RenderSystem::RenderSystem(RenderEngineCoreSettings init, const BaseRenderSystem
     gachRenderPasses.push_back(&renderPassDebug);
     gachRenderPasses.push_back(&renderPassOpaque);
     gachRenderPasses.push_back(&renderPassLight);
+    gachRenderPasses.push_back(&renderPassPP);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -118,6 +120,10 @@ void RenderSystem::ResizeViewport(uint32_t width, uint32_t height)
     pRenderer->ResizeMainViewport(Size2D(width, height));
     texturesManager->ResizeTextures();
     Resize();
+}
+void RenderSystem::DrawOpaqueModel(const OpaqueModelDrawData& drawData)
+{
+    renderPassOpaque.Draw(drawData);
 }
 
 void RenderSystem::Resize()
@@ -354,6 +360,10 @@ void RenderSystem::ReleaseImg(size_t id)
 }
 
 void RenderSystem::RegisterModel(size_t id, const ModelMesh& model)
+{
+    modelsManager->RegisterModel(id, model);
+}
+void RenderSystem::RegisterOpaqueModel(size_t id, const OpaqueMesh& model)
 {
     modelsManager->RegisterModel(id, model);
 }

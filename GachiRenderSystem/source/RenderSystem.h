@@ -8,6 +8,7 @@
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
 #include "RendererPasses/PBRPasses/OpaqueRenderPass/OpaqueRenderPass.h"
 #include "RendererPasses/PBRPasses/LightRenderPass/LightRenderPass.h"
+#include "RendererPasses/PBRPasses/PostProcessRenderPass/PostProcessRenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
 #include "RendererPasses/UIRenderPass/UIRenderPass.h"
 #include "ResourceManagers/ModelsManager.h"
@@ -57,6 +58,7 @@ public:
 	void DrawImg(size_t texId, const UIDrawData& data);
 
 	void RegisterModel(size_t id, const ModelMesh& model);
+	void RegisterOpaqueModel(size_t id, const OpaqueMesh& model);
 	void ReleaseModel(size_t id);
 
 
@@ -78,6 +80,7 @@ public:
 	void DrawDebug(const DebugDraw2DData& drawData);
 	void ResizeBackBuffer(uint32_t width, uint32_t height);
 	void ResizeViewport(uint32_t width, uint32_t height);
+	void DrawOpaqueModel(const OpaqueModelDrawData& draw_data);
 
 	//SkyboxRenderer	     managerSkybox;
 private:
@@ -96,6 +99,7 @@ private:
 	TAARenderPass	         renderPassTAA;
 	OpaqueRenderPass		 renderPassOpaque;
 	LightRenderPass			 renderPassLight;
+	PostProcessRenderPass	 renderPassPP;
 	
 #if _DEBUG
 	DebugRenderPass	         renderPassDebug;

@@ -25,6 +25,10 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(("pastDepth"), SURFACEFORMAT_SINGLE, false, true, false, width, height);
 
     CreateRenderTarget(("outTexture"), SURFACEFORMAT_COLOR, false, true, false, width, height);
+
+    colorTextures.insert({0,TextureCache{}});
+    floatTextures.insert({0,FloatTextureCache{}});
+    float3Textures.insert({0,Float3TextureCache{}});
 }
 
 void TexturesManager::RegTexture(void* data, int width, int height, size_t id)

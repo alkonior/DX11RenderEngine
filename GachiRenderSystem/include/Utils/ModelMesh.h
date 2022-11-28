@@ -22,7 +22,13 @@ struct MeshData {
 
 
 typedef MeshData<ModelVertex> ModelMesh;
-typedef MeshData<OpaqueModelVertex> OpaqueMesh;
+
+struct OpaqueMesh : MeshData<OpaqueModelVertex>
+{
+	
+	
+};
+
 typedef MeshData<ParticleVertex> ParticlesMesh;
 
 typedef  MeshData<UPVertex> UPModelMesh;

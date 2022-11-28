@@ -37,7 +37,6 @@ void ModelsManager::RegisterModel(size_t id, const ModelMesh& model)
 
 void ModelsManager::RegisterModel(size_t id, const OpaqueMesh& model)
 {
-
 	UniversalRegisterModel(id, model);
 }
 

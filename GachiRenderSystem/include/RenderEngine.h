@@ -5,6 +5,7 @@
 #include "TextureData.h"
 #include "RenderSettings.h"
 #include "imgui/imgui.h"
+#include "Utils/OpaqueModelDrawData.h"
 
 class RenderSystem;
 
@@ -70,6 +71,7 @@ struct RenderDevice {
 
 
 	void RegisterModel(size_t id, const ModelMesh&);
+	void RegisterModel(size_t id, const OpaqueMesh&);
 	void ReleaseTexture(size_t id);
 	bool WasIdUsed(size_t id);
 
@@ -82,6 +84,7 @@ struct RenderDevice {
 	
 	
 	void DrawModel(const ModelDrawData& drawData);
+	void DrawOpaqueModel(const OpaqueModelDrawData& drawData);
 	
 	
 	void DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data);

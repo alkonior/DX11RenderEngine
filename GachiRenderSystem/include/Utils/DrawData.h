@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "TransformUtils.h"
 #include "TextureData.h"
+#include "FloatData.h"
+#include "Float3Data.h"
 #include "ModelMesh.h"
 #include "Lights.h"
 
