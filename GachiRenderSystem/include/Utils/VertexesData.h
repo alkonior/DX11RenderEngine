@@ -52,8 +52,8 @@ struct OpaqueModelVertex {
     
     float3 position;
     float3 normal;
+    float2 texcoord;
     float3 binormal;
     float3 tangent;
     color  color;
-    float2 texcoord;
 };
