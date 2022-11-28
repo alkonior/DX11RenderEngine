@@ -100,6 +100,14 @@ void RenderDevice::RegisterTexture(size_t id, const char* file) {
 void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
+void RenderDevice::RegisterTexture(size_t id, const FloatData& tex)
+{
+	gfx->RegisterImg(id, tex);
+}
+void RenderDevice::RegisterTexture(size_t id, const Float3Data& tex)
+{
+	gfx->RegisterImg(id, tex);
+}
 
 void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data) {
 	gfx->RegisterImg(id, width, height, data);

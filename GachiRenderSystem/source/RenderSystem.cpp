@@ -343,6 +343,14 @@ void RenderSystem::RegisterImg(size_t id, const TextureData& text)
 {
     texturesManger->RegTexture(text, id);
 }
+void RenderSystem::RegisterImg(size_t id, const FloatData& text)
+{
+    texturesManger->RegFloatTexture(text, id);
+}
+void RenderSystem::RegisterImg(size_t id, const Float3Data& text)
+{
+    texturesManger->RegFloat3Texture(text, id);
+}
 
 void RenderSystem::UpdateImg(size_t id, const TextureData& text)
 {
