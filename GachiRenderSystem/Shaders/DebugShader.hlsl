@@ -49,8 +49,6 @@ PSOut psIn(PSIn input) : SV_Target
 
 
 #endif
-#define D3D
-#ifdef D3D
 
 struct VSIn {
 	float3 pos : Position;
@@ -75,7 +73,7 @@ struct PSOut {
 
 Texture2D<float> depthTex : register(t0);
 
-PSOut psIn(PSIn input) : SV_Target
+PSOut psIn(PSIn input)
 {
 	PSOut pso = (PSOut)0;
 	
@@ -96,10 +94,6 @@ PSOut psIn(PSIn input) : SV_Target
 
 	return pso;
 }
-
-
-#endif
-
 
 //VertexShaderOutput main(float2 pos : Position, float3 color : Color) {
 //	VertexShaderOutput vso;

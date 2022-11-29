@@ -280,7 +280,7 @@ bool RenderSystem::RenderFrame()
     BaseRenderSystem::Present();
 #if _DEBUG
     pRenderer->BeginEvent("Debug draw.");
-    renderPassDebug.Render();;
+    GFX_CATCH_RENDER(renderPassDebug.Render());
     pRenderer->EndEvent();
 #endif
 
