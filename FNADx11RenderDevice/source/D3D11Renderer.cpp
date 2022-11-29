@@ -1014,6 +1014,8 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     shDesc.T2Desc.ResourceMinLODClamp = 0;
     result->depth.nShView = testApi->CreateShaderResourceView(shDesc);
 
+    texture->shView =  result->depth.nShView;
+    
 
     result->texture = texture;
 

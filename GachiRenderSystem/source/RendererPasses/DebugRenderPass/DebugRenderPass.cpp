@@ -131,7 +131,7 @@ void DebugRenderPass::Render()
         renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
         renderDevice->DrawIndexedPrimitives(
-        (PrimitiveType)drawCalls2D[i].hash.pt, drawCalls2D[i].hash.vertexOffset, 0, 0, drawCalls2D[i].hash.indexOffset,
+        (PrimitiveType)drawCalls2D[i].hash.pt, 0, 0, 0, drawCalls2D[i].hash.indexOffset,
         drawCalls2D[i].hash.numElem);
     }
 
@@ -153,7 +153,7 @@ void DebugRenderPass::Render()
         renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
         renderDevice->DrawIndexedPrimitives(
-            (PrimitiveType)drawCalls3D[i].hash.pt, drawCalls3D[i].hash.vertexOffset, 0, 0, drawCalls3D[i].hash.indexOffset,
+            (PrimitiveType)drawCalls3D[i].hash.pt, 0, 0, 0, drawCalls3D[i].hash.indexOffset,
             drawCalls3D[i].hash.numElem);
     }
 }

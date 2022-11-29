@@ -81,7 +81,7 @@ PSOut psIn(PSIn input)
 	//pso.blurMask = modelsCosntBuffer.blurSwitch;
 
 #ifdef RED
-	pso.color = float4(1.0, 1.0, 1.0, 1.0f);
+	pso.color = float4(1.0, .0, .0, 1.0f);
 	return pso;
 #endif
 
