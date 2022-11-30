@@ -258,9 +258,9 @@ bool RenderSystem::RenderFrame()
     GFX_CATCH_RENDER(renderPassLight.Render());
     pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("Dynamic motion blur draw.");
+    //pRenderer->BeginEvent("Dynamic motion blur draw.");
     //GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
-    pRenderer->EndEvent();
+    //pRenderer->EndEvent();
 
 
     pRenderer->BeginEvent("SSAO draw.");
@@ -279,8 +279,8 @@ bool RenderSystem::RenderFrame()
     //GFX_CATCH_RENDER(managerBloom.Render(*this););
     pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("End BSP draw.");
-    //GFX_CATCH_RENDER(managerPostProcess.Render(*this););
+    pRenderer->BeginEvent("PostProcess.");
+    GFX_CATCH_RENDER(renderPassPP.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");

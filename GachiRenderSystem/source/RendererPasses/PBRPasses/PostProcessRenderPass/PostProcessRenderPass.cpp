@@ -63,8 +63,9 @@ void PostProcessRenderPass::Render()
 	PipelineFactoryFlags flagsCopy;
 	flagsCopy.definesFlags = ((1<<Settings.mode))>>1;
 	renderDevice->ApplyPipelineState(factory->GetState(flagsCopy));
+	//renderDevice->ApplyIndexBufferBinding(nullptr,16);
 	
-	renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+	renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLELIST, 0, 0, 0, 0, 2);
 
 	renderDevice->VerifyPixelTexture(1, nullptr);
 

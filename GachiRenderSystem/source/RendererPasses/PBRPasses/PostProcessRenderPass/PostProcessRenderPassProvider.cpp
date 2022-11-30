@@ -1,6 +1,7 @@
 #include "PostProcessRenderPassProvider.h"
 
 #include <d3d11.h>
+#include <xutility>
 
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"
@@ -37,7 +38,7 @@ Renderer::PipelineFactoryDescription PostProcessRenderPassProvider::GetFactoryDe
 {
     return {
         PostProcessRendererDefines,
-        sizeof(PostProcessRendererDefines),
+        std::size(PostProcessRendererDefines),
         Renderer::UseComputeShader,
         1
     };

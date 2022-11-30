@@ -10,7 +10,7 @@ struct PS_IN
 };
 
 
-PS_IN VSMain(uint id : SV_VertexID)
+PS_IN vsIn(uint id : SV_VertexID)
 {
 	PS_IN output = (PS_IN) 0;
 	float2 inds = float2(id & 1, (id & 2) >> 1);
@@ -29,8 +29,8 @@ static const float MIDDLE_GRAY = 0.72f;
 static const float LUM_WHITE = 1.5f;
 
 
-[earlydepthstencil]
-float4 PSMain(PS_IN input) : SV_Target0
+
+float4 psIn(PS_IN input) : SV_Target0
 {
 	float4 final = float4(0.25f, 0.25f, 0.25f, 1.0f);
 	
@@ -69,7 +69,7 @@ else
 	
 	final.a = 1.0f;
 	
-	final.rgb = pow(final.rgb, 1.0f / 2.2f);
+	final.rgb = pow(abs(final.rgb), 1.0f / 2.2f);
 	
 	return final;
 }

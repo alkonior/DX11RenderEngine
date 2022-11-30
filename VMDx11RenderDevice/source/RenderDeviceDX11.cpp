@@ -1212,7 +1212,7 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
         }
         case EDrawCallType::DRAW:
         {
-            context->Draw(call.get<0>(), call.get<1>());
+            context->Draw(call.get<1>(), call.get<0>());
             break;
         }
         case EDrawCallType::DRAW_INDEXED_INSTANCED:

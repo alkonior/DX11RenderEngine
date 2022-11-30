@@ -239,6 +239,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
     if (topology != primitiveType)
     {
         topology = primitiveType;
+        testApi->SetupPrimitiveTopology(ToGVM(primitiveType));
     }
 
 
@@ -253,7 +254,10 @@ void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexSt
 
     /* Bind draw state */
     if (topology != primitiveType)
-    { }
+    {
+        topology = primitiveType;
+        testApi->SetupPrimitiveTopology(ToGVM(primitiveType));
+    }
 
     /* Draw! */
     testApi->DrawPrimitives(vertexStart, primitiveCount);

@@ -117,6 +117,7 @@ void LightRenderPass::Render()
 {
     RenderTargetBinding* targets[] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Light")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("Bloom")),
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);

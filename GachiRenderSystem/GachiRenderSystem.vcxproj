@@ -193,9 +193,6 @@
       <Project>{6bd7be35-e16c-474a-b507-9883ae657e1e}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="source\RendererPasses\PBRPasses\TeneMapRenderPass" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5EFFD051-4BB4-44BD-9364-4FBA2E1FD74D}</ProjectGuid>
