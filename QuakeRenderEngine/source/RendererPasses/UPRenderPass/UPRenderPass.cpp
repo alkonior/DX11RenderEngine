@@ -85,8 +85,8 @@ void UPRenderPass::Render() {
 
 	renderDevice->VerifyConstBuffer(pDataCB, upCosntBuffer.slot);
 
-	renderDevice->VerifyPixelSampler(0, Samplers::anisotropic16);
-	renderDevice->VerifyPixelSampler(1, Samplers::anisotropic16);
+	renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
+	renderDevice->VerifyPixelSampler(1, Samplers::linearClamp);
 
 
 

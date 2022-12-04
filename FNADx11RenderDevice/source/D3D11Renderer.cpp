@@ -615,7 +615,7 @@ void D3D11Renderer::SetRenderTargets(RenderTargetBinding** renderTargets, int32_
     if (numRenderTargets == 0)
     {
         nviews[0] = nullptr;
-        testApi->SetupRenderTargets(nviews, 1, 0, nullptr);
+        testApi->SetupRenderTargets(nviews, 0, 0, nullptr);
         testApi->SetupNumRenderTargets(1);
         return;
     }

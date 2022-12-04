@@ -53,6 +53,27 @@ public:
     bool GS = false;
     bool HS = false;
     bool DS = false;
+    IUnknown* CSPtr = nullptr;
+    IUnknown* PSPtr = nullptr;
+    IUnknown* VSPtr = nullptr;
+    IUnknown* GSPtr = nullptr;
+    IUnknown* HSPtr = nullptr;
+    IUnknown* DSPtr = nullptr;
+    ID3D11BlendState* blendStatePtr;
+    FColor blendFactorHash;
+    ID3D11DepthStencilState* depthStencilStatePtr;
+    ID3D11RasterizerState* rasterizerStatePtr;
+    EPrimitiveTopology topologyHash;
+    ID3D11SamplerState* Samplers[16] = {};
+    uint8_t samplersNum = 0;
+    D3D11_VIEWPORT d3d11viewports[20];
+    uint8_t d3d11viewportsNum = 0;
+    uint8_t texturesNum = 0;
+    IUnknown* indexBufferPtr = nullptr;
+    uint8_t vertexBuffersNum = 0;
+    int32_t renderTargetsNum = 0;
+    ID3D11Buffer* constBuffersPtr[32];
+    uint8_t constBuffersNum = 0;
 
 private:
     wrl::ComPtr<ID3DUserDefinedAnnotation> perf;
@@ -153,22 +174,23 @@ protected:
 
 #pragma region SetupPipeline
     
-    virtual void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num) override;
-    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState) override;
-    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) override;
-    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState) override;
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num) override;
-    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology) override;
+    void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
+    void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
+    void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
+    void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
+    void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+    void SetupPrimitiveTopology(const EPrimitiveTopology topology);
+    void SetupShader(IShader* shader, EShaderType type);
+    void SetupInputLayout(IInputLayout* layout);
 
-    virtual void SetupVertexBuffer(IVertexBufferView* const vertexBuffers[], uint8_t num) override;
-    virtual void SetupIndexBuffer(IIndexBufferView* const indices) override;
+    virtual void SetupPipeline(const PipelineDescription& Pipeline) override;
+    virtual void SetupVertexBuffers(IVertexBufferView* const vertexBuffers[], uint8_t num) override;
+    virtual void SetupIndexBuffers(IIndexBufferView* const indices) override;
     virtual void SetupTextures(IResourceView* textures[], uint8_t num)  override;
     virtual void SetupRenderTargets(IRenderTargetView* const renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)  override;
     virtual void SetupUATargets(IUATargetView* uaTargets[], uint8_t num) override;
-    
-    virtual void SetupShader(IShader* shader, EShaderType type) override;
     virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) override;
-    void SetupInputLayout(IInputLayout* layout) override;
+
     void ClearState() override;
     
     void ClearRenderTarget(IRenderTargetView* rtView, FColor color) override;

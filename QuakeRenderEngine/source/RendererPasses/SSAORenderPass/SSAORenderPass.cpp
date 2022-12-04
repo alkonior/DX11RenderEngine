@@ -187,7 +187,6 @@ void SSAORenderPass::Render() {
 	renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField"))->texture);
 	renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->depthBuffer->texture);
 	renderDevice->VerifyPixelTexture(2, randVect);
-	renderDevice->VerifyPixelTexture(5, nullptr);
 
 	renderDevice->VerifyUATexture(0,  baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("oclusionField"))->texture);
 	

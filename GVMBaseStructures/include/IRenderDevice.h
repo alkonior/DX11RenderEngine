@@ -21,6 +21,7 @@ enum RenderDeviceLimitations {
 #define DX11
 #endif
 
+struct PipelineDescription;
 class IRenderDevice {
 
 
@@ -146,32 +147,52 @@ public:
 
     
 
-    virtual void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num) = 0;
-    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState) = 0;
-    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState) = 0;
-    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState) = 0;
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num) = 0;
-    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology) = 0;
+    virtual void SetupPipeline(const PipelineDescription& Pipeline) = 0;
 
-    virtual void SetupVertexBuffer(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) = 0;
-    virtual void SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices) = 0;
+    virtual void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) = 0;
+    virtual void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) = 0;
     virtual void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) = 0;
     virtual void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) = 0;
     virtual void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) = 0;
-
-    virtual void SetupShader(SHADERHANDLE shader, EShaderType type) = 0;
     virtual void SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num) = 0;
-    virtual void SetupInputLayout(INPUTLAYOUTHANDLE layout) = 0;
-    virtual void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) = 0;
-    virtual void ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil) = 0;
 
 
 #pragma endregion
 
+    virtual void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) = 0;
+    virtual void ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil) = 0;
 
     virtual void ResizeBackbuffer(int32_t width, int32_t height) = 0;
 
 };
 
 
+struct PipelineDescription
+{
+    Compressed::ViewportDesc* viewports; uint8_t viewportsNum;
+    Compressed::CoreBlendDesc blendState;
+    Compressed::DepthStencilStateDesc depthStencilState;
+    Compressed::RasterizerStateDesc rasterizerState;
+    const Compressed::SamplerStateDesc* samplers; uint8_t samplersNum;
+    EPrimitiveTopology topology;
+
+    bool isCS = false;
+    IRenderDevice::SHADERHANDLE VS;
+    IRenderDevice::SHADERHANDLE PS;
+    IRenderDevice::SHADERHANDLE GS;
+    IRenderDevice::SHADERHANDLE HS;
+    IRenderDevice::SHADERHANDLE DS;
+    IRenderDevice::SHADERHANDLE CS;
+    IRenderDevice::INPUTLAYOUTHANDLE layout;
+
+    //void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num);
+    //void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
+    //void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
+    //void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
+    //void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+    //void SetupPrimitiveTopology(const EPrimitiveTopology topology);
+    //void SetupInputLayout(INPUTLAYOUTHANDLE layout);
+    //void SetupShader(SHADERHANDLE shader, EShaderType type);
+};
+    
 }
