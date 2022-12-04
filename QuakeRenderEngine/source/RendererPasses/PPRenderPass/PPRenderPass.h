@@ -1,6 +1,4 @@
 #pragma 
-#include "CoreRenderSystem/RenderPasses/BaseRenderPass.h"
-#include "PPRendererFactory.h"
 #include "PPConstBuffer.h"
 #include "CoreRenderSystem/RenderPasses/QuadRenderPass.h"
 
@@ -31,7 +29,6 @@ public:
 
 	explicit PPRenderPass(BaseRenderSystem& in);
 
-	void Init(LPCWSTR dirr);
 
 public:
 	void Resize() override {};
@@ -39,6 +36,8 @@ public:
 	void Render();
 	void PreRender() override;
 	void PostRender() override;
+	~PPRenderPass() override;
+
 private:
 	void RenderIMGUI();
 
@@ -55,7 +54,5 @@ private:
 	
 
 	
-	~PPRenderPass() override;
-
 };
 

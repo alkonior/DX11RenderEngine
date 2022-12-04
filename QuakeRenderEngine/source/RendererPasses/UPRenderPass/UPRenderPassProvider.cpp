@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UPRenderer.h"
+#include "UPRenderPass.h"
 
 #include <d3d11.h>
 
@@ -12,9 +12,9 @@
 
 using namespace Renderer;
 
-UPRenderer::UPRendererProvider::UPRendererProvider()  {}
+UPRenderPass::UPRenderPassProvider::UPRenderPassProvider()  {}
 
-void UPRenderer::UPRendererProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) {
+void UPRenderPass::UPRenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) {
 
 	
 	refToPS->bs = &BlendStates::NoAlpha;
@@ -36,7 +36,7 @@ const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
 	{ "LIGHTTEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
-Renderer::InputLayoutDescription UPRenderer::UPRendererProvider::GetInputLayoutDescription(size_t definesFlags) {
+Renderer::InputLayoutDescription UPRenderPass::UPRenderPassProvider::GetInputLayoutDescription(size_t definesFlags) {
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
@@ -46,12 +46,12 @@ const ShaderDefines UPRendererDefines[] = {
 	ShaderDefines("LIGHTMAPPED")
 };
 
-const char* UPRenderer::UPRendererProvider::GetShaderName()
+const char* UPRenderPass::UPRenderPassProvider::GetShaderName()
 {
 	return "BSP shader";
 }
 
-Renderer::PipelineFactoryDescription UPRenderer::UPRendererProvider::GetFactoryDescription()
+Renderer::PipelineFactoryDescription UPRenderPass::UPRenderPassProvider::GetFactoryDescription()
 {
 	return {
 		UPRendererDefines,

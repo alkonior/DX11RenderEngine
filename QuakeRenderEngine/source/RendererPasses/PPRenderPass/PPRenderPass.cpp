@@ -91,12 +91,12 @@ void PPRenderPass::Render()
     RenderIMGUI();
 
     RenderTargetBinding* targets[] = {
-        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAtexure"))
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor"))
     };
 
     uint64_t flags = 0;
 
-    renderDevice->SetRenderTargets(targets, 1, nullptr);
+    renderDevice->SetRenderTargets(targets, std::size(targets), nullptr);
 
     renderDevice->VerifyPixelSampler(0, Samplers::pointClamp);
     renderDevice->VerifyPixelSampler(1, Samplers::pointClamp);
@@ -146,14 +146,22 @@ void PPRenderPass::Render()
         renderDevice->VerifyPixelTexture(5, nullptr);
         renderDevice->VerifyPixelTexture(6, nullptr);
 
-        if (!flags)
-        {
-            renderDevice->ApplyPipelineState(factory->GetState(PPALPHA | flags));
-            renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-        }
+        PipelineFactoryFlags f;
+        f.pipelineFlags |= PPALPHA;
+        renderDevice->ApplyPipelineState(factory->GetState(f));
+        renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
+        
 
         renderDevice->VerifyPixelTexture(3, nullptr);
     }
+}
+
+void PPRenderPass::PreRender()
+{
+}
+
+void PPRenderPass::PostRender()
+{
 }
 
 

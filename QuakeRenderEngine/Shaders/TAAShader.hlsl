@@ -297,7 +297,7 @@ void main( uint3 inDispatchIdx : SV_DispatchThreadID, uint3 inGroupID : SV_Group
     const bool hasValidHistory = ( velocityConfidenceFactor * depthDiffFactor * uvWeight ) > 0.f;
     fp16_t4 finalColour = fp16_t4( 1.f, 1.f , 1.f , 1.f  );
 
-    if ( true == hasValidHistory )
+    if (false)
     {
         // sample history
         fp16_t4 rawHistoryColour = fp16_t4( GetHistory( prevFrameScreenUV, prevFrameScreenST, isOnEdge ) );

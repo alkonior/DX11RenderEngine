@@ -166,7 +166,7 @@ void D3D11Renderer::Clear(ClearOptions options, FColor color, float depth, int32
     if (dsClearFlags != 0 && depthStencilBuffer != nullptr && depthStencilBuffer->texture != nullptr)
     {
         /* Clear! */
-        testApi->ClearDepthStencil(depthStencilBufferTest, depth, stencil);
+        testApi->ClearDepthStencil(depthStencilBuffer->depth.nDsView, depth, stencil);
     }
 }
 

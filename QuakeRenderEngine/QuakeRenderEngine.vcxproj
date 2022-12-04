@@ -244,21 +244,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORenderer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="source\RendererPasses\PPRenderPass\PPRenderPass.cpp" />
+    <ClCompile Include="source\RendererPasses\SSAORenderPass\SSAORenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\TAARenderPass\halton.cpp" />
     <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\TAARenderPass\TAARenderPassProvider.cpp" />
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.cpp" />
     <ClCompile Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.cpp" />
-    <ClCompile Include="source\RendererPasses\UPRenderer\UPRenderer.cpp" />
-    <ClCompile Include="source\RendererPasses\UPRenderer\UPRendererProvider.cpp" />
+    <ClCompile Include="source\RendererPasses\UPRenderPass\UPRenderPass.cpp" />
+    <ClCompile Include="source\RendererPasses\UPRenderPass\UPRenderPassProvider.cpp" />
     <ClCompile Include="source\RenderSystem.cpp" />
     <ClCompile Include="source\ResourceManagers\ModelsManager.cpp" />
     <ClCompile Include="source\ResourceManagers\States\BlendStates.cpp" />
@@ -479,31 +474,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORenderer.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORendererConstBuffer.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="source\RendererPasses\OldRenderPasses\SSAORenderer\SSAORendererFactory.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="source\RendererPasses\PPRenderPass\PPConstBuffer.h">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="source\RendererPasses\PPRenderPass\PPRendererFactory.h">
+    <ClInclude Include="source\RendererPasses\PPRenderPass\PPRenderPass.h">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="source\RendererPasses\PPRenderPass\PPRenderPass.h">
+    <ClInclude Include="source\RendererPasses\SSAORenderPass\SSAORenderPass.h">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\RendererPasses\SSAORenderPass\SSAORendererConstBuffer.h">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="source\RendererPasses\TAARenderPass\halton.h" />
@@ -513,8 +493,8 @@
     <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPass.h" />
     <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassConstBuffer.h" />
     <ClInclude Include="source\RendererPasses\UIRenderPass\UIRenderPassProvider.h" />
-    <ClInclude Include="source\RendererPasses\UPRenderer\UPConstBuffers.h" />
-    <ClInclude Include="source\RendererPasses\UPRenderer\UPRenderer.h" />
+    <ClInclude Include="source\RendererPasses\UPRenderPass\UPConstBuffers.h" />
+    <ClInclude Include="source\RendererPasses\UPRenderPass\UPRenderPass.h" />
     <ClInclude Include="source\RenderSystem.h" />
     <ClInclude Include="source\ResourceManagers\ModelsManager.h" />
     <ClInclude Include="source\ResourceManagers\States\BlendStates.h" />

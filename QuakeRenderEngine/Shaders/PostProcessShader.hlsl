@@ -34,28 +34,28 @@ Texture2D occlusion : register(t4);
 
 SamplerState blureSampler : register(s0);
 SamplerState pointSampler : register(s1);
-#define SINGLETEXTURE
+
 float4 psIn(PSIn input) : SV_Target
 {
     float4 x = 0;
     float2 texCoord = input.uv;
 
 #ifdef SINGLETEXTURE
-    float3 output = diffuseColor.Sample(blureSampler, texCoord);
+    float4 output = diffuseColor.Sample(blureSampler, texCoord);
     
-    if (output != abs(output))
-    {
-        output += float3(1,1,1);
-        output/=2;
-    }
-    return float4(output, 1); 
+    //if (output != abs(output))
+    //{
+    //    output += float4(1,1,1,1);
+    //    output/=2;
+    //}
+    return float4(output.xyz, 1); 
 #endif
     
 
 
 #ifdef ALPHA
 	float4 alphaColor = alphaSurfaces.Sample(blureSampler, texCoord);
-	float depth = depthTex.Sample(blureSampler, texCoord);
+	//float depth = depthTex.Sample(blureSampler, texCoord);
     alphaColor.w = 0.3;
 	return alphaColor;
 #endif

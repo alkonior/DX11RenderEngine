@@ -55,7 +55,7 @@ struct MM
 {
     static constexpr unsigned int crc32(const char* str, unsigned int prev_crc = 0xFFFFFFFF)
     {
-        return str[idx] != ' ' ? MM<size, idx + 1>::crc32(str, (prev_crc >> 8) ^ crc_table[(prev_crc ^ str[idx]) & 0xFF]) :
+        return str[idx] != ' ' && str[idx] != '\t'  ? MM<size, idx + 1>::crc32(str, (prev_crc >> 8) ^ crc_table[(prev_crc ^ str[idx]) & 0xFF]) :
         MM<size, idx + 1>::crc32(str, prev_crc);
     }
 };
@@ -86,7 +86,7 @@ inline string_id SIDRT(const char* str)
     unsigned int crc = 0xFFFFFFFF;
     for (uint8_t idx = 0; idx < std::strlen(str); idx++)
     {
-        if (str[idx] != ' ')
+        if (str[idx] != ' '&&str[idx] != '\t')
             crc = (crc >> 8) ^ crc_table[(crc ^ str[idx]) & 0xFF];
     }
     return crc ^ 0xFFFFFFFF;
