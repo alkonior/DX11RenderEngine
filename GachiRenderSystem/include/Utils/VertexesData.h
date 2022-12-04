@@ -41,10 +41,19 @@ struct FramedModelVertex {
 };
 
 struct OpaqueModelVertex {
+    OpaqueModelVertex() = default;
+    OpaqueModelVertex(float3 position): position(position){}
+    OpaqueModelVertex(float3 position, float3 normal): position(position), normal(normal){}
+    OpaqueModelVertex(float3 position, color color): position(position), color(color) {}
+    OpaqueModelVertex(float3 position, float2 texcoord): position(position), texcoord(texcoord){}
+    OpaqueModelVertex(float3 position, float3 normal, float2 texcoord): position(position), normal(normal), texcoord(texcoord){}
+    OpaqueModelVertex(float3 position, color color, float2 texcoord): position(position), color(color), texcoord(texcoord){}
+
+    
     float3 position;
     float3 normal;
+    float2 texcoord;
     float3 binormal;
     float3 tangent;
-    color color;
-    float2 texcoord;
+    color  color;
 };

@@ -987,7 +987,12 @@ void RenderDeviceDX11::SetupVertexBuffer(IVertexBufferView* const vertexBuffers[
 void RenderDeviceDX11::SetupIndexBuffer(IIndexBufferView* const indices)
 {
     const IndexBufferViewD3D11* indexBuffer = reinterpret_cast<const IndexBufferViewD3D11*>(indices);
-    GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0));
+    if (indices == nullptr) {
+        GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0));
+    }
+    else {
+        GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(indexBuffer->indexBuffer, indexBuffer->format, 0));
+    }
 }
 
 void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
@@ -1206,7 +1211,7 @@ void RenderDeviceDX11::SyncBlockExecutionEnd() {}
 
 void RenderDeviceDX11::Draw(const DrawCall& call)
 {
-    GFX_THROW_INFO_ONLY(
+    
         switch (call.type)
         {
         case EDrawCallType::DRAW_INDEXED:
@@ -1216,7 +1221,7 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
         }
         case EDrawCallType::DRAW:
         {
-            context->Draw(call.get<0>(), call.get<1>());
+            context->Draw(call.get<1>(), call.get<0>());
             break;
         }
         case EDrawCallType::DRAW_INDEXED_INSTANCED:
@@ -1230,7 +1235,7 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
             break;
         }
         }
-    );
+    
 }
 void RenderDeviceDX11::Present()
 {

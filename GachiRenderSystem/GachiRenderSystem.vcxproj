@@ -23,6 +23,7 @@
     <ClInclude Include="include\RenderFlags.h" />
     <ClInclude Include="include\RenderSettings.h" />
     <ClInclude Include="include\Utils\DrawData.h" />
+    <ClInclude Include="include\Utils\Lights.h" />
     <ClInclude Include="include\Utils\ModelMesh.h" />
     <ClInclude Include="include\Utils\OpaqueModelDrawData.h" />
     <ClInclude Include="include\Utils\PBRFlags.h" />
@@ -36,13 +37,15 @@
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassConstBuffer.h" />
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsPassProvider.h" />
     <ClInclude Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.h" />
-    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\LightPassConstBuffer.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\LightPassProvider.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\LightRenderPass\LightRenderPass.h" />
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassConstBuffer.h" />
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.h" />
     <ClInclude Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\PostProcessRenderPass\PostProcessRenderPass.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\PostProcessRenderPass\PostProcessRenderPassConstBuffer.h" />
+    <ClInclude Include="source\RendererPasses\PBRPasses\PostProcessRenderPass\PostProcessRenderPassProvider.h" />
     <ClInclude Include="source\RendererPasses\PBR\GBuffer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -92,6 +95,12 @@
     <None Include="Shaders\ParticlesShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
+    <None Include="Shaders\PBRLighting.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
+    <None Include="Shaders\PBRToneMapping.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </None>
     <None Include="Shaders\PixelPacking_Velocity.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
@@ -111,9 +120,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
     <None Include="Shaders\PBRFillGBuffer.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </None>
-    <None Include="source\RendererPasses\PBR\Shaders\PBRLighting.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
     <None Include="source\RendererPasses\PBR\Shaders\PBRToneMapping.hlsl">
@@ -139,10 +145,12 @@
     <ClCompile Include="source\RendererPasses\ModelsRenderPass\ModelsRenderPass.cpp" />
     <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\Lights.cpp">
     </ClCompile>
-    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.cpp">
-    </ClCompile>
-    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.cpp">
-    </ClCompile>
+    <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\LightPassProvider.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\LightRenderPass\LightRenderPass.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaquePassProvider.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\OpaqueRenderPass\OpaqueRenderPass.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\PostProcessRenderPass\PostProcessRenderPass.cpp" />
+    <ClCompile Include="source\RendererPasses\PBRPasses\PostProcessRenderPass\PostProcessRenderPassProvider.cpp" />
     <ClCompile Include="source\RendererPasses\PBR\GBuffer.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -184,9 +192,6 @@
     <ProjectReference Include="..\DX11RenderEngine\DX11RenderEngine.vcxproj">
       <Project>{6bd7be35-e16c-474a-b507-9883ae657e1e}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="source\RendererPasses\PBRPasses\TeneMapRenderPass" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

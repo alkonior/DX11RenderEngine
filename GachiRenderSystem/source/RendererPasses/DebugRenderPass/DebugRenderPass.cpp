@@ -97,7 +97,7 @@ void DebugRenderPass::Render()
     renderDevice->GetMainViewportSize(width, height);
 
     RenderTargetBinding* targets[] = {
-        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("outTexture")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("preAAcolor")),
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets), nullptr);
@@ -131,8 +131,8 @@ void DebugRenderPass::Render()
         renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
         renderDevice->DrawIndexedPrimitives(
-            (PrimitiveType)drawCalls2D[i].hash.pt, 0, 0, 0, 0,
-            drawCalls2D[i].hash.numElem);
+        (PrimitiveType)drawCalls2D[i].hash.pt, 0, 0, 0, drawCalls2D[i].hash.indexOffset,
+        drawCalls2D[i].hash.numElem);
     }
 
     renderDevice->ApplyMeshBuffersBinding(vetexBuffer3D.mesh);
@@ -153,7 +153,7 @@ void DebugRenderPass::Render()
         renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
         renderDevice->DrawIndexedPrimitives(
-            (PrimitiveType)drawCalls3D[i].hash.pt, 0, 0, 0, 0,
+            (PrimitiveType)drawCalls3D[i].hash.pt, 0, 0, 0, drawCalls3D[i].hash.indexOffset,
             drawCalls3D[i].hash.numElem);
     }
 }

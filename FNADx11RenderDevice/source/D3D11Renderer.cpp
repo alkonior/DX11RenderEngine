@@ -195,7 +195,11 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
     D3D11Buffer* d3dIndices = (D3D11Buffer*)indices;
     /* Bind index buffer */
 
-
+   if (!d3dIndices)
+   {
+       testApi->SetupIndexBuffer(nullptr);
+       return;
+   }
    if (!d3dIndices->indexViewTest)
    {
        d3dIndices->indexViewTest = testApi->CreateIndexBufferView({
@@ -235,6 +239,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
     if (topology != primitiveType)
     {
         topology = primitiveType;
+        testApi->SetupPrimitiveTopology(ToGVM(primitiveType));
     }
 
 
@@ -249,7 +254,10 @@ void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexSt
 
     /* Bind draw state */
     if (topology != primitiveType)
-    { }
+    {
+        topology = primitiveType;
+        testApi->SetupPrimitiveTopology(ToGVM(primitiveType));
+    }
 
     /* Draw! */
     testApi->DrawPrimitives(vertexStart, primitiveCount);
@@ -1010,6 +1018,8 @@ Renderbuffer* D3D11Renderer::GenDepthStencilRenderbuffer(int32_t width, int32_t 
     shDesc.T2Desc.ResourceMinLODClamp = 0;
     result->depth.nShView = testApi->CreateShaderResourceView(shDesc);
 
+    texture->shView =  result->depth.nShView;
+    
 
     result->texture = texture;
 

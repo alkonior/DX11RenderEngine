@@ -18,12 +18,17 @@ TexturesManager::TexturesManager(Renderer::IRenderer* renderDevice) : ITexturesM
     CreateRenderTarget(("velocityField"), SURFACEFORMAT_HALFVECTOR4, false, true, false, width, height);
     CreateRenderTarget(("blurMask"), SURFACEFORMAT_SINGLE, false, true, false, width, height);
     CreateRenderTarget(("normalsField"), SURFACEFORMAT_VECTOR4, false, true, false, width, height);
+    CreateRenderTarget(("worldPosition"), SURFACEFORMAT_VECTOR4, false, true, false, width, height);
     CreateRenderTarget(("oclusionField"), SURFACEFORMAT_SINGLE, true, true, false, width, height);
 
     CreateRenderTarget(("pastColor"), SURFACEFORMAT_COLOR, false, true, false, width, height);
     CreateRenderTarget(("pastDepth"), SURFACEFORMAT_SINGLE, false, true, false, width, height);
 
     CreateRenderTarget(("outTexture"), SURFACEFORMAT_COLOR, false, true, false, width, height);
+
+    colorTextures.insert({0,TextureCache{}});
+    floatTextures.insert({0,FloatTextureCache{}});
+    float3Textures.insert({0,Float3TextureCache{}});
 }
 
 void TexturesManager::RegTexture(void* data, int width, int height, size_t id)
@@ -308,7 +313,8 @@ const Renderer::RenderTargetBinding& TexturesManager::CreatePublicRenderTarget(
         renderDevice->GetBackbufferSize(width, height); //todo
     if (description.isVS)
         renderDevice->GetMainViewportSize(width, height);
-
+    
+    
     if (description.isUA)
         texture = renderDevice->CreateUATexture2D(description.format, width, height, 1);
     else
@@ -324,7 +330,7 @@ const Renderer::RenderTargetBinding& TexturesManager::CreatePublicRenderTarget(
         texture,
         nullptr,
         {
-            0, 0, (int32_t)description.width, (int32_t)description.height, 0.0, 1.0
+            0, 0, (int32_t)width, (int32_t)height, 0.0, 1.0
         }
     };
 

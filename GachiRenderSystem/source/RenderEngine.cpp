@@ -17,6 +17,7 @@ void RenderDevice::CreateDevice(RenderEngineCoreSettings init) {
 void RenderDevice::InitDevice(const RenderSettings& Settings) {
 	shadersDir = Settings.shadersDirr;
 	gfx->SetupSettings(Settings);
+	gfx->ReloadShaders(shadersDir.c_str());
 	
 }
 void RenderDevice::ReloadShaders()
@@ -99,6 +100,14 @@ void RenderDevice::RegisterTexture(size_t id, const char* file) {
 void RenderDevice::RegisterTexture(size_t id, const TextureData& tex) {
 	gfx->RegisterImg(id, tex);
 }
+void RenderDevice::RegisterTexture(size_t id, const FloatData& tex)
+{
+	gfx->RegisterImg(id, tex);
+}
+void RenderDevice::RegisterTexture(size_t id, const Float3Data& tex)
+{
+	gfx->RegisterImg(id, tex);
+}
 
 void RenderDevice::RegisterTexture(size_t id, int width, int height, void* data) {
 	gfx->RegisterImg(id, width, height, data);
@@ -114,6 +123,11 @@ void RenderDevice::UpdateTexture(const ImageUpdate& data) {
 
 void RenderDevice::RegisterModel(size_t id, const ModelMesh& model) {
 	gfx->RegisterModel(id, model);
+}
+
+void RenderDevice::RegisterModel(size_t id, const OpaqueMesh& model)
+{
+	gfx->RegisterOpaqueModel(id, model);
 }
 
 void RenderDevice::ReleaseTexture(size_t id) {
@@ -138,6 +152,14 @@ void RenderDevice::DrawImg(size_t texId, const UIDrawData& data) {
 void RenderDevice::DrawModel(const ModelDrawData& drawData)
 {
 	gfx->DrawModel(drawData);
+}
+void RenderDevice::DrawOpaqueModel(const OpaqueModelDrawData& drawData)
+{
+	gfx->DrawOpaqueModel(drawData);
+}
+void RenderDevice::DrawLight(const LightDrawData& drawData)
+{
+	gfx->DrawLight(drawData);
 }
 
 void RenderDevice::DrawUserPolygon(MeshHashData model, size_t textureId, UPDrawData data) {

@@ -33,7 +33,7 @@ struct LightData
 class LightBase
 {
 public:
-    StaticMeshId MeshRep = 0;
+    //StaticMeshId MeshRep = 0;
     DirectX::SimpleMath::Vector3 PosDir;
     float4 LightColor;
     float Intensity = 1.0f;
@@ -77,13 +77,13 @@ public:
     SpotLight(float3 position, float3 direction, float length, float umbra,
               float penumbra, float falloff, float intensity, color color);
 
-    [[nodiscard]] matrix CalcTransformmatrix() const;
+    [[nodiscard]] matrix CalcTransformMatrix() const;
 
     void DrawDebugData();
-    LightData GetLightData();
+    LightData GetLightData() const;
     PixelFlagsLighting GetLightFlags();
 
-    matrix GetTransformmatrix();
+    matrix GetTransformMatrix();
 };
 
 
@@ -100,8 +100,8 @@ public:
 
     void Update(float dt);
     void DrawDebugData();
-    matrix GetTransformmatrix();
-    LightData GetLightData();
+    matrix GetTransformMatrix();
+    LightData GetLightData() const;
     PixelFlagsLighting GetLightFlags();
 };
 
@@ -114,9 +114,9 @@ public:
     AmbientLight(float intensity, float specIntensity, Color color);
 
     void DrawDebugData();
-    LightData GetLightData();
+    LightData GetLightData() const ;
     PixelFlagsLighting GetLightFlags();
-    matrix GetTransformmatrix();
+    matrix GetTransformMatrix();
 };
 
 
@@ -131,17 +131,16 @@ public:
     void DrawDebugData();
 
 
-    LightData GetLightData();
+    LightData GetLightData() const;
 
     PixelFlagsLighting GetLightFlags();
 
-    matrix GetTransformmatrix();
+    matrix GetTransformMatrix();
 };
 
 
 struct UniversalLight
 {
-    LightTypes LightType;
 
     UniversalLight(const AmbientLight& ambientLight);
     UniversalLight(const DirectionalLight& directionalLight);
@@ -155,4 +154,8 @@ struct UniversalLight
         SpotLight spotLight;
         PointLight pointLight;
     };
+private:
+    LightTypes LightType;
+    friend class LightRenderPass;
+    LightData GetLightData() const;
 };

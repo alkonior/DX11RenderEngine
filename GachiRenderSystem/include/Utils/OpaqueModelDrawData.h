@@ -8,6 +8,7 @@
 struct DiffuseData {
     bool isTextured = false;
     DiffuseData():isTextured(false) {};
+    DiffuseData(TextureData::Color color):isTextured(false), color(color) {};
     DiffuseData(const DiffuseData& data):
     isTextured(data.isTextured),
     dummy1(data.dummy1),
@@ -25,6 +26,7 @@ struct DiffuseData {
 
 struct NormalData {
     bool isTextured = false;
+    NormalData(Float3Data::Color normal):isTextured(false), normal(normal) {};
     NormalData(const NormalData& data):
     isTextured(data.isTextured),
     dummy1(data.dummy1),
@@ -41,7 +43,8 @@ struct NormalData {
 };
 
 struct RoughnessData {
-    bool isTextured = false;
+    bool isTextured = false;;
+    RoughnessData(FloatData::Color roughness):isTextured(false), roughness(roughness) {};
     RoughnessData(const RoughnessData& data):
     isTextured(data.isTextured),
     dummy1(data.dummy1)
@@ -57,6 +60,7 @@ struct RoughnessData {
 
 struct MetallicData {
     bool isTextured = false;
+    MetallicData(FloatData::Color metallic):isTextured(false), metallic(metallic) {};
     MetallicData(const MetallicData& data):
     isTextured(data.isTextured),
     dummy1(data.dummy1)
