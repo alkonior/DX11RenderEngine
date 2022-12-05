@@ -13,6 +13,8 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     static IRenderDevice::VERTEXBUFFERVIEWHANDLE vertexBuffers[32];
     static IRenderDevice::RESOURCEVIEWHANDLE textures[128];
     static IRenderDevice::CONSTBUFFERVIEWHANDLE constBuffers[32];
+    static IRenderDevice::RESOURCEVIEWHANDLE texturesNulls[128];
+    static IRenderDevice::CONSTBUFFERVIEWHANDLE constBuffersNulls[32];
 
     pipelinesQueueShift += ps->SnapshotByteSize;
 
@@ -27,7 +29,11 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     {
         constBuffers[i] = (IRenderDevice::CONSTBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ConstBuffers[i]);
     }
-    RenderDevice->ClearState();
+    RenderDevice->SetupTextures(texturesNulls, 128);
+    RenderDevice->SetupRenderTargets(
+        nullptr, 8,
+        nullptr);
+        RenderDevice->SetupUATargets(nullptr, 16);
 
     pipelineDescription.CS = resourcesManager.GetRealShader(ps->CS);
     pipelineDescription.PS = resourcesManager.GetRealShader(ps->PS);

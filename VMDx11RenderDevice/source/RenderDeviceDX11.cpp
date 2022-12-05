@@ -37,10 +37,10 @@ RenderDeviceDX11::RenderDeviceDX11(const RenderDeviceInitParams& initParams, boo
 
     /* Create the D3D11Device */
     flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-    if (debugMode)
-    {
+
+#if _DEBUG
         flags |= D3D11_CREATE_DEVICE_DEBUG;
-    }
+#endif
 
 
     DXGI_SWAP_CHAIN_DESC swapchainDesc;
@@ -689,7 +689,7 @@ bool ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D11_VIEWPORT
          d3d11viewports[i].MinDepth <= d3d11viewports[i].MaxDepth
         );
     }
-    return true;
+    return result;
 }
 
 void RenderDeviceDX11::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
@@ -993,6 +993,7 @@ void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
 {
     if (topologyHash != topology)
     {
+        topologyHash = topology;
         context->IASetPrimitiveTopology(ToD3DPT[to_underlying(topology)]);
     }
 }
@@ -1000,6 +1001,7 @@ void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
 void RenderDeviceDX11::SetupVertexBuffers(IVertexBufferView* const vertexBuffers[], uint8_t num)
 {
     bool flag = num != vertexBuffersNum; 
+    vertexBuffersNum = num;
     for (int i = 0; i < num; i++)
     {
         const VertexBufferViewD3D11* vb = reinterpret_cast<const VertexBufferViewD3D11*>(vertexBuffers[i]);
@@ -1028,9 +1030,10 @@ void RenderDeviceDX11::SetupVertexBuffers(IVertexBufferView* const vertexBuffers
 
 void RenderDeviceDX11::SetupIndexBuffers(IIndexBufferView* const indices)
 {
-    const IndexBufferViewD3D11* indexBuffer = reinterpret_cast<const IndexBufferViewD3D11*>(indices);
+    IndexBufferViewD3D11* indexBuffer = (IndexBufferViewD3D11*)(indices);
     if (indexBuffer != indexBufferPtr)
     {
+        indexBufferPtr = indexBuffer;
         if (indices == nullptr) {
             GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0));
         }
@@ -1217,7 +1220,11 @@ void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8
 }
 void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout)
 {
-    context->IASetInputLayout((ID3D11InputLayout*)layout);
+    if (layoutPtr != layout)
+    {
+        layoutPtr = layout;
+        context->IASetInputLayout((ID3D11InputLayout*)layout);
+    }
 }
 
 void RenderDeviceDX11::SetupPipeline(const PipelineDescription& Pipeline)
@@ -1225,10 +1232,26 @@ void RenderDeviceDX11::SetupPipeline(const PipelineDescription& Pipeline)
     if (Pipeline.isCS)
     {
         SetupShader(Pipeline.CS, EShaderType::COMPUTE_SHADER);
+
+        HS = false;
+        PS = false;
+        DS = false;
+        VS = false;
+        GS = false;
+        HSPtr = nullptr;
+        PSPtr = nullptr;
+        DSPtr = nullptr;
+        VSPtr = nullptr;
+        GSPtr = nullptr;
+
         SetupSamplers(Pipeline.samplers, Pipeline.samplersNum);
+
+        
     }
     else
     {
+        CS    = false;
+        CSPtr = nullptr;
         SetupShader(Pipeline.HS, EShaderType::HULL_SHADER);
         SetupShader(Pipeline.PS, EShaderType::PIXEL_SHADER);
         SetupShader(Pipeline.DS, EShaderType::DOMAIN_SHADER);

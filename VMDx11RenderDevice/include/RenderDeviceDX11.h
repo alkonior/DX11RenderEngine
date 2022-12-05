@@ -10,6 +10,12 @@
 #include "GraphicsExceptions/DxgiInfoManager.h"
 
 
+#ifndef  TESTDEBUG 
+#define TESTDEBUG 1
+#endif
+
+
+
 
 namespace GVM {
 
@@ -37,7 +43,7 @@ public:
 
 #pragma region Fields
 
-#ifdef _DEBUG
+#if _DEBUG | TESTDEBUG
     DxgiInfoManager infoManager;
 #endif
     
@@ -74,6 +80,7 @@ public:
     int32_t renderTargetsNum = 0;
     ID3D11Buffer* constBuffersPtr[32];
     uint8_t constBuffersNum = 0;
+    IInputLayout* layoutPtr;
 
 private:
     wrl::ComPtr<ID3DUserDefinedAnnotation> perf;
