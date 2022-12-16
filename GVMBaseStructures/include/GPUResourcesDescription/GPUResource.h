@@ -20,7 +20,7 @@ public:
     };
     
     ResourceView* id = nullptr;
-    IRenderDevice::RESOURCEVIEWHANDLE view = nullptr;
+    IRenderDevice::RESOURCEVIEWHANDLE view = 0;
     Resource* resource = nullptr;
     EViewType type = EViewType::UNKNOWN;
     bool isRequiredUpdate = true;

@@ -5,8 +5,10 @@
 
 template<class T>
 using ComPtr = wrl::ComPtr<T>;
+using namespace GVM;
 
-GVM::RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, bool debugMode): IRenderDevice(initParams, debugMode)
+
+RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, bool debugMode): IRenderDevice(initParams, debugMode)
 {
 #if defined(DEBUG) || defined(_DEBUG) 
 	// Enable the D3D12 debug layer.
@@ -68,36 +70,18 @@ GVM::RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams
 	CreateCommandObjects(initParams);
     CreateSwapChain(initParams);
     CreateRtvAndDsvDescriptorHeaps();
-
+	
 	return;
 }
 
 
-GVM::RenderDeviceDX12::~RenderDeviceDX12()
+RenderDeviceDX12::~RenderDeviceDX12()
 {
-	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	ThrowIfFailed(md3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue)));
 
-	ThrowIfFailed(md3dDevice->CreateCommandAllocator(
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
-
-	ThrowIfFailed(md3dDevice->CreateCommandList(
-		0,
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		mDirectCmdListAlloc.Get(), // Associated command allocator
-		nullptr,                   // Initial PipelineStateObject
-		IID_PPV_ARGS(mCommandList.GetAddressOf())));
-
-	// Start off in a closed state.  This is because the first time we refer 
-	// to the command list we will Reset it, and it needs to be closed before
-	// calling Reset.
-	mCommandList->Close();
 }
 
-void GVM::RenderDeviceDX12::LogAdapterOutput(IDXGIAdapter* adapter)
+#ifdef _DEBUG
+void RenderDeviceDX12::LogAdapterOutput(IDXGIAdapter* adapter)
 {
 	UINT i = 0;
 	IDXGIOutput* output = nullptr;
@@ -118,8 +102,7 @@ void GVM::RenderDeviceDX12::LogAdapterOutput(IDXGIAdapter* adapter)
 		++i;
 	}
 }
-
-void GVM::RenderDeviceDX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
+void RenderDeviceDX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 {
 	UINT count = 0;
 	UINT flags = 0;
@@ -144,7 +127,7 @@ void GVM::RenderDeviceDX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORM
 	}
 }
 
-void GVM::RenderDeviceDX12::LogAdapters()
+void RenderDeviceDX12::LogAdapters()
 {
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
@@ -173,8 +156,10 @@ void GVM::RenderDeviceDX12::LogAdapters()
 	
 }
 
+#endif
 
-void GVM::RenderDeviceDX12::CreateCommandObjects(const RenderDeviceInitParams& initParams)
+
+void RenderDeviceDX12::CreateCommandObjects(const RenderDeviceInitParams& initParams)
 {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -198,7 +183,7 @@ void GVM::RenderDeviceDX12::CreateCommandObjects(const RenderDeviceInitParams& i
 	mCommandList->Close();
 }
 
-void GVM::RenderDeviceDX12::CreateSwapChain(const RenderDeviceInitParams& initParams)
+void RenderDeviceDX12::CreateSwapChain(const RenderDeviceInitParams& initParams)
 { // Release the previous swapchain we will be recreating.
 	mSwapChain.Reset();
 
@@ -227,7 +212,7 @@ void GVM::RenderDeviceDX12::CreateSwapChain(const RenderDeviceInitParams& initPa
 	
 }
 
-void GVM::RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
+void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
 {
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 		rtvHeapDesc.NumDescriptors = SwapChainBufferCount;
@@ -239,16 +224,42 @@ void GVM::RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
 
 
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-		dsvHeapDesc.NumDescriptors = 1;
+		dsvHeapDesc.NumDescriptors = 100;
 		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		dsvHeapDesc.NodeMask = 0;
 		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 			&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
+
+	CD3DX12_DESCRIPTOR_RANGE  
+		D3D12_DESCRIPTOR_HEAP_DESC shvCbUaHeapDesc =CD3DX12_DESCRIPTOR_RANGE{
+			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+			10000,
+			0,
+		shvCbUaHeapDesc.Type = ;
+		shvCbUaHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		shvCbUaHeapDesc.NodeMask = 0;
+		ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
+			&shvCbUaHeapDesc, IID_PPV_ARGS(mShvCbUaHeap.GetAddressOf())));
+
+			CD3DX12_ROOT_PARAMETER
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE RenderDeviceDX12::CurrentBackBufferView() const
+{
+	// CD3DX12 constructor to offset to the RTV of the current back buffer.
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+	mRtvHeap->GetCPUDescriptorHandleForHeapStart(),// handle start
+	mCurrBackBuffer, // index to offset
+	mRtvDescriptorSize); // byte size of descriptor
+}
 
-GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
+D3D12_CPU_DESCRIPTOR_HANDLE RenderDeviceDX12::DepthStencilView()const
+{
+	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
+IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
 {
 	switch (ResourceDesc.resourceDescription.Dimension)
 	{
@@ -265,7 +276,7 @@ GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuRe
 			nullptr,
 			IID_PPV_ARGS(&defaultBuffer)));
 
-		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+		return (IRenderDevice::IResource*)defaultBuffer;
 	}
 	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE1D:
 	{
@@ -284,7 +295,7 @@ GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuRe
 			nullptr,
 			IID_PPV_ARGS(&defaultBuffer)));
 
-		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+		return (IRenderDevice::IResource*)defaultBuffer;
 		
 	}
 	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE2D:
@@ -306,7 +317,7 @@ GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuRe
 			nullptr,
 			IID_PPV_ARGS(&defaultBuffer)));
 
-		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+		return (IRenderDevice::IResource*)defaultBuffer;
 	}
 	case EResourceDimension::RESOURCE_DIMENSION_TEXTURE3D:
 	{
@@ -328,39 +339,23 @@ GVM::IRenderDevice::IResource* GVM::RenderDeviceDX12::CreateResource(const GpuRe
 			nullptr,
 			IID_PPV_ARGS(&defaultBuffer)));
 
-		return (GVM::IRenderDevice::IResource*)defaultBuffer;
+		return (IRenderDevice::IResource*)defaultBuffer;
 	}
 		
 	}
 	
 }
-GVM::IRenderDevice::IResourceView* GVM::RenderDeviceDX12::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
+RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
 {
+	RESOURCEVIEWHANDLE output;
 	switch (desc.type)
 	{
 	case GpuResourceView::EViewType::CB:
 		{
-		
-		
-		D3D12_CPU_DESCRIPTOR_HANDLE defaultBuffer;
+			D3D12_CPU_DESCRIPTOR_HANDLE defaultBuffer = {};
 
-		// Create the actual default buffer resource.
-		ThrowIfFailed(device->CreateConstantBufferView(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Tex3D(
-			ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
-			ResourceDesc.resourceDescription.Width,
-			ResourceDesc.resourceDescription.Height,
-			ResourceDesc.resourceDescription.DepthOrArraySize
-			),
-			D3D12_RESOURCE_STATE_COMMON,
-			nullptr,
-			IID_PPV_ARGS(&defaultBuffer)));
-
-		return (GVM::IRenderDevice::IResource*)defaultBuffer;
-
+			output.data = defaultBuffer.ptr;
 		}
 	}
-	
+	return  output;
 }

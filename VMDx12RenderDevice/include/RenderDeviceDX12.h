@@ -3,9 +3,10 @@
 #define GVM_MSW
 
 #include "winHandler.h"
+#define DX12
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
-
+#undef DX12
 
 
 namespace GVM {
@@ -48,6 +49,7 @@ public:
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mShvCbUaHeap;
 
     D3D12_VIEWPORT mScreenViewport; 
     D3D12_RECT mScissorRect;
@@ -90,58 +92,58 @@ private:
     void CreateCommandObjects(const RenderDeviceInitParams& initParams);
     void CreateSwapChain(const RenderDeviceInitParams& initParams);
     void CreateRtvAndDsvDescriptorHeaps();
+    D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 #pragma endregion 
 
     
 protected:
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
-    void DestroyResource(IPlaceable* resource) override;
-    IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
-
-    IShader* CreateShader(const ShaderDesc& desc) override;
-    IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
+public:
+    void DestroyResource(const RESOURCEHANDLE resource) override;
+    void DestroyResourceView(const RESOURCEVIEWHANDLE resource) override;
     
+    SHADERHANDLE CreateShader(const ShaderDesc& desc) override;
+    INPUTLAYOUTHANDLE CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
+    RESOURCEVIEWHANDLE CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
+
+    void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
-     virtual void Draw(const DrawCall& call) override;
-    void Present() override;
+#pragma region ResourceSynchronization
 
-#pragma region SetupPipeline
-    
-    virtual void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
-    virtual void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
-    virtual void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);
-    virtual void SetupRasterizerState(const Compressed::RasterizerStateDesc& rasterizerState);
-    virtual void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
-    virtual void SetupPrimitiveTopology(const EPrimitiveTopology topology);
-
-    virtual void SetupVertexBuffer(const IVertexBufferView* vertexBuffers[], uint8_t num);
-    virtual void SetupIndexBuffer(const IIndexBufferView* indices);
-    virtual void SetupTextures(IResourceView* textures[], uint8_t num);
-    virtual void SetupRenderTargets(const IRenderTargetView* renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer);
-    virtual void SetupUATargets(const IUATargetView* uaTargets[], uint8_t num) override;
-    
-    virtual void SetupShader(IShader* shader, EShaderType type);
-    virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num);
-    void SetupInputLayout(IInputLayout* layout) override;
-    void ClearState() override;
-    
-    void ClearRenderTarget(const IRenderTargetView* rtView, FColor color) override;
-    void ClearDepthStencil(const IDepthStencilView* dsView, float depth, int8_t stencil) override;
-
-
+    void SyncBlockExecutionStart() override;
+    void SyncResourcesRead(RESOURCEHANDLE data[], size_t size) override;
+    void SyncResourcesWrite(RESOURCEHANDLE data[], size_t size) override;
+    void SyncBlockExecutionEnd() override;
 #pragma endregion
 
+#pragma region PipelineSetup
+    
+    void SetupPipeline(const PipelineDescription& Pipeline) override;
+    void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) override;
+    void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) override;
+    void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) override;
+    void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) override;
+    void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) override;
+    void SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num) override;
+    void ClearState() override;
+    
+#pragma endregion
+
+    void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) override;
+    void ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil) override;
+    void Present() override;
+    void Draw(const DrawCall& call) override;
     void ResizeBackbuffer(int32_t width, int32_t height) override;
 
-    void BeginEvent(const char* name) override;
-    void EndEvent() override;
 
-    void* GetNativeTexture(const IResourceView* view) override;
-public:
     
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
+    
+    void BeginEvent(const char* name) override;
+    void EndEvent() override;
+    
 };
 
 }

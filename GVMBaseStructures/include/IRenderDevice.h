@@ -17,8 +17,9 @@ enum RenderDeviceLimitations {
     MAX_VIEWPORT_ATTACHMENTS = 8,
     MAX_CONSTBUFFER_ATTACHMENTS = 15,
 };
-#ifndef DX12
-#define DX11
+
+#ifndef DX11
+#define DX12
 #endif
 
 struct PipelineDescription;
@@ -85,7 +86,7 @@ public:
     class IShader : public IPlaceable {};
     
     struct DX12ResourceView {
-        uint64_t data;
+        SIZE_T data;
     };
     struct DX1VertexBufferView   :  DX12ResourceView{};
     struct DX1IndexBufferView    :  DX12ResourceView{};
@@ -94,6 +95,22 @@ public:
     struct DX1DepthStencilView   :  DX12ResourceView{};
     struct DX1ShaderResourceView :  DX12ResourceView{};
     struct DX1UATargetView       :  DX12ResourceView{};
+
+
+
+public: 
+    typedef IResource*             RESOURCEHANDLE          ;
+    typedef DX12ResourceView       RESOURCEVIEWHANDLE      ;
+    typedef IInputLayout*          INPUTLAYOUTHANDLE       ;
+    typedef IShader*               SHADERHANDLE            ;
+        
+    typedef DX1VertexBufferView   VERTEXBUFFERVIEWHANDLE   ;
+    typedef DX1IndexBufferView    INDEXBUFFERVIEWHANDLE    ;
+    typedef DX1ConstBufferView    CONSTBUFFERVIEWHANDLE    ;
+    typedef DX1RenderTargetView   RENDERTARGETVIEWHANDLE   ;
+    typedef DX1DepthStencilView   DEPTHSTENCILVIEWHANDLE   ;
+    typedef DX1ShaderResourceView SHADERRESOURCEVIEWHANDLE ;
+    typedef DX1UATargetView       UATARGETVIEWHANDLE       ;
 
 #endif
 
@@ -165,7 +182,6 @@ public:
     virtual void ResizeBackbuffer(int32_t width, int32_t height) = 0;
 
 };
-
 
 struct PipelineDescription
 {

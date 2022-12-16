@@ -15,8 +15,127 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="VMDx12RenderDevice.cpp">
+    <ClCompile Include="DX12Helpers\d3dApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DX12Helpers\d3dUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Helpers\GameTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\BinaryReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\BufferHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\DescriptorHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\DirectXHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\GraphicsMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\LinearAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DX12Toolkit\Src\ResourceUploadBatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GraphicsExceptions\GraphicsException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RenderDeviceDX12.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DX12Helpers\d3dApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Helpers\d3dUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Helpers\d3dx12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Helpers\GameTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Helpers\UploadBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderDeviceDX12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\winHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\BufferHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\DescriptorHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\DirectXHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\DX12PipelineStateDescription.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\GeometricPrimitive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\GraphicsMemory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\RenderTargetState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\AlignedNew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\BinaryReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\DemandCreate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\LinearAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\PlatformHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\Src\SharedResourcePool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GraphicsExceptions\GraphicsException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GraphicsExceptions\GraphicsExceptionsDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GVMToDx12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DX12Toolkit\ResourceUploadBatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

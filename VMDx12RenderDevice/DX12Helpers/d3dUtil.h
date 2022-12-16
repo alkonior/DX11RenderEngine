@@ -54,7 +54,7 @@ inline void d3dSetDebugName(ID3D12DeviceChild* obj, const char* name)
 inline std::wstring AnsiToWString(const std::string& str)
 {
     WCHAR buffer[512];
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
+    //MultiByteToWideChar(0, 0, str.c_str(), -1, buffer, 512);
     return std::wstring(buffer);
 }
 
@@ -124,8 +124,7 @@ public:
 		const std::string& target);
 };
 
-
-
+#ifdef _DEBUG
 #ifndef ThrowIfFailed
 #define ThrowIfFailed(x)                                              \
 {                                                                     \
@@ -133,7 +132,12 @@ public:
     if(FAILED(hr__)) { throw GVM::HrException(__LINE__, __FILE__, hr__); } \
 }
 #endif
+#endif
+
+#ifndef ThrowIfFailed
+#define ThrowIfFailed(x) {x;}
+#endif
 
 #ifndef ReleaseCom
-#define ReleaseCom(x) { if(x){ x->Release(); x = 0; } }
+#define ReleaseCom(x) { if(x){ x->Release(); x = nullptr; } }
 #endif

@@ -92,9 +92,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;$(ProjectDir)source\DX12Toolkit\Src;$(ProjectDir)source\DX12Toolkit</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +129,8 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;$(ProjectDir)source\DX12Toolkit\Src;$(ProjectDir)source\DX12Toolkit</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,6 +162,14 @@
     <ClCompile Include="DX12Helpers\d3dApp.cpp" />
     <ClCompile Include="DX12Helpers\d3dUtil.cpp" />
     <ClCompile Include="DX12Helpers\GameTimer.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\BinaryReader.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\BufferHelpers.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\DescriptorHeap.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\DirectXHelpers.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\GraphicsMemory.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\LinearAllocator.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\pch.cpp" />
+    <ClCompile Include="source\DX12Toolkit\Src\ResourceUploadBatch.cpp" />
     <ClCompile Include="source\GraphicsExceptions\DxgiInfoManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -311,7 +321,6 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="source\RenderDeviceDX12.cpp" />
-    <ClCompile Include="VMDx12RenderDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12Helpers\d3dApp.h" />
@@ -321,6 +330,21 @@
     <ClInclude Include="DX12Helpers\UploadBuffer.h" />
     <ClInclude Include="include\RenderDeviceDX12.h" />
     <ClInclude Include="include\winHandler.h" />
+    <ClInclude Include="source\DX12Toolkit\BufferHelpers.h" />
+    <ClInclude Include="source\DX12Toolkit\DescriptorHeap.h" />
+    <ClInclude Include="source\DX12Toolkit\DirectXHelpers.h" />
+    <ClInclude Include="source\DX12Toolkit\DX12PipelineStateDescription.h" />
+    <ClInclude Include="source\DX12Toolkit\GeometricPrimitive.h" />
+    <ClInclude Include="source\DX12Toolkit\GraphicsMemory.h" />
+    <ClInclude Include="source\DX12Toolkit\RenderTargetState.h" />
+    <ClInclude Include="source\DX12Toolkit\ResourceUploadBatch.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\AlignedNew.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\BinaryReader.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\DemandCreate.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\LinearAllocator.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\pch.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\PlatformHelpers.h" />
+    <ClInclude Include="source\DX12Toolkit\Src\SharedResourcePool.h" />
     <ClInclude Include="source\GraphicsExceptions\DxgiInfoManager.h" />
     <ClInclude Include="source\GraphicsExceptions\GraphicsException.h" />
     <ClInclude Include="source\GraphicsExceptions\GraphicsExceptionsDefines.h" />

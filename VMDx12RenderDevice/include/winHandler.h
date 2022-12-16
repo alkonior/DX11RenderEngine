@@ -120,3 +120,28 @@ namespace dx = DirectX;
 
 
 #endif WH_H//
+
+
+#include <mmreg.h>
+#include <mfidl.h>
+#include <mfapi.h>
+#include <mfreadwrite.h>
+
+#include <stdio.h>
+#include <vector>
+#include <memory>
+
+#include <ppltasks.h>
+#include <concrt.h>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
