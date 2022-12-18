@@ -171,6 +171,30 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptor(ID3D12Device* device
     return gpuHandle;
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteNextDescriptors(ID3D12Device* device, const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors, uint32_t descriptorCount)
+{
+    WriteDescriptors(device, writeNext, pDescriptors, descriptorCount);
+    auto res = GetCpuHandle(writeNext);
+    writeNext+=descriptorCount;
+    return res;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteNextDescriptor(ID3D12Device* device, const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor)
+{
+   WriteDescriptors(device, writeNext, pDescriptor, 1);
+    auto res = GetCpuHandle(writeNext);
+    writeNext++;
+    return res;
+}
+D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetNextWriteDescriptor()
+{
+    return GetGpuHandle(writeNext);
+}
+void DescriptorHeap::ResetWrite()
+{
+    writeNext = 0;
+}
+
 _Use_decl_annotations_
 
 void DescriptorHeap::Create(

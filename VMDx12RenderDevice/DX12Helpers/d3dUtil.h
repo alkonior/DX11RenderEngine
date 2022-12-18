@@ -141,3 +141,15 @@ public:
 #ifndef ReleaseCom
 #define ReleaseCom(x) { if(x){ x->Release(); x = nullptr; } }
 #endif
+
+
+UINT Align(UINT uLocation, UINT uAlign)
+{
+    if ( (0 == uAlign) || (uAlign & (uAlign-1)) )
+        
+    {
+        throw GVM::HrException(__LINE__, __FILE__, 0,{ "non-pow2 alignment"} );
+    }
+
+    return ( (uLocation + (uAlign-1)) & ~(uAlign-1) );
+}

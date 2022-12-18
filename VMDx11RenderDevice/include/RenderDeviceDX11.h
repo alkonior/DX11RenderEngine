@@ -186,7 +186,7 @@ protected:
 
      void SetupPipeline(const PipelineDescription& Pipeline) override;
     void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) override;
-    void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) override;
+    void SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices) override;
     void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) override;
     void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) override;
     void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) override;
@@ -210,8 +210,8 @@ public:
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
 protected:
     void SyncBlockExecutionStart() override;
-    void SyncResourcesRead(IResource** data, size_t size) override;
-    void SyncResourcesWrite(IResource** data, size_t size) override;
+    void SyncResourcesRead(GpuResource data[], size_t size) override;
+    void SyncResourcesWrite(GpuResource data[], size_t size) override;
     void SyncBlockExecutionEnd() override;
 };
 

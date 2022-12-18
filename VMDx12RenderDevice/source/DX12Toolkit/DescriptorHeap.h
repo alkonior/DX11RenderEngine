@@ -64,16 +64,31 @@ namespace DirectX
             _In_reads_(descriptorRangeCount) const uint32_t* pDescriptorRangeSizes,
             uint32_t descriptorRangeCount);
 
+    private:
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(
             _In_ ID3D12Device* device,
             uint32_t offsetIntoHeap,
             _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors,
             uint32_t descriptorCount);
-        
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptor(
             _In_ ID3D12Device* device,
             uint32_t offsetIntoHeap,
             const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor);
+        
+        uint32_t writeNext;
+    public:
+        D3D12_CPU_DESCRIPTOR_HANDLE __cdecl WriteNextDescriptors(
+            _In_ ID3D12Device* device,
+            _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors,
+            uint32_t descriptorCount);
+        
+        D3D12_CPU_DESCRIPTOR_HANDLE __cdecl WriteNextDescriptor(
+            _In_ ID3D12Device* device,
+            const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor);
+        
+        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetNextWriteDescriptor();
+
+        void ResetWrite();
 
         D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const noexcept
         {

@@ -1,3 +1,4 @@
+// ReSharper disable CppMsExtAddressOfClassRValue
 #include "RenderDeviceDX12.h"
 #include "../DX12Helpers/d3dUtil.h"
 #include "GPUResourcesDescription/GPUResource.h"
@@ -22,6 +23,7 @@ enum DX12Limitations
     maxRTV = 8,
     maUA = 8,
     maxTextures = 40,
+    maxVertexBuffers = 10,
     maxConstBuffers = 16,
     maxSamplers = 20,
 };
@@ -91,6 +93,11 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
     CreateCommandObjects(initParams);
     CreateSwapChain(initParams);
     CreateRtvAndDsvDescriptorHeaps();
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
+    ps.pRootSignature = rootSignature.Get();
+    md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&mDefaultPS));
+
+    CreateDefaultHandles();
 
     return;
 }
@@ -150,10 +157,10 @@ void RenderDeviceDX12::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT fo
 
 void RenderDeviceDX12::LogAdapters()
 {
-    UINT i = 0;
+    UINT ii = 0;
     IDXGIAdapter* adapter = nullptr;
     std::vector<IDXGIAdapter*> adapterList;
-    while (mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+    while (mdxgiFactory->EnumAdapters(ii, &adapter) != DXGI_ERROR_NOT_FOUND)
     {
         DXGI_ADAPTER_DESC desc;
         adapter->GetDesc(&desc);
@@ -166,7 +173,7 @@ void RenderDeviceDX12::LogAdapters()
 
         adapterList.push_back(adapter);
 
-        ++i;
+        ++ii;
     }
 
     for (size_t i = 0; i < adapterList.size(); ++i)
@@ -264,55 +271,6 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
         &rtvHeapDesc, IID_PPV_ARGS(mBBHeap.GetAddressOf())));
 
 
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
-        DX12Limitations::maxDSV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mDsvHeapInterface
-    );
-
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
-        DX12Limitations::maxRTV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mRTVHeapInterface
-    );
-
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER,
-        DX12Limitations::maxSamplers,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mSamplerHeapInterface
-    );
-
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        DX12Limitations::maxTextures,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mShvHeapInterface
-    );
-
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        DX12Limitations::maxConstBuffers,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mCbHeapInterface
-    );
-
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        DX12Limitations::maUA,
-        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
-        0,
-        mUaHeapInterface
-    );
-
-
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
@@ -322,7 +280,7 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
     rootParameters[RootParameterIndex::UABase].InitAsDescriptorTable(1, &uaRange, D3D12_SHADER_VISIBILITY_ALL);
 
     CD3DX12_DESCRIPTOR_RANGE cbRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, DX12Limitations::maxConstBuffers, 0);
-    rootParameters[RootParameterIndex::CBBase].InitAsDescriptorTable(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+    rootParameters[RootParameterIndex::CBBase].InitAsDescriptorTable(0, &cbRange, D3D12_SHADER_VISIBILITY_ALL);
 
     CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, DX12Limitations::maxTextures, 0);
     rootParameters[RootParameterIndex::SRVBase].InitAsDescriptorTable(1, &textureRange, D3D12_SHADER_VISIBILITY_ALL);
@@ -331,6 +289,16 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
     rootParameters[RootParameterIndex::SamplerBase].InitAsDescriptorTable(
         1, &textureSamplerRange, D3D12_SHADER_VISIBILITY_ALL);
 
+    // HLSL syntax todo!!!! maybe...
+    //#define DualTextureRS \
+    //"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
+    //"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+    //"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+    //"            DENY_HULL_SHADER_ROOT_ACCESS )," \
+    //"DescriptorTable ( SRV(t0, numDescriptors = 2), visibility = SHADER_VISIBILITY_PIXEL )," \
+    //"DescriptorTable ( Sampler(s0, numDescriptors = 2), visibility = SHADER_VISIBILITY_PIXEL )," \
+    //"CBV(b0)"
+
     // Create the root signature
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
     rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
@@ -338,19 +306,69 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
 
     ComPtr<ID3DBlob> pSignature;
     ComPtr<ID3DBlob> pError;
-    HRESULT hr = D3D12SerializeRootSignature(&rsigDesc, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(),
-                                             pError.GetAddressOf());
-    if (SUCCEEDED(hr))
-    {
-        hr = device->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
-                                         IID_PPV_ARGS(&rootSignature)
-        );
-    }
+    ThrowIfFailed(D3D12SerializeRootSignature(&rsigDesc, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(),
+        pError.GetAddressOf()));
+    ThrowIfFailed(md3dDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
+        IID_PPV_ARGS(&rootSignature)));
+
+    mCommandList->SetGraphicsRootSignature(rootSignature.Get());
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
+        DX12Limitations::maxDSV*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
+        0,
+        mDsvHeapInterface
+    );
+
+
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
+        DX12Limitations::maxRTV*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        0,
+        mRTVHeapInterface
+    );
+
+
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER,
+        DX12Limitations::maxSamplers*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        0,
+        mSamplerHeapInterface
+    );
+    mCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::SamplerBase,
+                                                 mSamplerHeapInterface->GetGpuHandle(0));
+
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+        DX12Limitations::maxTextures*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        0,
+        mShvHeapInterface
+    );
+    mCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::SRVBase, mShvHeapInterface->GetGpuHandle(0));
+
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+        DX12Limitations::maxConstBuffers*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        0,
+        mCbHeapInterface
+    );
+    mCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CBBase, mCbHeapInterface->GetGpuHandle(0));
 
 
     CreateDH(
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        1000,
+        DX12Limitations::maUA*1000,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        0,
+        mUaHeapInterface
+    );
+    CreateDH(
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+        10000,
         D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
         0,
         srvStorageHeap
@@ -380,6 +398,97 @@ D3D12_CPU_DESCRIPTOR_HANDLE RenderDeviceDX12::CurrentBackBufferView() const
         mRtvDescriptorSize); // byte size of descriptor
 }
 
+void RenderDeviceDX12::CreateDefaultHandles()
+{
+    // Create the actual default buffer resource.
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(256),
+        D3D12_RESOURCE_STATE_COMMON,
+        nullptr,
+        IID_PPV_ARGS(cbResource.GetAddressOf())));
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
+    desc.BufferLocation = cbResource->GetGPUVirtualAddress();
+    desc.SizeInBytes = 256;
+    defaultCB = srvStorageHeap->GetNextCpuHandle();
+    md3dDevice->CreateConstantBufferView(
+        &desc,
+        defaultCB
+    );
+
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256,256),
+        D3D12_RESOURCE_STATE_COMMON,
+        nullptr,
+        IID_PPV_ARGS(shResource.GetAddressOf())));
+
+
+    auto defaultTexture = srvStorageHeap->GetNextCpuHandle();
+    md3dDevice->CreateShaderResourceView(
+        shResource.Get(),
+        nullptr,
+        defaultTexture
+    );
+
+
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256,256,8),
+        D3D12_RESOURCE_STATE_COMMON,
+        nullptr,
+        IID_PPV_ARGS(rtResource.GetAddressOf())));
+
+    for (int i = 0; i < 8; i++)
+    {
+        defaultRT[i] = srvStorageHeap->GetNextCpuHandle();
+        D3D12_RENDER_TARGET_VIEW_DESC desc;
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DARRAY;
+        desc.Texture2DArray.MipSlice = 0;
+        desc.Texture2DArray.PlaneSlice = 0;
+        desc.Texture2DArray.ArraySize = 1;
+        desc.Texture2DArray.FirstArraySlice = i;
+
+        md3dDevice->CreateRenderTargetView(
+            rtResource.Get(),
+            &desc,
+            defaultRT[i]
+        );
+    }
+
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256,256,8),
+        D3D12_RESOURCE_STATE_COMMON,
+        nullptr,
+        IID_PPV_ARGS(uaResource.GetAddressOf())));
+
+    for (int i = 0; i < 8; i++)
+    {
+        defaultUA[i] = srvStorageHeap->GetNextCpuHandle();
+        D3D12_UNORDERED_ACCESS_VIEW_DESC desc;
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+        desc.Texture2DArray.MipSlice = 0;
+        desc.Texture2DArray.PlaneSlice = 0;
+        desc.Texture2DArray.ArraySize = 1;
+        desc.Texture2DArray.FirstArraySlice = i;
+
+        md3dDevice->CreateUnorderedAccessView(
+            rtResource.Get(),
+            nullptr,
+            &desc,
+            defaultUA[i]
+        );
+    }
+}
+
 IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
 {
     switch (ResourceDesc.resourceDescription.Dimension)
@@ -389,7 +498,7 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
             ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
-            ThrowIfFailed(device->CreateCommittedResource(
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
                 &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
                 D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Buffer(ResourceDesc.resourceDescription.Width),
@@ -404,7 +513,7 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
             ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
-            ThrowIfFailed(device->CreateCommittedResource(
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
                 &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
                 D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Tex1D(
@@ -423,7 +532,7 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
             ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
-            ThrowIfFailed(device->CreateCommittedResource(
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
                 &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
                 D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Tex2D(
@@ -443,7 +552,7 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
             ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
-            ThrowIfFailed(device->CreateCommittedResource(
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
                 &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
                 D3D12_HEAP_FLAG_NONE,
                 &CD3DX12_RESOURCE_DESC::Tex3D(
@@ -458,13 +567,36 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
 
             return (IRenderDevice::IResource*)defaultBuffer;
         }
+        default:
+            break;
     }
+    return nullptr;
+}
+
+void RenderDeviceDX12::DestroyResource(RESOURCEHANDLE const resource)
+{
+    ID3D12Resource* resourcePtr = (ID3D12Resource*)resource;
+    resourcePtr->Release();
+}
+
+void RenderDeviceDX12::DestroyResourceView(const RESOURCEVIEWHANDLE resource)
+{
+}
+
+IRenderDevice::SHADERHANDLE RenderDeviceDX12::CreateShader(const ShaderDesc& desc)
+{
+    shaders.push_back({desc.bytecode, desc.byteCodeSize});
+    return (IRenderDevice::SHADERHANDLE)shaders.size();
 }
 
 IRenderDevice::INPUTLAYOUTHANDLE RenderDeviceDX12::CreateInputLayout(const InputAssemblerDeclarationDesc& desc,
-    const ShaderDesc& Shader)
+                                                                     const ShaderDesc& Shader)
 {
-    
+    inputLayoutsData.push_back(ToD3D11(desc));
+    D3D12_INPUT_LAYOUT_DESC inp;
+    inp.NumElements = inputLayoutsData.rbegin()->size();
+    inp.pInputElementDescs = inputLayoutsData.rbegin()->data();
+    return (IRenderDevice::INPUTLAYOUTHANDLE)inputLayouts.size();
 }
 
 RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
@@ -482,7 +614,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
             desc.SizeInBytes = ViewDesc.cbViewDescription.Size;
 
             auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-            device->CreateConstantBufferView(
+            md3dDevice->CreateConstantBufferView(
                 &desc,
                 descriptorHandle
             );
@@ -524,16 +656,16 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
         {
             D3D12_DEPTH_STENCIL_VIEW_DESC desc = {};
             const auto& view = ViewDesc.dbViewDescription;
-            desc= ToD3D12DepthStencilView(view);
+            desc = ToD3D12DepthStencilView(view);
 
             auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-            device->CreateDepthStencilView(
+            md3dDevice->CreateDepthStencilView(
                 resource,
                 &desc,
                 descriptorHandle
             );
-            
-            descriptorFormats.insert({descriptorHandle.ptr,desc.Format});
+
+            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
 
             output.data = descriptorHandle.ptr;
         }
@@ -544,13 +676,13 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
             desc = ToD3D12RTView(view);
 
             auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-            device->CreateRenderTargetView(
+            md3dDevice->CreateRenderTargetView(
                 resource,
                 &desc,
                 descriptorHandle
             );
 
-            descriptorFormats.insert({descriptorHandle.ptr,desc.Format});
+            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
 
             output.data = descriptorHandle.ptr;
         }
@@ -561,7 +693,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
             desc = ToD3D12ShaderView(view);
 
             auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-            device->CreateShaderResourceView(
+            md3dDevice->CreateShaderResourceView(
                 resource,
                 &desc,
                 descriptorHandle
@@ -576,16 +708,236 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
             desc = ToD3D12UAView(view);
 
             auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-            device->CreateUnorderedAccessView(
+            md3dDevice->CreateUnorderedAccessView(
                 resource,
                 nullptr,
                 &desc,
                 descriptorHandle
             );
-            
-            descriptorFormats.insert({descriptorHandle.ptr,desc.Format});
+
+            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
             output.data = descriptorHandle.ptr;
         }
     }
     return output;
+}
+
+void* RenderDeviceDX12::GetNativeTexture(RESOURCEVIEWHANDLE view)
+{
+    return nullptr;
+}
+
+
+void UploadBufferData(
+    ID3D12Device* device,
+    ID3D12GraphicsCommandList* cmdList,
+    const void* data,
+    ID3D12Resource* buffer,
+    GpuResource::ResourceState state,
+    Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer)
+{
+    auto heapDesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+    auto resDesc = buffer->GetDesc();;
+    // In order to copy CPU memory data into our default buffer, we need to create
+    // an intermediate upload heap. 
+    ThrowIfFailed(device->CreateCommittedResource(
+        &heapDesUpload,
+        D3D12_HEAP_FLAG_NONE,
+        &resDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
+
+    // Describe the data we want to copy into the default buffer.
+    D3D12_SUBRESOURCE_DATA subResourceData;
+    subResourceData.pData = data;
+    subResourceData.RowPitch = resDesc.Height * resDesc.Width * BitsPerPixel(resDesc.Format);
+    subResourceData.SlicePitch = subResourceData.RowPitch * resDesc.Height;
+
+    // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
+    // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
+    // the intermediate upload heap data will be copied to mBuffer.
+    auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+                                                          D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+    cmdList->ResourceBarrier(1, &transtion);
+
+    UpdateSubresources<1>(cmdList, buffer, uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+    transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+                                                     D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+    cmdList->ResourceBarrier(1, &transtion);
+
+    // Note: uploadBuffer has to be kept alive after the above function calls because
+    // the command list has not been executed yet that performs the actual copy.
+    // The caller can Release the uploadBuffer after it knows the copy has been executed.
+}
+
+void RenderDeviceDX12::SetResourceData(const GpuResource& resourceG, uint16_t dstSubresource, const UBox& rect,
+                                       const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+{
+    auto resource = (ID3D12Resource*)resourceG.resource;
+    auto desc = resource->GetDesc();
+    if (desc.Height == rect.Right && rect.Left == 0)
+    {
+        uploadBuffers.push_back(nullptr);
+
+        UploadBufferData(
+            md3dDevice.Get(),
+            mCommandList.Get(),
+            pSrcData,
+            resource,
+            resourceG.currentState,
+            uploadBuffers[uploadBuffers.size() - 1]
+        ); //todo Обсудить ибо грустно и 0 идей...
+    }
+}
+
+
+void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
+{
+
+    
+}
+
+
+
+void RenderDeviceDX12::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffersOut[], uint8_t num)
+{
+    vertexBuffersPtr.resize(DX12Limitations::maxVertexBuffers);
+    for (int i = 0; i < num; i++)
+    {
+        const auto vb = (vertexBuffersOut[i].data);
+        if (vb != 0)
+        {
+            this->vertexBuffersPtr[i] = vertexBuffers[vb - 1];
+        }
+        else
+        {
+            this->vertexBuffersPtr[i] = {};
+        }
+    }
+
+    mCommandList->IASetVertexBuffers(0, num, this->vertexBuffersPtr.data());
+}
+
+void RenderDeviceDX12::SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices)
+{
+    const auto ib = (indices.data);
+    if (ib != 0)
+        mCommandList->IASetIndexBuffer(&indexBuffers[ib - 1]);
+    else
+        mCommandList->IASetIndexBuffer(nullptr);
+}
+
+void RenderDeviceDX12::SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num)
+{
+    mCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::SRVBase,mShvHeapInterface->GetNextWriteDescriptor());
+    for (int i = 0; i < DX12Limitations::maxTextures; i++)
+    {
+        if (textures != nullptr && i < num && textures[i].data != 0)
+        {
+            D3D12_CPU_DESCRIPTOR_HANDLE handle;
+            handle.ptr = textures[i].data;
+            mShvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        }
+        else
+        {
+            mShvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), defaultTexture);
+        }
+    }
+}
+
+void RenderDeviceDX12::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num,
+                                          DEPTHSTENCILVIEWHANDLE depthStencilBuffer)
+{
+    D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
+    for (int i = 0; i < DX12Limitations::maxRTV; i++)
+    {
+        if (renderTargets != nullptr && i < num && renderTargets[i].data != 0)
+        {
+            D3D12_CPU_DESCRIPTOR_HANDLE handle;
+            handle.ptr = renderTargets[i].data;
+            renderTargetsHandles[i] = mRTVHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        }
+        else
+        {
+            renderTargetsHandles[i] = defaultRT[i];
+        }
+    }
+    if (depthStencilBuffer.data != 0)
+    {
+        D3D12_CPU_DESCRIPTOR_HANDLE handle;
+        handle.ptr = depthStencilBuffer.data;
+        auto dsv = mDsvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        mCommandList->OMSetRenderTargets(DX12Limitations::maxRTV, renderTargetsHandles,
+                                         false,
+                                         &dsv);
+    }
+    else
+    {
+        mCommandList->OMSetRenderTargets(DX12Limitations::maxRTV,
+                                         renderTargetsHandles,
+                                         false,
+                                         nullptr);
+    }
+}
+
+void RenderDeviceDX12::SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t num)
+{
+    //D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
+    //for (int i = 0; i < DX12Limitations::maxRTV; i++)
+    //{
+    //    if (ua_targets != nullptr && i < num)
+    //    {
+    //        D3D12_CPU_DESCRIPTOR_HANDLE handle;
+    //        handle.ptr = ua_targets->data;
+    //        mRTVHeapInterface->WriteDescriptor(md3dDevice.Get(), i, handle);
+    //    }
+    //    else
+    //    {
+    //        renderTargetsHandles[i] = defaultRT[i];
+    //    }
+    //}
+//
+    //    D3D12_CPU_DESCRIPTOR_HANDLE handle;
+    //    handle.ptr = depthStencilBuffer.data;
+    //    mDsvHeapInterface->WriteDescriptor(md3dDevice.Get(), 0, handle);
+    //    mCommandList->Un(DX12Limitations::maxRTV, renderTargetsHandles,
+    //                                     false,
+    //                                     &handle);
+    //
+}
+
+void RenderDeviceDX12::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num)
+{
+    mCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CBBase, mCbHeapInterface->GetNextWriteDescriptor());
+    for (int i = 0; i < DX12Limitations::maxConstBuffers; i++)
+    {
+        if (constBuffers != nullptr && i < num && constBuffers[i].data != 0)
+        {
+            D3D12_CPU_DESCRIPTOR_HANDLE handle;
+            handle.ptr = constBuffers[i].data;
+            mCbHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        }
+        else
+        {
+            mCbHeapInterface->WriteNextDescriptor(md3dDevice.Get(), defaultCB);
+        }
+    }
+}
+
+void RenderDeviceDX12::ClearState()
+{
+    mCommandList->ClearState(mDefaultPS.Get());
+}
+
+void RenderDeviceDX12::GetBackbufferSize(uint32_t& w, uint32_t& h)
+{
+    w = 1;
+    h = 1;
+}
+
+void RenderDeviceDX12::BeginEvent(const char* name)
+{
+    //todo
 }

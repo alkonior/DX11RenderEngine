@@ -123,8 +123,8 @@ public:
 
 
     virtual void SyncBlockExecutionStart() = 0;
-    virtual void SyncResourcesRead(RESOURCEHANDLE data[], size_t size) = 0;
-    virtual void SyncResourcesWrite(RESOURCEHANDLE data[], size_t size) = 0;
+    virtual void SyncResourcesRead(GpuResource data[], size_t size) = 0;
+    virtual void SyncResourcesWrite(GpuResource data[], size_t size) = 0;
     virtual void SyncBlockExecutionEnd() = 0;
 
 #pragma region SetupPipeline
@@ -134,7 +134,7 @@ public:
     virtual void SetupPipeline(const PipelineDescription& Pipeline) = 0;
 
     virtual void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) = 0;
-    virtual void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) = 0;
+    virtual void SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices) = 0;
     virtual void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) = 0;
     virtual void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) = 0;
     virtual void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) = 0;

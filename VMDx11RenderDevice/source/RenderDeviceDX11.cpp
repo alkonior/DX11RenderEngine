@@ -1028,7 +1028,7 @@ void RenderDeviceDX11::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuf
         context->IASetVertexBuffers(0, num, this->vertexBuffers.data(), vertexBufferStrides.data(), vertexBufferOffsets.data());
 }
 
-void RenderDeviceDX11::SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices)
+void RenderDeviceDX11::SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices)
 {
     IndexBufferViewD3D11* indexBuffer = (IndexBufferViewD3D11*)(indices.ToPtr());
     if (indexBuffer != indexBufferPtr)
@@ -1365,8 +1365,8 @@ void RenderDeviceDX11::GetBackbufferSize(uint32_t& w, uint32_t& h)
     h = backBufferHeight;
 }
 void RenderDeviceDX11::SyncBlockExecutionStart() {}
-void RenderDeviceDX11::SyncResourcesRead(IResource** data, size_t size) {}
-void RenderDeviceDX11::SyncResourcesWrite(IResource** data, size_t size)
+void RenderDeviceDX11::SyncResourcesRead(GpuResource* data, size_t size) {}
+void RenderDeviceDX11::SyncResourcesWrite(GpuResource* data, size_t size)
 {
 }
 void RenderDeviceDX11::SyncBlockExecutionEnd() {}

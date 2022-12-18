@@ -35,7 +35,8 @@ public:
     Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
     Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
     Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
-
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> mDefaultPS;
+    
     Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
     UINT64 mCurrentFence = 0;
 	
@@ -74,7 +75,23 @@ public:
 
     std::vector<D3D12_INDEX_BUFFER_VIEW> indexBuffers;
     std::vector<D3D12_VERTEX_BUFFER_VIEW> vertexBuffers;
+    std::vector<D3D12_INPUT_LAYOUT_DESC> inputLayouts;
+    std::vector<std::vector<D3D12_INPUT_ELEMENT_DESC>> inputLayoutsData;
+    std::vector<D3D12_SHADER_BYTECODE> shaders;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> cbResource;
+    D3D12_CPU_DESCRIPTOR_HANDLE defaultCB;
+    D3D12_CPU_DESCRIPTOR_HANDLE defaultSampler;
+    Microsoft::WRL::ComPtr<ID3D12Resource> shResource;
+    D3D12_CPU_DESCRIPTOR_HANDLE defaultTexture;
+    Microsoft::WRL::ComPtr<ID3D12Resource> rtResource;
+    D3D12_CPU_DESCRIPTOR_HANDLE defaultRT[8];
+    Microsoft::WRL::ComPtr<ID3D12Resource> uaResource;
+    D3D12_CPU_DESCRIPTOR_HANDLE defaultUA[8];
+
     
+    std::vector<D3D12_VERTEX_BUFFER_VIEW> vertexBuffersPtr;
+    size_t vertexBuffersNum = 0;
 
     // Derived class should set these in derived constructor to customize starting values.
     D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
@@ -91,7 +108,6 @@ public:
     HRESULT hr;
     
     
-    wrl::ComPtr<ID3D12Device> device;
     bool CS = false;
     bool PS = false;
     bool VS = false;
@@ -99,6 +115,7 @@ public:
     bool HS = false;
     bool DS = false;
 
+#pragma endregion 
 private:
     
 #ifdef _DEBUG
@@ -111,7 +128,7 @@ private:
     void CreateSwapChain(const RenderDeviceInitParams& initParams);
     void CreateRtvAndDsvDescriptorHeaps();
     D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
-#pragma endregion 
+    void CreateDefaultHandles();
 
     
 protected:
@@ -126,21 +143,26 @@ public:
     RESOURCEVIEWHANDLE CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
 
     void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
+private:
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadBuffers;
+public:
+    
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
 #pragma region ResourceSynchronization
 
     void SyncBlockExecutionStart() override;
-    void SyncResourcesRead(RESOURCEHANDLE data[], size_t size) override;
-    void SyncResourcesWrite(RESOURCEHANDLE data[], size_t size) override;
+    void SyncResourcesRead(GpuResource data[], size_t size) override;
+    void SyncResourcesWrite(GpuResource data[], size_t size) override;
     void SyncBlockExecutionEnd() override;
+
 #pragma endregion
 
 #pragma region PipelineSetup
     
     void SetupPipeline(const PipelineDescription& Pipeline) override;
     void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) override;
-    void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) override;
+    void SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices) override;
     void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) override;
     void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) override;
     void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) override;

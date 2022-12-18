@@ -61,16 +61,35 @@ class GpuResource {
 public:
     enum class ResourceState : uint8_t
     {
-        Undefined,
-        Read,
-        Write
+        RESOURCE_STATE_COMMON,
+        RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+        RESOURCE_STATE_INDEX_BUFFER,
+        RESOURCE_STATE_RENDER_TARGET,
+        RESOURCE_STATE_UNORDERED_ACCESS,
+        RESOURCE_STATE_DEPTH_WRITE,
+        RESOURCE_STATE_DEPTH_READ,
+        RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+        RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+        RESOURCE_STATE_STREAM_OUT,
+        RESOURCE_STATE_INDIRECT_ARGUMENT,
+        RESOURCE_STATE_COPY_DEST,
+        RESOURCE_STATE_COPY_SOURCE,
+        RESOURCE_STATE_RESOLVE_DEST,
+        RESOURCE_STATE_RESOLVE_SOURCE,
+        RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE,
+        RESOURCE_STATE_SHADING_RATE_SOURCE,
+        RESOURCE_STATE_GENERIC_READ,
+        RESOURCE_STATE_PRESENT,
+        RESOURCE_STATE_UNDEFINED,
+        
     }; 
     
     Resource* id = nullptr;
     IRenderDevice::RESOURCEHANDLE resource = nullptr;
     uint32_t resourceBindings = 0;
     bool isRequiredUpdate = true;
-    ResourceState currentState = ResourceState::Undefined;
+    ResourceState currentState = ResourceState::RESOURCE_STATE_COMMON;
+    ResourceState nextState = ResourceState::RESOURCE_STATE_UNDEFINED;
 
     std::vector<ResourceView*> views;
 

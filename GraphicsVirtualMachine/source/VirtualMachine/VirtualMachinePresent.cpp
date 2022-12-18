@@ -81,7 +81,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 
         RenderDevice->SetupVertexBuffers((const IRenderDevice::VERTEXBUFFERVIEWHANDLE*)vertexBuffers,
                                          ps->vertexBuffersNum);
-        RenderDevice->SetupIndexBuffers(
+        RenderDevice->SetupIndexBuffer(
             (IRenderDevice::INDEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ps->indexBuffer));
 
         RenderDevice->SetupRenderTargets(

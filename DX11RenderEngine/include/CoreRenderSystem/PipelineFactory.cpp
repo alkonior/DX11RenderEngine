@@ -63,7 +63,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
                 definesArray.data(),
                 definesArray.size(),
                 D3D_COMPILE_STANDARD_FILE_INCLUDE,
-                "psIn","ps_4_0",compileFlags,
+                "psIn","ps_5_0",compileFlags,
 #ifdef _DEBUG
                 name
 #endif
@@ -75,7 +75,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
             {
                 shaderData,dataSize,definesArray.data(),
                 definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-                "vsIn","vs_4_0",compileFlags,
+                "vsIn","vs_5_0",compileFlags,
 #ifdef _DEBUG
                 name
 #endif
@@ -87,7 +87,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
                 {
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-                    "gsIn","gs_4_0",compileFlags,
+                    "gsIn","gs_5_0",compileFlags,
 #ifdef _DEBUG
                     name
 #endif
@@ -101,7 +101,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
                 {
                     shaderData,dataSize,definesArray.data(),
                     definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-                    "csIn","cs_4_0",compileFlags,
+                    "csIn","cs_5_0",compileFlags,
 #ifdef _DEBUG
                     name
 #endif
