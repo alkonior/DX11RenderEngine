@@ -349,9 +349,9 @@ void RenderDeviceDX11::DestroyResource(IResource* const resource)
 }
 
 
-void RenderDeviceDX11::DestroyResourceView(IResourceView* const resource)
+void RenderDeviceDX11::DestroyResourceView(const RESOURCEVIEWHANDLE resource)
 {
-    IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource);
+    IUnknown* d3d11resource = reinterpret_cast<IUnknown*>(resource.ToPtr());
     if (d3d11resource)
         d3d11resource->Release();
 }
@@ -427,26 +427,26 @@ D3D11_UNORDERED_ACCESS_VIEW_DESC ToD3D11UAView(const UATargetViewDesc& desc)
     return result;
 }
 
-IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
+IRenderDevice::RESOURCEVIEWHANDLE RenderDeviceDX11::CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc)
 {
     switch (desc.type)
     {
     case GpuResourceView::EViewType::CB:
     {
         ConstBufferViewD3D11* result = new ConstBufferViewD3D11(desc.cbViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::VB:
     {
         VertexBufferViewD3D11* result = new VertexBufferViewD3D11(desc.vbViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::IB:
     {
         IndexBufferViewD3D11* result = new IndexBufferViewD3D11(desc.ibViewDescription, reinterpret_cast<ID3D11Buffer*>(ResourceDesc.resource));
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::DB:
@@ -458,7 +458,7 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
             &d3d11desc,
             &result
         );
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::RT:
@@ -482,7 +482,7 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
             );
         }
 
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::SR:
@@ -506,7 +506,7 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
             );
         }
 
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     case GpuResourceView::EViewType::UA:
@@ -530,7 +530,7 @@ IRenderDevice::IResourceView* RenderDeviceDX11::CreateResourceView(const GpuReso
             );
         }
 
-        return reinterpret_cast<IResourceView*>(result);
+        return IRenderDevice::RESOURCEVIEWHANDLE(result);
         break;
     }
     }
@@ -998,13 +998,13 @@ void RenderDeviceDX11::SetupPrimitiveTopology(const EPrimitiveTopology topology)
     }
 }
 
-void RenderDeviceDX11::SetupVertexBuffers(IVertexBufferView* const vertexBuffers[], uint8_t num)
+void RenderDeviceDX11::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num)
 {
     bool flag = num != vertexBuffersNum; 
     vertexBuffersNum = num;
     for (int i = 0; i < num; i++)
     {
-        const VertexBufferViewD3D11* vb = reinterpret_cast<const VertexBufferViewD3D11*>(vertexBuffers[i]);
+        const VertexBufferViewD3D11* vb = reinterpret_cast<const VertexBufferViewD3D11*>(vertexBuffers[i].ToPtr());
         if (vb != nullptr)
         {
             flag |= this->vertexBuffers[i] !=  vb->vertexBuffer;
@@ -1028,13 +1028,13 @@ void RenderDeviceDX11::SetupVertexBuffers(IVertexBufferView* const vertexBuffers
         context->IASetVertexBuffers(0, num, this->vertexBuffers.data(), vertexBufferStrides.data(), vertexBufferOffsets.data());
 }
 
-void RenderDeviceDX11::SetupIndexBuffers(IIndexBufferView* const indices)
+void RenderDeviceDX11::SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices)
 {
-    IndexBufferViewD3D11* indexBuffer = (IndexBufferViewD3D11*)(indices);
+    IndexBufferViewD3D11* indexBuffer = (IndexBufferViewD3D11*)(indices.ToPtr());
     if (indexBuffer != indexBufferPtr)
     {
         indexBufferPtr = indexBuffer;
-        if (indices == nullptr) {
+        if (indices.ToPtr() == nullptr) {
             GFX_THROW_INFO_ONLY(context->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0));
         }
         else {
@@ -1043,7 +1043,7 @@ void RenderDeviceDX11::SetupIndexBuffers(IIndexBufferView* const indices)
     }
 }
 
-void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
+void RenderDeviceDX11::SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num)
 {
     bool flag = num != texturesNum;
     if (textures == nullptr)
@@ -1058,7 +1058,7 @@ void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
     {
         for (int i = 0; i < num; i++)
         {
-            ID3D11ShaderResourceView* sh = (ID3D11ShaderResourceView*)(textures[i]);
+            ID3D11ShaderResourceView* sh = (ID3D11ShaderResourceView*)(textures[i].ToPtr());
             flag |= Textures[i] != sh;
             Textures[i] = sh;
         }
@@ -1075,11 +1075,11 @@ void RenderDeviceDX11::SetupTextures(IResourceView* textures[], uint8_t num)
     }
 }
 
-void RenderDeviceDX11::SetupRenderTargets(IRenderTargetView* const renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)
+void RenderDeviceDX11::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer)
 {
     bool flag = num  != renderTargetsNum;
-    flag |= this->depthStencilBuffer != (ID3D11DepthStencilView*)depthStencilBuffer;
-    this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer;
+    flag |= this->depthStencilBuffer != (ID3D11DepthStencilView*)depthStencilBuffer.ToPtr();
+    this->depthStencilBuffer = (ID3D11DepthStencilView*)depthStencilBuffer.ToPtr();
     if (renderTargets == nullptr)
     {
         static ID3D11RenderTargetView* nulls[MAX_RENDERTARGET_ATTACHMENTS];
@@ -1089,7 +1089,7 @@ void RenderDeviceDX11::SetupRenderTargets(IRenderTargetView* const renderTargets
     }
     for (int i = 0; i < num; i++)
     {
-        auto rtView =  renderTargets[i] == nullptr ? swapchainRTView : ((ID3D11RenderTargetView*)renderTargets[i]);
+        auto rtView =  renderTargets[i].ToPtr() == nullptr ? swapchainRTView : ((ID3D11RenderTargetView*)renderTargets[i].ToPtr());
         flag |= renderTargetViews[i] != rtView;
         renderTargetViews[i] = rtView;
     }
@@ -1104,7 +1104,7 @@ void RenderDeviceDX11::SetupRenderTargets(IRenderTargetView* const renderTargets
     }
 }
 
-void RenderDeviceDX11::SetupUATargets(IUATargetView* uaTargets[], uint8_t num)
+void RenderDeviceDX11::SetupUATargets(UATARGETVIEWHANDLE uaTargets[], uint8_t num)
 {
     static UINT arr[8];
     if (uaTargets == nullptr)
@@ -1115,7 +1115,7 @@ void RenderDeviceDX11::SetupUATargets(IUATargetView* uaTargets[], uint8_t num)
     }
     for (int i = 0; i < num; i++)
     {
-        uaViews[i] = ((ID3D11UnorderedAccessView*)uaTargets[i]);
+        uaViews[i] = ((ID3D11UnorderedAccessView*)uaTargets[i].ToPtr());
     }
     for (int i = num; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
     {
@@ -1194,12 +1194,12 @@ void RenderDeviceDX11::SetupShader(IShader* shader, EShaderType type)
     }
 }
 
-void RenderDeviceDX11::SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num)
+void RenderDeviceDX11::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num)
 {
     bool flag = num != constBuffersNum;
     for (int i = 0; i < num; i++)
     {
-        ID3D11Buffer* buffer = ((ConstBufferViewD3D11**)constBuffers)[i] ? ((ConstBufferViewD3D11**)constBuffers)[i]->constBuffer : nullptr;
+        ID3D11Buffer* buffer = ((ConstBufferViewD3D11*)constBuffers[i].ToPtr()) ? ((ConstBufferViewD3D11*)constBuffers[i].ToPtr())->constBuffer : nullptr;
         flag |= buffer != constBuffersPtr[i] ;
         constBuffersPtr[i] = buffer;
     }
@@ -1301,14 +1301,14 @@ void RenderDeviceDX11::ClearState()
     indexBufferPtr = nullptr;
     
 }
-void RenderDeviceDX11::ClearRenderTarget(IRenderTargetView* rtView, FColor color)
+void RenderDeviceDX11::ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color)
 {
-    context->ClearRenderTargetView((ID3D11RenderTargetView*)rtView ? (ID3D11RenderTargetView*)rtView : swapchainRTView, color.Color);
+    context->ClearRenderTargetView((ID3D11RenderTargetView*)rtView.ToPtr() ? (ID3D11RenderTargetView*)rtView.ToPtr() : swapchainRTView, color.Color);
 }
 
-void RenderDeviceDX11::ClearDepthStencil(IDepthStencilView* dsView, float depth, int8_t stencil)
+void RenderDeviceDX11::ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil)
 {
-    context->ClearDepthStencilView((ID3D11DepthStencilView*)dsView, D3D11_CLEAR_DEPTH, depth, stencil);
+    context->ClearDepthStencilView((ID3D11DepthStencilView*)dsView.ToPtr(), D3D11_CLEAR_DEPTH, depth, stencil);
 }
 
 void RenderDeviceDX11::ResizeBackbuffer(int32_t width, int32_t height)
@@ -1354,9 +1354,9 @@ void RenderDeviceDX11::EndEvent()
     perf->EndEvent();
 }
 
-void* RenderDeviceDX11::GetNativeTexture(IResourceView* view)
+void* RenderDeviceDX11::GetNativeTexture(RESOURCEVIEWHANDLE view)
 {
-    return (void*)view;
+    return (void*)view.ToPtr();
 }
 
 void RenderDeviceDX11::GetBackbufferSize(uint32_t& w, uint32_t& h)

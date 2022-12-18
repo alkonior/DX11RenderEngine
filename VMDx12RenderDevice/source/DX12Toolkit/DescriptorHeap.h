@@ -67,8 +67,13 @@ namespace DirectX
         D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptors(
             _In_ ID3D12Device* device,
             uint32_t offsetIntoHeap,
-            _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptors,
+            _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors,
             uint32_t descriptorCount);
+        
+        D3D12_GPU_DESCRIPTOR_HANDLE __cdecl WriteDescriptor(
+            _In_ ID3D12Device* device,
+            uint32_t offsetIntoHeap,
+            const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor);
 
         D3D12_GPU_DESCRIPTOR_HANDLE GetFirstGpuHandle() const noexcept
         {
@@ -81,6 +86,14 @@ namespace DirectX
         {
             assert(m_pHeap != nullptr);
             return m_hCPU;
+        }
+        size_t next = 0;
+        
+        D3D12_CPU_DESCRIPTOR_HANDLE GetNextCpuHandle() noexcept
+        {
+            assert(next < Count());
+            next++;
+            return GetCpuHandle(next-1);
         }
 
         D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandle(_In_ size_t index) const

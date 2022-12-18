@@ -4,6 +4,7 @@
 
 #include "winHandler.h"
 #define DX12
+#include "DescriptorHeap.h"
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 #undef DX12
@@ -45,11 +46,23 @@ public:
     static const int SwapChainBufferCount = 2;
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
-    Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
 
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mShvCbUaHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mBBHeap;
+    
+    DirectX::DescriptorHeap* mDsvHeapInterface;
+    DirectX::DescriptorHeap* mRTVHeapInterface;
+    DirectX::DescriptorHeap* mSamplerHeapInterface;
+    DirectX::DescriptorHeap* mShvHeapInterface;
+    DirectX::DescriptorHeap* mCbHeapInterface;
+    DirectX::DescriptorHeap* mUaHeapInterface;
+    
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+
+    
+    DirectX::DescriptorHeap* srvStorageHeap;
+    DirectX::DescriptorHeap* rtvStorageHeap;
+    std::map<uint64_t, DXGI_FORMAT> descriptorFormats;
+    DirectX::DescriptorHeap* samplersStorageHeap;
 
     D3D12_VIEWPORT mScreenViewport; 
     D3D12_RECT mScissorRect;
@@ -57,6 +70,11 @@ public:
     UINT mRtvDescriptorSize = 0;
     UINT mDsvDescriptorSize = 0;
     UINT mCbvSrvUavDescriptorSize = 0;
+    UINT mSamplerDescriptorSize = 0;
+
+    std::vector<D3D12_INDEX_BUFFER_VIEW> indexBuffers;
+    std::vector<D3D12_VERTEX_BUFFER_VIEW> vertexBuffers;
+    
 
     // Derived class should set these in derived constructor to customize starting values.
     D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;

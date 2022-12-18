@@ -138,19 +138,41 @@ _Use_decl_annotations_
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
     ID3D12Device* device,
     uint32_t offsetIntoHeap,
-    const D3D12_CPU_DESCRIPTOR_HANDLE* pDescriptors,
+    const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors,
     uint32_t descriptorCount)
 {
-    return WriteDescriptors(
-        device,
-        offsetIntoHeap,
+    assert((size_t(offsetIntoHeap) + size_t(descriptorCount)) <= size_t(m_desc.NumDescriptors));
+
+    const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(offsetIntoHeap);
+    device->CopyDescriptorsSimple(
         descriptorCount,
+        cpuHandle,
         pDescriptors,
-        &descriptorCount,
-        1);
+        m_desc.Type);
+
+    auto gpuHandle = GetGpuHandle(offsetIntoHeap);
+
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptor(ID3D12Device* device, uint32_t offsetIntoHeap,
+    const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor)
+{
+    assert((size_t(offsetIntoHeap) + size_t(1)) <= size_t(m_desc.NumDescriptors));
+
+    const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(offsetIntoHeap);
+    device->CopyDescriptorsSimple(
+        1,
+        cpuHandle,
+        pDescriptor,
+        m_desc.Type);
+
+    auto gpuHandle = GetGpuHandle(offsetIntoHeap);
+
+    return gpuHandle;
 }
 
 _Use_decl_annotations_
+
 void DescriptorHeap::Create(
     ID3D12Device* pDevice,
     const D3D12_DESCRIPTOR_HEAP_DESC* pDesc)

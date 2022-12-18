@@ -133,6 +133,7 @@ namespace dx = DirectX;
 
 #include <ppltasks.h>
 #include <concrt.h>
+#include <map>
     
     
     

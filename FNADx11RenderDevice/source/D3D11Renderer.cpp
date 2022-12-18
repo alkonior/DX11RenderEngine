@@ -203,7 +203,10 @@ void D3D11Renderer::ApplyIndexBufferBinding(const Buffer* indices, uint8_t index
    if (!d3dIndices->indexViewTest)
    {
        d3dIndices->indexViewTest = testApi->CreateIndexBufferView({
-           (GVM::IndexBuffer*)d3dIndices->handleTest,GVMIndexType[indexElementSize / 16 - 1],(uint32_t)d3dIndices->size
+               (GVM::IndexBuffer*)d3dIndices->handleTest,
+               GVMIndexType[indexElementSize / 16 - 1],
+                0,
+               (uint32_t)d3dIndices->size
        });
    }
     
@@ -1132,7 +1135,8 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
             buff->vertexViewTest = testApi->CreateVertexBufferView({
                 buff->vertexTest,
                 uint32_t(vertexBuffer.vertexStride[0]),
-                vertexBuffer.vertexOffset[0]
+                vertexBuffer.vertexOffset[0],
+                buff->size
             });
         vb.vertexBuffers[0] = buff->vertexViewTest;
         //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
@@ -1149,7 +1153,8 @@ void D3D11Renderer::ApplyVertexBufferBinding(const VertexBufferBinding& vertexBu
                 buff->vertexViewTest = testApi->CreateVertexBufferView({
                     buff->vertexTest,
                     uint32_t(vertexBuffer.vertexStride[i]),
-                    vertexBuffer.vertexOffset[i]
+                    vertexBuffer.vertexOffset[i],
+                buff->size
                 });
             vb.vertexBuffers[i] = buff->vertexViewTest;
             //vb.vertexStride[0] = vertexBuffer.vertexStride[0];
@@ -1283,7 +1288,7 @@ ConstBuffer* D3D11Renderer::CreateConstBuffer(size_t size)
 
 
     result->buffer = testApi->CreateConstBuffer(rDesc);
-    result->bufferView = testApi->CreateConstBufferView({result->buffer,rDesc.Size});
+    result->bufferView = testApi->CreateConstBufferView({result->buffer,0, rDesc.Size});
 
     result->size = size;
 

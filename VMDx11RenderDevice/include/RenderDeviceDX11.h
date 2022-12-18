@@ -5,15 +5,9 @@
 #include "winHandler.h"
 
 #define DX11
-
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
-
-
-#ifndef  TESTDEBUG 
-#define TESTDEBUG 1
-#endif
-
+#undef DX11
 
 
 
@@ -168,8 +162,8 @@ protected:
 
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
     void DestroyResource(IResource* const resource) override;
-    void DestroyResourceView(IResourceView* const resource) override;
-    IResourceView* CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
+    void DestroyResourceView(const RESOURCEVIEWHANDLE resource) override;
+    RESOURCEVIEWHANDLE CreateResourceView(const GpuResourceView& desc, const GpuResource& ResourceDesc) override;
 
     IShader* CreateShader(const ShaderDesc& desc) override;
     IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
@@ -190,18 +184,17 @@ protected:
     void SetupShader(IShader* shader, EShaderType type);
     void SetupInputLayout(IInputLayout* layout);
 
-    virtual void SetupPipeline(const PipelineDescription& Pipeline) override;
-    virtual void SetupVertexBuffers(IVertexBufferView* const vertexBuffers[], uint8_t num) override;
-    virtual void SetupIndexBuffers(IIndexBufferView* const indices) override;
-    virtual void SetupTextures(IResourceView* textures[], uint8_t num)  override;
-    virtual void SetupRenderTargets(IRenderTargetView* const renderTargets[], int32_t num, IDepthStencilView* depthStencilBuffer)  override;
-    virtual void SetupUATargets(IUATargetView* uaTargets[], uint8_t num) override;
-    virtual void SetupConstBuffers(IConstBufferView* constBuffers[], uint8_t num) override;
-
+     void SetupPipeline(const PipelineDescription& Pipeline) override;
+    void SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffers[], uint8_t num) override;
+    void SetupIndexBuffers(const INDEXBUFFERVIEWHANDLE indices) override;
+    void SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num) override;
+    void SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num, DEPTHSTENCILVIEWHANDLE depthStencilBuffer) override;
+    void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) override;
+    void SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num) override;
     void ClearState() override;
     
-    void ClearRenderTarget(IRenderTargetView* rtView, FColor color) override;
-    void ClearDepthStencil(IDepthStencilView* dsView, float depth, int8_t stencil) override;
+    void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) override;
+    void ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil) override;
 
 
 #pragma endregion
@@ -211,7 +204,7 @@ protected:
     void BeginEvent(const char* name) override;
     void EndEvent() override;
 
-    void* GetNativeTexture(IResourceView* view) override;
+    void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
 public:
     
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;

@@ -17,7 +17,7 @@ struct D3D11Buffer : Buffer
 	GVM::VertexBufferView* vertexViewTest = nullptr;
 	GVM::ResourceView* indexViewTest = nullptr;
 	uint8_t dynamic = 0;
-	int32_t size = 0;
+	uint32_t size = 0;
 };
 
 struct D3D11ConstBuffer : ConstBuffer

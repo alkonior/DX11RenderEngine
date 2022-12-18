@@ -32,7 +32,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     RenderDevice->SetupTextures(texturesNulls, 128);
     RenderDevice->SetupRenderTargets(
         nullptr, 8,
-        nullptr);
+        {});
         RenderDevice->SetupUATargets(nullptr, 16);
 
     pipelineDescription.CS = resourcesManager.GetRealShader(ps->CS);
@@ -60,7 +60,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         for (int i = ps->renderTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
         {
             pipelineDescription.blendState.BlendStates[i] = Compressed::BlendStateDesc();
-            renderTargets[i] = nullptr;
+            renderTargets[i] = {};
         }
         auto VertexBuffers = (VertexBufferView**)(ps->Data + ps->VertexBuffersShift);
         for (int i = 0; i < ps->vertexBuffersNum; i++)
@@ -102,7 +102,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         }
         for (int i = ps->uaTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
         {
-            uaTargets[i] = nullptr;
+            uaTargets[i] = {};
         }
 
         RenderDevice->SetupUATargets((IRenderDevice::UATARGETVIEWHANDLE*)uaTargets, ps->renderTargetsNum);
@@ -390,14 +390,14 @@ void VirtualMachine::RunVM()
             comandIndex++;
             switch (command)
             {
-            case EMachineCommands::CREATE_RESOURCE:
+                case EMachineCommands::CREATE_RESOURCE:
                 {
                     auto& resource = resourcesManager.GetResource((Resource*)(description));
                     resource.resource = RenderDevice->CreateResource(resource); //todo
                     break;
                 }
 
-            case EMachineCommands::UPDATE_RESOURCE:
+                case EMachineCommands::UPDATE_RESOURCE:
                 {
                     auto& resource = resourcesManager.GetResource((Resource*)description);
                     RenderDevice->DestroyResource(resource.resource);
@@ -405,7 +405,7 @@ void VirtualMachine::RunVM()
                     break;
                 }
 
-            case EMachineCommands::CREATE_RESOURCE_VIEW:
+                case EMachineCommands::CREATE_RESOURCE_VIEW:
                 {
                     auto& resourceView = resourcesManager.GetResourceView((ResourceView*)description);
                     resourceView.view = RenderDevice->CreateResourceView(resourceView,
@@ -414,7 +414,7 @@ void VirtualMachine::RunVM()
                     break;
                 }
 
-            case EMachineCommands::SET_RESOURCE_DATA:
+                case EMachineCommands::SET_RESOURCE_DATA:
                 {
                     // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
                     auto& desc = *(SetResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
@@ -427,26 +427,26 @@ void VirtualMachine::RunVM()
                     break;
                 }
 
-            case EMachineCommands::SETUP_PIPELINE:
+                case EMachineCommands::SETUP_PIPELINE:
                 {
                     auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + (uint32_t)description);
                     ExecuteSetupPipeline(ps);
                     break;
                 }
 
-            case EMachineCommands::DRAW:
+                case EMachineCommands::DRAW:
                 {
                     //auto drawData = *(DrawCall*)description;
                     RenderDevice->Draw(*(DrawCall*)(drawCallsQueue.data() + (uint32_t)description));
                     drawCallsQueueShift++;
                     break;
                 }
-            case EMachineCommands::CLEAR_PIPELINE:
+                case EMachineCommands::CLEAR_PIPELINE:
                 {
                     RenderDevice->ClearState();
                     break;
                 }
-            case EMachineCommands::CLEAR_RT:
+                case EMachineCommands::CLEAR_RT:
                 {
                     auto& desc = *(ClearRenderTargetDesc*)(dataQueue.data() + (uint32_t)description);
                     RenderDevice->ClearRenderTarget(
@@ -454,7 +454,7 @@ void VirtualMachine::RunVM()
                         desc.color);
                     break;
                 }
-            case EMachineCommands::CLEAR_DS:
+                case EMachineCommands::CLEAR_DS:
                 {
                     auto& desc = *(ClearDepthStencilDesc*)(dataQueue.data() + (uint32_t)description);
                     //auto& resource = PullData<DepthStencilView*>();
@@ -467,7 +467,7 @@ void VirtualMachine::RunVM()
                     );
                     break;
                 }
-            case EMachineCommands::BEGIN_EVENT:
+                case EMachineCommands::BEGIN_EVENT:
                 {
                     const char* name = (char*)(dataQueue.data() + (uint32_t)description);
                     // std::cout << name << std::endl;
@@ -475,7 +475,7 @@ void VirtualMachine::RunVM()
                     RenderDevice->BeginEvent(name);
                     break;
                 }
-            case EMachineCommands::END_EVENT:
+                case EMachineCommands::END_EVENT:
                 {
                     RenderDevice->EndEvent();
 
@@ -487,7 +487,7 @@ void VirtualMachine::RunVM()
     }
 
     static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[1] = {nullptr};
-    RenderDevice->SetupRenderTargets((const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, 1, nullptr);
+    RenderDevice->SetupRenderTargets((const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, 1, {});
 
     renderGraph.Clear();
     queueShift = 0;

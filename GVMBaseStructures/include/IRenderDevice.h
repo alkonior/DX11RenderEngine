@@ -36,45 +36,7 @@ public:
 
 
 protected:
-
-#ifdef DX11
     
-protected:
-
-    struct IPlaceable {
-    public:
-        //virtual void Place(void* ptr) const = 0;
-        //virtual ~IPlaceable() = 0 {};
-    };
-    
-    class IResource : public IPlaceable {};
-    class IResourceView : public IPlaceable {};
-    class IInputLayout : public IPlaceable {};
-    class IShader : public IPlaceable {};
-
-    class IVertexBufferView     : public IResourceView {};
-    class IIndexBufferView      : public IResourceView {};
-    class IConstBufferView      : public IResourceView {};
-    class IRenderTargetView     : public IResourceView {};
-    class IDepthStencilView     : public IResourceView {};
-    class IShaderResourceView   : public IResourceView {};
-    class IUATargetView         : public IResourceView {};
-    
-public: 
-    typedef IResource*           RESOURCEHANDLE         ;
-    typedef IResourceView*       RESOURCEVIEWHANDLE     ;
-    typedef IInputLayout*        INPUTLAYOUTHANDLE      ;
-    typedef IShader*             SHADERHANDLE           ;
-        
-    typedef IVertexBufferView*   VERTEXBUFFERVIEWHANDLE   ;
-    typedef IIndexBufferView*    INDEXBUFFERVIEWHANDLE    ;
-    typedef IConstBufferView*    CONSTBUFFERVIEWHANDLE    ;
-    typedef IRenderTargetView*   RENDERTARGETVIEWHANDLE   ;
-    typedef IDepthStencilView*   DEPTHSTENCILVIEWHANDLE   ;
-    typedef IShaderResourceView* SHADERRESOURCEVIEWHANDLE ;
-    typedef IUATargetView*       UATARGETVIEWHANDLE       ;
-
-#elif defined(DX12)
     
     struct IPlaceable {
     public:
@@ -86,7 +48,14 @@ public:
     class IShader : public IPlaceable {};
     
     struct DX12ResourceView {
-        SIZE_T data;
+        DX12ResourceView() = default;
+        template<typename T>
+        DX12ResourceView(T* ptr): data((uint64_t)ptr) {}
+        DX12ResourceView(std::nullptr_t): data(0) {}
+        DX12ResourceView(uint64_t i):data(i) {}
+        DX12ResourceView(int i):data(i) {}
+        void* ToPtr() const { return (void*)data; }
+        uint64_t data;
     };
     struct DX1VertexBufferView   :  DX12ResourceView{};
     struct DX1IndexBufferView    :  DX12ResourceView{};
@@ -111,8 +80,6 @@ public:
     typedef DX1DepthStencilView   DEPTHSTENCILVIEWHANDLE   ;
     typedef DX1ShaderResourceView SHADERRESOURCEVIEWHANDLE ;
     typedef DX1UATargetView       UATARGETVIEWHANDLE       ;
-
-#endif
 
     
     //friend class VirtualMachine;
