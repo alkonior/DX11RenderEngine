@@ -150,8 +150,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptors(
         pDescriptors,
         m_desc.Type);
 
-    auto gpuHandle = GetGpuHandle(offsetIntoHeap);
-
+    return GetGpuHandle(offsetIntoHeap);
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteDescriptor(ID3D12Device* device, uint32_t offsetIntoHeap,

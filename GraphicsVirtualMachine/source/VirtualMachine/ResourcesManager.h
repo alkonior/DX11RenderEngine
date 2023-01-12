@@ -75,6 +75,7 @@ class ResourcesManager {
     //void UpdateResources();
     
     GpuResource& GetResource(const Resource* resource);
+    GpuResource& GetResource(const ResourceView* resource);
     GpuResourceView& GetResourceView(const ResourceView* resourceView);
 
 public:

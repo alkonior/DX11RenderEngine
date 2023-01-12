@@ -101,7 +101,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)debug\</OutDir>
     <IncludePath>$(ProjectDir)include\</IncludePath>
-    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\;$(ProjectDir)..\FNADx12RenderDevice\include\</ExternalIncludePath>
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|Win32'">
@@ -120,8 +120,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)</IncludePath>
-    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\</ExternalIncludePath>
+    <IncludePath>$(ProjectDir)include\</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\FNADx11RenderDevice\include\;$(SolutionDir);$(ProjectDir)..\SimpleMath\include\;$(ProjectDir)..\FNADx12RenderDevice\include\</ExternalIncludePath>
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">
@@ -287,14 +287,6 @@
     <ClInclude Include="include\CoreRenderSystem\ResourceManagers\ITexturesManager.h" />
     <ClInclude Include="include\Float3Data.h" />
     <ClInclude Include="include\FloatData.h" />
-    <ClInclude Include="include\imgui\imconfig.h" />
-    <ClInclude Include="include\imgui\imgui.h" />
-    <ClInclude Include="include\imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="include\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="include\imgui\imgui_internal.h" />
-    <ClInclude Include="include\imgui\imstb_rectpack.h" />
-    <ClInclude Include="include\imgui\imstb_textedit.h" />
-    <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\SID.h" />
     <ClInclude Include="include\TextureData.h" />
     <ClInclude Include="resource.h" />
@@ -308,13 +300,6 @@
     <ClCompile Include="include\CoreRenderSystem\PipelineFactory.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\IMGUIRenderPass\ImGUIRenderPass.cpp" />
     <ClCompile Include="include\CoreRenderSystem\RenderPasses\QuadRenderPass.cpp" />
-    <ClCompile Include="include\imgui\imgui.cpp" />
-    <ClCompile Include="include\imgui\imgui_demo.cpp" />
-    <ClCompile Include="include\imgui\imgui_draw.cpp" />
-    <ClCompile Include="include\imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="include\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="include\imgui\imgui_tables.cpp" />
-    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="source\Float3Data.cpp" />
     <ClCompile Include="source\FloatData.cpp" />
     <ClCompile Include="source\GDIPlusManager.cpp" />

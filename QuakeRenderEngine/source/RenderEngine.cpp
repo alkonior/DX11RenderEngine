@@ -188,9 +188,9 @@ void RenderDevice::DrawParticles(const ParticlesMesh& particles, const Particles
 
 
 bool RenderDevice::ProcessMessages(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
-		return true;
-    }
+	//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+	//	return true;
+    //}
 	return false;
 }
 

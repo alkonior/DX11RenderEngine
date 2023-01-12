@@ -89,30 +89,6 @@
     <ClInclude Include="source\GDIPlusManager.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
-    <ClInclude Include="include\imgui\imconfig.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imgui.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imgui_impl_dx11.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imgui_impl_win32.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imgui_internal.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imstb_rectpack.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imstb_textedit.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="include\imgui\imstb_truetype.h">
-      <Filter>RenderEngine</Filter>
-    </ClInclude>
     <ClInclude Include="source\VertexTypes.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
@@ -163,13 +139,6 @@
     <ClCompile Include="source\GDIPlusManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="include\imgui\imgui.cpp" />
-    <ClCompile Include="include\imgui\imgui_demo.cpp" />
-    <ClCompile Include="include\imgui\imgui_draw.cpp" />
-    <ClCompile Include="include\imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="include\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="include\imgui\imgui_tables.cpp" />
-    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="source\TextureData.cpp" />
     <ClCompile Include="source\TransformUtils.cpp" />
     <ClCompile Include="source\VertexTypes.cpp" />

@@ -75,9 +75,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)include\</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -109,9 +111,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;$(ProjectDir)source\DX12Toolkit\Src;$(ProjectDir)source\DX12Toolkit</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -329,7 +332,7 @@
     <ClInclude Include="DX12Helpers\GameTimer.h" />
     <ClInclude Include="DX12Helpers\UploadBuffer.h" />
     <ClInclude Include="include\RenderDeviceDX12.h" />
-    <ClInclude Include="include\winHandler.h" />
+    <ClInclude Include="include\winHandlerdx12.h" />
     <ClInclude Include="source\DX12Toolkit\BufferHelpers.h" />
     <ClInclude Include="source\DX12Toolkit\DescriptorHeap.h" />
     <ClInclude Include="source\DX12Toolkit\DirectXHelpers.h" />

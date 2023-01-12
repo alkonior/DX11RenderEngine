@@ -3,12 +3,12 @@
 #include "Utils/ModelData.h"
 #include "RenderFlags.h"
 #include "TextureData.h"
-#include "imgui/imgui.h"
+//#include "imgui/imgui.h"
 
 class RenderSystem;
 
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 

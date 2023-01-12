@@ -3,7 +3,7 @@
 
 #include <d3d11.h>
 
-#include "imgui/imgui.h"
+//#include "imgui/imgui.h"
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"
 #include "ResourceManagers/States/RasterizerStates.h"
@@ -38,7 +38,7 @@ const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
 };
 
 
-Renderer::InputLayoutDescription PPRenderPass::PPRenderPassProvider::GetInputLayoutDescription(size_t definesFlags)
+Renderer::InputLayoutDescription PPRenderPass::PPRenderPassProvider::GetInputLayoutDescription(uint32_t definesFlags)
 {
     return Renderer::InputLayoutDescription{(void*)DefaultInputElements,std::size(DefaultInputElements)};
 }
@@ -167,16 +167,16 @@ void PPRenderPass::PostRender()
 
 void PPRenderPass::RenderIMGUI()
 {
-    ImGui::Begin("PostProcess settings.");                          // Create a window called "Hello, world!" and append into it.
-
-
-
-    ImGui::Checkbox("ShowDebugTexture", &ShowDebugTexture);
-
-    for (int i = 0; i < texturesList.size(); ++i)
-    {
-        ImGui::Checkbox(texturesList[i], (bool*)(texutersFlags.data() + i));
-    }
+    //ImGui::Begin("PostProcess settings.");                          // Create a window called "Hello, world!" and append into it.
+//
+//
+//
+    //ImGui::Checkbox("ShowDebugTexture", &ShowDebugTexture);
+//
+    //for (int i = 0; i < texturesList.size(); ++i)
+    //{
+    //    ImGui::Checkbox(texturesList[i], (bool*)(texutersFlags.data() + i));
+    //}
 
     //ImGui::Checkbox("LightOnly", &lightOnly);
     //ImGui::Checkbox("BloomOnly", &bloomOnly);
@@ -186,7 +186,7 @@ void PPRenderPass::RenderIMGUI()
     //ImGui::Checkbox("NormalsOnly", &normalsOnly);
     ////ImGui::SliderInt("MotionBlure samples", &localData.numSampes, 1,10);
     //ImGui::SliderFloat("light Add", &localData.lightAdd, 0, 1.0);
-    ImGui::End();
+    //ImGui::End();
 }
 
 

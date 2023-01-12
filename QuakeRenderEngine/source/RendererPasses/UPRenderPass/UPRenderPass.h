@@ -15,8 +15,8 @@ class UPRenderPass : public BaseRenderPass {
 	struct UPRenderPassProvider : public Renderer::IStateProvider {
 		int32_t width, height;
 		UPRenderPassProvider();
-		virtual void PatchPipelineState(Renderer::Pipeline* refToPS, size_t definesFlags) override;
-		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
+		virtual void PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) override;
+		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(uint32_t definesFlags) override;
 		virtual const char* GetShaderName() override;
 		virtual Renderer::PipelineFactoryDescription GetFactoryDescription() override;
 		

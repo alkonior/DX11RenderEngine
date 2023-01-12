@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------
 
 #pragma once
-
+#include "winHandlerdx12.h"
 
 #include <cassert>
 #include <cstddef>

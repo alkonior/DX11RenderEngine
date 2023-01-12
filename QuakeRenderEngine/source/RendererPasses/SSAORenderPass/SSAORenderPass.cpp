@@ -3,7 +3,7 @@
 
 #include <d3d11.h>
 
-#include "imgui/imgui.h"
+//#include "imgui/imgui.h"
 #include "../TAARenderPass/halton.h"
 #include "ResourceManagers/States/BlendStates.h"
 #include "ResourceManagers/States/DSStates.h"
@@ -35,7 +35,7 @@ Renderer::PipelineFactoryDescription SSAORenderPass::SSAORenderPassProvider::Get
 	};
 }
 
-void SSAORenderPass::SSAORenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, size_t definesFlags) {
+void SSAORenderPass::SSAORenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) {
 
 	refToPS->bs = &BlendStates::NoAlpha;
 	refToPS->dss = &DepthStencilStates::NoDSS;
@@ -49,7 +49,7 @@ const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
 };
 
 
-Renderer::InputLayoutDescription SSAORenderPass::SSAORenderPassProvider::GetInputLayoutDescription(size_t definesFlags) {
+Renderer::InputLayoutDescription SSAORenderPass::SSAORenderPassProvider::GetInputLayoutDescription(uint32_t definesFlags) {
 	return Renderer::InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 
@@ -269,18 +269,18 @@ void SSAORenderPass::PostRender()
 
 void SSAORenderPass::RenderIMGUI()
 {	
-	ImGui::Begin("SSAO settings.");                          // Create a window called "Hello, world!" and append into it.
-
-	ImGui::SliderFloat("gOcclusionRadius  ",&localBuffer.gOcclusionRadius   ,0,3);
-	ImGui::SliderFloat("gOcclusionFadeStar",&localBuffer.gOcclusionFadeStart,0,3);
-	ImGui::SliderFloat("gOcclusionFadeEnd ",&localBuffer.gOcclusionFadeEnd  ,0,3);
-	ImGui::SliderFloat("gSurfaceEpsilon   ",&localBuffer.gSurfaceEpsilon    ,0,3);
-	
-	ImGui::SliderFloat("intencity   ",&localBuffer.intensity    ,0,10);
-	ImGui::SliderFloat("sigma   ",&localBuffer.sigma   ,0.01,5);
-	ImGui::SliderInt("kernel   ",&localBuffer.kernel   ,1,10);
-	//ImGui::SliderInt("radius   ",&localBuffer.radius   ,0,SSAOBLUR_NUM_THREADS);
-	ImGui::End();
+	//ImGui::Begin("SSAO settings.");                          // Create a window called "Hello, world!" and append into it.
+//
+	//ImGui::SliderFloat("gOcclusionRadius  ",&localBuffer.gOcclusionRadius   ,0,3);
+	//ImGui::SliderFloat("gOcclusionFadeStar",&localBuffer.gOcclusionFadeStart,0,3);
+	//ImGui::SliderFloat("gOcclusionFadeEnd ",&localBuffer.gOcclusionFadeEnd  ,0,3);
+	//ImGui::SliderFloat("gSurfaceEpsilon   ",&localBuffer.gSurfaceEpsilon    ,0,3);
+	//
+	//ImGui::SliderFloat("intencity   ",&localBuffer.intensity    ,0,10);
+	//ImGui::SliderFloat("sigma   ",&localBuffer.sigma   ,0.01,5);
+	//ImGui::SliderInt("kernel   ",&localBuffer.kernel   ,1,10);
+	////ImGui::SliderInt("radius   ",&localBuffer.radius   ,0,SSAOBLUR_NUM_THREADS);
+	//ImGui::End();
 }
 
 

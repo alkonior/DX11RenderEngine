@@ -123,8 +123,7 @@ public:
 
 
     virtual void SyncBlockExecutionStart() = 0;
-    virtual void SyncResourcesRead(GpuResource data[], size_t size) = 0;
-    virtual void SyncResourcesWrite(GpuResource data[], size_t size) = 0;
+    virtual void SyncResourcesState(GpuResource* data[], size_t size) = 0;
     virtual void SyncBlockExecutionEnd() = 0;
 
 #pragma region SetupPipeline

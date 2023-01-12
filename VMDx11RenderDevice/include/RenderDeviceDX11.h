@@ -210,8 +210,7 @@ public:
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
 protected:
     void SyncBlockExecutionStart() override;
-    void SyncResourcesRead(GpuResource data[], size_t size) override;
-    void SyncResourcesWrite(GpuResource data[], size_t size) override;
+    void SyncResourcesState(GpuResource* data[], size_t size) override;
     void SyncBlockExecutionEnd() override;
 };
 

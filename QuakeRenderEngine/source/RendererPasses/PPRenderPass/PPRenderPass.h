@@ -19,7 +19,7 @@ class PPRenderPass : public BaseRenderPass {
 	struct PPRenderPassProvider : public Renderer::IStateProvider {
 		PPRenderPassProvider();
 		virtual void PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) override;
-		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
+		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(uint32_t definesFlags) override;
 		virtual const char* GetShaderName() override;
 		Renderer::PipelineFactoryDescription GetFactoryDescription() override;
 	};

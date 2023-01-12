@@ -5,10 +5,6 @@
 #define GFX_THROW_NOINFO(hrcall) if(FAILED(hr = (hrcall))) throw HrException(__LINE__,  __FILE__,  hr)
 
 
-#ifndef  TESTDEBUG 
-#define TESTDEBUG 1
-#endif
-
 #if _DEBUG | TESTDEBUG
 #define GFX_EXCEPT(hr) HrException(__LINE__,  __FILE__, (hr), infoManager.GetMessages())
 #define GFX_THROW_INFO(hrcall) infoManager.Set(); if(FAILED(hr = (hrcall))) throw GFX_EXCEPT(hr)

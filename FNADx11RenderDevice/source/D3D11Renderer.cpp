@@ -6,11 +6,14 @@
 #include "D3D11Shaders.h"
 #include "D3D11RenderBuffer.h"
 
-#include "RenderDeviceDX11.h"
+//#include "RenderDeviceDX11.h"
 
 
+#include "RenderDeviceDX12.h"
 #include "DX11ShadersCompiler.h"
 #include "GraphicsAPI.h"
+
+
 #pragma warning( disable : 26812 )
 
 #pragma comment( lib,"gdiplus.lib" )
@@ -48,11 +51,11 @@ void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h)
 
 void* D3D11Renderer::GetDevice()
 {
-  return  ((GVM::RenderDeviceDX11*)testRD)->device.Get();
+  return  ((GVM::RenderDeviceDX12*)testRD)->md3dDevice.Get();
 }
 void* D3D11Renderer::GetContext()
 {
-  return  ((GVM::RenderDeviceDX11*)testRD)->context.Get();
+  return  ((GVM::RenderDeviceDX12*)testRD)->mCommandList.Get();
 }
 
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
@@ -67,7 +70,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
 
-    testRD = new GVM::RenderDeviceDX11(init, debugMode);
+    testRD = new GVM::RenderDeviceDX12(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
     delete ppppp;
 

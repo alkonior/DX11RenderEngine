@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------
 
 #pragma once
-#include "winHandler.h"
+#include "winHandlerdx12.h"
 #include "../DX12Helpers/d3dx12.h"
 
 // Off by default warnings

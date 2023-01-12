@@ -1,4 +1,5 @@
-﻿#ifndef WH_H
+﻿#pragma once
+#ifndef WH_H
 #define WH_H
 
 #ifndef _CRT_SECURE_NO_WARNINGS

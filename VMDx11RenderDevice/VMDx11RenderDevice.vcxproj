@@ -99,6 +99,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
     <OutDir>$(SolutionDir)debug\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include\</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|Win32'">
     <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>

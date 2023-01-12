@@ -170,12 +170,12 @@ struct SetResourceDataDesc{
 };
 
 struct ClearRenderTargetDesc{
-    ResourceView* resource;
+    ResourceView* resourceView;
     FColor color;
 };
 
 struct ClearDepthStencilDesc{
-    ResourceView* resource;
+    ResourceView* resourceView;
     float depth;
     int8_t stencil;
 };

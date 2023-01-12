@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\;$(ProjectDir)..\VMDx12RenderDevice\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -175,7 +175,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\;$(ProjectDir)..\VMDx12RenderDevice\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -274,6 +274,9 @@
     </ProjectReference>
     <ProjectReference Include="..\VMDx11RenderDevice\VMDx11RenderDevice.vcxproj">
       <Project>{eed93469-9dcf-4a80-a11f-0d9bcb560b25}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VMDx12RenderDevice\VMDx12RenderDevice.vcxproj">
+      <Project>{4c5c2cc2-95c0-4bde-97c6-3d136b4ecb0d}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
 	{ "LIGHTTEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
-Renderer::InputLayoutDescription UPRenderPass::UPRenderPassProvider::GetInputLayoutDescription(size_t definesFlags) {
+Renderer::InputLayoutDescription UPRenderPass::UPRenderPassProvider::GetInputLayoutDescription(uint32_t definesFlags) {
 	return InputLayoutDescription{ (void*)DefaultInputElements, std::size(DefaultInputElements) };
 }
 

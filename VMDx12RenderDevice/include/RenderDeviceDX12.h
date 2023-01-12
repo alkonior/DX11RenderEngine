@@ -2,14 +2,16 @@
 
 #define GVM_MSW
 
-#include "winHandler.h"
+#include "winHandlerdx12.h"
 #define DX12
-#include "DescriptorHeap.h"
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 #undef DX12
 
 
+namespace DirectX {
+class DescriptorHeap;
+}
 namespace GVM {
 class ResourceViewDX12;
 
@@ -43,6 +45,7 @@ public:
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mDirectCmdListAlloc;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+    uint8_t d3d11viewportsNum = 0;
 
     static const int SwapChainBufferCount = 2;
     int mCurrBackBuffer = 0;
@@ -126,8 +129,9 @@ private:
     
     void CreateCommandObjects(const RenderDeviceInitParams& initParams);
     void CreateSwapChain(const RenderDeviceInitParams& initParams);
+    ID3D12Resource* CurrentBackBuffer() const;
+    D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView();
     void CreateRtvAndDsvDescriptorHeaps();
-    D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
     void CreateDefaultHandles();
 
     
@@ -145,16 +149,19 @@ public:
     void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
 private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadBuffers;
+
+    std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
+    D3D12_CPU_DESCRIPTOR_HANDLE FetchSamplerState(const Compressed::SamplerStateDesc& state);
 public:
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
 #pragma region ResourceSynchronization
 
-    void SyncBlockExecutionStart() override;
-    void SyncResourcesRead(GpuResource data[], size_t size) override;
-    void SyncResourcesWrite(GpuResource data[], size_t size) override;
-    void SyncBlockExecutionEnd() override;
+    void SyncBlockExecutionStart() override
+    { }
+    void SyncResourcesState(GpuResource * data[], size_t size) override;
+    void SyncBlockExecutionEnd() override{};
 
 #pragma endregion
 
@@ -168,21 +175,24 @@ public:
     void SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t uint8) override;
     void SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num) override;
     void ClearState() override;
-    
+    void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
+    void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+
 #pragma endregion
 
     void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) override;
     void ClearDepthStencil(DEPTHSTENCILVIEWHANDLE dsView, float depth, int8_t stencil) override;
+    void FlushCommandQueue();
     void Present() override;
     void Draw(const DrawCall& call) override;
-    void ResizeBackbuffer(int32_t width, int32_t height) override;
+    void ResizeBackbuffer(int32_t width, int32_t height) override{};
 
 
     
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
     
     void BeginEvent(const char* name) override;
-    void EndEvent() override;
+    void EndEvent() override{};
     
 };
 

@@ -1,4 +1,4 @@
-#include "winHandler.h"
+#include "winHandlerdx12.h"
 
 using namespace GVM;
 
@@ -170,7 +170,7 @@ std::vector<D3D12_INPUT_ELEMENT_DESC> inline ToD3D11(const InputAssemblerDeclara
     return result;
 }
 
-bool inline ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D12_VIEWPORT d3d11viewports[20], uint8_t num)
+bool inline ToD3D12Viewports(const Compressed::ViewportDesc viewports[], D3D12_VIEWPORT d3d11viewports[20], uint8_t num)
 {
     bool result = false;
     for (int i = 0; i < num; i++)

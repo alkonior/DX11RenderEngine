@@ -588,6 +588,10 @@ GpuResource& ResourcesManager::GetResource(const Resource* resource)
 {
     return Resources[reinterpret_cast<uintptr_t>(resource)];
 }
+GpuResource& ResourcesManager::GetResource(const ResourceView* resourceView)
+{
+    return Resources[reinterpret_cast<uintptr_t>(ResourceViews[reinterpret_cast<uintptr_t>(resourceView)].resource)];
+}
 GpuResourceView& ResourcesManager::GetResourceView(const ResourceView* resourceView)
 {
     return ResourceViews[reinterpret_cast<uintptr_t>(resourceView)];

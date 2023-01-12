@@ -6,8 +6,8 @@
 #include "D3D11Renderer.h"
 
 #include <filesystem>
-#include "imgui/imgui_impl_dx11.h"
-#include "imgui/imgui_impl_win32.h"
+//#include "imgui/imgui_impl_dx11.h"
+//#include "imgui/imgui_impl_win32.h"
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -29,13 +29,13 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPassPP(*this),
     renderPassSSAO(*this)
 {
-    ImGui::CreateContext();
+   // ImGui::CreateContext();
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
+   // ImGuiIO& io = ImGui::GetIO();
+    //io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_ViewportsEnable;
 
-    ImGui_ImplWin32_Init(init.hWnd);
-    ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(), (ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
+    //ImGui_ImplWin32_Init(init.hWnd);
+    //ImGui_ImplDX11_Init((ID3D11Device*)((D3D11Renderer*)pRenderer)->GetDevice(), (ID3D11DeviceContext*)((D3D11Renderer*)pRenderer)->GetContext());
 
 
 

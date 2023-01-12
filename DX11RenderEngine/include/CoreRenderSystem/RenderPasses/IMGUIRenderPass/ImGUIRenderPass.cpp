@@ -11,9 +11,9 @@ void ImGUIRenderPass::Resize()
 }
 
 void ImGUIRenderPass::PreRender() {
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	//ImGui_ImplDX11_NewFrame();
+	//ImGui_ImplWin32_NewFrame();
+	//ImGui::NewFrame();
 }
 
 void ImGUIRenderPass::Render() {
@@ -27,17 +27,17 @@ void ImGUIRenderPass::PostRender()
 	show = true;
 	//ImGui::ShowDemoWindow(&show);
 	
-	ImGuiIO& io = ImGui::GetIO();
+	//ImGuiIO& io = ImGui::GetIO();
 	
 	
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	//ImGui::Render();
+	//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-	}
+	//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	//{
+	//	ImGui::UpdatePlatformWindows();
+	//	ImGui::RenderPlatformWindowsDefault();
+	//}
 	
 }
 

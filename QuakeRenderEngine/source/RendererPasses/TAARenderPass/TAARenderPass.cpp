@@ -2,7 +2,7 @@
 
 #include "halton.h"
 #include "TAARenderPassProvider.h"
-#include "imgui/imgui.h"
+//#include "imgui/imgui.h"
 #include "ResourceManagers/States/Samplers.h"
 
 using namespace Renderer;
@@ -170,20 +170,20 @@ void TAARenderPass::Render()
 void TAARenderPass::RenderImGUI()
 {
     static bool opened = true;
-    ImGui::Begin("TAA settings.", &opened);                          // Create a window called "Hello, world!" and append into it.
+    //ImGui::Begin("TAA settings.", &opened);                          // Create a window called "Hello, world!" and append into it.
+    ////
+    ////ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
+    //ImGui::SliderInt("NumSamples",				    &Settings.numSamples , 1, 20 , "%.3f");
+    //ImGui::SliderFloat("TAAShiftStrength",          &Settings.taaStrength, 0.0, 100.0  , "%.3f");
+    //ImGui::Checkbox("markNoHistoryPixels	    ",  &Settings.markNoHistoryPixels		    );
+    //ImGui::Checkbox("allowBicubicFilter		    ",  &Settings.allowBicubicFilter		    );
+    //ImGui::Checkbox("allowDepthThreshold	 	",  &Settings.allowDepthThreshold		    );
+    //ImGui::Checkbox("allowVarianceClipping	    ",  &Settings.allowVarianceClipping		);
+    //ImGui::Checkbox("allowNeighbourhoodSampling",   &Settings.allowNeighbourhoodSampling	);
+    //ImGui::Checkbox("allowYCoCg				    ",  &Settings.allowYCoCg					);
+    //ImGui::Checkbox("allowLongestVelocityVector",   &Settings.allowLongestVelocityVector	);
     //
-    //ImGui::SliderFloat("depthThreshold",     &localBuffer.depthThreshold ,0.0, 1.0 , "%.10f");
-    ImGui::SliderInt("NumSamples",				    &Settings.numSamples , 1, 20 , "%.3f");
-    ImGui::SliderFloat("TAAShiftStrength",          &Settings.taaStrength, 0.0, 100.0  , "%.3f");
-    ImGui::Checkbox("markNoHistoryPixels	    ",  &Settings.markNoHistoryPixels		    );
-    ImGui::Checkbox("allowBicubicFilter		    ",  &Settings.allowBicubicFilter		    );
-    ImGui::Checkbox("allowDepthThreshold	 	",  &Settings.allowDepthThreshold		    );
-    ImGui::Checkbox("allowVarianceClipping	    ",  &Settings.allowVarianceClipping		);
-    ImGui::Checkbox("allowNeighbourhoodSampling",   &Settings.allowNeighbourhoodSampling	);
-    ImGui::Checkbox("allowYCoCg				    ",  &Settings.allowYCoCg					);
-    ImGui::Checkbox("allowLongestVelocityVector",   &Settings.allowLongestVelocityVector	);
-    
-    ImGui::End();
+    //ImGui::End();
 }
 void TAARenderPass::PostRender()
 {
