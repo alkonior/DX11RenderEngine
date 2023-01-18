@@ -15,7 +15,7 @@ class DescriptorHeap;
 namespace GVM {
 class ResourceViewDX12;
 
-struct Dx11PlatformHandle : public PlatformHandle {
+struct Dx12PlatformHandle : public PlatformHandle {
 
 #if defined(GVM_LINUX)
 //xcb_connection_t*                   connection;

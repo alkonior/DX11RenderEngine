@@ -61,7 +61,7 @@ void* D3D11Renderer::GetContext()
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
-    auto ppppp = new GVM::Dx11PlatformHandle();
+    auto ppppp = new GVM::Dx12PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle;
     GVM::RenderDeviceInitParams init{
         presentationParameters.BackBufferSize.Width,
