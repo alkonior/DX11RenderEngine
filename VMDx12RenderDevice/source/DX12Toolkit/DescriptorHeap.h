@@ -124,6 +124,19 @@ namespace DirectX
             handle.ptr = m_hGPU.ptr + UINT64(index) * UINT64(m_increment);
             return handle;
         }
+        D3D12_GPU_DESCRIPTOR_HANDLE GetCurrentGpuHandle() const
+        {
+            assert(m_pHeap != nullptr);
+            if (next >= m_desc.NumDescriptors)
+            {
+                throw std::out_of_range("D3DX12_GPU_DESCRIPTOR_HANDLE");
+            }
+            assert(m_desc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+            D3D12_GPU_DESCRIPTOR_HANDLE handle;
+            handle.ptr = m_hGPU.ptr + UINT64(next) * UINT64(m_increment);
+            return handle;
+        }
 
         D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(_In_ size_t index) const
         {

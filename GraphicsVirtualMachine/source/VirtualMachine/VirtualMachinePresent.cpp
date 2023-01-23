@@ -29,12 +29,13 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     {
         constBuffers[i] = (IRenderDevice::CONSTBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ConstBuffers[i]);
     }
+#ifdef DX11
     RenderDevice->SetupTextures(texturesNulls, 128);
     RenderDevice->SetupRenderTargets(
-        nullptr, 8,
+    nullptr, 8,
         {});
         RenderDevice->SetupUATargets(nullptr, 16);
-
+#endif
     pipelineDescription.CS = resourcesManager.GetRealShader(ps->CS);
     pipelineDescription.PS = resourcesManager.GetRealShader(ps->PS);
     pipelineDescription.VS = resourcesManager.GetRealShader(ps->VS);
@@ -44,6 +45,10 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 
     pipelineDescription.samplers = (Compressed::SamplerStateDesc*)(ps->Data + ps->SamplersShift);
     pipelineDescription.samplersNum = ps->samplersNum;
+
+    pipelineDescription.cbCount = ps->constBuffersNum;
+    pipelineDescription.srvCount = ps->texturesNum;
+
     
     if (ps->VS != nullptr && ps->PS != nullptr)
     {
@@ -88,6 +93,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
             (const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, ps->renderTargetsNum,
             (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(ps->DepthBuffer));
     }
+    pipelineDescription.uaCount = ps->uaTargetsNum;
 
     if (ps->CS)
     {
@@ -104,7 +110,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         {
             uaTargets[i] = {};
         }
-
+            
         RenderDevice->SetupUATargets((IRenderDevice::UATARGETVIEWHANDLE*)uaTargets, ps->renderTargetsNum);
     }
 

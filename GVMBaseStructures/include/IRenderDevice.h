@@ -167,6 +167,10 @@ struct PipelineDescription
     IRenderDevice::SHADERHANDLE CS;
     IRenderDevice::INPUTLAYOUTHANDLE layout;
 
+    uint8_t uaCount  = 0;
+    uint8_t cbCount  = 0;
+    uint8_t srvCount = 0;
+
     //void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num);
     //void SetupBlendState(const Compressed::CoreBlendDesc& blendState);
     //void SetupDepthStencilState(const Compressed::DepthStencilStateDesc& depthStencilState);

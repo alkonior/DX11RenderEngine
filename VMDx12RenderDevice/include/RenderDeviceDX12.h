@@ -37,7 +37,6 @@ public:
     Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
     Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
     Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> mDefaultPS;
     
     Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
     UINT64 mCurrentFence = 0;
@@ -54,13 +53,10 @@ public:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mBBHeap;
     
     DirectX::DescriptorHeap* mDsvHeapInterface;
-    DirectX::DescriptorHeap* mRTVHeapInterface;
-    DirectX::DescriptorHeap* mSamplerHeapInterface;
-    DirectX::DescriptorHeap* mShvHeapInterface;
-    DirectX::DescriptorHeap* mCbHeapInterface;
-    DirectX::DescriptorHeap* mUaHeapInterface;
+    DirectX::DescriptorHeap* mRtvHeapInterface;
+    DirectX::DescriptorHeap* mGpuSamplerHeapInterface;
+    DirectX::DescriptorHeap* mGpuShvCbUaHeapInterface;
     
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 
     
     DirectX::DescriptorHeap* srvStorageHeap;
@@ -102,6 +98,7 @@ public:
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
 
+    std::vector<std::pair<uint32_t, wrl::ComPtr<ID3D12RootSignature>>> RootSignatures = {};
 #pragma region Fields
 
 #ifdef _DEBUG
@@ -152,6 +149,19 @@ private:
 
     std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
     D3D12_CPU_DESCRIPTOR_HANDLE FetchSamplerState(const Compressed::SamplerStateDesc& state);
+    
+    struct SignatureParams {
+        union {
+            struct {
+                uint8_t cbCount;
+                uint8_t srvCount;
+                uint8_t uaCount;
+                uint8_t samplersCount;
+            };
+            uint32_t data;
+        };
+    };
+    ID3D12RootSignature* FetchRS(SignatureParams params);
 public:
     
     void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;

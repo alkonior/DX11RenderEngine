@@ -162,7 +162,7 @@ bool RenderSystem::RenderFrame()
 
 
     pRenderer->BeginEvent("SSAO draw.");
-    GFX_CATCH_RENDER(renderPassSSAO.Render(););
+    //GFX_CATCH_RENDER(renderPassSSAO.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Sky draw.");
@@ -178,11 +178,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("PostProcess draw.");
-    GFX_CATCH_RENDER(renderPassPP.Render(););
+    //GFX_CATCH_RENDER(renderPassPP.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    renderPassTAA.Render();
+    //renderPassTAA.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");
@@ -190,7 +190,7 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("IMGUI draw.");
-    renderPassIMGUI.Render();
+    //renderPassIMGUI.Render();
     pRenderer->EndEvent();
 
 
