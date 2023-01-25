@@ -89,7 +89,7 @@ public:
     uint32_t resourceBindings = 0;
     bool isRequiredUpdate = true;
     ResourceState currentState = ResourceState::RESOURCE_STATE_COMMON;
-    ResourceState nextState = ResourceState::RESOURCE_STATE_UNDEFINED;
+    ResourceState nextState = ResourceState::RESOURCE_STATE_COMMON;
 
     std::vector<ResourceView*> views;
 

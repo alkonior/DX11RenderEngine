@@ -80,10 +80,12 @@ constexpr DXGI_FORMAT ToD3D_DepthFormat[] = {
     DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
 };
 
+#define ZEROS(r) std::memset(&r, 0, sizeof(r));
 
 D3D12_DEPTH_STENCIL_VIEW_DESC inline ToD3D12DepthStencilView(const DepthStencilViewDesc& desc)
 {
     D3D12_DEPTH_STENCIL_VIEW_DESC result;
+    ZEROS(result)
     result.Format = ToD3D_DepthFormat[to_underlying(desc.Format)];
     result.Flags = (D3D12_DSV_FLAGS)to_underlying(desc.Flag);
     result.Format = ToD3D_DepthFormat[to_underlying(desc.Format)];
@@ -128,16 +130,21 @@ constexpr D3D12_UAV_DIMENSION ToD3D_UAViewDimension[] = {
 D3D12_SHADER_RESOURCE_VIEW_DESC inline ToD3D12ShaderView(const ShaderResourceViewDesc& desc)
 {
     D3D12_SHADER_RESOURCE_VIEW_DESC result;
+    ZEROS(result)
     result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
     result.ViewDimension = ToD3D_ShaderViewDimension[to_underlying(desc.Dimension)];
     result.Texture2D.MipLevels = 1;
     result.Texture2D.MostDetailedMip = 0;
+    result.Texture2D.PlaneSlice = 0;
+    result.Texture2D.ResourceMinLODClamp = 0;
+    result.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     return result;
 }
 
 D3D12_RENDER_TARGET_VIEW_DESC inline ToD3D12RTView(const RenderTargetViewDesc& desc)
 {
     D3D12_RENDER_TARGET_VIEW_DESC result;
+    ZEROS(result)
     result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
     result.ViewDimension = ToD3D_RTViewDimension[to_underlying(desc.Dimension)];
     result.Texture2D.MipSlice = 0;
@@ -147,6 +154,7 @@ D3D12_RENDER_TARGET_VIEW_DESC inline ToD3D12RTView(const RenderTargetViewDesc& d
 D3D12_UNORDERED_ACCESS_VIEW_DESC inline ToD3D12UAView(const UATargetViewDesc& desc)
 {
     D3D12_UNORDERED_ACCESS_VIEW_DESC result;
+    ZEROS(result)
     result.Format = ToD3D_TextureFormat[to_underlying(desc.Format)];
     result.ViewDimension = ToD3D_UAViewDimension[to_underlying(desc.Dimension)];
     result.Texture2D.MipSlice = 0;
@@ -196,6 +204,7 @@ bool inline ToD3D12Viewports(const Compressed::ViewportDesc viewports[], D3D12_V
 D3D12_BLEND_DESC inline ToD3D12Blend(const Compressed::CoreBlendDesc& blendState)
 {
     D3D12_BLEND_DESC desc{D3D12_BLEND_DESC()};
+    ZEROS(desc);
     desc.AlphaToCoverageEnable = 0;
     desc.IndependentBlendEnable = 0;
 
@@ -462,6 +471,7 @@ D3D12_FILTER inline ToD3D11SamplerFilter[] = {
 D3D12_SAMPLER_DESC inline ToD3D12(const Compressed::SamplerStateDesc& state)
 {
     D3D12_SAMPLER_DESC desc{};
+    ZEROS(desc);
     assert(state.Fields.Filter != 0);
     desc.Filter = ToD3D11SamplerFilter[state.Fields.Filter];
     desc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -473,4 +483,37 @@ D3D12_SAMPLER_DESC inline ToD3D12(const Compressed::SamplerStateDesc& state)
     desc.MipLODBias = 0;
     return desc;
 }
+/*
+BIND_VERTEX_BUFFER          = 0x1L,
+BIND_INDEX_BUFFER           = 0x2L,
+BIND_CONSTANT_BUFFER        = 0x4L,
+BIND_SHADER_RESOURCE        = 0x8L,
+BIND_STREAM_OUTPUT          = 0x10L,
+BIND_RENDER_TARGET          = 0x20L,
+BIND_DEPTH_STENCIL          = 0x40L,
+BIND_UNORDERED_ACCESS       = 0x80L,
+*/
+/*
+D3D12_RESOURCE_FLAG_NONE	= 0,
+D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET	= 0x1,
+D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL	= 0x2,
+D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS	= 0x4,
+D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE	= 0x8,
+D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER	= 0x10,
+D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS	= 0x20,
+D3D12_RESOURCE_FLAG_VIDEO_DECODE_REFERENCE_ONLY	= 0x40
+*/
 
+D3D12_RESOURCE_FLAGS ToDx12TextureFlags(uint32_t bindings)
+{
+    uint32_t result = 0;
+
+    if(bindings & to_underlying(EBindFlags::BIND_RENDER_TARGET))
+        result |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+    if(bindings & to_underlying(EBindFlags::BIND_DEPTH_STENCIL))
+        result |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+    if(bindings & to_underlying(EBindFlags::BIND_UNORDERED_ACCESS))
+        result |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+    return D3D12_RESOURCE_FLAGS(result);
+}
