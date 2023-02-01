@@ -49,6 +49,8 @@ public:
     static const int SwapChainBufferCount = 2;
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
+    UINT BackBufferWidth = 0;
+    UINT BackBufferHeight = 0;
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mBBHeap;
     

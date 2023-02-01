@@ -292,6 +292,8 @@ void RenderDeviceDX12::CreateSwapChain(const RenderDeviceInitParams& initParams)
 {
 	// Release the previous swapchain we will be recreating.
 	mSwapChain.Reset();
+	BackBufferWidth = initParams.backBufferWidth;
+	BackBufferHeight = initParams.backBufferHeight;
 
 	DXGI_SWAP_CHAIN_DESC sd;
 	sd.BufferDesc.Width = initParams.backBufferWidth;
@@ -541,7 +543,7 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
 		ThrowIfFailed(md3dDevice->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(ResourceDesc.resourceDescription.Width),
+			&CD3DX12_RESOURCE_DESC::Buffer(CalcConstantBufferByteSize(ResourceDesc.resourceDescription.Width)),
 			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
 			IID_PPV_ARGS(&defaultBuffer)));
@@ -772,7 +774,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
 	{
 		D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
 		desc.BufferLocation = resource->GetGPUVirtualAddress() + ViewDesc.cbViewDescription.Offset;
-		desc.SizeInBytes = ViewDesc.cbViewDescription.Size;
+		desc.SizeInBytes = CalcConstantBufferByteSize(ViewDesc.cbViewDescription.Size);
 
 		auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
 		md3dDevice->CreateConstantBufferView(
@@ -863,7 +865,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
 		desc = ToD3D12ShaderView(view);
 
 		auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-		if(!view.MakeDefault)
+		if (!view.MakeDefault)
 			md3dDevice->CreateShaderResourceView(
 				resource,
 				&desc,
@@ -884,14 +886,24 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
 		D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
 		const auto& view = ViewDesc.uaViewDescription;
 		desc = ToD3D12UAView(view);
-
 		auto descriptorHandle = srvStorageHeap->GetNextCpuHandle();
-		md3dDevice->CreateUnorderedAccessView(
-			resource,
-			nullptr,
-			&desc,
-			descriptorHandle
-		);
+		if (!view.MakeDefault)
+			md3dDevice->CreateUnorderedAccessView(
+				resource,
+				nullptr,
+				&desc,
+				descriptorHandle
+			);
+		else
+		{
+
+			md3dDevice->CreateUnorderedAccessView(
+				resource,
+				nullptr,
+				NULL,
+				descriptorHandle
+			);
+		}
 
 		descriptorFormats.insert({ descriptorHandle.ptr,desc.Format });
 		output.data = descriptorHandle.ptr;
@@ -1313,8 +1325,8 @@ void RenderDeviceDX12::Draw(const DrawCall& call)
 }
 void RenderDeviceDX12::GetBackbufferSize(uint32_t& w, uint32_t& h)
 {
-	w = 1;
-	h = 1;
+	w = BackBufferWidth;
+	h = BackBufferHeight;
 }
 
 void RenderDeviceDX12::BeginEvent(const char* name)
