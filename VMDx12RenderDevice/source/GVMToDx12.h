@@ -423,7 +423,7 @@ constexpr D3D12_RESOURCE_STATES inline ToDx12(GpuResource::ResourceState state)
             return D3D12_RESOURCE_STATE_PRESENT;
         case GpuResource::ResourceState::RESOURCE_STATE_UNDEFINED:
             assert(false);
-            return D3D12_RESOURCE_STATE_VIDEO_DECODE_READ;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            return D3D12_RESOURCE_STATE_VIDEO_DECODE_READ; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 }
 
@@ -483,6 +483,7 @@ D3D12_SAMPLER_DESC inline ToD3D12(const Compressed::SamplerStateDesc& state)
     desc.MipLODBias = 0;
     return desc;
 }
+
 /*
 BIND_VERTEX_BUFFER          = 0x1L,
 BIND_INDEX_BUFFER           = 0x2L,
@@ -508,12 +509,108 @@ D3D12_RESOURCE_FLAGS ToDx12TextureFlags(uint32_t bindings)
 {
     uint32_t result = 0;
 
-    if(bindings & to_underlying(EBindFlags::BIND_RENDER_TARGET))
+    if (bindings & to_underlying(EBindFlags::BIND_RENDER_TARGET))
         result |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-    if(bindings & to_underlying(EBindFlags::BIND_DEPTH_STENCIL))
+    if (bindings & to_underlying(EBindFlags::BIND_DEPTH_STENCIL))
         result |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-    if(bindings & to_underlying(EBindFlags::BIND_UNORDERED_ACCESS))
+    if (bindings & to_underlying(EBindFlags::BIND_UNORDERED_ACCESS))
         result |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
     return D3D12_RESOURCE_FLAGS(result);
+}
+
+D3D12_PRIMITIVE_TOPOLOGY_TYPE ToD3DPT[] = {
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH,
+    D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH,
+};
+
+
+D3D12_DEPTH_STENCIL_DESC ToDX12DSState(const Compressed::DepthStencilStateDesc& depthStencilState)
+{
+    const std::array<D3D12_STENCIL_OP, 9> depthOpArray = {
+        D3D12_STENCIL_OP(0),
+        D3D12_STENCIL_OP_KEEP,
+        D3D12_STENCIL_OP_ZERO,
+        D3D12_STENCIL_OP_REPLACE,
+        D3D12_STENCIL_OP_INCR_SAT,
+        D3D12_STENCIL_OP_DECR_SAT,
+        D3D12_STENCIL_OP_INVERT,
+        D3D12_STENCIL_OP_INCR,
+        D3D12_STENCIL_OP_DECR
+    };
+
+    const std::array<D3D12_COMPARISON_FUNC, 9> depthCompArray = {
+        D3D12_COMPARISON_FUNC(0),
+        D3D12_COMPARISON_FUNC_NEVER,
+        D3D12_COMPARISON_FUNC_LESS,
+        D3D12_COMPARISON_FUNC_EQUAL,
+        D3D12_COMPARISON_FUNC_LESS_EQUAL,
+        D3D12_COMPARISON_FUNC_GREATER,
+        D3D12_COMPARISON_FUNC_NOT_EQUAL,
+        D3D12_COMPARISON_FUNC_GREATER_EQUAL,
+        D3D12_COMPARISON_FUNC_ALWAYS
+    };
+
+
+    D3D12_DEPTH_STENCIL_DESC desc{};
+    ZEROS(desc);
+    desc.BackFace.StencilFailOp = depthOpArray[depthStencilState.Fields.BackStencilFailOp];
+    desc.BackFace.StencilFunc = depthCompArray[depthStencilState.Fields.BackStencilFunc];
+    desc.BackFace.StencilPassOp = depthOpArray[depthStencilState.Fields.BackStencilPassOp];
+    desc.BackFace.StencilDepthFailOp = depthOpArray[depthStencilState.Fields.BackStencilDepthFailOp];
+
+    desc.BackFace.StencilFailOp = depthOpArray[depthStencilState.Fields.FrontStencilFailOp];
+    desc.BackFace.StencilFunc = depthCompArray[depthStencilState.Fields.FrontStencilFunc];
+    desc.BackFace.StencilPassOp = depthOpArray[depthStencilState.Fields.FrontStencilPassOp];
+    desc.BackFace.StencilDepthFailOp = depthOpArray[depthStencilState.Fields.FrontStencilDepthFailOp];
+
+    desc.DepthEnable = depthStencilState.Fields.DepthEnable;
+    desc.DepthFunc = depthCompArray[depthStencilState.Fields.DepthFunc];
+    desc.StencilEnable = depthCompArray[depthStencilState.Fields.StencilEnable];
+    desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK(depthStencilState.Fields.DepthWriteMask);
+    desc.StencilWriteMask = depthStencilState.Fields.StencilWriteMask;
+    desc.StencilReadMask = depthStencilState.Fields.StencilReadMask;
+
+    return desc;
+}
+
+
+D3D12_RASTERIZER_DESC ToDX12RSState(const Compressed::RasterizerStateDesc& rasterizerState)
+{
+    D3D12_RASTERIZER_DESC result{};
+    ZEROS(result);
+    result.CullMode =
+        std::array<D3D12_CULL_MODE, 4>({
+            D3D12_CULL_MODE_NONE,
+            D3D12_CULL_MODE_NONE,
+            D3D12_CULL_MODE_FRONT,
+            D3D12_CULL_MODE_BACK
+        })
+        [rasterizerState.Fields.CullMode];
+    result.FillMode =
+        std::array<D3D12_FILL_MODE, 3>({
+            D3D12_FILL_MODE(0),
+            D3D12_FILL_MODE_WIREFRAME,
+            D3D12_FILL_MODE_SOLID
+        })
+        [rasterizerState.Fields.FillMode];
+    result.FrontCounterClockwise = rasterizerState.Fields.FrontCounterClockwise;
+    result.DepthClipEnable = rasterizerState.Fields.DepthClipEnable;
+    //result.ScissorEnable = rasterizerState.Fields.ScissorEnable;
+    result.DepthBiasClamp = D3D12_FLOAT32_MAX;
+
+    return result;
 }

@@ -771,6 +771,7 @@ IRenderDevice::INPUTLAYOUTHANDLE RenderDeviceDX12::CreateInputLayout(const Input
     D3D12_INPUT_LAYOUT_DESC inp;
     inp.NumElements = inputLayoutsData.rbegin()->size();
     inp.pInputElementDescs = inputLayoutsData.rbegin()->data();
+    inputLayouts.push_back(inp);
     return (IRenderDevice::INPUTLAYOUTHANDLE)inputLayouts.size();
 }
 
@@ -1001,7 +1002,8 @@ void UploadTextureData(
     for (UINT y = 0; y < bufferDescription.Height; y++)
     {
         UINT8* pScan = m_pDataBegin + placedTexture2D.Offset + y * pitchedDesc.RowPitch;
-        memcpy(pScan, &(((uint8_t*)data)[y * bufferDescription.Width]), BitsPerPixel(bufferDescription.Format) * bufferDescription.Width);
+        memcpy(pScan, &(((uint8_t*)data)[y * bufferDescription.Width]),
+               BitsPerPixel(bufferDescription.Format) * bufferDescription.Width);
     }
 
     uploadBuffer->Unmap(0,NULL);
@@ -1010,15 +1012,15 @@ void UploadTextureData(
     // Copy heap data to texture2D.
     //
     auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                             ToDx12(state), D3D12_RESOURCE_STATE_COPY_DEST);
-    
+                                                          ToDx12(state), D3D12_RESOURCE_STATE_COPY_DEST);
+
     cmdList->CopyTextureRegion(
         &CD3DX12_TEXTURE_COPY_LOCATION(buffer, 0),
         0, 0, 0,
         &CD3DX12_TEXTURE_COPY_LOCATION(uploadBuffer.Get(), placedTexture2D),
         nullptr);
     transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                    D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(state));
+                                                     D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(state));
     cmdList->ResourceBarrier(1, &transtion);
 }
 
@@ -1054,7 +1056,7 @@ void UploadBufferData(
     // Describe the data we want to copy into the default buffer.
     D3D12_SUBRESOURCE_DATA subResourceData;
     subResourceData.pData = data;
-    subResourceData.RowPitch = resDesc.Width * BitsPerPixel(resDesc.Format)/8;
+    subResourceData.RowPitch = resDesc.Width * BitsPerPixel(resDesc.Format) / 8;
     subResourceData.SlicePitch = subResourceData.RowPitch * resDesc.Height;
 
     // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
@@ -1120,11 +1122,14 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
 {
     ID3D12PipelineState* newPipeline;
     D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
+    ZEROS(ps);
     SignatureParams params;
     params.uaCount = Pipeline.uaCount;
     params.cbCount = Pipeline.cbCount;
     params.srvCount = Pipeline.srvCount;
-    ps.pRootSignature = FetchRS(params);
+    auto rs = FetchRS(params);
+    mCommandList->SetGraphicsRootSignature(rs);
+    ps.pRootSignature = rs;
     auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuHandle();
     auto handlesSamplers = mGpuSamplerHeapInterface->GetCurrentGpuHandle();
 
@@ -1149,12 +1154,17 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
     }
     else
     {
-        ps.HS = shaders[((uint32_t)Pipeline.HS)];
-        ps.PS = shaders[((uint32_t)Pipeline.PS)];
-        ps.DS = shaders[((uint32_t)Pipeline.DS)];
-        ps.VS = shaders[((uint32_t)Pipeline.VS)];
-        ps.GS = shaders[((uint32_t)Pipeline.GS)];
-        ps.InputLayout = inputLayouts[(uint32_t)Pipeline.layout];
+        if (Pipeline.HS)
+            ps.HS = shaders[((uint32_t)Pipeline.HS) - 1];
+        if (Pipeline.PS)
+            ps.PS = shaders[((uint32_t)Pipeline.PS) - 1];
+        if (Pipeline.DS)
+            ps.DS = shaders[((uint32_t)Pipeline.DS) - 1];
+        if (Pipeline.VS)
+            ps.VS = shaders[((uint32_t)Pipeline.VS) - 1];
+        if (Pipeline.GS)
+            ps.GS = shaders[((uint32_t)Pipeline.GS) - 1];
+        ps.InputLayout = inputLayouts[(uint32_t)Pipeline.layout-1];
 
         //SetupInputLayout(Pipeline.layout);
         //
@@ -1164,15 +1174,20 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         //SetupDepthStencilState(Pipeline.depthStencilState);
         //SetupRasterizerState(Pipeline.rasterizerState);
         //SetupPrimitiveTopology(Pipeline.topology);
+        ps.BlendState = ToD3D12Blend(Pipeline.blendState);
+        
+        ps.RasterizerState = ToDX12RSState(Pipeline.rasterizerState);
+        ps.DepthStencilState = ToDX12DSState(Pipeline.depthStencilState);
+        ps.PrimitiveTopologyType = ToD3DPT[to_underlying(Pipeline.topology)];
+        ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
+        mCommandList->SetPipelineState(newPipeline);
+        mCommandList->SetGraphicsRootDescriptorTable(0, handlesSRV);
+        mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
+        newPipeline->Release();
     }
-    ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
-    mCommandList->SetPipelineState(newPipeline);
-    mCommandList->SetGraphicsRootDescriptorTable(0, handlesSRV);
-    mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
-    newPipeline->Release();
 }
 
-D3D12_VIEWPORT* d3d12viewports;
+D3D12_VIEWPORT d3d12viewports[20];
 
 void RenderDeviceDX12::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
 {
