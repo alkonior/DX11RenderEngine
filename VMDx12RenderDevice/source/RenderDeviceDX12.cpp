@@ -816,6 +816,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
             indexBuffers.push_back(desc);
 
             output.data = indexBuffers.size();
+            break;
         }
         case GpuResourceView::EViewType::VB:
         {
@@ -1120,19 +1121,6 @@ void RenderDeviceDX12::SyncResourcesState(GpuResource* data[], size_t size)
 
 void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
 {
-    ID3D12PipelineState* newPipeline;
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
-    ZEROS(ps);
-    SignatureParams params;
-    params.uaCount = Pipeline.uaCount;
-    params.cbCount = Pipeline.cbCount;
-    params.srvCount = Pipeline.srvCount;
-    auto rs = FetchRS(params);
-    mCommandList->SetGraphicsRootSignature(rs);
-    ps.pRootSignature = rs;
-    auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuHandle();
-    auto handlesSamplers = mGpuSamplerHeapInterface->GetCurrentGpuHandle();
-
     if (Pipeline.isCS)
     {
         //    SetupShader(Pipeline.CS, EShaderType::COMPUTE_SHADER);
@@ -1154,6 +1142,19 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
     }
     else
     {
+        ID3D12PipelineState* newPipeline;
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
+        ZEROS(ps);
+        SignatureParams params;
+        params.uaCount = Pipeline.uaCount;
+        params.cbCount = Pipeline.cbCount;
+        params.srvCount = Pipeline.srvCount;
+        auto rs = FetchRS(params);
+        mCommandList->SetGraphicsRootSignature(rs);
+        ps.pRootSignature = rs;
+        auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuHandle();
+        auto handlesSamplers = mGpuSamplerHeapInterface->GetCurrentGpuHandle();
+
         if (Pipeline.HS)
             ps.HS = shaders[((uint32_t)Pipeline.HS) - 1];
         if (Pipeline.PS)
@@ -1164,7 +1165,7 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
             ps.VS = shaders[((uint32_t)Pipeline.VS) - 1];
         if (Pipeline.GS)
             ps.GS = shaders[((uint32_t)Pipeline.GS) - 1];
-        ps.InputLayout = inputLayouts[(uint32_t)Pipeline.layout-1];
+        ps.InputLayout = inputLayouts[(uint32_t)Pipeline.layout - 1];
 
         //SetupInputLayout(Pipeline.layout);
         //
@@ -1175,7 +1176,7 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         //SetupRasterizerState(Pipeline.rasterizerState);
         //SetupPrimitiveTopology(Pipeline.topology);
         ps.BlendState = ToD3D12Blend(Pipeline.blendState);
-        
+
         ps.RasterizerState = ToDX12RSState(Pipeline.rasterizerState);
         ps.DepthStencilState = ToDX12DSState(Pipeline.depthStencilState);
         ps.PrimitiveTopologyType = ToD3DPT[to_underlying(Pipeline.topology)];
@@ -1364,11 +1365,14 @@ void RenderDeviceDX12::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTar
     D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
     for (int i = 0; i < DX12Limitations::maxRTV; i++)
     {
-        if (renderTargets != nullptr && i < num && renderTargets[i].data != 0)
+        if (renderTargets != nullptr && i < num)
         {
             D3D12_CPU_DESCRIPTOR_HANDLE handle;
             handle.ptr = renderTargets[i].data;
-            renderTargetsHandles[i] = mRtvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+            if (renderTargets[i].data == 0)
+                renderTargetsHandles[i] =  CurrentBackBufferView();
+            else
+                renderTargetsHandles[i] = mRtvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
         }
     }
     if (depthStencilBuffer.data != 0)
