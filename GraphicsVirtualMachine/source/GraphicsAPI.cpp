@@ -83,7 +83,7 @@ void GraphicsApi::DrawIndexedPrimitives( int32_t primitiveCount, int32_t startIn
         graphicsMachine->PushPSC(*ps);
         wasPSUpdated = false;
     }
-    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED,{primitiveCount,startIndex,baseVertex,0,0}});
+    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED,{primitiveCount,startIndex,baseVertex,1,0}});
 }
 
 void GraphicsApi::DrawInstancedPrimitives(int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount)

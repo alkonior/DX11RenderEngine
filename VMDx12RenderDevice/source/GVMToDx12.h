@@ -861,6 +861,7 @@ D3D12_RASTERIZER_DESC ToDX12RSState(const Compressed::RasterizerStateDesc& raste
     result.DepthClipEnable = rasterizerState.Fields.DepthClipEnable;
     //result.ScissorEnable = rasterizerState.Fields.ScissorEnable;
     result.DepthBiasClamp = D3D12_FLOAT32_MAX;
+    result.MultisampleEnable = false;
 
     return result;
 }

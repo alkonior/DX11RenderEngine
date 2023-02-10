@@ -1175,6 +1175,8 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         ps.DepthStencilState = ToDX12DSState(Pipeline.depthStencilState);
         ps.PrimitiveTopologyType = ToD3DPT_Type[to_underlying(Pipeline.topology)];
         ps.NumRenderTargets = Pipeline.rtCount;
+        ps.SampleDesc.Count = 1;
+        ps.SampleDesc.Quality = 0;
         for (int i = 0; i < Pipeline.rtCount; i++)
         {
             ps.RTVFormats[i] = ToD3D_TextureFormat[to_underlying(Pipeline.RTVFormats[i])];
