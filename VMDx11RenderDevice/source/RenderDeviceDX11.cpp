@@ -625,13 +625,12 @@ IRenderDevice::IInputLayout* RenderDeviceDX11::CreateInputLayout(const InputAsse
 
     return reinterpret_cast<IRenderDevice::IInputLayout*>(inputLayout);
 }
-void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch,
+
+void RenderDeviceDX11::SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch,
     int32_t srcDepthPitch)
 {
     D3D11_BOX dstBox;
     
-       
-
     //int32_t blockSize = Texture_GetBlockSize(d3dTexture->format);
 
     ///if (blockSize > 1) {
@@ -667,6 +666,29 @@ void RenderDeviceDX11::SetResourceData(const GpuResource& resource, uint16_t dst
                 ));
     }
     //SDL_LockMutex(renderer->ctxLock);
+}
+
+void RenderDeviceDX11::UploadSubresourceData(const GpuResource& resource, uint16_t dstSubresource,
+        const size_t dataSize, const void* pSrcData, int32_t srcRowPitch,
+    int32_t srcDepthPitch)
+{
+    
+    D3D11_BOX dstBox;
+    dstBox.left = 0;
+    dstBox.top = 0;
+    dstBox.front = 0;
+    dstBox.right = dataSize;
+    dstBox.bottom = 1;
+    dstBox.back = 1;
+
+    GFX_THROW_INFO_ONLY(context->UpdateSubresource(
+        reinterpret_cast<ID3D11Resource*>(resource.resource),
+        dstSubresource,
+        &dstBox,
+        pSrcData,
+        srcRowPitch,
+        srcDepthPitch
+    ));
 }
 
 bool ToD3D11Viewports(const Compressed::ViewportDesc viewports[], D3D11_VIEWPORT d3d11viewports[20], uint8_t num)

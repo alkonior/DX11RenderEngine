@@ -166,7 +166,8 @@ private:
     ID3D12RootSignature* FetchRS(SignatureParams params);
 public:
     
-    void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+    void UploadSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const size_t dataSize,  const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+    void SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
 #pragma region ResourceSynchronization
 

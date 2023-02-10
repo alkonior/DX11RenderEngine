@@ -168,7 +168,8 @@ protected:
     IShader* CreateShader(const ShaderDesc& desc) override;
     IInputLayout* CreateInputLayout(const InputAssemblerDeclarationDesc& desc, const ShaderDesc& Shader) override;
     
-    void SetResourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+    void SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+    void UploadSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const size_t dataSize, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
      virtual void Draw(const DrawCall& call) override;
     void Present() override;

@@ -9,9 +9,9 @@ Resource* VirtualMachine::CreateResource(const ResourceDesc& desc)
     auto& resource = resourcesManager.CreateResource(desc);
     //resource.resource = RenderDevice->CreateResource(resource.resourceDescription);
     //todo Command
-    
+
     PushData((void*)resource.id);
-    
+
     if (resource.resource == nullptr)
         PushCommand(EMachineCommands::CREATE_RESOURCE);
     else
@@ -226,7 +226,7 @@ DepthStencilView* VirtualMachine::CreateDepthStencilsView(const DepthStencilView
 
     PushData((void*)resourceView.id);
     PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
-    
+
     return reinterpret_cast<DepthStencilView*>(resourceView.id);
 }
 
@@ -237,14 +237,14 @@ UATargetView* VirtualMachine::CreateUATargetView(const UATargetViewDesc& desc)
 
     PushData((void*)resourceView.id);
     PushCommand(EMachineCommands::CREATE_RESOURCE_VIEW);
-    
+
     return reinterpret_cast<UATargetView*>(resourceView.id);
 }
 
 void VirtualMachine::AddDisposeResource(const Resource* resource)
 {
     auto& gpuResource = resourcesManager.Resources[(uintptr_t)resource];
-    for (auto& resourceView : gpuResource.views )
+    for (auto& resourceView : gpuResource.views)
     {
         RenderDevice->DestroyResourceView(resourcesManager.GetRealResourceView(resourceView));
     }
@@ -276,7 +276,7 @@ InputLayout* VirtualMachine::CreateInputLayout(const InputAssemblerDeclarationDe
 
 
 void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource, const UBox& rect,
-                                     const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+    const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
 {
     //PushData((void*)resource);
     auto& Resource = resourcesManager.GetResource(resource);
@@ -289,9 +289,9 @@ void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource
     {
         resource,
         {rect,dstSubresource,srcRowPitch,srcDepthPitch,dataSize},
-        dataQueue.size()+sizeof(SetResourceDataDesc)
+        dataQueue.size() + sizeof(SetResourceDataDesc)
     };
-    
+
     PushData(description);
     PushData(pSrcData, dataSize);
     PushCommand(EMachineCommands::SET_RESOURCE_DATA);
@@ -299,24 +299,58 @@ void VirtualMachine::SetResourceData(Resource* resource, uint16_t dstSubresource
     //
 }
 
+void VirtualMachine::UploadResourceData(Resource* resource, uint16_t dstSubresource, uint32_t dataSize, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch)
+{
+    //PushData((void*)resource);
+    auto& Resource = resourcesManager.GetResource(resource);
+    //+  ((Resource.resourceDescription.Dimension == EResourceDimension::RESOURCE_DIMENSION_BUFFER) ? 1 : 0));
+
+    UploadResourceDataDesc description =
+    {
+        resource,
+        {dstSubresource,srcRowPitch,srcDepthPitch,dataSize},
+        dataQueue.size() + sizeof(SetResourceDataDesc)
+    };
+
+    PushData(description);
+    PushData(pSrcData, dataSize);
+    PushCommand(EMachineCommands::UPLOAD_RESOURCE_DATA);
+}
+
 void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0u,0u,offset + dataLength,1u,1u};
-    SetResourceData(vertexBuffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
+#ifdef _DEBUG
+    if (offset == 0 && dataLength == resourcesManager.GetResource(vertexBuffer).resourceDescription.Width)
+        UploadResourceData(vertexBuffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
+    else
+    {
+        throw std::exception("Unsupported.");
+    }
+#else
+        UploadResourceData(vertexBuffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
+#endif
+    
 }
 
 void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcData, uint32_t dataLength, uint32_t offset,
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
-    UBox rect{offset,0u,0u,offset + dataLength,1u,1u};
-    SetResourceData(buffer, 0, rect, pSrcData, srcRowPitch, srcDepthPitch);
+#ifdef _DEBUG
+    if (offset == 0 && dataLength == resourcesManager.GetResource(buffer).resourceDescription.Width)
+        UploadResourceData(buffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
+    else
+    {
+        throw std::exception("Unsupported.");
+    }
+#else
+    UploadResourceData(buffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
+#endif
 }
 
 void VirtualMachine::SetConstBufferData(ConstBuffer* constBuffer, const void* data, uint32_t dataSize, uint32_t offset)
 {
-    UBox rect{offset,0u,0u,offset + dataSize,1u,1u};
-    SetResourceData(constBuffer, 0, rect, data, 0, 0);
+    UploadResourceData(constBuffer, 0, dataSize, data, 0, 0);
 }
 
 
@@ -327,12 +361,12 @@ void VirtualMachine::ClearState()
 }
 void VirtualMachine::ClearRenderTarget(RenderTargetView* rtView, FColor color)
 {
-    PushData(ClearRenderTargetDesc{rtView, color});
+    PushData(ClearRenderTargetDesc{rtView,color});
     PushCommand(EMachineCommands::CLEAR_RT);
 }
 void VirtualMachine::ClearDepthStencil(DepthStencilView* dsView, float depth, int8_t stencil)
-{ 
-    PushData(ClearDepthStencilDesc{dsView, depth, stencil});
+{
+    PushData(ClearDepthStencilDesc{dsView,depth,stencil});
     PushCommand(EMachineCommands::CLEAR_DS);
 }
 

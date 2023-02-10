@@ -112,7 +112,16 @@ public:
     
     virtual void* GetNativeTexture(RESOURCEVIEWHANDLE view) = 0;
 
-    virtual void SetResourceData(
+    virtual void UploadSubresourceData(
+        const GpuResource& resource,
+        uint16_t dstSubresource,
+        const size_t dataSize,
+        const void* pSrcData,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    ) = 0;
+    
+    virtual void SetSubresourceData(
         const GpuResource& resource,
         uint16_t dstSubresource,
         const UBox& rect,
@@ -170,6 +179,8 @@ struct PipelineDescription
     uint8_t uaCount  = 0;
     uint8_t cbCount  = 0;
     uint8_t srvCount = 0;
+    uint8_t rtCount = 0;
+    GVM::EFormat RTVFormats[8];
 
     //void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num);
     //void SetupBlendState(const Compressed::CoreBlendDesc& blendState);

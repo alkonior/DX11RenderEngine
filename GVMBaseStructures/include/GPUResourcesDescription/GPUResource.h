@@ -25,7 +25,7 @@ public:
     EViewType type = EViewType::UNKNOWN;
     bool isRequiredUpdate = true;
 
-    GpuResourceView(){};
+    GpuResourceView(): rtViewDescription({nullptr, false, EFormat::FORMAT_R8G8B8A8_UNORM}) {};
     GpuResourceView(ResourceView* id, const ConstBufferViewDesc& desc);
     GpuResourceView(ResourceView* id, const DepthStencilViewDesc& desc);
     GpuResourceView(ResourceView* id, const RenderTargetViewDesc& desc);

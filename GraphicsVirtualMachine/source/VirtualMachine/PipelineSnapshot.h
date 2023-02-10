@@ -154,6 +154,7 @@ enum class EMachineCommands : uint8_t {
     CREATE_SHADER,
     UPDATE_RESOURCE,
     SET_RESOURCE_DATA,
+    UPLOAD_RESOURCE_DATA,
     COPY_RESOURCE_DATA,
 };
 
@@ -161,6 +162,16 @@ struct SetResourceDataDesc{
     Resource* resource;
     struct ResourceUpdateData {
         UBox rect = {};
+        uint16_t dstSubresource = 0;
+        int32_t srcRowPitch = 0;
+        int32_t srcDepthPitch = 0;
+        uint32_t dataSize = 0;
+    } params;
+    uint32_t shift;
+};
+struct UploadResourceDataDesc{
+    Resource* resource;
+    struct ResourceUpdateData {
         uint16_t dstSubresource = 0;
         int32_t srcRowPitch = 0;
         int32_t srcDepthPitch = 0;

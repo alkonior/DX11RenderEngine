@@ -53,12 +53,20 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     if (ps->VS != nullptr && ps->PS != nullptr)
     {
         pipelineDescription.isCS = false;
+        pipelineDescription.rtCount = ps->renderTargetsNum;
         auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data + ps->RenderTargetsShift);
         for (int i = 0; i < ps->renderTargetsNum; i++)
         {
             pipelineDescription.blendState.BlendStates[i] = RenderTargets[i].BlendState;
-            renderTargets[i] = (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.
-                GetRealResourceView(RenderTargets[i].rtv);
+            auto rtvView =  resourcesManager.GetResourceView(RenderTargets[i].rtv);
+            renderTargets[i] = (IRenderDevice::RENDERTARGETVIEWHANDLE)rtvView.view;
+            if(rtvView.rtViewDescription.MakeDefault)
+            {
+                auto& res = resourcesManager.GetResource(rtvView.resource);
+                pipelineDescription.RTVFormats[i] = res.resourceDescription.Format;
+            }
+            else
+                pipelineDescription.RTVFormats[i] = rtvView.rtViewDescription.Format;
         }
 
 
@@ -293,6 +301,23 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
+    case EMachineCommands::UPLOAD_RESOURCE_DATA:
+        {
+            // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+            auto& description = PullData<UploadResourceDataDesc>();
+            PullPointer(description.params.dataSize);
+            renderGraph.AddCommand(
+                {
+                    EMachineCommands::SET_RESOURCE_DATA,
+                    (void*)
+                    ((uint8_t*)&description - dataQueue.data())
+                },
+                {},
+                {description.resource}
+            );
+            break;
+        }
+
     case EMachineCommands::SETUP_PIPELINE:
         {
             auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
@@ -449,9 +474,22 @@ void VirtualMachine::RunVM()
                 {
                     // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
                     auto& desc = *(SetResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
-                    RenderDevice->SetResourceData(resourcesManager.GetResource(desc.resource),
+                    RenderDevice->SetSubresourceData(resourcesManager.GetResource(desc.resource),
                                                   desc.params.dstSubresource,
                                                   desc.params.rect,
+                                                  dataQueue.data() + desc.shift,
+                                                  desc.params.srcRowPitch,
+                                                  desc.params.srcDepthPitch);
+                    break;
+                }
+
+                case EMachineCommands::UPLOAD_RESOURCE_DATA:
+                {
+                    // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                    auto& desc = *(UploadResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
+                    RenderDevice->UploadSubresourceData(resourcesManager.GetResource(desc.resource),
+                                                  desc.params.dstSubresource,
+                                                  desc.params.dataSize,
                                                   dataQueue.data() + desc.shift,
                                                   desc.params.srcRowPitch,
                                                   desc.params.srcDepthPitch);

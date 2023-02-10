@@ -174,6 +174,16 @@ public:
         int32_t srcDepthPitch = 0
     );
 
+
+    void UploadResourceData(
+        Resource* resource,
+        uint16_t dstSubresource,
+        uint32_t dataSize, 
+        const void* pSrcData,
+        int32_t srcRowPitch = 0,
+        int32_t srcDepthPitch = 0
+    );
+
     void SetVertexBufferData(
         VertexBuffer* vertexBuffer,
         const void* pSrcData,
