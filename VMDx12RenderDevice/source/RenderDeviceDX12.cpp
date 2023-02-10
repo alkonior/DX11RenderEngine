@@ -84,6 +84,11 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
             // This warning occurs when using capture frame while graphics debugging.
             D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE,
             // This warning occurs when using capture frame while graphics debugging.
+            D3D12_MESSAGE_ID_SET_INDEX_BUFFER_INVALID,
+            // This warning occurs when no index buffer.
+            D3D12_MESSAGE_ID_CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE,
+            D3D12_MESSAGE_ID_COMMAND_LIST_DRAW_INDEX_BUFFER_NOT_SET,
+
         };
 
         D3D12_INFO_QUEUE_FILTER NewFilter = {};
@@ -379,6 +384,9 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
         rtvHeapHandle.Offset(1, mRtvDescriptorSize);
     }
 
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+        D3D12_RESOURCE_STATE_PRESENT,
+        D3D12_RESOURCE_STATE_RENDER_TARGET));
 
     //GPU Descriptor heaps
     CreateDH(
@@ -1184,9 +1192,15 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
         mCommandList->SetPipelineState(newPipeline);
         mCommandList->IASetPrimitiveTopology(ToD3DPT[to_underlying(Pipeline.topology)]);
+
+        ID3D12DescriptorHeap* ppHeaps[] = {
+            mGpuShvCbUaHeapInterface->Heap(),
+            mGpuSamplerHeapInterface->Heap()
+        };
+        mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
         mCommandList->SetGraphicsRootDescriptorTable(0, handlesSRV);
         mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
-        newPipeline->Release();
+        pipelineStates.push_back(newPipeline);
     }
 }
 
@@ -1285,20 +1299,19 @@ void RenderDeviceDX12::FlushCommandQueue()
 void RenderDeviceDX12::Present()
 {
     // Done recording commands.
+
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+        D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATE_PRESENT));
+
     ThrowIfFailed(mCommandList->Close());
 
     // Add the command list to the queue for execution.
     ID3D12CommandList* cmdsLists[] = {mCommandList.Get()};
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-        D3D12_RESOURCE_STATE_PRESENT,
-        D3D12_RESOURCE_STATE_RENDER_TARGET));
 
     mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-        D3D12_RESOURCE_STATE_RENDER_TARGET,
-        D3D12_RESOURCE_STATE_PRESENT));
     // swap the back and front buffers
     ThrowIfFailed(mSwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
@@ -1316,7 +1329,16 @@ void RenderDeviceDX12::Present()
     // A command list can be reset after it has been added to the command queue via ExecuteCommandList.
     // Reusing the command list reuses memory.
     ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+
+
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+        D3D12_RESOURCE_STATE_PRESENT,
+        D3D12_RESOURCE_STATE_RENDER_TARGET));
+
     uploadBuffers.clear();
+    pipelineStates.clear();
+    mGpuShvCbUaHeapInterface->next = 0;
+    mGpuSamplerHeapInterface->next = 0;
 }
 
 void RenderDeviceDX12::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffersOut[], uint8_t num)

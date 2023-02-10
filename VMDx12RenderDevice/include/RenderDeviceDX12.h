@@ -148,6 +148,7 @@ public:
     void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
 private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadBuffers;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
 
     std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
     D3D12_CPU_DESCRIPTOR_HANDLE FetchSamplerState(const Compressed::SamplerStateDesc& state);
