@@ -75,8 +75,8 @@ namespace DirectX
             uint32_t offsetIntoHeap,
             const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor);
         
-        uint32_t writeNext;
     public:
+        uint32_t writeNext;
         D3D12_CPU_DESCRIPTOR_HANDLE __cdecl WriteNextDescriptors(
             _In_ ID3D12Device* device,
             _In_reads_(descriptorCount) const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptors,

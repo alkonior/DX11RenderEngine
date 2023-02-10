@@ -308,7 +308,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             PullPointer(description.params.dataSize);
             renderGraph.AddCommand(
                 {
-                    EMachineCommands::SET_RESOURCE_DATA,
+                    EMachineCommands::UPLOAD_RESOURCE_DATA,
                     (void*)
                     ((uint8_t*)&description - dataQueue.data())
                 },

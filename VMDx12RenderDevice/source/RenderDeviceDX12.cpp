@@ -1339,6 +1339,8 @@ void RenderDeviceDX12::Present()
     pipelineStates.clear();
     mGpuShvCbUaHeapInterface->next = 0;
     mGpuSamplerHeapInterface->next = 0;
+    mGpuShvCbUaHeapInterface->writeNext = 0;
+    mGpuSamplerHeapInterface->writeNext = 0;
 }
 
 void RenderDeviceDX12::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffersOut[], uint8_t num)
