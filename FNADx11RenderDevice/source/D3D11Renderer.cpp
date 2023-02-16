@@ -10,8 +10,8 @@
 
 
 
-//#include "RenderDeviceDX12.h"
-#include "RenderDeviceDX11.h"
+#include "RenderDeviceDX12.h"
+//#include "RenderDeviceDX11.h"
 #include "DX11ShadersCompiler.h"
 #include "GraphicsAPI.h"
 
@@ -70,10 +70,19 @@ void* D3D11Renderer::GetContext()
 #endif
 }
 
+#ifdef DX12
+typedef GVM::Dx12PlatformHandle PlatformHandle;
+typedef GVM::RenderDeviceDX12 RenderDevice;
+#endif
+#ifdef DX11
+typedef GVM::Dx11PlatformHandle PlatformHandle;
+typedef GVM::RenderDeviceDX11 RenderDevice;
+#endif
+
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
-    auto ppppp = new GVM::Dx11PlatformHandle();
+    auto ppppp = new PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle;
     GVM::RenderDeviceInitParams init{
         presentationParameters.BackBufferSize.Width,
@@ -82,7 +91,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
 
-    testRD = new GVM::RenderDeviceDX11(init, debugMode);
+    testRD = new RenderDevice(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
     delete ppppp;
 

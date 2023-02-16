@@ -1030,10 +1030,10 @@ void UploadBufferData(
     ID3D12Device* device,
     ID3D12GraphicsCommandList* cmdList,
     const void* data,
-    ID3D12Resource* buffer,
-    GpuResource::ResourceState state,
+    const GpuResource& resource,
     Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer)
 {
+    auto buffer = (ID3D12Resource*)resource.resource;
     auto bufferDescription = buffer->GetDesc();
     //if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
     //    return UploadTextureData(device, cmdList, data, buffer, state, uploadBuffer);
@@ -1058,19 +1058,20 @@ void UploadBufferData(
     // Describe the data we want to copy into the default buffer.
     D3D12_SUBRESOURCE_DATA subResourceData;
     subResourceData.pData = data;
-    subResourceData.RowPitch = resDesc.Width * BitsPerPixel(resDesc.Format) / 8;
+    
+    subResourceData.RowPitch = resource.resourceDescription.Width * BitsPerPixel(resDesc.Format) / 8;
     subResourceData.SlicePitch = subResourceData.RowPitch * resDesc.Height;
 
     // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
     // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
     // the intermediate upload heap data will be copied to mBuffer.
     auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-        ToDx12(state), D3D12_RESOURCE_STATE_COPY_DEST);
+        ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
     cmdList->ResourceBarrier(1, &transtion);
 
     UpdateSubresources<1>(cmdList, buffer, uploadBuffer.Get(), 0, 0, 1, &subResourceData);
     transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-        D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(state));
+        D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
     cmdList->ResourceBarrier(1, &transtion);
 
     // Note: uploadBuffer has to be kept alive after the above function calls because
@@ -1087,8 +1088,7 @@ void RenderDeviceDX12::UploadSubresourceData(const GpuResource& resource, uint16
         md3dDevice.Get(),
         mCommandList.Get(),
         pSrcData,
-        (ID3D12Resource*)resource.resource,
-        resource.currentState,
+        resource,
         uploadBuffers[uploadBuffers.size() - 1]
     );
 }
@@ -1154,8 +1154,8 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         auto rs = FetchRS(params);
         mCommandList->SetGraphicsRootSignature(rs);
         ps.pRootSignature = rs;
-        auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuHandle();
-        auto handlesSamplers = mGpuSamplerHeapInterface->GetCurrentGpuHandle();
+        auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuWriteHandle();
+        auto handlesSamplers = mGpuSamplerHeapInterface->GetCurrentGpuWriteHandle();
 
         if (Pipeline.HS)
             ps.HS = shaders[((uint32_t)Pipeline.HS) - 1];
