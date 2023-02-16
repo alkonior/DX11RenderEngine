@@ -9,7 +9,9 @@
 //#include "RenderDeviceDX11.h"
 
 
-#include "RenderDeviceDX12.h"
+
+//#include "RenderDeviceDX12.h"
+#include "RenderDeviceDX11.h"
 #include "DX11ShadersCompiler.h"
 #include "GraphicsAPI.h"
 
@@ -51,17 +53,27 @@ void D3D11Renderer::GetDrawableSize(void* window, int32_t* w, int32_t* h)
 
 void* D3D11Renderer::GetDevice()
 {
+#ifdef DX12
   return  ((GVM::RenderDeviceDX12*)testRD)->md3dDevice.Get();
+#endif
+#ifdef DX11
+  return  ((GVM::RenderDeviceDX11*)testRD)->device.Get();
+#endif
 }
 void* D3D11Renderer::GetContext()
 {
+#ifdef DX12
   return  ((GVM::RenderDeviceDX12*)testRD)->mCommandList.Get();
+#endif
+#ifdef DX11
+  return  ((GVM::RenderDeviceDX11*)testRD)->context.Get();
+#endif
 }
 
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
-    auto ppppp = new GVM::Dx12PlatformHandle();
+    auto ppppp = new GVM::Dx11PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle;
     GVM::RenderDeviceInitParams init{
         presentationParameters.BackBufferSize.Width,
@@ -70,7 +82,7 @@ D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint
         GVM::EPresentInterval::PRESENT_INTERVAL_IMMEDIATE
     };
 
-    testRD = new GVM::RenderDeviceDX12(init, debugMode);
+    testRD = new GVM::RenderDeviceDX11(init, debugMode);
     testApi = new GVM::GraphicsApi(testRD);
     delete ppppp;
 

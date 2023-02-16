@@ -309,7 +309,7 @@ void VirtualMachine::UploadResourceData(Resource* resource, uint16_t dstSubresou
     {
         resource,
         {dstSubresource,srcRowPitch,srcDepthPitch,dataSize},
-        dataQueue.size() + sizeof(SetResourceDataDesc)
+        dataQueue.size() + sizeof(UploadResourceDataDesc)
     };
 
     PushData(description);

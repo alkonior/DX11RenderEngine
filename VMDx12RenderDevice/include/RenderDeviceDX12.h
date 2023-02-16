@@ -6,7 +6,6 @@
 #define DX12
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
-#undef DX12
 
 
 namespace DirectX {

@@ -7,7 +7,7 @@
 #define DX11
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
-#undef DX11
+
 
 
 

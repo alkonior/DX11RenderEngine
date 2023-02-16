@@ -672,6 +672,18 @@ void RenderDeviceDX11::UploadSubresourceData(const GpuResource& resource, uint16
         const size_t dataSize, const void* pSrcData, int32_t srcRowPitch,
     int32_t srcDepthPitch)
 {
+    if (resource.resourceBindings & to_underlying(EBindFlags::BIND_CONSTANT_BUFFER))
+    {
+        GFX_THROW_INFO_ONLY(context->UpdateSubresource(
+         reinterpret_cast<ID3D11Resource*>(resource.resource),
+         dstSubresource,
+         NULL,
+         pSrcData,
+         srcRowPitch,
+         srcDepthPitch
+     ));
+        return;
+    }
     
     D3D11_BOX dstBox;
     dstBox.left = 0;
