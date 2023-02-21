@@ -72,6 +72,10 @@ struct UBox
         Back(Back)
     {
     };
+    inline size_t GetSize() const
+    {
+        return (Bottom-Top)*(Right-Left)*(Back-Front);
+    };
 
     uint32_t Left;
     uint32_t Top;

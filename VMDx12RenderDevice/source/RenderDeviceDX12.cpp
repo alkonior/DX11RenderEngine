@@ -1041,9 +1041,10 @@ void UploadBufferData(
     auto heapDesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 
     auto resDesc = buffer->GetDesc();;
-    auto requiredSize = resDesc.Width *
-        resDesc.Height *
-        resDesc.DepthOrArraySize * BitsPerPixel(bufferDescription.Format) / 8;
+    UINT64 requiredSize;
+    //  = resDesc.Width *
+    //    resDesc.Height *
+    //    resDesc.DepthOrArraySize * BitsPerPixel(bufferDescription.Format) / 8;
     // In order to copy CPU memory data into our default buffer, we need to create
     // an intermediate upload heap. 
     device->GetCopyableFootprints(&resDesc, 0, 1, 0, nullptr, nullptr, nullptr, &requiredSize);
@@ -1083,19 +1084,136 @@ void UploadBufferData(
 void RenderDeviceDX12::UploadSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const size_t dataSize, const void* pSrcData, int32_t srcRowPitch,
     int32_t srcDepthPitch)
 {
-    uploadBuffers.push_back(nullptr);
-    UploadBufferData(
-        md3dDevice.Get(),
-        mCommandList.Get(),
-        pSrcData,
+    //uploadBuffers.push_back(nullptr);
+    UBox box;
+    box.Top = 0;
+    box.Left = 0;
+    box.Front = 0;
+    box.Right = dataSize;
+    box.Bottom = 1;
+    box.Back = 1;
+    SetSubresourceData(
         resource,
-        uploadBuffers[uploadBuffers.size() - 1]
+        dstSubresource,
+        box,
+        pSrcData,
+        srcRowPitch,
+        srcDepthPitch
     );
+
+    
 }
 
 void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch,
     int32_t srcDepthPitch)
 {
+ 
+    uploadBuffers.push_back(nullptr);
+    
+    auto buffer = (ID3D12Resource*)resource.resource;
+    auto bufferDescription = buffer->GetDesc();
+    
+    if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
+        uploadBuffers.push_back(nullptr);
+    auto& uploadBuffer = uploadBuffers[uploadBuffers.size()-1]; 
+    //if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
+    //    return UploadTextureData(device, cmdList, data, buffer, state, uploadBuffer);
+
+    auto heapDesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+    auto resDesc = buffer->GetDesc();;
+    auto requiredSize = rect.GetSize() * BitsPerPixel(bufferDescription.Format) / 8;
+    // In order to copy CPU memory data into our default buffer, we need to create
+    // an intermediate upload heap. 
+    //md3dDevice->GetCopyableFootprints(&resDesc, 0, 1, 0, nullptr, nullptr, nullptr, &requiredSize);
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &heapDesUpload,
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer( requiredSize ),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&uploadBuffer)));
+
+    // Describe the data we want to copy into the default buffer.
+    D3D12_SUBRESOURCE_DATA subResourceData;
+    subResourceData.pData = pSrcData;
+    
+    subResourceData.RowPitch = (rect.Right - rect.Left) * BitsPerPixel(resDesc.Format) / 8;
+    subResourceData.SlicePitch = subResourceData.RowPitch * (rect.Bottom - rect.Top);
+    
+    // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
+    // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
+    // the intermediate upload heap data will be copied to mBuffer.
+
+    auto pDestinationResource = buffer;
+    
+    BYTE* pData;
+    HRESULT hr = uploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&pData));
+    if (FAILED(hr))
+    {
+        return;
+    }
+    
+    D3D12_MEMCPY_DEST DestData = { pData, requiredSize, requiredSize };
+    MemcpySubresource(&DestData, &subResourceData, requiredSize, 1, 1);
+    
+    uploadBuffer->Unmap(0, NULL);
+
+    
+    auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+        ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
+    if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
+    {
+        auto& m_texture = uploadBuffers[uploadBuffers.size()-2];
+        D3D12_RESOURCE_DESC textureDesc = bufferDescription;
+        textureDesc.Width = (rect.Right - rect.Left);
+        textureDesc.Height =  (rect.Bottom - rect.Top);
+        textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+        ThrowIfFailed(md3dDevice->CreateCommittedResource(
+            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+            D3D12_HEAP_FLAG_NONE,
+            &textureDesc,
+            D3D12_RESOURCE_STATE_COPY_DEST,
+            nullptr,
+            IID_PPV_ARGS(&m_texture)));
+
+        UpdateSubresources(mCommandList.Get(), m_texture.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+        D3D12_RESOURCE_BARRIER transtions[2];
+        transtions[0] = CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        transtions[1] = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+            ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
+
+        
+        
+        mCommandList->ResourceBarrier(2, transtions);
+        
+        CD3DX12_TEXTURE_COPY_LOCATION Dst(pDestinationResource, 0 );
+        CD3DX12_TEXTURE_COPY_LOCATION Src(m_texture.Get(), dstSubresource);
+        D3D12_BOX box;
+        box.back = 0;
+        box.left = 0;
+        box.top = 0;
+        box.right = textureDesc.Width;
+        box.bottom = textureDesc.Height;
+        box.front = textureDesc.DepthOrArraySize;
+        
+        mCommandList->CopyTextureRegion(&Dst, rect.Left, rect.Top, rect.Front, &Src, nullptr);
+        transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+            D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+        mCommandList->ResourceBarrier(1, &transtion);
+    }else
+    {
+        transtion  = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+            ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
+        mCommandList->ResourceBarrier(1, &transtion);
+        mCommandList->CopyBufferRegion(buffer, rect.Left, uploadBuffer.Get(),0, requiredSize);
+        transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+        D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+        mCommandList->ResourceBarrier(1, &transtion);
+    }
+    
     //todo Обсудить ибо грустно и 0 идей... Вроде идея есть.... текстуры говно....
 }
 
