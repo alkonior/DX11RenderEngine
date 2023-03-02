@@ -100,6 +100,12 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
         NewFilter.DenyList.pIDList = DenyIds;
 
         ThrowIfFailed(pInfoQueue->PushStorageFilter(&NewFilter));
+
+        //ComPtr<ID3D12Debug> spDebugController0;
+        //ComPtr<ID3D12Debug1> spDebugController1;
+        //ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0)));
+        //ThrowIfFailed(spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1)));
+        //spDebugController1->SetEnableGPUBasedValidation(true);
     }
 #endif
 
@@ -134,6 +140,18 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
         CreateSwapChain(initParams);
         CreateRtvAndDsvDescriptorHeaps();
 
+        currentBufferUploadBufferSize = 10000;
+
+        ThrowIfFailed(md3dDevice->CreateCommittedResource(
+            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            D3D12_HEAP_FLAG_NONE,
+            &CD3DX12_RESOURCE_DESC::Buffer( currentBufferUploadBufferSize ),
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(&currentBufferUploadBuffer)));
+        bufferUploadBuffers.push_back(currentBufferUploadBuffer);
+
+        ThrowIfFailed(currentBufferUploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&currentBufferUploadBufferPtr)));
         /*
 
         D3D12_GRAPHICS_PIPELINE_STATE_DESC ps;
@@ -745,6 +763,13 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
         ThrowIfFailed(md3dDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
             IID_PPV_ARGS(&rootSignature)));
         RootSignatures.push_back({params.data,rootSignature});
+
+        std::wstring psName = L"RootSignature_" ;
+        psName += std::wstring(L"cb")+ std::to_wstring(params.cbCount)+std::wstring(L"_").c_str();
+        psName += std::wstring(L"sam")+ std::to_wstring(params.samplersCount)+std::wstring(L"_").c_str();
+        psName += std::wstring(L"drv")+ std::to_wstring(params.srvCount)+std::wstring(L"_").c_str();
+        psName += std::wstring(L"ua")+ std::to_wstring(params.uaCount)+std::wstring(L"_").c_str();
+        rootSignature->SetName(psName.c_str());
         rs = rootSignature.Get();
     }
 
@@ -812,7 +837,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
         case EFormat::FORMAT_R32_UINT: desc.Format = DXGI_FORMAT_R32_UINT;
             break;
         }
-        desc.SizeInBytes = ViewDesc.ibViewDescription.Size;
+        desc.SizeInBytes = resource->GetDesc().Width;
 
         indexBuffers.push_back(desc);
 
@@ -824,7 +849,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
         const auto& view = ViewDesc.vbViewDescription;
         D3D12_VERTEX_BUFFER_VIEW desc = {};
         desc.BufferLocation = resource->GetGPUVirtualAddress() + view.Offset;
-        desc.SizeInBytes = view.Size;
+        desc.SizeInBytes = resource->GetDesc().Width;
         desc.StrideInBytes = view.Stride;
 
         vertexBuffers.push_back(desc);
@@ -1059,7 +1084,7 @@ void UploadBufferData(
     // Describe the data we want to copy into the default buffer.
     D3D12_SUBRESOURCE_DATA subResourceData;
     subResourceData.pData = data;
-    
+
     subResourceData.RowPitch = resource.resourceDescription.Width * BitsPerPixel(resDesc.Format) / 8;
     subResourceData.SlicePitch = subResourceData.RowPitch * resDesc.Height;
 
@@ -1100,74 +1125,52 @@ void RenderDeviceDX12::UploadSubresourceData(const GpuResource& resource, uint16
         srcRowPitch,
         srcDepthPitch
     );
+}
 
-    
+void RenderDeviceDX12::MakeUploadBufferBigger(size_t minSize)
+{
+    currentBufferUploadBufferSize = currentBufferUploadBufferSize * 1.3 + minSize;
+    currentBufferUploadBuffer->Unmap(0, &D3D12_RANGE(0, currentBufferUploadBufferShift));
+
+    ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer( currentBufferUploadBufferSize ),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&currentBufferUploadBuffer)));
+    bufferUploadBuffers.push_back(currentBufferUploadBuffer);
+
+    ThrowIfFailed(currentBufferUploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&currentBufferUploadBufferPtr)));
+    currentBufferUploadBufferShift = 0;
 }
 
 void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch,
     int32_t srcDepthPitch)
 {
- 
-    uploadBuffers.push_back(nullptr);
-    
+    //uploadBuffers.push_back(nullptr);
+
     auto buffer = (ID3D12Resource*)resource.resource;
     auto bufferDescription = buffer->GetDesc();
-    
-    if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
-        uploadBuffers.push_back(nullptr);
-    auto& uploadBuffer = uploadBuffers[uploadBuffers.size()-1]; 
+
+    // if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
+    //    uploadBuffers.push_back(nullptr);
+    //auto& uploadBuffer = uploadBuffers[uploadBuffers.size() - 1];
     //if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
     //    return UploadTextureData(device, cmdList, data, buffer, state, uploadBuffer);
 
-    auto heapDesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 
-    auto resDesc = buffer->GetDesc();;
-    auto requiredSize = rect.GetSize() * BitsPerPixel(bufferDescription.Format) / 8;
-    // In order to copy CPU memory data into our default buffer, we need to create
-    // an intermediate upload heap. 
-    //md3dDevice->GetCopyableFootprints(&resDesc, 0, 1, 0, nullptr, nullptr, nullptr, &requiredSize);
-    ThrowIfFailed(md3dDevice->CreateCommittedResource(
-        &heapDesUpload,
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer( requiredSize ),
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&uploadBuffer)));
 
-    // Describe the data we want to copy into the default buffer.
-    D3D12_SUBRESOURCE_DATA subResourceData;
-    subResourceData.pData = pSrcData;
-    
-    subResourceData.RowPitch = (rect.Right - rect.Left) * BitsPerPixel(resDesc.Format) / 8;
-    subResourceData.SlicePitch = subResourceData.RowPitch * (rect.Bottom - rect.Top);
-    
-    // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
-    // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
-    // the intermediate upload heap data will be copied to mBuffer.
 
-    auto pDestinationResource = buffer;
-    
-    BYTE* pData;
-    HRESULT hr = uploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&pData));
-    if (FAILED(hr))
-    {
-        return;
-    }
-    
-    D3D12_MEMCPY_DEST DestData = { pData, requiredSize, requiredSize };
-    MemcpySubresource(&DestData, &subResourceData, requiredSize, 1, 1);
-    
-    uploadBuffer->Unmap(0, NULL);
-
-    
     auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
         ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
     if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
     {
-        auto& m_texture = uploadBuffers[uploadBuffers.size()-2];
+        uploadTextureBuffers.push_back(nullptr);
+        auto& m_texture = uploadTextureBuffers[uploadTextureBuffers.size() - 1];
         D3D12_RESOURCE_DESC textureDesc = bufferDescription;
         textureDesc.Width = (rect.Right - rect.Left);
-        textureDesc.Height =  (rect.Bottom - rect.Top);
+        textureDesc.Height = (rect.Bottom - rect.Top);
         textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
         ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -1178,19 +1181,41 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
             nullptr,
             IID_PPV_ARGS(&m_texture)));
 
-        UpdateSubresources(mCommandList.Get(), m_texture.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+        const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, 1);
+
+        // Create the GPU upload buffer.
+        //ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        //    &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        //    D3D12_HEAP_FLAG_NONE,
+        //    &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        //    D3D12_RESOURCE_STATE_GENERIC_READ,
+        //    nullptr,
+        //    IID_PPV_ARGS(&uploadBuffer)));
+        
+        currentBufferUploadBufferShift = CalcTextureBufferByteOffset(currentBufferUploadBufferShift);
+        if (currentBufferUploadBufferShift + uploadBufferSize > currentBufferUploadBufferSize)
+            MakeUploadBufferBigger(uploadBufferSize);
+
+        D3D12_SUBRESOURCE_DATA textureData = {};
+        textureData.pData = pSrcData;
+        textureData.RowPitch = textureDesc.Width * BitsPerPixel(textureDesc.Format) / 8;
+        textureData.SlicePitch = textureData.RowPitch * textureDesc.Height;
+    
+        UpdateSubresources(mCommandList.Get(), m_texture.Get(), currentBufferUploadBuffer.Get(),
+            currentBufferUploadBufferShift, 0, 1, &textureData);
+        currentBufferUploadBufferShift += uploadBufferSize;
         D3D12_RESOURCE_BARRIER transtions[2];
         transtions[0] = CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
-        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
+            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
         transtions[1] = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
             ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
 
-        
-        
+
+
         mCommandList->ResourceBarrier(2, transtions);
-        
-        CD3DX12_TEXTURE_COPY_LOCATION Dst(pDestinationResource, 0 );
-        CD3DX12_TEXTURE_COPY_LOCATION Src(m_texture.Get(), dstSubresource);
+
+        CD3DX12_TEXTURE_COPY_LOCATION Dst(buffer, dstSubresource);
+        CD3DX12_TEXTURE_COPY_LOCATION Src(m_texture.Get(), 0);
         D3D12_BOX box;
         box.back = 0;
         box.left = 0;
@@ -1198,22 +1223,66 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
         box.right = textureDesc.Width;
         box.bottom = textureDesc.Height;
         box.front = textureDesc.DepthOrArraySize;
-        
+
         mCommandList->CopyTextureRegion(&Dst, rect.Left, rect.Top, rect.Front, &Src, nullptr);
         transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
             D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
         mCommandList->ResourceBarrier(1, &transtion);
-    }else
+    }
+    else
     {
-        transtion  = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
+        //auto heapDesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+
+        auto resDesc = buffer->GetDesc();
+        auto requiredSize = rect.GetSize() * BitsPerPixel(bufferDescription.Format) / 8;
+        // In order to copy CPU memory data into our default buffer, we need to create
+        // an intermediate upload heap. 
+        //md3dDevice->GetCopyableFootprints(&resDesc, 0, 1, 0, nullptr, nullptr, nullptr, &requiredSize);
+        //ThrowIfFailed(md3dDevice->CreateCommittedResource(
+        //    &heapDesUpload,
+        //    D3D12_HEAP_FLAG_NONE,
+        //    &CD3DX12_RESOURCE_DESC::Buffer( requiredSize ),
+        //    D3D12_RESOURCE_STATE_GENERIC_READ,
+        //    nullptr,
+        //    IID_PPV_ARGS(&uploadBuffer)));
+
+        // Describe the data we want to copy into the default buffer.
+        D3D12_SUBRESOURCE_DATA subResourceData;
+        subResourceData.pData = pSrcData;
+
+        subResourceData.RowPitch = (rect.Right - rect.Left) * BitsPerPixel(resDesc.Format) / 8;
+        subResourceData.SlicePitch = subResourceData.RowPitch * (rect.Bottom - rect.Top);
+
+        // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
+        // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
+        // the intermediate upload heap data will be copied to mBuffer.
+
+        auto pDestinationResource = buffer;
+
+        // BYTE* pData;
+        //HRESULT hr = uploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&pData));
+        //if (FAILED(hr))
+        //{
+        //    return;
+        //}
+        if (currentBufferUploadBufferShift + requiredSize > currentBufferUploadBufferSize)
+            MakeUploadBufferBigger(requiredSize);
+
+        D3D12_MEMCPY_DEST DestData = {currentBufferUploadBufferPtr + currentBufferUploadBufferShift,requiredSize,requiredSize};
+        MemcpySubresource(&DestData, &subResourceData, requiredSize, 1, 1);
+
+        //uploadBuffer->Unmap(0, NULL);
+
+        transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
             ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
         mCommandList->ResourceBarrier(1, &transtion);
-        mCommandList->CopyBufferRegion(buffer, rect.Left, uploadBuffer.Get(),0, requiredSize);
+        mCommandList->CopyBufferRegion(buffer, rect.Left, currentBufferUploadBuffer.Get(), currentBufferUploadBufferShift, requiredSize);
+        currentBufferUploadBufferShift += requiredSize;
         transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-        D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+            D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
         mCommandList->ResourceBarrier(1, &transtion);
     }
-    
+
     //todo Обсудить ибо грустно и 0 идей... Вроде идея есть.... текстуры говно....
 }
 
@@ -1262,8 +1331,12 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
     }
     else
     {
-        ID3D12PipelineState* newPipeline;
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
+        wrl::ComPtr<ID3D12PipelineState> newPipeline;
+        struct MyPS : public D3D12_GRAPHICS_PIPELINE_STATE_DESC{
+            char end = 0;
+        };
+        
+        MyPS ps{};
         ZEROS(ps);
         SignatureParams params;
         params.uaCount = Pipeline.uaCount;
@@ -1307,10 +1380,22 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         {
             ps.RTVFormats[i] = ToD3D_TextureFormat[to_underlying(Pipeline.RTVFormats[i])];
         }
-        ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
-        mCommandList->SetPipelineState(newPipeline);
+        string_id psid = SIDRT((char*)&ps);
+        if (pipelineStates.count(psid) > 0)
+        {
+            newPipeline = pipelineStates[psid];
+        }
+        else
+        {
+            std::wstring psName = L"Pipeline_" ;
+            psName.append(std::to_wstring(psid));
+            ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
+            pipelineStates.insert({psid, newPipeline});
+            newPipeline->SetName(psName.c_str());
+        }
+        mCommandList->SetPipelineState(newPipeline.Get());
+        mCommandList->OMSetBlendFactor(Pipeline.blendState.desc.BlendFactor);
         mCommandList->IASetPrimitiveTopology(ToD3DPT[to_underlying(Pipeline.topology)]);
-
         ID3D12DescriptorHeap* ppHeaps[] = {
             mGpuShvCbUaHeapInterface->Heap(),
             mGpuSamplerHeapInterface->Heap()
@@ -1318,7 +1403,6 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
         mCommandList->SetGraphicsRootDescriptorTable(0, handlesSRV);
         mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
-        pipelineStates.push_back(newPipeline);
     }
 }
 
@@ -1327,8 +1411,9 @@ D3D12_RECT m_scissorRect[20];
 
 void RenderDeviceDX12::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
 {
-    if (ToD3D12Viewports(viewports, d3d12viewports, m_scissorRect, num) || num != d3d11viewportsNum)
+    //if ( || num != d3d11viewportsNum)
     {
+        ToD3D12Viewports(viewports, d3d12viewports, m_scissorRect, num);
         d3d11viewportsNum = num;
         mCommandList->RSSetViewports(num, d3d12viewports);
         mCommandList->RSSetScissorRects(num, m_scissorRect);
@@ -1424,11 +1509,13 @@ void RenderDeviceDX12::Present()
 
     ThrowIfFailed(mCommandList->Close());
 
+    currentBufferUploadBuffer->Unmap(0, &D3D12_RANGE(0, currentBufferUploadBufferShift));
+
     // Add the command list to the queue for execution.
     ID3D12CommandList* cmdsLists[] = {mCommandList.Get()};
 
-
     mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
 
     // swap the back and front buffers
     ThrowIfFailed(mSwapChain->Present(0, 0));
@@ -1439,6 +1526,11 @@ void RenderDeviceDX12::Present()
     // so we do not have to wait per frame.
     FlushCommandQueue();
 
+    bufferUploadBuffers.clear();
+    bufferUploadBuffers.push_back(currentBufferUploadBuffer);
+    currentBufferUploadBufferShift = 0;
+
+    currentBufferUploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&currentBufferUploadBufferPtr));
 
     // Reuse the memory associated with command recording.
     // We can only reset when the associated command lists have finished execution on the GPU.
@@ -1453,8 +1545,10 @@ void RenderDeviceDX12::Present()
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-    uploadBuffers.clear();
-    pipelineStates.clear();
+    auto color = {0.f,0.f,0.f,1.f};
+    mCommandList->ClearRenderTargetView(CurrentBackBufferView(), color.begin(), 0, NULL);
+    
+    uploadTextureBuffers.clear();
     mGpuShvCbUaHeapInterface->next = 0;
     mGpuSamplerHeapInterface->next = 0;
     mGpuShvCbUaHeapInterface->writeNext = 0;
@@ -1618,7 +1712,14 @@ void RenderDeviceDX12::GetBackbufferSize(uint32_t& w, uint32_t& h)
     h = BackBufferHeight;
 }
 
+#include "pix3.h"
+
 void RenderDeviceDX12::BeginEvent(const char* name)
 {
-    //todo
+    PIXBeginEvent(PIX_COLOR(255, 0, 0), name);
+}
+
+void GVM::RenderDeviceDX12::EndEvent()
+{
+    PIXEndEvent();
 }

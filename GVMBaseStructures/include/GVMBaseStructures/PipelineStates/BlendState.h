@@ -32,7 +32,7 @@ namespace Compressed {
             uint8_t   BlendOp               : 2;
             uint8_t   BlendOpAlpha          : 2;
             uint8_t   LogicOp               : 2;
-            uint8_t   RenderTargetWriteMask : 2;
+            uint8_t   RenderTargetWriteMask : 8;
         };
         
         union 

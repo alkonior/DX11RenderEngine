@@ -7,6 +7,8 @@
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 
+#include "SID.h"
+
 
 namespace DirectX {
 class DescriptorHeap;
@@ -146,8 +148,8 @@ public:
 
     void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
 private:
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadBuffers;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadTextureBuffers;
+    std::map<string_id, Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
 
     std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
     D3D12_CPU_DESCRIPTOR_HANDLE FetchSamplerState(const Compressed::SamplerStateDesc& state);
@@ -167,6 +169,18 @@ private:
 public:
     
     void UploadSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const size_t dataSize,  const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
+private:
+    std::vector<wrl::ComPtr<ID3D12Resource>> bufferUploadBuffers;
+    wrl::ComPtr<ID3D12Resource> currentBufferUploadBuffer;
+    size_t currentBufferUploadBufferSize = 0;
+    size_t currentBufferUploadBufferShift = 0;
+    BYTE* currentBufferUploadBufferPtr = nullptr;
+
+    void MakeUploadBufferBigger(size_t minSize);
+
+    
+public:
+    
     void SetSubresourceData(const GpuResource& resource, uint16_t dstSubresource, const UBox& rect, const void* pSrcData, int32_t srcRowPitch, int32_t srcDepthPitch) override;
 
 #pragma region ResourceSynchronization
@@ -205,7 +219,7 @@ public:
     void GetBackbufferSize(uint32_t& w, uint32_t& h) override;
     
     void BeginEvent(const char* name) override;
-    void EndEvent() override{};
+    void EndEvent() override;
     
 };
 

@@ -137,5 +137,11 @@
     <ClInclude Include="include\winHandlerdx12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -111,7 +111,7 @@ void UIRenderPass::Render()
     renderDevice->SetRenderTargets(targets, 1, nullptr);
     renderDevice->VerifyConstBuffer(constBuffer, uiTransformCB.slot);
 
-    for (int j =0; j<6 ; j++)
+    ///for (int j =0; j<6 ; j++)
     for (size_t i = 0; i < drawCalls.size(); i++) {
         if (drawCalls[i].data.flag != lastFlag) {
             if (drawCalls[i].data.flag & UICHAR) { renderDevice->BeginEvent("Chars"); }

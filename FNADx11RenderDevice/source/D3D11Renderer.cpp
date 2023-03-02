@@ -402,6 +402,15 @@ GVM::BlendStateDesc ToGVM(const BlendState& blendState)
     result.BlendOpAlpha = ToGVM(blendState.alphaBlendFunction);
     result.DestBlendAlpha = ToGVM(blendState.alphaDestinationBlend);
     result.LogicOpEnable = false;
+    //switch (blendState.colorWriteEnable)
+    //{
+    //case COLORWRITECHANNELS_NONE:  result.RenderTargetWriteMask = 0; break;
+    //case COLORWRITECHANNELS_RED: result.RenderTargetWriteMask = 0xc0; break;
+    //case COLORWRITECHANNELS_GREEN: result.RenderTargetWriteMask = 0x30; break;
+    //case COLORWRITECHANNELS_BLUE: result.RenderTargetWriteMask = 0x0c; break;
+    //case COLORWRITECHANNELS_ALPHA: result.RenderTargetWriteMask = 0x03; break;
+    //case COLORWRITECHANNELS_ALL: result.RenderTargetWriteMask = 0xFF; break;
+    //}
     result.RenderTargetWriteMask = blendState.colorWriteEnable;
     return result;
 }

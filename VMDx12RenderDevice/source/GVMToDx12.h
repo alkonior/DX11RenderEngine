@@ -6,6 +6,10 @@ static UINT CalcConstantBufferByteSize(UINT byteSize)
 {
 	return (byteSize + 255) & ~255;
 }
+static UINT CalcTextureBufferByteOffset(UINT offset)
+{
+	return (offset + 511) & ~511;
+}
 
 constexpr DXGI_FORMAT ToD3D_TextureFormat[] =
 {
@@ -223,6 +227,7 @@ D3D12_BLEND_DESC inline ToD3D12Blend(const Compressed::CoreBlendDesc& blendState
 				tbs.Fields.SrcBlendAlpha == D3D12_BLEND_ONE &&
 				tbs.Fields.DestBlendAlpha == D3D12_BLEND_ZERO
 				);
+		desc.RenderTarget[i].BlendEnable = false;
 		if (desc.RenderTarget[i].BlendEnable)
 		{
 			desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP((tbs.Fields.BlendOp));
@@ -232,6 +237,7 @@ D3D12_BLEND_DESC inline ToD3D12Blend(const Compressed::CoreBlendDesc& blendState
 			desc.RenderTarget[i].SrcBlend = D3D12_BLEND((tbs.Fields.SrcBlend));
 			desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND((tbs.Fields.SrcBlendAlpha));
 		}
+		desc.RenderTarget[i].RenderTargetWriteMask = tbs.Fields.RenderTargetWriteMask;
 	}
 	return desc;
 }
