@@ -12,6 +12,7 @@ struct SamplerStateDesc {
     SamplerStateDesc();
     SamplerStateDesc(const SamplerStateDesc&);
     SamplerStateDesc& operator=(const SamplerStateDesc&);
+    bool operator==(const SamplerStateDesc&)const;
     SamplerStateDesc(const SamplerStateDesc&&) noexcept;
     SamplerStateDesc(const GVM::SamplerStateDesc&);
     

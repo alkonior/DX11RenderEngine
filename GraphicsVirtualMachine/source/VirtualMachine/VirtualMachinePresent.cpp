@@ -49,7 +49,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     pipelineDescription.cbCount = ps->constBuffersNum;
     pipelineDescription.srvCount = ps->texturesNum;
 
-    
+
     if (ps->VS != nullptr && ps->PS != nullptr)
     {
         pipelineDescription.isCS = false;
@@ -58,9 +58,9 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         for (int i = 0; i < ps->renderTargetsNum; i++)
         {
             pipelineDescription.blendState.BlendStates[i] = RenderTargets[i].BlendState;
-            auto rtvView =  resourcesManager.GetResourceView(RenderTargets[i].rtv);
+            auto rtvView = resourcesManager.GetResourceView(RenderTargets[i].rtv);
             renderTargets[i] = (IRenderDevice::RENDERTARGETVIEWHANDLE)rtvView.view;
-            if(rtvView.rtViewDescription.MakeDefault)
+            if (rtvView.rtViewDescription.MakeDefault)
             {
                 auto& res = resourcesManager.GetResource(rtvView.resource);
                 pipelineDescription.RTVFormats[i] = res.resourceDescription.Format;
@@ -68,8 +68,10 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
             else
                 pipelineDescription.RTVFormats[i] = rtvView.rtViewDescription.Format;
         }
-
-
+        if (ps->DepthBuffer)
+            pipelineDescription.DSVFormat = resourcesManager.GetResourceView(ps->DepthBuffer).dbViewDescription.Format;
+        else
+            pipelineDescription.DSVFormat = EDepthFormat::FORMAT_UNKNOWN;
         for (int i = ps->renderTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
         {
             pipelineDescription.blendState.BlendStates[i] = Compressed::BlendStateDesc();
@@ -89,7 +91,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         pipelineDescription.rasterizerState = ps->rasterizerState;
         pipelineDescription.topology = ps->primitiveTopology;
         pipelineDescription.layout = resourcesManager.GetRealInputLayout(ps->vertexDeclaration);
-
+        
         RenderDevice->SetupPipeline(pipelineDescription);
 
         RenderDevice->SetupVertexBuffers((const IRenderDevice::VERTEXBUFFERVIEWHANDLE*)vertexBuffers,
@@ -118,7 +120,7 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         {
             uaTargets[i] = {};
         }
-            
+
         RenderDevice->SetupUATargets((IRenderDevice::UATARGETVIEWHANDLE*)uaTargets, ps->renderTargetsNum);
     }
 
@@ -191,7 +193,6 @@ void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapsho
 
 void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* ps)
 {
-
     auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data + ps->RenderTargetsShift);
     auto UATargets = (UATargetView**)(ps->Data + ps->UATargetsShift);
 
@@ -199,7 +200,8 @@ void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* p
     for (int i = 0; i < ps->renderTargetsNum; i++)
     {
         if (RenderTargets[i].rtv != nullptr)
-            resourcesManager.GetResource(RenderTargets[i].rtv).nextState = GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
+            resourcesManager.GetResource(RenderTargets[i].rtv).nextState =
+                GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
     }
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
@@ -216,23 +218,28 @@ void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* p
     for (int i = 0; i < ps->vertexBuffersNum; i++)
     {
         if (VertexBuffers[i] != nullptr)
-            resourcesManager.GetResource(VertexBuffers[i]).nextState = GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER ;
+            resourcesManager.GetResource(VertexBuffers[i]).nextState =
+                GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
     }
     for (int i = 0; i < ps->texturesNum; i++)
     {
         if (Textures[i] != nullptr)
-            resourcesManager.GetResource(Textures[i]).nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+            resourcesManager.GetResource(Textures[i]).nextState =
+                GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
     }
     for (int i = 0; i < ps->constBuffersNum; i++)
     {
         if (ConstBuffers[i] != nullptr)
-            resourcesManager.GetResource(ConstBuffers[i]).nextState = GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER ;
+            resourcesManager.GetResource(ConstBuffers[i]).nextState =
+                GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
     }
 
     if (ps->indexBuffer != nullptr)
-        resourcesManager.GetResource(ps->indexBuffer).nextState = GpuResource::ResourceState::RESOURCE_STATE_INDEX_BUFFER;
+        resourcesManager.GetResource(ps->indexBuffer).nextState =
+            GpuResource::ResourceState::RESOURCE_STATE_INDEX_BUFFER;
     if (ps->DepthBuffer != nullptr)
-        resourcesManager.GetResource(ps->DepthBuffer).nextState = GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
+        resourcesManager.GetResource(ps->DepthBuffer).nextState =
+            GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
 }
 
 
@@ -242,7 +249,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
 
     switch (command)
     {
-    case EMachineCommands::CREATE_RESOURCE:
+        case EMachineCommands::CREATE_RESOURCE:
         {
             auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
             renderGraph.AddCommand(
@@ -256,7 +263,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::UPDATE_RESOURCE:
+        case EMachineCommands::UPDATE_RESOURCE:
         {
             auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
             renderGraph.AddCommand(
@@ -270,7 +277,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::CREATE_RESOURCE_VIEW:
+        case EMachineCommands::CREATE_RESOURCE_VIEW:
         {
             auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
             renderGraph.AddCommand(
@@ -284,7 +291,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::SET_RESOURCE_DATA:
+        case EMachineCommands::SET_RESOURCE_DATA:
         {
             // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
             auto& description = PullData<SetResourceDataDesc>();
@@ -301,7 +308,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::UPLOAD_RESOURCE_DATA:
+        case EMachineCommands::UPLOAD_RESOURCE_DATA:
         {
             // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
             auto& description = PullData<UploadResourceDataDesc>();
@@ -318,7 +325,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::SETUP_PIPELINE:
+        case EMachineCommands::SETUP_PIPELINE:
         {
             auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
 
@@ -337,7 +344,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-    case EMachineCommands::DRAW:
+        case EMachineCommands::DRAW:
         {
             renderGraph.AddCommand(
                 {
@@ -350,12 +357,12 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             drawCallsQueueShift++;
             break;
         }
-    case EMachineCommands::CLEAR_PIPELINE:
+        case EMachineCommands::CLEAR_PIPELINE:
         {
             //RenderDevice->ClearState();
             break;
         }
-    case EMachineCommands::CLEAR_RT:
+        case EMachineCommands::CLEAR_RT:
         {
             auto& desc = PullData<ClearRenderTargetDesc>();
 
@@ -370,7 +377,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             );
             break;
         }
-    case EMachineCommands::CLEAR_DS:
+        case EMachineCommands::CLEAR_DS:
         {
             auto& desc = PullData<ClearDepthStencilDesc>();
             renderGraph.AddCommand(
@@ -384,7 +391,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             );
             break;
         }
-    case EMachineCommands::BEGIN_EVENT:
+        case EMachineCommands::BEGIN_EVENT:
         {
             const char* name = (const char*)dataQueue.data() + queueShift;
             //std::cout << name << std::endl;
@@ -401,7 +408,7 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             );
             break;
         }
-    case EMachineCommands::END_EVENT:
+        case EMachineCommands::END_EVENT:
         {
             renderGraph.AddCommand(
                 {
@@ -426,14 +433,12 @@ void VirtualMachine::SyncResources(std::vector<Resource*>& resorces)
 }
 
 
-
 void VirtualMachine::RunVM()
 {
     int comandIndex = 0;
 
     for (auto& block : renderGraph.Blocks)
     {
-
         SyncResources(block.ReadDependencies);
         SyncResources(block.WrightDependencies);
 
@@ -446,8 +451,8 @@ void VirtualMachine::RunVM()
                 {
                     auto& resource = resourcesManager.GetResource((Resource*)(description));
                     resource.resource = RenderDevice->CreateResource(resource); //todo
-                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_COMMON;
-                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_COMMON;
+                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
                     break;
                 }
 
@@ -456,8 +461,8 @@ void VirtualMachine::RunVM()
                     auto& resource = resourcesManager.GetResource((Resource*)description);
                     RenderDevice->DestroyResource(resource.resource);
                     resource.resource = RenderDevice->CreateResource(resource);
-                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_COMMON;
-                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_COMMON;
+                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
                     break;
                 }
 
@@ -475,11 +480,11 @@ void VirtualMachine::RunVM()
                     // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
                     auto& desc = *(SetResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
                     RenderDevice->SetSubresourceData(resourcesManager.GetResource(desc.resource),
-                                                  desc.params.dstSubresource,
-                                                  desc.params.rect,
-                                                  dataQueue.data() + desc.shift,
-                                                  desc.params.srcRowPitch,
-                                                  desc.params.srcDepthPitch);
+                                                     desc.params.dstSubresource,
+                                                     desc.params.rect,
+                                                     dataQueue.data() + desc.shift,
+                                                     desc.params.srcRowPitch,
+                                                     desc.params.srcDepthPitch);
                     break;
                 }
 
@@ -488,11 +493,11 @@ void VirtualMachine::RunVM()
                     // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
                     auto& desc = *(UploadResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
                     RenderDevice->UploadSubresourceData(resourcesManager.GetResource(desc.resource),
-                                                  desc.params.dstSubresource,
-                                                  desc.params.dataSize,
-                                                  dataQueue.data() + desc.shift,
-                                                  desc.params.srcRowPitch,
-                                                  desc.params.srcDepthPitch);
+                                                        desc.params.dstSubresource,
+                                                        desc.params.dataSize,
+                                                        dataQueue.data() + desc.shift,
+                                                        desc.params.srcRowPitch,
+                                                        desc.params.srcDepthPitch);
                     break;
                 }
 
@@ -525,7 +530,7 @@ void VirtualMachine::RunVM()
                     RenderDevice->ClearRenderTarget(
                         (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
                         desc.color);
-                    
+
                     break;
                 }
                 case EMachineCommands::CLEAR_DS:
@@ -562,7 +567,6 @@ void VirtualMachine::RunVM()
 
     static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[1] = {nullptr};
     RenderDevice->SetupRenderTargets((const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, 1, {});
-
 }
 
 

@@ -227,7 +227,6 @@ D3D12_BLEND_DESC inline ToD3D12Blend(const Compressed::CoreBlendDesc& blendState
 				tbs.Fields.SrcBlendAlpha == D3D12_BLEND_ONE &&
 				tbs.Fields.DestBlendAlpha == D3D12_BLEND_ZERO
 				);
-		desc.RenderTarget[i].BlendEnable = false;
 		if (desc.RenderTarget[i].BlendEnable)
 		{
 			desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP((tbs.Fields.BlendOp));

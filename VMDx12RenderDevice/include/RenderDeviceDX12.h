@@ -204,7 +204,9 @@ public:
     void ClearState() override;
     void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
     void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
-
+    Compressed::SamplerStateDesc  cachedSamplers[20];
+    uint8_t cachedSamplersNUm = 0;
+    D3D12_GPU_DESCRIPTOR_HANDLE cachedSamplerhandle;
 #pragma endregion
 
     void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) override;

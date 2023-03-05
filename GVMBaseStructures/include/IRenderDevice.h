@@ -181,6 +181,7 @@ struct PipelineDescription
     uint8_t srvCount = 0;
     uint8_t rtCount = 0;
     GVM::EFormat RTVFormats[8];
+    GVM::EDepthFormat DSVFormat;
 
     //void SetupViewports(const Compressed::ViewportDesc viewport[], uint8_t num);
     //void SetupBlendState(const Compressed::CoreBlendDesc& blendState);

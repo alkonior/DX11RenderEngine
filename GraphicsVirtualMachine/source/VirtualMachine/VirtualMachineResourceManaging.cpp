@@ -321,12 +321,12 @@ void VirtualMachine::SetVertexBufferData(VertexBuffer* vertexBuffer, const void*
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 #ifdef _DEBUG
-    if (offset == 0 && dataLength == resourcesManager.GetResource(vertexBuffer).resourceDescription.Width)
+  //  if (offset == 0 && dataLength == resourcesManager.GetResource(vertexBuffer).resourceDescription.Width)
         UploadResourceData(vertexBuffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
-    else
-    {
-        throw std::exception("Unsupported.");
-    }
+   // else
+   // {
+   //     throw std::exception("Unsupported.");
+   // }
 #else
         UploadResourceData(vertexBuffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
 #endif
@@ -337,12 +337,12 @@ void VirtualMachine::SetIndexBufferData(IndexBuffer* buffer, const void* pSrcDat
     int32_t srcRowPitch, int32_t srcDepthPitch)
 {
 #ifdef _DEBUG
-    if (offset == 0 && dataLength == resourcesManager.GetResource(buffer).resourceDescription.Width)
+   // if (offset == 0 && dataLength == resourcesManager.GetResource(buffer).resourceDescription.Width)
         UploadResourceData(buffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
-    else
-    {
-        throw std::exception("Unsupported.");
-    }
+    //else
+    //{
+    //    throw std::exception("Unsupported.");
+    //}
 #else
     UploadResourceData(buffer, 0, dataLength, pSrcData, srcRowPitch, srcDepthPitch);
 #endif

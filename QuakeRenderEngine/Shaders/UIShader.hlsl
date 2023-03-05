@@ -46,7 +46,7 @@ float4 psIn(PSIn input) : SV_Target
 #ifdef RED
 	return float4(1,0, 0.0f ,1.0f);
 #endif
-	return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
+	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 	return tex.Sample(basicSampler, input.uv);
 	//return float4(input.uv.x, input.uv.y, 0.0f ,1.0f);
 }
