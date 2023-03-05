@@ -83,6 +83,8 @@ public:
         _In_ ID3D12Device* device,
         const D3D12_CPU_DESCRIPTOR_HANDLE pDescriptor);
 
+    void __cdecl WriteNextDescriptor();
+
     D3D12_GPU_DESCRIPTOR_HANDLE __cdecl GetNextWriteDescriptor();
 
     void ResetWrite();

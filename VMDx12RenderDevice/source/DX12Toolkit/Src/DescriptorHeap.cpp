@@ -185,6 +185,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::WriteNextDescriptor(ID3D12Device* de
     writeNext++;
     return res;
 }
+
+void DescriptorHeap::WriteNextDescriptor()
+{
+    writeNext++;
+}
+
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetNextWriteDescriptor()
 {
     return GetGpuHandle(writeNext);

@@ -1274,7 +1274,7 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         };
         mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
         mCommandList->SetComputeRootDescriptorTable(0, handlesSRV);
-        SetupSamplers(Pipeline.samplers, Pipeline.samplersNum);
+        SetupSamplers(Pipeline.samplers, Pipeline.samplersNum, true);
     }
     else
     {
@@ -1347,7 +1347,7 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         };
         mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
         mCommandList->SetGraphicsRootDescriptorTable(0, handlesSRV);
-        SetupSamplers(Pipeline.samplers, Pipeline.samplersNum);
+        SetupSamplers(Pipeline.samplers, Pipeline.samplersNum, false);
     }
 }
 
@@ -1390,7 +1390,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE RenderDeviceDX12::FetchSamplerState(const Compressed
     return handle;
 }
 
-void RenderDeviceDX12::SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num)
+void RenderDeviceDX12::SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num, bool isCompute)
 {
     bool flag = cachedSamplersNUm == num;
     for (int i = 0; (i < num) && (flag); i++)
@@ -1408,10 +1408,18 @@ void RenderDeviceDX12::SetupSamplers(const Compressed::SamplerStateDesc samplers
             mGpuSamplerHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
         }
         cachedSamplersNUm  = num;
+        if (isCompute)
+        mCommandList->SetComputeRootDescriptorTable(1, handlesSamplers);
+        else
         mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
     }
     else
+    {
+        if (isCompute)
+        mCommandList->SetComputeRootDescriptorTable(1, cachedSamplerhandle);
+        else
         mCommandList->SetGraphicsRootDescriptorTable(1, cachedSamplerhandle);
+    }
 }
 
 void RenderDeviceDX12::ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color)
@@ -1546,6 +1554,10 @@ void RenderDeviceDX12::SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num)
             handle.ptr = textures[i].data;
             mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
         }
+        else
+        {
+            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
+        }
         //else
         //{
         //    mShvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), defaultTexture);
@@ -1597,6 +1609,10 @@ void RenderDeviceDX12::SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t n
             handle.ptr = ua_targets[i].data;
             mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
         }
+        else
+        {
+            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
+        }
     }
 }
 
@@ -1609,6 +1625,10 @@ void RenderDeviceDX12::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], u
             D3D12_CPU_DESCRIPTOR_HANDLE handle;
             handle.ptr = constBuffers[i].data;
             mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        }
+        else
+        {
+            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
         }
         //else
         //{

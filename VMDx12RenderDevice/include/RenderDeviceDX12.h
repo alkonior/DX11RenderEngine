@@ -202,7 +202,7 @@ public:
     void SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num) override;
     void ClearState() override;
     void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
-    void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num);
+    void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num, bool isCompute);
     Compressed::SamplerStateDesc  cachedSamplers[20];
     uint8_t cachedSamplersNUm = 0;
     D3D12_GPU_DESCRIPTOR_HANDLE cachedSamplerhandle;
