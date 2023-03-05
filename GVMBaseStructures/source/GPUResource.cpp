@@ -85,6 +85,15 @@ GpuResourceView::GpuResourceView(const GpuResourceView& copy) noexcept
     }*/
 }
 
+GpuResourceView& GpuResourceView::operator=(const GpuResourceView& copy) noexcept
+{
+    id = (copy.id); view=(copy.view); resource=(copy.resource); type=(copy.type);
+    data[0] = copy.data[0];
+    data[1] = copy.data[1];
+    data[2] = copy.data[2];
+    return *this;
+}
+
 GpuResourceView::GpuResourceView(const GpuResourceView&& copy) noexcept
 :id(copy.id), view(copy.view), resource(copy.resource), type(copy.type)
 {

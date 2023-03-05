@@ -64,7 +64,7 @@ public:
     
     DirectX::DescriptorHeap* srvStorageHeap;
     DirectX::DescriptorHeap* rtvStorageHeap;
-    std::map<uint64_t, DXGI_FORMAT> descriptorFormats;
+    //std::map<uint64_t, DXGI_FORMAT> descriptorFormats;
     DirectX::DescriptorHeap* samplersStorageHeap;
 
     D3D12_VIEWPORT mScreenViewport; 
@@ -132,7 +132,6 @@ private:
     ID3D12Resource* CurrentBackBuffer() const;
     D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView();
     void CreateRtvAndDsvDescriptorHeaps();
-    void CreateDefaultHandles();
 
     
 protected:

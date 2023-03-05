@@ -84,7 +84,18 @@ namespace Renderer
 inline string_id SIDRT(const char* str)
 {
     unsigned int crc = 0xFFFFFFFF;
-    for (uint8_t idx = 0; idx < std::strlen(str); idx++)
+    for (uint32_t idx = 0; idx < std::strlen(str); idx++)
+    {
+        if (str[idx] != ' '&&str[idx] != '\t')
+            crc = (crc >> 8) ^ crc_table[(crc ^ str[idx]) & 0xFF];
+    }
+    return crc ^ 0xFFFFFFFF;
+}
+
+inline string_id SIDRT(const char* str, uint32_t size)
+{
+    unsigned int crc = 0xFFFFFFFF;
+    for (uint32_t idx = 0; idx < size; idx++)
     {
         if (str[idx] != ' '&&str[idx] != '\t')
             crc = (crc >> 8) ^ crc_table[(crc ^ str[idx]) & 0xFF];

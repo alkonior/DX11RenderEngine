@@ -14,9 +14,10 @@ struct PipelineSnapshot;
 
 class ResourcesManager {
 
-    uintptr_t freeIndex = 1;
-    std::unordered_map<uintptr_t, GpuResource> Resources = {{0,{}}};
-    std::unordered_map<uintptr_t, GpuResourceView> ResourceViews = {{0,{}}};
+    std::vector<GpuResource> Resources = {GpuResource{}};
+    std::vector<GpuResourceView> ResourceViews = {GpuResourceView{}};
+    std::vector<size_t> ResourcesFreeIndexes;
+    std::vector<size_t> ResourceViewsFreeIndexes;
 
     uint32_t dataSize = 0;
     std::vector<uint8_t> savedData;

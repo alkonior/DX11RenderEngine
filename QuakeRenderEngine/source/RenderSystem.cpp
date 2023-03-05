@@ -178,11 +178,11 @@ bool RenderSystem::RenderFrame()
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("PostProcess draw.");
-    //GFX_CATCH_RENDER(renderPassPP.Render(););
+    GFX_CATCH_RENDER(renderPassPP.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("TAA-pass.");
-    //renderPassTAA.Render();
+    renderPassTAA.Render();
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("UI draw.");

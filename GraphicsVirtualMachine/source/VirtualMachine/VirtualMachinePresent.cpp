@@ -206,8 +206,9 @@ void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* p
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
     {
-        //if (UATargets[i] != nullptr)
-        //    resourcesManager.GetResourceView(UATargets[i]).resource);
+        if (UATargets[i] != nullptr)
+            resourcesManager.GetResource(UATargets[i]).nextState =
+                GpuResource::ResourceState::RESOURCE_STATE_UNORDERED_ACCESS;
     }
 
 
@@ -472,6 +473,7 @@ void VirtualMachine::RunVM()
                     resourceView.view = RenderDevice->CreateResourceView(resourceView,
                                                                          resourcesManager.GetResource(
                                                                              resourceView.resource));
+                    resourceView.isRequiredUpdate = false;
                     break;
                 }
 
@@ -505,6 +507,8 @@ void VirtualMachine::RunVM()
                 {
                     auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + (uint32_t)description);
                     SetupPipelineResourceStates(ps);
+                    SyncResources(block.ReadDependencies);
+                    SyncResources(block.WrightDependencies);
                     ExecuteSetupPipeline(ps);
                     break;
                 }

@@ -35,6 +35,7 @@ public:
     GpuResourceView(ResourceView* id, const IndexBufferViewDesc& desc);
 
     GpuResourceView(const GpuResourceView& copy) noexcept;
+    GpuResourceView& operator=(const GpuResourceView& copy) noexcept;
     GpuResourceView(const GpuResourceView&& copy) noexcept;
 
     ~GpuResourceView() = default;

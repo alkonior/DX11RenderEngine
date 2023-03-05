@@ -467,98 +467,6 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
     );
 }
 
-void RenderDeviceDX12::CreateDefaultHandles()
-{
-    // Create the actual default buffer resource.
-    ThrowIfFailed(md3dDevice->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(256),
-        D3D12_RESOURCE_STATE_COMMON,
-        nullptr,
-        IID_PPV_ARGS(cbResource.GetAddressOf())));
-
-    D3D12_CONSTANT_BUFFER_VIEW_DESC desc;
-    desc.BufferLocation = cbResource->GetGPUVirtualAddress();
-    desc.SizeInBytes = 256;
-    defaultCB = srvStorageHeap->GetNextCpuHandle();
-    md3dDevice->CreateConstantBufferView(
-        &desc,
-        defaultCB
-    );
-
-    ThrowIfFailed(md3dDevice->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256, 256),
-        D3D12_RESOURCE_STATE_COMMON,
-        nullptr,
-        IID_PPV_ARGS(shResource.GetAddressOf())));
-
-
-    auto defaultTexture = srvStorageHeap->GetNextCpuHandle();
-    md3dDevice->CreateShaderResourceView(
-        shResource.Get(),
-        nullptr,
-        defaultTexture
-    );
-
-
-    ThrowIfFailed(md3dDevice->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256, 256, 8),
-        D3D12_RESOURCE_STATE_COMMON,
-        nullptr,
-        IID_PPV_ARGS(rtResource.GetAddressOf())));
-
-    for (int i = 0; i < 8; i++)
-    {
-        defaultRT[i] = srvStorageHeap->GetNextCpuHandle();
-        D3D12_RENDER_TARGET_VIEW_DESC desc;
-        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DARRAY;
-        desc.Texture2DArray.MipSlice = 0;
-        desc.Texture2DArray.PlaneSlice = 0;
-        desc.Texture2DArray.ArraySize = 1;
-        desc.Texture2DArray.FirstArraySlice = i;
-
-        md3dDevice->CreateRenderTargetView(
-            rtResource.Get(),
-            &desc,
-            defaultRT[i]
-        );
-    }
-
-    ThrowIfFailed(md3dDevice->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM, 256, 256, 8),
-        D3D12_RESOURCE_STATE_COMMON,
-        nullptr,
-        IID_PPV_ARGS(uaResource.GetAddressOf())));
-
-    for (int i = 0; i < 8; i++)
-    {
-        defaultUA[i] = srvStorageHeap->GetNextCpuHandle();
-        D3D12_UNORDERED_ACCESS_VIEW_DESC desc;
-        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        desc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-        desc.Texture2DArray.MipSlice = 0;
-        desc.Texture2DArray.PlaneSlice = 0;
-        desc.Texture2DArray.ArraySize = 1;
-        desc.Texture2DArray.FirstArraySlice = i;
-
-        md3dDevice->CreateUnorderedAccessView(
-            rtResource.Get(),
-            nullptr,
-            &desc,
-            defaultUA[i]
-        );
-    }
-
-    defaultSampler = FetchSamplerState({});
-}
 
 IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
 {
@@ -881,7 +789,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
                 descriptorHandle
             );
 
-            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
+            //descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
 
             output.data = descriptorHandle.ptr;
             break;
@@ -906,7 +814,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
                     descriptorHandle
                 );
 
-            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
+            //descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
 
             output.data = descriptorHandle.ptr;
             break;
@@ -957,7 +865,7 @@ RenderDeviceDX12::RESOURCEVIEWHANDLE RenderDeviceDX12::CreateResourceView(
                 );
             }
 
-            descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
+            //descriptorFormats.insert({descriptorHandle.ptr, desc.Format});
             output.data = descriptorHandle.ptr;
             break;
         }
@@ -1329,37 +1237,56 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
 {
     if (Pipeline.isCS)
     {
-        //    SetupShader(Pipeline.CS, EShaderType::COMPUTE_SHADER);
-        //
-        //    HS = false;
-        //    PS = false;
-        //    DS = false;
-        //    VS = false;
-        //    GS = false;
-        //    HSPtr = nullptr;
-        //    PSPtr = nullptr;
-        //    DSPtr = nullptr;
-        //    VSPtr = nullptr;
-        //    GSPtr = nullptr;
-        //
-        //    SetupSamplers(Pipeline.samplers, Pipeline.samplersNum);
-        //
-        //    
-    }
-    else
-    {
-        wrl::ComPtr<ID3D12PipelineState> newPipeline;
-        struct MyPS : public D3D12_GRAPHICS_PIPELINE_STATE_DESC
-        {
-            char end = 0;
-        };
-
-        MyPS ps{};
+        D3D12_COMPUTE_PIPELINE_STATE_DESC ps{};
         ZEROS(ps);
         SignatureParams params;
         params.uaCount = Pipeline.uaCount;
         params.cbCount = Pipeline.cbCount;
         params.srvCount = Pipeline.srvCount;
+        params.samplersCount = Pipeline.samplersNum;
+        auto rs = FetchRS(params);
+        mCommandList->SetComputeRootSignature(rs);
+        auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuWriteHandle();
+
+        ps.CS = shaders[((uint32_t)Pipeline.CS) - 1];
+        ps.pRootSignature = rs;
+        
+        wrl::ComPtr<ID3D12PipelineState> newPipeline;
+        string_id psid = SIDRT((char*)&ps, sizeof(ps));
+        if (pipelineStates.count(psid) > 0)
+        {
+            newPipeline = pipelineStates[psid];
+        }
+        else
+        {
+            std::wstring psName = L"Pipeline_";
+            psName.append(std::to_wstring(psid));
+            ThrowIfFailed(md3dDevice->CreateComputePipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
+            pipelineStates.insert({psid, newPipeline});
+            newPipeline->SetName(psName.c_str());
+        }
+        mCommandList->SetPipelineState(newPipeline.Get());
+
+        
+        ID3D12DescriptorHeap* ppHeaps[] = {
+            mGpuShvCbUaHeapInterface->Heap(),
+            mGpuSamplerHeapInterface->Heap()
+        };
+        mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+        mCommandList->SetComputeRootDescriptorTable(0, handlesSRV);
+        SetupSamplers(Pipeline.samplers, Pipeline.samplersNum);
+    }
+    else
+    {
+        wrl::ComPtr<ID3D12PipelineState> newPipeline;
+        
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC ps{};
+        ZEROS(ps);
+        SignatureParams params;
+        params.uaCount = Pipeline.uaCount;
+        params.cbCount = Pipeline.cbCount;
+        params.srvCount = Pipeline.srvCount;
+        params.samplersCount = Pipeline.samplersNum;
         auto rs = FetchRS(params);
         mCommandList->SetGraphicsRootSignature(rs);
         ps.pRootSignature = rs;
@@ -1398,7 +1325,7 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
             ps.RTVFormats[i] = ToD3D_TextureFormat[to_underlying(Pipeline.RTVFormats[i])];
         }
         ps.SampleDesc.Quality = 0;
-        string_id psid = SIDRT((char*)&ps);
+        string_id psid = SIDRT((char*)&ps, sizeof(ps));
         if (pipelineStates.count(psid) > 0)
         {
             newPipeline = pipelineStates[psid];
@@ -1662,35 +1589,22 @@ void RenderDeviceDX12::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTar
 
 void RenderDeviceDX12::SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t num)
 {
-    //D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
-    //for (int i = 0; i < DX12Limitations::maxRTV; i++)
-    //{
-    //    if (ua_targets != nullptr && i < num)
-    //    {
-    //        D3D12_CPU_DESCRIPTOR_HANDLE handle;
-    //        handle.ptr = ua_targets->data;
-    //        mRTVHeapInterface->WriteDescriptor(md3dDevice.Get(), i, handle);
-    //    }
-    //    else
-    //    {
-    //        renderTargetsHandles[i] = defaultRT[i];
-    //    }
-    //}
-    //
-    //    D3D12_CPU_DESCRIPTOR_HANDLE handle;
-    //    handle.ptr = depthStencilBuffer.data;
-    //    mDsvHeapInterface->WriteDescriptor(md3dDevice.Get(), 0, handle);
-    //    mCommandList->Un(DX12Limitations::maxRTV, renderTargetsHandles,
-    //                                     false,
-    //                                     &handle);
-    //
+    for (int i = 0; i < num; i++)
+    {
+        if (ua_targets != nullptr && ua_targets[i].data != 0)
+        {
+            D3D12_CPU_DESCRIPTOR_HANDLE handle;
+            handle.ptr = ua_targets[i].data;
+            mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+        }
+    }
 }
 
 void RenderDeviceDX12::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num)
 {
-    for (int i = 0; i < DX12Limitations::maxConstBuffers; i++)
+    for (int i = 0; i < num; i++)
     {
-        if (constBuffers != nullptr && i < num && constBuffers[i].data != 0)
+        if (constBuffers != nullptr && constBuffers[i].data != 0)
         {
             D3D12_CPU_DESCRIPTOR_HANDLE handle;
             handle.ptr = constBuffers[i].data;

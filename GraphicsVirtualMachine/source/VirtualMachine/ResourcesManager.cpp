@@ -5,7 +5,6 @@
 using namespace GVM;
 
 
-
 uint32_t ResourcesManager::CalculateResourceSize(const ResourceDesc& desc)
 {
     //uint8_t numLevels = desc.MipLevels;
@@ -85,7 +84,16 @@ uint32_t ResourcesManager::CalculateResourceSize(const TextureCubeResourceDesc& 
 
 GpuResource& ResourcesManager::CreateResource(const ResourceDesc& desc)
 {
-    uintptr_t resourceIndex = freeIndex++;
+    uintptr_t resourceIndex = Resources.size();
+    if (ResourcesFreeIndexes.size())
+    {
+        resourceIndex = ResourcesFreeIndexes.back();
+        ResourcesFreeIndexes.pop_back();
+    }
+    else
+    {
+        Resources.push_back({});
+    }
     Resource* resourcePtr = reinterpret_cast<Resource*>(resourceIndex);
     ResourceDesc savedDesc = desc;
 
@@ -223,7 +231,7 @@ GpuResourceView& ResourcesManager::CreateConstBufferView(const ConstBufferViewDe
 
 #ifdef _DEBUG
     assert(desc.Buffer != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -242,10 +250,19 @@ GpuResourceView& ResourcesManager::CreateConstBufferView(const ConstBufferViewDe
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
-    ConstBufferView* viewPtr = reinterpret_cast<ConstBufferView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
 
+    ConstBufferView* viewPtr = reinterpret_cast<ConstBufferView*>(viewIndex);
+    ResourceViews[viewIndex] = (GpuResourceView(viewPtr, desc));
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
 }
@@ -256,7 +273,7 @@ GpuResourceView& ResourcesManager::CreateVertexBufferView(const VertexBufferView
     auto resPtr = reinterpret_cast<Resource*>(desc.Buffer);
 #ifdef _DEBUG
     assert(desc.Buffer != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -275,9 +292,19 @@ GpuResourceView& ResourcesManager::CreateVertexBufferView(const VertexBufferView
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     VertexBufferView* viewPtr = reinterpret_cast<VertexBufferView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -289,7 +316,7 @@ GpuResourceView& ResourcesManager::CreateIndexBufferView(const IndexBufferViewDe
     auto resPtr = reinterpret_cast<Resource*>(desc.Buffer);
 #ifdef _DEBUG
     assert(desc.Buffer != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -308,9 +335,19 @@ GpuResourceView& ResourcesManager::CreateIndexBufferView(const IndexBufferViewDe
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     IndexBufferView* viewPtr = reinterpret_cast<IndexBufferView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -322,7 +359,7 @@ GpuResourceView& ResourcesManager::CreateDepthStencilView(const DepthStencilView
     auto resPtr = reinterpret_cast<Resource*>(desc.Resource);
 #ifdef _DEBUG
     assert(desc.Resource != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -340,9 +377,14 @@ GpuResourceView& ResourcesManager::CreateDepthStencilView(const DepthStencilView
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
     DepthStencilView* viewPtr = reinterpret_cast<DepthStencilView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -365,18 +407,20 @@ GpuResourceView& ResourcesManager::CreateShaderResourceView(const ShaderResource
     auto resPtr = reinterpret_cast<Resource*>(desc.Resource);
 #ifdef _DEBUG
     assert(desc.Resource != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size()> (resId));
 #endif
 
     auto& resource = Resources.at(resId);
-    auto savedDesc = desc; 
-    
-    
+    auto savedDesc = desc;
+
+
 #ifdef _DEBUG
-    
+
     assert(desc.MakeDefault || desc.Dimension != EShaderViewDimension::DIMENSION_UNKNOWN);
     assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(
+        desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension
+        )]);
     assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
@@ -390,9 +434,19 @@ GpuResourceView& ResourcesManager::CreateShaderResourceView(const ShaderResource
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     ShaderResourceView* viewPtr = reinterpret_cast<ShaderResourceView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -414,7 +468,7 @@ GpuResourceView& ResourcesManager::CreateRenderTargetView(const RenderTargetView
     auto resPtr = reinterpret_cast<Resource*>(desc.Resource);
 #ifdef _DEBUG
     assert(desc.Resource != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -422,7 +476,9 @@ GpuResourceView& ResourcesManager::CreateRenderTargetView(const RenderTargetView
 #ifdef _DEBUG
     assert(desc.MakeDefault || desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
     assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(
+        desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension
+        )]);
     assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
@@ -436,9 +492,19 @@ GpuResourceView& ResourcesManager::CreateRenderTargetView(const RenderTargetView
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     RenderTargetView* viewPtr = reinterpret_cast<RenderTargetView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -450,7 +516,7 @@ GpuResourceView& ResourcesManager::CreateDepthStencilsView(const DepthStencilVie
     auto resPtr = reinterpret_cast<Resource*>(desc.Resource);
 #ifdef _DEBUG
     assert(desc.Resource != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -471,9 +537,19 @@ GpuResourceView& ResourcesManager::CreateDepthStencilsView(const DepthStencilVie
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     DepthStencilView* viewPtr = reinterpret_cast<DepthStencilView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -485,7 +561,7 @@ GpuResourceView& ResourcesManager::CreateUATargetView(const UATargetViewDesc& de
     auto resPtr = reinterpret_cast<Resource*>(desc.Resource);
 #ifdef _DEBUG
     assert(desc.Resource != nullptr);
-    assert(Resources.contains(resId));
+    assert(Resources.size() > (resId));
 #endif
 
     auto& resource = Resources.at(resId);
@@ -493,7 +569,9 @@ GpuResourceView& ResourcesManager::CreateUATargetView(const UATargetViewDesc& de
 #ifdef _DEBUG
     assert(desc.MakeDefault || desc.Dimension != ERTViewDimension::DIMENSION_UNKNOWN);
     assert(desc.MakeDefault || desc.Format != EFormat::FORMAT_UNKNOWN);
-    assert(desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension)]);
+    assert(
+        desc.MakeDefault || resource.resourceDescription.Dimension == ShaderViewDimToResDim[to_underlying(desc.Dimension
+        )]);
     assert(desc.MakeDefault || FormatByteSize[to_underlying(resource.resourceDescription.Format)] ==
         FormatByteSize[to_underlying(desc.Format)]);
 #endif
@@ -507,9 +585,19 @@ GpuResourceView& ResourcesManager::CreateUATargetView(const UATargetViewDesc& de
     }
 
 
-    uintptr_t viewIndex = freeIndex++;
+    uintptr_t viewIndex = ResourceViews.size();
+    if (ResourceViewsFreeIndexes.size())
+    {
+        viewIndex = ResourceViewsFreeIndexes.back();
+        ResourceViewsFreeIndexes.pop_back();
+    }
+    else
+    {
+        ResourceViews.push_back({});
+    }
+
     UATargetView* viewPtr = reinterpret_cast<UATargetView*>(viewIndex);
-    ResourceViews.insert(std::make_pair(viewIndex, GpuResourceView(viewPtr, desc)));
+    ResourceViews[viewIndex] = GpuResourceView(viewPtr, desc);
 
     resource.views.push_back(viewPtr);
     return ResourceViews.at(viewIndex);
@@ -570,17 +658,17 @@ void ResourcesManager::AddDisposeResource(const Resource* resource)
     auto& gpuResource = GetResource(resource);
     for (auto& resourceView : gpuResource.views)
     {
-        ResourceViews.erase(reinterpret_cast<uintptr_t>(resourceView));
+        ResourceViewsFreeIndexes.push_back((uintptr_t)resourceView);
     }
-    Resources.erase(reinterpret_cast<uintptr_t>(resource));
+    ResourcesFreeIndexes.push_back((uintptr_t)resource);
 }
 
 void ResourcesManager::AddDisposeResourceView(const ResourceView* resourceView)
 {
     auto& gpuResourceView = GetResourceView(resourceView);
     auto& gpuResource = GetResource(gpuResourceView.resource);
-    gpuResource.views.erase(std::find(gpuResource.views.begin(),gpuResource.views.end(), resourceView));
-    ResourceViews.erase(reinterpret_cast<uintptr_t>(resourceView));
+    gpuResource.views.erase(std::find(gpuResource.views.begin(), gpuResource.views.end(), resourceView));
+    ResourceViewsFreeIndexes.push_back((uintptr_t)resourceView);
 }
 
 
@@ -588,10 +676,12 @@ GpuResource& ResourcesManager::GetResource(const Resource* resource)
 {
     return Resources[reinterpret_cast<uintptr_t>(resource)];
 }
+
 GpuResource& ResourcesManager::GetResource(const ResourceView* resourceView)
 {
     return Resources[reinterpret_cast<uintptr_t>(ResourceViews[reinterpret_cast<uintptr_t>(resourceView)].resource)];
 }
+
 GpuResourceView& ResourcesManager::GetResourceView(const ResourceView* resourceView)
 {
     return ResourceViews[reinterpret_cast<uintptr_t>(resourceView)];
