@@ -116,19 +116,67 @@ struct FDrawCall
 
 struct DrawCall
 {
-    DrawCall(EDrawCallType type,
-             std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> list): type(type), args(list)
+    DrawCall(
+     EDrawCallType type,
+     uint32_t IndexCountPerInstance,
+     uint32_t InstanceCount,
+     uint32_t StartIndexLocation,
+     uint32_t BaseVertexLocation,
+     uint32_t StartInstanceLocation
+        ):
+    IndexCountPerInstance(IndexCountPerInstance),
+    InstanceCount(InstanceCount),
+    StartIndexLocation(StartIndexLocation),
+    BaseVertexLocation(BaseVertexLocation),
+    StartInstanceLocation(StartInstanceLocation),
+    type(type)
     {
     }
-
+    DrawCall(
+     EDrawCallType type,
+     int32_t IndexCountPerInstance,
+     int32_t InstanceCount,
+     int32_t StartIndexLocation,
+     int32_t BaseVertexLocation,
+     int32_t StartInstanceLocation
+        ):
+    IndexCountPerInstance(IndexCountPerInstance),
+    InstanceCount(InstanceCount),
+    StartIndexLocation(StartIndexLocation),
+    BaseVertexLocation(BaseVertexLocation),
+    StartInstanceLocation(StartInstanceLocation),
+    type(type)
+    {
+    }
+    DrawCall(
+     uint32_t x,
+     uint32_t y,
+     uint32_t z
+        ):
+    x(x),
+    y(y),
+    z(z),
+    type(EDrawCallType::DISPATCH)
+    {
+    }
+    union
+    {
+        struct
+        {
+            uint32_t IndexCountPerInstance;
+            uint32_t BaseVertexLocation;
+            uint16_t InstanceCount;
+            uint16_t StartInstanceLocation;
+            uint32_t StartIndexLocation;
+        };
+        struct
+        {
+            uint32_t x;
+            uint32_t y;
+            uint32_t z;
+        };
+    };
     EDrawCallType type;
-    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> args;
-
-    template <size_t index>
-    uint32_t get() const
-    {
-        return std::get<index>(args);
-    }
 };
 
 

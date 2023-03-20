@@ -46,14 +46,12 @@ struct SyncThreadBlock {
 
 
 class RenderGraph {
-    IRenderDevice* RenderDevice;
-
 
 public:
     
     std::vector<SyncThreadBlock> Blocks;
 
-    RenderGraph(IRenderDevice* Device): RenderDevice(Device) {
+    RenderGraph(IRenderDevice* Device) {
     Blocks.push_back({}); }
     
     void AddCommand(

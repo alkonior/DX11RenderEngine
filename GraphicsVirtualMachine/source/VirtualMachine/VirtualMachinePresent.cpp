@@ -7,7 +7,7 @@ using namespace GVM;
 
 void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
 {
-    static PipelineDescription pipelineDescription;
+    PipelineDescription pipelineDescription;
     static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[MAX_RENDERTARGET_ATTACHMENTS];
     static IRenderDevice::UATARGETVIEWHANDLE uaTargets[MAX_RENDERTARGET_ATTACHMENTS];
     static IRenderDevice::VERTEXBUFFERVIEWHANDLE vertexBuffers[32];
@@ -473,7 +473,6 @@ void VirtualMachine::RunVM()
                     resourceView.view = RenderDevice->CreateResourceView(resourceView,
                                                                          resourcesManager.GetResource(
                                                                              resourceView.resource));
-                    resourceView.isRequiredUpdate = false;
                     break;
                 }
 

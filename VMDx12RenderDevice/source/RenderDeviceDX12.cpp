@@ -188,6 +188,50 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
 
 
         //CreateDefaultHandles();
+        ThrowIfFailed(md3dDevice->CreateCommittedResource(
+                        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                        D3D12_HEAP_FLAG_NONE,
+                        &CD3DX12_RESOURCE_DESC::Buffer(CalcConstantBufferByteSize(256)),
+                        D3D12_RESOURCE_STATE_GENERIC_READ,
+                        nullptr,
+                        IID_PPV_ARGS(&cbResource)));
+        
+        D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
+        desc.BufferLocation = cbResource->GetGPUVirtualAddress();
+        desc.SizeInBytes = 256;
+
+        defaultCB = srvStorageHeap->GetNextCpuHandle();
+        md3dDevice->CreateConstantBufferView(
+            &desc,
+            defaultCB
+        );
+
+        
+        ThrowIfFailed(md3dDevice->CreateCommittedResource(
+                        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                        D3D12_HEAP_FLAG_NONE,
+                        &CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM,256,256),
+                        D3D12_RESOURCE_STATE_GENERIC_READ,
+                        nullptr,
+                        IID_PPV_ARGS(&shResource)));
+        
+
+        defaultTexture = srvStorageHeap->GetNextCpuHandle();
+        md3dDevice->CreateShaderResourceView(
+            shResource.Get(),
+            NULL,
+            defaultTexture
+        );
+        
+        GVM::SamplerStateDesc sd = {
+                };
+        sd.Filter = ESamplerFilter::FILTER_ANISOTROPIC;
+        sd.AddressU = ETextureAddressMode::TEXTURE_ADDRESS_WRAP;
+        sd.AddressV = ETextureAddressMode::TEXTURE_ADDRESS_WRAP;
+        sd.AddressW = ETextureAddressMode::TEXTURE_ADDRESS_WRAP;
+        defaultSampler = FetchSamplerState(
+        sd
+        );
     }
     catch (std::exception& ex)
     {
@@ -681,10 +725,10 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
         RootSignatures.push_back({params.data, rootSignature});
 
         std::wstring psName = L"RootSignature_";
-        psName += std::wstring(L"cb") + std::to_wstring(params.cbCount) + std::wstring(L"_").c_str();
-        psName += std::wstring(L"sam") + std::to_wstring(params.samplersCount) + std::wstring(L"_").c_str();
-        psName += std::wstring(L"drv") + std::to_wstring(params.srvCount) + std::wstring(L"_").c_str();
         psName += std::wstring(L"ua") + std::to_wstring(params.uaCount) + std::wstring(L"_").c_str();
+        psName += std::wstring(L"cb") + std::to_wstring(params.cbCount) + std::wstring(L"_").c_str();
+        psName += std::wstring(L"srv") + std::to_wstring(params.srvCount) + std::wstring(L"_").c_str();
+        psName += std::wstring(L"sam") + std::to_wstring(params.samplersCount) + std::wstring(L"_").c_str();
         rootSignature->SetName(psName.c_str());
         rs = rootSignature.Get();
     }
@@ -1546,34 +1590,50 @@ void RenderDeviceDX12::SetupIndexBuffer(const INDEXBUFFERVIEWHANDLE indices)
 
 void RenderDeviceDX12::SetupTextures(RESOURCEVIEWHANDLE textures[], uint8_t num)
 {
+    static  D3D12_CPU_DESCRIPTOR_HANDLE handle;
     for (int i = 0; i < num; i++)
     {
         if (textures != nullptr && i < num && textures[i].data != 0)
-        {
-            D3D12_CPU_DESCRIPTOR_HANDLE handle;
             handle.ptr = textures[i].data;
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
-        }
         else
-        {
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
-        }
-        //else
-        //{
-        //    mShvHeapInterface->WriteNextDescriptor(md3dDevice.Get(), defaultTexture);
-        //}
+            handle.ptr = defaultTexture.ptr;
+        mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+    }
+}
+
+void RenderDeviceDX12::SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t num)
+{
+    static D3D12_CPU_DESCRIPTOR_HANDLE handle;
+    for (int i = 0; i < num; i++)
+    {
+        if (ua_targets != nullptr && ua_targets[i].data != 0)
+            handle.ptr = ua_targets[i].data;
+        mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
+    }
+}
+
+void RenderDeviceDX12::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num)
+{
+    static  D3D12_CPU_DESCRIPTOR_HANDLE handle;
+    for (int i = 0; i < num; i++)
+    {
+        if (constBuffers != nullptr && constBuffers[i].data != 0)
+            handle.ptr = constBuffers[i].data;
+        else
+            handle.ptr = defaultCB.ptr;
+        mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
     }
 }
 
 void RenderDeviceDX12::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTargets[], int32_t num,
                                           DEPTHSTENCILVIEWHANDLE depthStencilBuffer)
 {
+    static D3D12_CPU_DESCRIPTOR_HANDLE handle;
     D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
     for (int i = 0; i < DX12Limitations::maxRTV; i++)
     {
         if (renderTargets != nullptr && i < num)
         {
-            D3D12_CPU_DESCRIPTOR_HANDLE handle;
             handle.ptr = renderTargets[i].data;
             if (renderTargets[i].data == 0)
                 renderTargetsHandles[i] = CurrentBackBufferView();
@@ -1599,43 +1659,6 @@ void RenderDeviceDX12::SetupRenderTargets(const RENDERTARGETVIEWHANDLE renderTar
     }
 }
 
-void RenderDeviceDX12::SetupUATargets(UATARGETVIEWHANDLE ua_targets[], uint8_t num)
-{
-    for (int i = 0; i < num; i++)
-    {
-        if (ua_targets != nullptr && ua_targets[i].data != 0)
-        {
-            D3D12_CPU_DESCRIPTOR_HANDLE handle;
-            handle.ptr = ua_targets[i].data;
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
-        }
-        else
-        {
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
-        }
-    }
-}
-
-void RenderDeviceDX12::SetupConstBuffers(CONSTBUFFERVIEWHANDLE constBuffers[], uint8_t num)
-{
-    for (int i = 0; i < num; i++)
-    {
-        if (constBuffers != nullptr && constBuffers[i].data != 0)
-        {
-            D3D12_CPU_DESCRIPTOR_HANDLE handle;
-            handle.ptr = constBuffers[i].data;
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor(md3dDevice.Get(), handle);
-        }
-        else
-        {
-            mGpuShvCbUaHeapInterface->WriteNextDescriptor();
-        }
-        //else
-        //{
-        //    mCbHeapInterface->WriteNextDescriptor(md3dDevice.Get(), defaultCB);
-        //}
-    }
-}
 
 void RenderDeviceDX12::ClearState()
 {
@@ -1651,16 +1674,16 @@ void RenderDeviceDX12::Draw(const DrawCall& call)
         case EDrawCallType::DRAW_INDEXED_INSTANCED:
         {
             mCommandList->DrawIndexedInstanced(
-                call.get<0>(),
-                call.get<3>(),
-                call.get<4>(),
-                call.get<1>(),
-                call.get<2>());
+                call.IndexCountPerInstance,
+                call.InstanceCount,
+                call.StartIndexLocation,
+                call.BaseVertexLocation,
+                call.StartInstanceLocation);
             break;
         }
         case EDrawCallType::DISPATCH:
         {
-            mCommandList->Dispatch(call.get<0>(), call.get<1>(), call.get<2>());
+            mCommandList->Dispatch(call.x, call.y, call.z);
             break;
         }
     }

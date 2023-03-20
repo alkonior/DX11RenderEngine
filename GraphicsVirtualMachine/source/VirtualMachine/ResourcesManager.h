@@ -22,11 +22,6 @@ class ResourcesManager {
     uint32_t dataSize = 0;
     std::vector<uint8_t> savedData;
 
-    std::vector<Resource*> ResourcesRequiredUpdate;
-    std::vector<ResourceView*> ResourceViewsRequiredUpdate;
-
-    IRenderDevice* device;
-
     static uint32_t CalculateResourceSize(const BufferResourceDesc& desc);
     static uint32_t CalculateResourceSize(const ResourceDesc& desc);
     static uint32_t CalculateResourceSize(const Texture1DResourceDesc& desc);

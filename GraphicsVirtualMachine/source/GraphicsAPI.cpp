@@ -83,17 +83,27 @@ void GraphicsApi::DrawIndexedPrimitives( int32_t primitiveCount, int32_t startIn
         graphicsMachine->PushPSC(*ps);
         wasPSUpdated = false;
     }
-    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED,{primitiveCount,startIndex,baseVertex,1,0}});
+    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED,
+        primitiveCount,
+        1,
+        startIndex,
+        baseVertex,
+        0});
 }
 
-void GraphicsApi::DrawInstancedPrimitives(int32_t baseVertex, int32_t minVertexIndex, int32_t numVertices, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount)
+void GraphicsApi::DrawInstancedPrimitives(int32_t baseVertex, int32_t startInstance, int32_t startIndex, int32_t primitiveCount, int32_t instanceCount)
 {
     if (wasPSUpdated)
     {
         graphicsMachine->PushPSC(*ps);
         wasPSUpdated = false;
     }
-    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED_INSTANCED,{baseVertex,minVertexIndex,numVertices,startIndex,primitiveCount}});
+    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW_INDEXED_INSTANCED,
+        primitiveCount,
+        instanceCount,
+        startIndex,
+        baseVertex,
+        startInstance});
 }
 
 void GraphicsApi::DrawPrimitives(int32_t vertexStart, int32_t primitiveCount)
@@ -103,7 +113,12 @@ void GraphicsApi::DrawPrimitives(int32_t vertexStart, int32_t primitiveCount)
         graphicsMachine->PushPSC(*ps);
         wasPSUpdated = false;
     }
-    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW,{vertexStart,primitiveCount,0,0,0}});
+    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DRAW,
+        primitiveCount,
+        1,
+        0,
+        vertexStart,
+        0});
 }
 
 void GraphicsApi::Dispatch(size_t x, size_t y, size_t z)
@@ -113,13 +128,8 @@ void GraphicsApi::Dispatch(size_t x, size_t y, size_t z)
         graphicsMachine->PushPSC(*ps);
         wasPSUpdated = false;
     }
-    graphicsMachine->PushDrawCall(DrawCall{EDrawCallType::DISPATCH,{x,y,z,0,0}});
+    graphicsMachine->PushDrawCall(DrawCall{x,y,z});
 }
-
-
-
-
-
 
 void GraphicsApi::SetupViewports(const ViewportDesc viewport[], uint8_t num, uint8_t offset)
 {

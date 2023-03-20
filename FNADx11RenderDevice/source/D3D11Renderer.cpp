@@ -271,8 +271,7 @@ void D3D11Renderer::DrawInstancedPrimitives(PrimitiveType primitiveType, int32_t
 
 
     /* Draw! */
-    testApi->DrawInstancedPrimitives(baseVertex, 0, PrimitiveVerts(primitiveType, primitiveCount), startIndex,
-        primitiveCount, instanceCount);
+    testApi->DrawInstancedPrimitives(baseVertex, 0,  startIndex, primitiveCount, instanceCount);
 }
 
 void D3D11Renderer::DrawPrimitives(PrimitiveType primitiveType, int32_t vertexStart, int32_t primitiveCount)

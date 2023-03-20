@@ -107,7 +107,7 @@ GpuResource& ResourcesManager::CreateResource(const ResourceDesc& desc)
     }
 
     Resources[resourceIndex] = GpuResource(resourcePtr, savedDesc);
-    ResourcesRequiredUpdate.push_back(resourcePtr);
+    //ResourcesRequiredUpdate.push_back(resourcePtr);
     return Resources.at(resourceIndex);
 }
 
@@ -244,8 +244,8 @@ GpuResourceView& ResourcesManager::CreateConstBufferView(const ConstBufferViewDe
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_CONSTANT_BUFFER)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_CONSTANT_BUFFER);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -286,8 +286,8 @@ GpuResourceView& ResourcesManager::CreateVertexBufferView(const VertexBufferView
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_VERTEX_BUFFER)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_VERTEX_BUFFER);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -329,8 +329,8 @@ GpuResourceView& ResourcesManager::CreateIndexBufferView(const IndexBufferViewDe
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_INDEX_BUFFER)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_INDEX_BUFFER);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -371,8 +371,8 @@ GpuResourceView& ResourcesManager::CreateDepthStencilView(const DepthStencilView
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_DEPTH_STENCIL)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_DEPTH_STENCIL);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -428,8 +428,8 @@ GpuResourceView& ResourcesManager::CreateShaderResourceView(const ShaderResource
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_SHADER_RESOURCE)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_SHADER_RESOURCE);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -486,8 +486,8 @@ GpuResourceView& ResourcesManager::CreateRenderTargetView(const RenderTargetView
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_RENDER_TARGET)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_RENDER_TARGET);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -531,8 +531,8 @@ GpuResourceView& ResourcesManager::CreateDepthStencilsView(const DepthStencilVie
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_DEPTH_STENCIL)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_DEPTH_STENCIL);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 
@@ -579,8 +579,8 @@ GpuResourceView& ResourcesManager::CreateUATargetView(const UATargetViewDesc& de
     if (!(resource.resourceBindings & to_underlying(EBindFlags::BIND_UNORDERED_ACCESS)))
     {
         resource.resourceBindings |= to_underlying(EBindFlags::BIND_UNORDERED_ACCESS);
-        if (!resource.isRequiredUpdate)
-            ResourcesRequiredUpdate.push_back(resPtr);
+        //if (!resource.isRequiredUpdate)
+        //    ResourcesRequiredUpdate.push_back(resPtr);
         resource.isRequiredUpdate = true;
     }
 

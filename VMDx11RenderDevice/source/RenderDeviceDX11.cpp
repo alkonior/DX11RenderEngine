@@ -1409,22 +1409,30 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
         {
         case EDrawCallType::DRAW_INDEXED:
         {
-            context->DrawIndexed(call.get<0>(), call.get<1>(), call.get<2>());
+            context->DrawIndexed(call.IndexCountPerInstance, call.StartInstanceLocation, call.BaseVertexLocation);
             break;
         }
         case EDrawCallType::DRAW:
         {
-            context->Draw(call.get<1>(), call.get<0>());
+            context->Draw(call.IndexCountPerInstance, call.BaseVertexLocation);
             break;
         }
         case EDrawCallType::DRAW_INDEXED_INSTANCED:
         {
-            context->DrawIndexedInstanced(call.get<0>(), call.get<1>(), call.get<2>(), call.get<3>(), call.get<4>());
+            context->DrawIndexedInstanced(
+                call.IndexCountPerInstance,
+                call.InstanceCount,
+                call.StartIndexLocation,
+                call.BaseVertexLocation,
+                call.StartInstanceLocation);
             break;
         }
         case EDrawCallType::DISPATCH:
         {
-            context->Dispatch(call.get<0>(), call.get<1>(), call.get<2>());
+            context->Dispatch(
+                call.x,
+                call.y,
+                call.z);
             break;
         }
         }

@@ -81,15 +81,12 @@ public:
     std::vector<std::vector<D3D12_INPUT_ELEMENT_DESC>> inputLayoutsData;
     std::vector<D3D12_SHADER_BYTECODE> shaders;
 
+    
     Microsoft::WRL::ComPtr<ID3D12Resource> cbResource;
     D3D12_CPU_DESCRIPTOR_HANDLE defaultCB;
     D3D12_CPU_DESCRIPTOR_HANDLE defaultSampler;
     Microsoft::WRL::ComPtr<ID3D12Resource> shResource;
     D3D12_CPU_DESCRIPTOR_HANDLE defaultTexture;
-    Microsoft::WRL::ComPtr<ID3D12Resource> rtResource;
-    D3D12_CPU_DESCRIPTOR_HANDLE defaultRT[8];
-    Microsoft::WRL::ComPtr<ID3D12Resource> uaResource;
-    D3D12_CPU_DESCRIPTOR_HANDLE defaultUA[8];
 
     
     std::vector<D3D12_VERTEX_BUFFER_VIEW> vertexBuffersPtr;

@@ -48,8 +48,7 @@ public:
 
     void DrawInstancedPrimitives(
         int32_t baseVertex,
-        int32_t minVertexIndex,
-        int32_t numVertices,
+        int32_t startInstance,
         int32_t startIndex,
         int32_t primitiveCount,
         int32_t instanceCount

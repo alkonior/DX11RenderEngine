@@ -20,6 +20,7 @@ public:
     };
     
     ResourceView* id = nullptr;
+    IRenderDevice::RESOURCEHANDLE realResource = nullptr;//todo
     IRenderDevice::RESOURCEVIEWHANDLE view = 0;
     Resource* resource = nullptr;
     EViewType type = EViewType::UNKNOWN;
