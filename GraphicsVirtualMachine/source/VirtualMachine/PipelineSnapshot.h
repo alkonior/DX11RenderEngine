@@ -140,7 +140,7 @@ namespace Compressed {
 enum class EMachineCommands : uint8_t {
     UNKNOWN,
 
-    SETUP_PIPELINE,
+    //SETUP_PIPELINE,
     CLEAR_PIPELINE,
     CLEAR_RT,
     CLEAR_DS,
@@ -193,6 +193,11 @@ struct ClearDepthStencilDesc{
 
 struct BeginEventDesc{
     const char* name;
+};
+
+struct DrawCallDesc{
+    DrawCall dc;
+    uint32_t positionPS;
 };
 
 

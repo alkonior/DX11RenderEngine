@@ -326,27 +326,31 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             break;
         }
 
-        case EMachineCommands::SETUP_PIPELINE:
-        {
-            auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
-
-            GetPipelineResourceDependencies(ps);
-
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::SETUP_PIPELINE,
-                    (void*)pipelinesQueueShift
-                },
-                {LastPsReadDep},
-                {}
-            );
-
-            pipelinesQueueShift += ps->SnapshotByteSize;
-            break;
-        }
+        //case EMachineCommands::SETUP_PIPELINE:
+        //{
+        //    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
+//
+        //    GetPipelineResourceDependencies(ps);
+//
+        //    renderGraph.AddCommand(
+        //        {
+        //            EMachineCommands::SETUP_PIPELINE,
+        //            (void*)pipelinesQueueShift
+        //        },
+        //        {LastPsReadDep},
+        //        {}
+        //    );
+//
+        //    break;
+        //}
 
         case EMachineCommands::DRAW:
         {
+            auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + drawCallsQueue[drawCallsQueueShift].positionPS);
+            //
+
+            GetPipelineResourceDependencies(ps);
+            
             renderGraph.AddCommand(
                 {
                     EMachineCommands::DRAW,
@@ -502,20 +506,23 @@ void VirtualMachine::RunVM()
                     break;
                 }
 
-                case EMachineCommands::SETUP_PIPELINE:
+                //case EMachineCommands::SETUP_PIPELINE:
+                //{
+                //   
+                //    break;
+                //}
+
+                case EMachineCommands::DRAW:
                 {
-                    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + (uint32_t)description);
+                    auto& dcDesc = drawCallsQueue[(uint32_t)description];
+                    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + dcDesc.positionPS);
                     SetupPipelineResourceStates(ps);
                     SyncResources(block.ReadDependencies);
                     SyncResources(block.WrightDependencies);
                     ExecuteSetupPipeline(ps);
-                    break;
-                }
-
-                case EMachineCommands::DRAW:
-                {
+                    
                     //auto drawData = *(DrawCall*)description;
-                    RenderDevice->Draw(*(DrawCall*)(drawCallsQueue.data() + (uint32_t)description));
+                    RenderDevice->Draw(dcDesc.dc);
                     drawCallsQueueShift++;
                     break;
                 }

@@ -24,17 +24,19 @@ VirtualMachine::VirtualMachine(IRenderDevice* RenderDevice):
 
 void VirtualMachine::PushPSC(const PipelineSnapshot& pipelineSnapshot)
 {
-    auto position = pipelinesQueue.size();
+    lastPSPosition = pipelinesQueue.size();
     auto psSize = pipelineSnapshot.GetSize();
-    pipelinesQueue.resize(position + psSize);
+    pipelinesQueue.resize(lastPSPosition + psSize);
     pipelineSnapshot.Compress(
-        PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + position), resourcesManager));
-    PushCommand(EMachineCommands::SETUP_PIPELINE);
+        PipelineSnapshot::CompressArgs(reinterpret_cast<PSC*>(pipelinesQueue.data() + lastPSPosition), resourcesManager));
+    pipelinesQueueShift += psSize;
+    
+    //PushCommand(EMachineCommands::SETUP_PIPELINE);
 }
 
 void VirtualMachine::PushDrawCall(const DrawCall& drawCall)
 {
-    drawCallsQueue.push_back(drawCall);
+    drawCallsQueue.push_back({drawCall, lastPSPosition});
     PushCommand(EMachineCommands::DRAW);
 }
 
