@@ -638,6 +638,7 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
 
 
         std::vector<CD3DX12_DESCRIPTOR_RANGE> descriptorRanges;
+        CD3DX12_DESCRIPTOR_RANGE textureSamplerRange;
         if (params.uaCount)
         {
             descriptorRanges.push_back(CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, params.uaCount, 0));
@@ -657,22 +658,12 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
         }
         if (params.samplersCount)
         {
-            CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER,
+            textureSamplerRange = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER,
                                                          DX12Limitations::maxSamplers, 0);
             rootParameters[RootParameterIndex::SamplerBase].InitAsDescriptorTable(
                 1, &textureSamplerRange, D3D12_SHADER_VISIBILITY_ALL);
         }
-        // HLSL syntax todo!!!! maybe...
-        //#define DualTextureRS \
-        //"RootFlags ( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |" \
-        //"            DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
-        //"            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
-        //"            DENY_HULL_SHADER_ROOT_ACCESS )," \
-        //"DescriptorTable ( SRV(t0, numDescriptors = 2), visibility = SHADER_VISIBILITY_PIXEL )," \
-        //"DescriptorTable ( Sampler(s0, numDescriptors = 2), visibility = SHADER_VISIBILITY_PIXEL )," \
-        //"CBV(b0)"
 
-        // Create the root signature
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
         auto paramsEnum = (descriptorRanges.size() > 0) + (params.samplersCount > 0) * 2;
@@ -706,6 +697,7 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
 
         ComPtr<ID3DBlob> pSignature;
         ComPtr<ID3DBlob> pError;
+#if _DEBUG
         try
         {
             ThrowIfFailed(
@@ -720,6 +712,17 @@ ID3D12RootSignature* RenderDeviceDX12::FetchRS(SignatureParams params)
             };
             throw ce;
         }
+#else
+        HRESULT hr__ =
+            D3D12SerializeRootSignature(&rsigDesc, D3D_ROOT_SIGNATURE_VERSION_1, pSignature.GetAddressOf(),
+                pError.GetAddressOf());
+        if (FAILED(hr__)) {
+            auto* error =
+                (char*)pError->GetBufferPointer();
+            std::wcout << error << std::endl;
+            throw GVM::HrException(__LINE__, __FILE__, hr__);
+        }
+#endif
         ThrowIfFailed(md3dDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(),
             IID_PPV_ARGS(&rootSignature)));
         RootSignatures.push_back({params.data, rootSignature});
@@ -1259,7 +1262,8 @@ void RenderDeviceDX12::SyncResourcesState(GpuResource* data[], size_t size)
 {
     if (size == 0)
         return;
-    std::vector<D3D12_RESOURCE_BARRIER> bariers;
+    static std::vector<D3D12_RESOURCE_BARRIER> bariers;
+    bariers.clear();
     for (int i = 0; i < size; i++)
     {
         if (data[i]->currentState != data[i]->nextState)

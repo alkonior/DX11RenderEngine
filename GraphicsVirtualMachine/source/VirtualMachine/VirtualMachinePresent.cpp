@@ -431,7 +431,8 @@ void VirtualMachine::PushCommand(EMachineCommands command)
 
 void VirtualMachine::SyncResources(std::vector<Resource*>& resorces)
 {
-    std::vector<GpuResource*> gpu;
+    static std::vector<GpuResource*> gpu;
+    gpu.clear();
     for (auto r : resorces)
         gpu.push_back(&resourcesManager.GetResource(r));
     RenderDevice->SyncResourcesState(gpu.data(), gpu.size());
