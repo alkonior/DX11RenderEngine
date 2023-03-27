@@ -224,6 +224,11 @@ void GraphicsApi::SetupTexture(ResourceView* texture, uint8_t slot)
     ps->texturesNum = std::max<uint8_t>(ps->texturesNum, slot+1);
 }
 
+void GraphicsApi::FlushTextures()
+{
+    ps->texturesNum = 0;
+}
+
 void GraphicsApi::SetupNumRenderTargets(int32_t num)
 {
     ps->renderTargetsNum = num;

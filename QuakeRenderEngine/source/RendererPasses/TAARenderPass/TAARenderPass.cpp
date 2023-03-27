@@ -27,10 +27,14 @@ void TAARenderPass::Init(const char* dirr)
     
 	uint32_t width, height;
 	renderDevice->GetMainViewportSize(width, height);
-    
-    TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
+    if (TAAHistory)
+    	renderDevice->AddDisposeTexture(TAAHistory);
+	TAAHistory = renderDevice->CreateUATexture2D(Renderer::SURFACEFORMAT_VECTOR4,width, height,1);
+	if (constBuffer)
+		renderDevice->AddDisposeConstBuffer(constBuffer);
 	constBuffer = renderDevice->CreateConstBuffer(sizeof(localBuffer));
 }
+
 void TAARenderPass::UpdateHaltonSequence()
 {
     if (localBuffer.numSamples == 0) {

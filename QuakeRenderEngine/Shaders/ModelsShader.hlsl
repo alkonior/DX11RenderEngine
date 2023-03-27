@@ -115,6 +115,7 @@ struct PSOut {
 	packed_velocity_t velocity   : SV_Target2;
 	float  blurMask   : SV_Target3;
 	float4  normal   : SV_Target4;
+	float4  alpha   : SV_Target5;
 };
 
 PSOut psIn(PSIn input) 

@@ -125,6 +125,7 @@ public:
 
 
 	virtual void VerifyPixelTexture(int32_t index, const Texture* texture) override;
+	virtual void FlushPixelTextures() override;
 	virtual void VerifyUATexture(int32_t index, const Texture* texture) override;
 	virtual void VerifyVertexTexture(int32_t index, const Texture* texture) override;
 	virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) override;

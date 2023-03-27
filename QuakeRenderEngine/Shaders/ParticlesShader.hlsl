@@ -1,6 +1,7 @@
 #define HLSL
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/CoreShaderInclude.h"
-#include "..\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\source\CoreRenderSystem/Renderers/ParticlesRenderer/ParticlesConstBuffer.h"
+
+#include "ref_dx11rg\DX11RenderEngine\DX11RenderEngine\include/CoreRenderSystem/CoreShaderInclude.h"
+#include "ref_dx11rg\DX11RenderEngine\QuakeRenderEngine/source/RendererPasses/TAARenderPass\TAARenderPassConstBuffer.h"
 
 struct VSIn {
 	float3 pos     : Position;
@@ -23,7 +24,7 @@ GSIn vsIn(VSIn input) {
 
 	float4 worldPosition = float4(input.pos, 1);
 
-	vso.pos = mul(worldPosition, mainConstants.view);
+	vso.pos = mul(worldPosition, coreConstants.currentMatrices.view);
 
 	vso.color = input.color;
 	return vso;
@@ -32,10 +33,10 @@ GSIn vsIn(VSIn input) {
 PSIn CreateQuadVertex(GSIn input, float2 offset) {
 	PSIn gso = (PSIn)0;
 	input.pos.xy += offset;
-	gso.pos = mul(input.pos, mainConstants.projection);
+	gso.pos = mul(input.pos, coreConstants.currentMatrices.projection);
 
-	gso.pos.xy += taaShiftBuffer.taaStrength*
-	taaShiftBuffer.taaPixelShift*
+	gso.pos.xy += coreConstants.taaBuffer.taaStrength*
+	coreConstants.taaBuffer.taaPixelShift*
 		gso.pos.w;
 	
 	gso.color = input.color;

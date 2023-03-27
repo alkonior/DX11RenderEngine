@@ -4,6 +4,7 @@
 
 #include "CoreRenderSystem/RenderPasses/IMGUIRenderPass/ImGUIRenderPass.h"
 #include "RendererPasses/ModelsRenderPass/ModelsRenderPass.h"
+#include "RendererPasses/ParticlesRenderPass/ParticlesRenderPass.h"
 #include "RendererPasses/PPRenderPass/PPRenderPass.h"
 #include "RendererPasses/SSAORenderPass/SSAORenderPass.h"
 #include "RendererPasses/TAARenderPass/TAARenderPass.h"
@@ -98,7 +99,7 @@ private:
 	
 	//MotionBlurRenderer	 managerMB;
 	//PPRenderer			 managerPostProcess;
-	//ParticlesRenderer	 managerParticles;
+	ParticlesRenderPass		 renderPassParticles;
 	//BloomRenderer	     managerBloom;
 	//FXAARenderer	     managerFXAA;
 	//TAARenderer	         managerTAA;

@@ -521,6 +521,7 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
     D3D11Texture* d3dTexture = (D3D11Texture*)texture;
     if (texture == nullptr)
     {
+        pixelTextures[index] = nullptr;
         testApi->SetupTexture(nullptr, index);
         return;
     }
@@ -531,6 +532,10 @@ void D3D11Renderer::VerifyPixelTexture(int32_t index, const Texture* texture)
         pixelTextures[index] = d3dTexture;
         testApi->SetupTexture(d3dTexture->shView, index);
     }
+}
+void D3D11Renderer::FlushPixelTextures()
+{
+    testApi->FlushTextures();
 }
 
 void D3D11Renderer::VerifyUATexture(int32_t index, const Texture* texture)

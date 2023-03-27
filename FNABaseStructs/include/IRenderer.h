@@ -215,6 +215,7 @@ namespace Renderer
          */
         virtual void VerifyPixelSampler(int32_t index, const SamplerState& sampler) = 0;
         virtual void VerifyPixelTexture(int32_t index, const Texture* texture) = 0;
+        virtual void FlushPixelTextures() = 0;
 
         virtual void VerifyUATexture(int32_t index, const Texture* texture) = 0;
 

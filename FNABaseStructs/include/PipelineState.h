@@ -41,7 +41,6 @@ struct InputLayoutDescription {
 struct PipelineFactoryDescription {
 	const  Renderer::ShaderDefines* defines = nullptr;
 	size_t defineCount = 0;
-	UsedShaders shaders = (UsedShaders)0;
 	uint16_t compileFlags
 #if _DEBUG
 	=1;

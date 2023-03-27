@@ -36,7 +36,6 @@ Renderer::PipelineFactoryDescription TAARenderPassProvider::GetFactoryDescriptio
     return {
         TAARendererDefines,
         sizeof(TAARendererDefines),
-        Renderer::UseComputeShader,
         1
     };
     

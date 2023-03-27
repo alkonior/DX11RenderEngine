@@ -86,6 +86,7 @@ public:
     void SetupMeshBuffers(const Mesh& bindings);
     void SetupTextures(ResourceView* textures[], uint8_t num, uint8_t offset);
     void SetupTexture(ResourceView* texture, uint8_t slot);
+    void FlushTextures();
 
     void SetupNumRenderTargets(int32_t num);
     void SetupRenderTargets(const RenderTargetDesc renderTargets[], int32_t num, uint8_t offset, DepthStencilView* depthStencilBuffer);

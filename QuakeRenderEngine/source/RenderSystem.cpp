@@ -27,7 +27,8 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPassTAA(*this),
     renderPassUP(*this),
     renderPassPP(*this),
-    renderPassSSAO(*this)
+    renderPassSSAO(*this),
+    renderPassParticles(*this)
 {
    // ImGui::CreateContext();
 
@@ -51,6 +52,7 @@ RenderSystem::RenderSystem(RenderEngineInitStruct init, const BaseRenderSystemIn
     renderPasses.push_back(&renderPassUP);
     renderPasses.push_back(&renderPassPP);
     renderPasses.push_back(&renderPassSSAO);
+    renderPasses.push_back(&renderPassParticles);
     //managerImGUI.Init();
     //ImGui_ImplDX11_Init(pRenderer.device.Get(), pRenderer.context.Get());7
 
@@ -151,6 +153,10 @@ bool RenderSystem::RenderFrame()
     pRenderer->BeginEvent("Static motion blur draw.");
     //GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
     pRenderer->EndEvent();
+    
+    pRenderer->BeginEvent("Particles draw.");
+    GFX_CATCH_RENDER(renderPassParticles.Render(););
+    pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Models draw.");
     renderPassModels.Render(); 
@@ -162,16 +168,13 @@ bool RenderSystem::RenderFrame()
 
 
     pRenderer->BeginEvent("SSAO draw.");
-    //GFX_CATCH_RENDER(renderPassSSAO.Render(););
+    GFX_CATCH_RENDER(renderPassSSAO.Render(););
     pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Sky draw.");
     //GFX_CATCH_RENDER(managerSkybox.Render(*this););
     pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("Particles draw.");
-    //GFX_CATCH_RENDER(managerParticles.Render(*this););
-    pRenderer->EndEvent();
 
     pRenderer->BeginEvent("Bloom pass.");
     //GFX_CATCH_RENDER(managerBloom.Render(*this););
@@ -310,5 +313,5 @@ void RenderSystem::DrawFramedModel(size_t modelId, size_t textureId, const LerpM
 
 void RenderSystem::DrawParticles(const ParticlesMesh& particles, const ParticlesDrawData& data)
 {
-    // managerParticles.Draw(particles, data);
+    renderPassParticles.Draw(particles, data);
 }

@@ -9,8 +9,7 @@ PipelineFactory::PipelineFactory(IStateProvider* provider, const ShaderDefines* 
     defineCount(defineCount),
     compileFlags(compileFlags),
     dataSize(0),
-    shaderData(nullptr),
-    useShaders(0)
+    shaderData(nullptr)
 {}
 
 PipelineFactory::PipelineFactory(
@@ -18,7 +17,7 @@ Renderer::IRenderer* renderDevice,
 Renderer::IStateProvider* provider,
 void* shaderData,
 size_t dataSize):
-    PipelineFactory(provider, provider->GetFactoryDescription().defines, provider->GetFactoryDescription().defineCount, provider->GetFactoryDescription().compileFlags)
+    PipelineFactory(provider,provider->GetFactoryDescription().defines, provider->GetFactoryDescription().defineCount, provider->GetFactoryDescription().compileFlags)
 {
     this->renderDevice = renderDevice;
     this->shaderData = malloc(dataSize);
@@ -82,7 +81,7 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
             }, inputDescriptor.inputLayout, inputDescriptor.inputLayoutSize
         );
 
-        if (useShaders & Renderer::UseGeometryShader)
+        if (definesFlags.useShaders & Renderer::UseGeometryShader)
             sh->gs = renderDevice->CompileGeometryShader(
                 {
                     shaderData,dataSize,definesArray.data(),
@@ -95,25 +94,9 @@ PipelineState PipelineFactory::GetState(PipelineFactoryFlags definesFlags)
             );
         else
             sh->gs = nullptr;
-
-        if (useShaders & Renderer::UseComputeShader)
-            sh->cs = renderDevice->CompileComputeShader(
-                {
-                    shaderData,dataSize,definesArray.data(),
-                    definesArray.size(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
-                    "csIn","cs_5_0",compileFlags,
-#ifdef _DEBUG
-                    name
-#endif
-                }
-            );
-        else
-            sh->cs = nullptr;
-
-
-
-
-
+        
+        sh->cs = nullptr;
+        
         dictinaryShaders.insert({definesFlags.definesFlags,sh});
         ps.shaders = sh;
     }

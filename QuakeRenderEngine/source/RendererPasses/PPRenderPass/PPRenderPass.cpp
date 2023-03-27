@@ -22,13 +22,13 @@ PPRenderPass::PPRenderPassProvider::PPRenderPassProvider() {}
 void PPRenderPass::PPRenderPassProvider::PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags)
 {
     refToPS->bs = &BlendStates::NoAlpha;
+    refToPS->dss = &DepthStencilStates::NoDSS;
 
     if (definesFlags & (PPALPHA))
     {
         refToPS->bs = &BlendStates::Alpha;
     }
 
-    refToPS->dss = &DepthStencilStates::NoDSS;
     refToPS->rs = &RasterizerStates::All;
 }
 const D3D11_INPUT_ELEMENT_DESC DefaultInputElements[] =
@@ -118,8 +118,7 @@ void PPRenderPass::Render()
         renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor				"))->texture);
         renderDevice->VerifyPixelTexture(1, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("bloomMask					"))->texture);
         renderDevice->VerifyPixelTexture(2, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor				"))->texture);
-        renderDevice->VerifyPixelTexture(3, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces				"))->texture);
-        renderDevice->VerifyPixelTexture(4, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("oclusionField				"))->texture);
+        renderDevice->VerifyPixelTexture(3, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("oclusionField				"))->texture);
     }
 
 
@@ -128,13 +127,7 @@ void PPRenderPass::Render()
 
     renderDevice->ApplyPipelineState(factory->GetState(PPZERO | flags));
     renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);
-    renderDevice->VerifyPixelTexture(0, nullptr);
-    renderDevice->VerifyPixelTexture(1, nullptr);
-    renderDevice->VerifyPixelTexture(2, nullptr);
-    renderDevice->VerifyPixelTexture(3, nullptr);
-    renderDevice->VerifyPixelTexture(4, nullptr);
-    renderDevice->VerifyPixelTexture(8, nullptr);
-    renderDevice->VerifyPixelTexture(9, nullptr);
+    renderDevice->FlushPixelTextures();
 
     if (!ShowDebugTexture)
     {
@@ -143,10 +136,11 @@ void PPRenderPass::Render()
 
         renderDevice->SetRenderTargets(targets, 1, nullptr);
 
-        renderDevice->VerifyPixelTexture(5, nullptr);
-        renderDevice->VerifyPixelTexture(6, nullptr);
+        renderDevice->VerifyPixelTexture(0, baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces				"))->texture);
+        
 
         PipelineFactoryFlags f;
+        f.definesFlags |= PPALPHA;
         f.pipelineFlags |= PPALPHA;
         renderDevice->ApplyPipelineState(factory->GetState(f));
         renderDevice->DrawIndexedPrimitives(Renderer::PrimitiveType::PRIMITIVETYPE_TRIANGLESTRIP, 0, 0, 0, 0, 2);

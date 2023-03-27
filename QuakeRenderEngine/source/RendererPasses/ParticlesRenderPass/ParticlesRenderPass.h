@@ -1,24 +1,35 @@
 #pragma once
+#include "CoreRenderSystem/RenderPasses/QuadRenderPass.h"
+#include "Utils/DrawData.h"
 #include "DynamicMeshBuffer.h"
-#include "ParticlesRendererFactory.h"
-#include "ParticlesConstBuffer.h"
-#include "CoreRenderSystem/Renderers/BaseRenderer.h"
+
+enum ParticlesDefines : uint64_t {
+	PARZERO = 0,
+	PARRED = 1,
+};
+
+using Renderer::ShaderDefines;
+
+const ShaderDefines ParticlesRendererDefines[] = {
+	ShaderDefines("RED"),
+};
 
 
 
 
+class ParticlesRenderPass : public BaseRenderPass {
 
-class ParticlesRenderer : public BaseRenderer {
+private:
 	struct ParticlesRendererProvider;
 
-	ParticlesRendererFactory* factory = nullptr;
 	ParticlesRendererProvider* provider = nullptr;
 
 	struct ParticlesRendererProvider : public Renderer::IStateProvider {
 		int32_t width, height;
 		ParticlesRendererProvider(int32_t width, int32_t  height);
-		virtual void PatchPipelineState(Renderer::PipelineState* refToPS, size_t definesFlags) override;
+		virtual void PatchPipelineState(Renderer::Pipeline* refToPS, uint32_t definesFlags) override;
 		virtual  Renderer::InputLayoutDescription GetInputLayoutDescription(size_t definesFlags) override;
+		virtual Renderer::PipelineFactoryDescription GetFactoryDescription() override;
 		virtual const char* GetShaderName() override;
 	};
 
@@ -31,18 +42,22 @@ class ParticlesRenderer : public BaseRenderer {
 
 
 public:
+	explicit ParticlesRenderPass(BaseRenderSystem& renderSystem);
 
-	ParticlesRenderer();
-
-	virtual  void Init(void* shaderData, size_t dataSize) override;
+	virtual void Init(const char* dirr) override;
 	
 
 	void Draw(const ParticlesMesh& particles, const ParticlesDrawData& data);
 	
-	void Render(const GraphicsBase& gfx);
-	void Clear();
+	void Resize() override {};
+	void PreRender() override{};
+	
+	void Render();
 
-	~ParticlesRenderer() override;
+	void Clear();
+	void PostRender() override{Clear();};
+
+	~ParticlesRenderPass() override;
 
 private:
 

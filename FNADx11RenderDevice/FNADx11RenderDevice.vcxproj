@@ -221,7 +221,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GraphicsVirtualMachine\include\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\FNABaseStructs\include\;$(ProjectDir)..\VMDx11RenderDevice\include\;$(ProjectDir)..\VMDx12RenderDevice\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>

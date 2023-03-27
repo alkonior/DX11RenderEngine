@@ -23,13 +23,16 @@ PSIn vsIn(VSIn input)
     return output;
 }
 
-
+#ifndef ALPHA
 Texture2D diffuseColor : register(t0);
-
 Texture2D bloomMask : register(t1);
 Texture2D lightmap : register(t2);;
-Texture2D alphaSurfaces : register(t3);
-Texture2D occlusion : register(t4);
+Texture2D occlusion : register(t3);
+#endif
+
+#ifdef ALPHA
+Texture2D alphaSurfaces : register(t0);
+#endif
 
 
 SamplerState blureSampler : register(s0);
@@ -56,10 +59,10 @@ float4 psIn(PSIn input) : SV_Target
 #ifdef ALPHA
 	float4 alphaColor = alphaSurfaces.Sample(blureSampler, texCoord);
 	//float depth = depthTex.Sample(blureSampler, texCoord);
-    alphaColor.w = 0.3;
+    //alphaColor.w = 0.3;
 	return alphaColor;
 #endif
-
+#ifndef ALPHA
     float4 color = diffuseColor.Sample(blureSampler, texCoord);
     float4 light = lightmap.Sample(blureSampler, texCoord);
     light = light * occlusion.Sample(pointSampler, texCoord).xxxx;
@@ -69,4 +72,5 @@ float4 psIn(PSIn input) : SV_Target
     
     return color*light + bloom;
 
+#endif
 }

@@ -131,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)include\;$(ProjectDir)source\;$(ProjectDir)..\GVMBaseStructures\include\;$(ProjectDir)..\dxerr;$(ProjectDir)source\DX12Toolkit\Src;$(ProjectDir)source\DX12Toolkit</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>

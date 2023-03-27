@@ -39,7 +39,7 @@ Renderer::PipelineFactoryDescription UIRenderPassProvider::GetFactoryDescription
     debug = 1;
 #endif
     
-    return {UIRendererDefines,sizeof(UIRendererDefines),Renderer::UsePSVS,debug};
+    return {UIRendererDefines,sizeof(UIRendererDefines),debug};
 }
 
 

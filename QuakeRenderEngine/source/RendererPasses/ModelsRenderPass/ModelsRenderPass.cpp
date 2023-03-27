@@ -60,12 +60,13 @@ void ModelsRenderPass::Render()
     uint32_t width, height;
     renderDevice->GetBackbufferSize(width, height);
 
-    RenderTargetBinding* targets[5] = {
+    RenderTargetBinding* targets[] = {
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("diffuseColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("lightColor")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("velocityField")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("blurMask")),
         baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("normalsField")),
+        baseRendererParams.renderSystem.texturesManger->GetRenderTarget(SID("alphaSurfaces")),
     };
 
     renderDevice->SetRenderTargets(targets, std::size(targets), baseRendererParams.renderSystem.texturesManger->depthBuffer);
