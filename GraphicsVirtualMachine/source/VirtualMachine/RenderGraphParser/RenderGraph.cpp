@@ -9,60 +9,89 @@ GVM::RenderGraphNode::RenderGraphNode(EMachineCommands Command, void* Descriptio
 
 
 bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
-    const std::vector<Resource*>& readDependencies,
-    const std::vector<Resource*>& wrightDependencies
+    const ResourceStateTransition transitionsIn[50],
+    uint8_t transitionsNum
 )
 {
-    static std::vector<Resource*> NewReadDep;
-    static std::vector<Resource*> NewWrightDep;
-    NewReadDep.clear();
-    NewWrightDep.clear();
+    static std::vector<ResourceStateTransition> NewBeginTrans;
+    static std::vector<ResourceStateTransition> NewEndTrans;
+    NewBeginTrans.clear();
+    NewEndTrans.clear();
 
     bool result = true;
 
-    for (auto& readDep : readDependencies)
+    for (int i = 0; i < transitionsNum; i++)
     {
-        if (std::find(WrightDependencies.rbegin(), WrightDependencies.rend(), readDep) != WrightDependencies.rend())
+        
+        auto curTransition = transitionsIn[i];
+        uint8_t flags = curTransition.flags;
+        curTransition.flags = flags & (!ResourceStateTransition::END);
+        if (flags == ResourceStateTransition::DefInvalidFlag)
         {
-            return false;
+            for (const auto& transition : *transitionsEnd)
+            {
+                if (curTransition == transition)
+                {
+                    goto end_cycle;
+                }
+                if (curTransition.resource == transition.resource)
+                {
+                    return false;
+                }
+            }
+            NewBeginTrans.push_back(curTransition);
+            NewEndTrans.push_back(curTransition);
         }
-        if (std::find(ReadDependencies.rbegin(), ReadDependencies.rend(), readDep) != ReadDependencies.rend())
+        if (flags & ResourceStateTransition::BEGIN)
         {
-            continue;
+            for (const auto& transition : *transitionsBegin)
+            {
+                if (curTransition == transition)
+                {
+                    goto end_cycle;
+                }
+                if (curTransition.resource == transition.resource)
+                {
+                    return false;
+                }
+            }
+            NewBeginTrans.push_back(curTransition);
         }
-        NewReadDep.push_back(readDep);
-        //NewWrightDep.push_back(readDep);
-    }
-    for (auto& wrightDep : wrightDependencies)
-    {
-        if (std::find(ReadDependencies.rbegin(), ReadDependencies.rend(), wrightDep) != ReadDependencies.rend())
+        curTransition.flags = flags & (!ResourceStateTransition::WRITE);
+        if (flags & ResourceStateTransition::END)
         {
-            return false;
+            for (const auto& transition : *transitionsEnd)
+            {
+                if (curTransition == transition)
+                {
+                    goto end_cycle;
+                }
+                if (curTransition.resource == transition.resource)
+                {
+                    return false;
+                }
+            }
+                NewEndTrans.push_back(curTransition);
         }
-        if (std::find(WrightDependencies.rbegin(), WrightDependencies.rend(), wrightDep) != WrightDependencies.rend())
-        {
-            continue;
-        }
-        NewWrightDep.push_back(wrightDep);
+end_cycle: {}
     }
     
-    for (auto& readDep : NewReadDep)
+    for (auto& readDep : NewBeginTrans)
     {
-        ReadDependencies.push_back(readDep);
+        transitionsBegin->push_back(readDep);
     }
-    for (auto& wrightDep : NewWrightDep)
+    for (auto& wrightDep : NewEndTrans)
     {
-        WrightDependencies.push_back(wrightDep);
+        transitionsEnd->push_back(wrightDep);
     }
 
-    Nodes.push_back(Node);
+    GraphicsNodes.push_back(Node);
     return true;
 }
 
 
 void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
-    const std::vector<Resource*>& ReadDependencies,
-    const std::vector<Resource*>& WrightDependencies)
+    const std::vector<ResourceStateTransition>& transitionsIn)
 {
     //switch (Node.Command())
     //{
@@ -83,10 +112,11 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
     //}
 
 
-    if (!Blocks.rbegin()->TryAdd(Node, ReadDependencies, WrightDependencies))
+    if (!Blocks.rbegin()->TryAdd(Node, transitionsIn.data(), transitionsIn.size()))
     {
-        Blocks.push_back({});
-        bool succses = (Blocks[Blocks.size() - 1].TryAdd(Node, ReadDependencies, WrightDependencies));
+        TransitionPull.resize(Blocks.size()+1);
+        Blocks.emplace_back(TransitionPull.rbegin()->first, TransitionPull.rbegin()->second);
+        bool succses = (Blocks[Blocks.size() - 1].TryAdd(Node, transitionsIn.data(), transitionsIn.size()));
         assert(succses);
     }
 }
@@ -95,5 +125,14 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
 void GVM::RenderGraph::Clear()
 {
     Blocks.clear();
-    Blocks.push_back({});
+    for (auto& [l, r] : TransitionPull)
+    {
+        if (l->capacity() > 1.5*l->size())
+            l->shrink_to_fit();
+        if (r->capacity() > 1.5*r->size())
+            r->shrink_to_fit();
+        l->clear();
+        r->clear();
+    }
+    Blocks.emplace_back(TransitionPull[0].first, TransitionPull[0].second);
 }

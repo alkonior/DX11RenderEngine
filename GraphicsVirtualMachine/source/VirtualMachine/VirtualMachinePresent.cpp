@@ -91,11 +91,11 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         pipelineDescription.rasterizerState = ps->rasterizerState;
         pipelineDescription.topology = ps->primitiveTopology;
         pipelineDescription.layout = resourcesManager.GetRealInputLayout(ps->vertexDeclaration);
-        
+
         RenderDevice->SetupPipeline(pipelineDescription);
 
         RenderDevice->SetupVertexBuffers((const IRenderDevice::VERTEXBUFFERVIEWHANDLE*)vertexBuffers,
-                                         ps->vertexBuffersNum);
+            ps->vertexBuffersNum);
         RenderDevice->SetupIndexBuffer(
             (IRenderDevice::INDEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ps->indexBuffer));
 
@@ -243,189 +243,199 @@ void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* p
             GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
 }
 
-
 void VirtualMachine::PushCommand(EMachineCommands command)
 {
     commandQueue.push_back(command);
 
     switch (command)
     {
-        case EMachineCommands::CREATE_RESOURCE:
-        {
-            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::CREATE_RESOURCE,
-                    (void*)resource.id
-                },
-                {},
-                {resource.id}
-            );
-            break;
-        }
+    case EMachineCommands::CREATE_RESOURCE:
+    {
+        auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::CREATE_RESOURCE,
+                (void*)resource.id
+            },
+            {
+                ResourceStateTransition(
+                    ResourceStateTransition::DefInvalidFlag,
+                    resource.resource,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
+            }
+        );
+        resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+        break;
+    }
 
-        case EMachineCommands::UPDATE_RESOURCE:
-        {
-            auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::UPDATE_RESOURCE,
-                    (void*)resource.id
-                },
-                {},
-                {resource.id}
-            );
-            break;
-        }
+    case EMachineCommands::UPDATE_RESOURCE:
+    {
+        auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::UPDATE_RESOURCE,
+                (void*)resource.id
+            },
+            {
+                ResourceStateTransition(
+                    ResourceStateTransition::DefInvalidFlag,
+                    resource.resource,
+                    resource.currentState,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
+            }
+        );
+        resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+        break;
+    }
 
-        case EMachineCommands::CREATE_RESOURCE_VIEW:
-        {
-            auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::CREATE_RESOURCE_VIEW,
-                    (void*)resourceView.id
-                },
-                {},
-                {resourceView.resource}
-            );
-            break;
-        }
+    case EMachineCommands::CREATE_RESOURCE_VIEW:
+    {
+        auto& resourceView = resourcesManager.GetResourceView((ResourceView*)PullPointer());
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::CREATE_RESOURCE_VIEW,
+                (void*)resourceView.id
+            },
+            {}
+        );
+        break;
+    }
 
-        case EMachineCommands::SET_RESOURCE_DATA:
-        {
-            // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            auto& description = PullData<SetResourceDataDesc>();
-            PullPointer(description.params.dataSize);
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::SET_RESOURCE_DATA,
-                    (void*)
-                    ((uint8_t*)&description - dataQueue.data())
-                },
-                {},
-                {description.resource}
-            );
-            break;
-        }
+    case EMachineCommands::SET_RESOURCE_DATA:
+    {
+        // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+        auto& description = PullData<SetResourceDataDesc>();
+        PullPointer(description.params.dataSize);
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::SET_RESOURCE_DATA,
+                (void*)
+                ((uint8_t*)&description - dataQueue.data())
+            },
+            {},
+            {description.resource}
+        );
+        break;
+    }
 
-        case EMachineCommands::UPLOAD_RESOURCE_DATA:
-        {
-            // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-            auto& description = PullData<UploadResourceDataDesc>();
-            PullPointer(description.params.dataSize);
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::UPLOAD_RESOURCE_DATA,
-                    (void*)
-                    ((uint8_t*)&description - dataQueue.data())
-                },
-                {},
-                {description.resource}
-            );
-            break;
-        }
+    case EMachineCommands::UPLOAD_RESOURCE_DATA:
+    {
+        // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+        auto& description = PullData<UploadResourceDataDesc>();
+        PullPointer(description.params.dataSize);
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::UPLOAD_RESOURCE_DATA,
+                (void*)
+                ((uint8_t*)&description - dataQueue.data())
+            },
+            {},
+            {description.resource}
+        );
+        break;
+    }
 
-        //case EMachineCommands::SETUP_PIPELINE:
-        //{
-        //    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
+    //case EMachineCommands::SETUP_PIPELINE:
+    //{
+    //    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
 //
-        //    GetPipelineResourceDependencies(ps);
+    //    GetPipelineResourceDependencies(ps);
 //
-        //    renderGraph.AddCommand(
-        //        {
-        //            EMachineCommands::SETUP_PIPELINE,
-        //            (void*)pipelinesQueueShift
-        //        },
-        //        {LastPsReadDep},
-        //        {}
-        //    );
+    //    renderGraph.AddCommand(
+    //        {
+    //            EMachineCommands::SETUP_PIPELINE,
+    //            (void*)pipelinesQueueShift
+    //        },
+    //        {LastPsReadDep},
+    //        {}
+    //    );
 //
-        //    break;
-        //}
+    //    break;
+    //}
 
-        case EMachineCommands::DRAW:
-        {
-            auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + drawCallsQueue[drawCallsQueueShift].positionPS);
-            //
+    case EMachineCommands::DRAW:
+    {
+        auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + drawCallsQueue[drawCallsQueueShift].positionPS);
+        //
 
-            GetPipelineResourceDependencies(ps);
-            
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::DRAW,
-                    (void*)drawCallsQueueShift
-                },
-                LastPsReadDep,
-                LastPsWriteDep
-            );
-            drawCallsQueueShift++;
-            break;
-        }
-        case EMachineCommands::CLEAR_PIPELINE:
-        {
-            //RenderDevice->ClearState();
-            break;
-        }
-        case EMachineCommands::CLEAR_RT:
-        {
-            auto& desc = PullData<ClearRenderTargetDesc>();
+        GetPipelineResourceDependencies(ps);
 
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::CLEAR_RT,
-                    (void*)
-                    ((uint8_t*)&desc - dataQueue.data())
-                },
-                {},
-                {resourcesManager.GetResourceView(desc.resourceView).resource}
-            );
-            break;
-        }
-        case EMachineCommands::CLEAR_DS:
-        {
-            auto& desc = PullData<ClearDepthStencilDesc>();
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::CLEAR_DS,
-                    (void*)
-                    ((uint8_t*)&desc - dataQueue.data())
-                },
-                {},
-                {resourcesManager.GetResourceView(desc.resourceView).resource}
-            );
-            break;
-        }
-        case EMachineCommands::BEGIN_EVENT:
-        {
-            const char* name = (const char*)dataQueue.data() + queueShift;
-            //std::cout << name << std::endl;
-            PullPointer(std::strlen(name) + 1);
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::DRAW,
+                (void*)drawCallsQueueShift
+            },
+            LastPsReadDep,
+            LastPsWriteDep
+        );
+        drawCallsQueueShift++;
+        break;
+    }
+    case EMachineCommands::CLEAR_PIPELINE:
+    {
+        //RenderDevice->ClearState();
+        break;
+    }
+    case EMachineCommands::CLEAR_RT:
+    {
+        auto& desc = PullData<ClearRenderTargetDesc>();
 
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::BEGIN_EVENT,
-                    (void*)
-                    ((uint8_t*)name - dataQueue.data())
-                },
-                {},
-                {}
-            );
-            break;
-        }
-        case EMachineCommands::END_EVENT:
-        {
-            renderGraph.AddCommand(
-                {
-                    EMachineCommands::END_EVENT,
-                    nullptr
-                },
-                {},
-                {}
-            );
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::CLEAR_RT,
+                (void*)
+                ((uint8_t*)&desc - dataQueue.data())
+            },
+            {},
+            {resourcesManager.GetResourceView(desc.resourceView).resource}
+        );
+        break;
+    }
+    case EMachineCommands::CLEAR_DS:
+    {
+        auto& desc = PullData<ClearDepthStencilDesc>();
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::CLEAR_DS,
+                (void*)
+                ((uint8_t*)&desc - dataQueue.data())
+            },
+            {},
+            {resourcesManager.GetResourceView(desc.resourceView).resource}
+        );
+        break;
+    }
+    case EMachineCommands::BEGIN_EVENT:
+    {
+        const char* name = (const char*)dataQueue.data() + queueShift;
+        //std::cout << name << std::endl;
+        PullPointer(std::strlen(name) + 1);
 
-            break;
-        }
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::BEGIN_EVENT,
+                (void*)
+                ((uint8_t*)name - dataQueue.data())
+            },
+            {},
+            {}
+        );
+        break;
+    }
+    case EMachineCommands::END_EVENT:
+    {
+        renderGraph.AddCommand(
+            {
+                EMachineCommands::END_EVENT,
+                nullptr
+            },
+            {},
+            {}
+        );
+
+        break;
+    }
     }
 }
 
@@ -453,124 +463,124 @@ void VirtualMachine::RunVM()
             comandIndex++;
             switch (command)
             {
-                case EMachineCommands::CREATE_RESOURCE:
-                {
-                    auto& resource = resourcesManager.GetResource((Resource*)(description));
-                    resource.resource = RenderDevice->CreateResource(resource); //todo
-                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                    break;
-                }
+            case EMachineCommands::CREATE_RESOURCE:
+            {
+                auto& resource = resourcesManager.GetResource((Resource*)(description));
+                resource.resource = RenderDevice->CreateResource(resource); //todo
+                resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                break;
+            }
 
-                case EMachineCommands::UPDATE_RESOURCE:
-                {
-                    auto& resource = resourcesManager.GetResource((Resource*)description);
-                    RenderDevice->DestroyResource(resource.resource);
-                    resource.resource = RenderDevice->CreateResource(resource);
-                    resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                    resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                    break;
-                }
+            case EMachineCommands::UPDATE_RESOURCE:
+            {
+                auto& resource = resourcesManager.GetResource((Resource*)description);
+                RenderDevice->DestroyResource(resource.resource);
+                resource.resource = RenderDevice->CreateResource(resource);
+                resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+                break;
+            }
 
-                case EMachineCommands::CREATE_RESOURCE_VIEW:
-                {
-                    auto& resourceView = resourcesManager.GetResourceView((ResourceView*)description);
-                    resourceView.view = RenderDevice->CreateResourceView(resourceView,
-                                                                         resourcesManager.GetResource(
-                                                                             resourceView.resource));
-                    break;
-                }
+            case EMachineCommands::CREATE_RESOURCE_VIEW:
+            {
+                auto& resourceView = resourcesManager.GetResourceView((ResourceView*)description);
+                resourceView.view = RenderDevice->CreateResourceView(resourceView,
+                    resourcesManager.GetResource(
+                        resourceView.resource));
+                break;
+            }
 
-                case EMachineCommands::SET_RESOURCE_DATA:
-                {
-                    // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-                    auto& desc = *(SetResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
-                    RenderDevice->SetSubresourceData(resourcesManager.GetResource(desc.resource),
-                                                     desc.params.dstSubresource,
-                                                     desc.params.rect,
-                                                     dataQueue.data() + desc.shift,
-                                                     desc.params.srcRowPitch,
-                                                     desc.params.srcDepthPitch);
-                    break;
-                }
+            case EMachineCommands::SET_RESOURCE_DATA:
+            {
+                // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                auto& desc = *(SetResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
+                RenderDevice->SetSubresourceData(resourcesManager.GetResource(desc.resource),
+                    desc.params.dstSubresource,
+                    desc.params.rect,
+                    dataQueue.data() + desc.shift,
+                    desc.params.srcRowPitch,
+                    desc.params.srcDepthPitch);
+                break;
+            }
 
-                case EMachineCommands::UPLOAD_RESOURCE_DATA:
-                {
-                    // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
-                    auto& desc = *(UploadResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
-                    RenderDevice->UploadSubresourceData(resourcesManager.GetResource(desc.resource),
-                                                        desc.params.dstSubresource,
-                                                        desc.params.dataSize,
-                                                        dataQueue.data() + desc.shift,
-                                                        desc.params.srcRowPitch,
-                                                        desc.params.srcDepthPitch);
-                    break;
-                }
+            case EMachineCommands::UPLOAD_RESOURCE_DATA:
+            {
+                // auto& resource = resourcesManager.GetResource((Resource*)PullPointer());
+                auto& desc = *(UploadResourceDataDesc*)(dataQueue.data() + (uint32_t)description);
+                RenderDevice->UploadSubresourceData(resourcesManager.GetResource(desc.resource),
+                    desc.params.dstSubresource,
+                    desc.params.dataSize,
+                    dataQueue.data() + desc.shift,
+                    desc.params.srcRowPitch,
+                    desc.params.srcDepthPitch);
+                break;
+            }
 
-                //case EMachineCommands::SETUP_PIPELINE:
-                //{
-                //   
-                //    break;
-                //}
+            //case EMachineCommands::SETUP_PIPELINE:
+            //{
+            //   
+            //    break;
+            //}
 
-                case EMachineCommands::DRAW:
-                {
-                    auto& dcDesc = drawCallsQueue[(uint32_t)description];
-                    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + dcDesc.positionPS);
-                    SetupPipelineResourceStates(ps);
-                    SyncResources(block.ReadDependencies);
-                    SyncResources(block.WrightDependencies);
-                    ExecuteSetupPipeline(ps);
-                    
-                    //auto drawData = *(DrawCall*)description;
-                    RenderDevice->Draw(dcDesc.dc);
-                    drawCallsQueueShift++;
-                    break;
-                }
-                case EMachineCommands::CLEAR_PIPELINE:
-                {
-                    RenderDevice->ClearState();
-                    break;
-                }
-                case EMachineCommands::CLEAR_RT:
-                {
-                    auto& desc = *(ClearRenderTargetDesc*)(dataQueue.data() + (uint32_t)description);
-                    auto* resource = &resourcesManager.GetResource(desc.resourceView);
-                    resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
-                    RenderDevice->SyncResourcesState(&resource, 1);
-                    RenderDevice->ClearRenderTarget(
-                        (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
-                        desc.color);
+            case EMachineCommands::DRAW:
+            {
+                auto& dcDesc = drawCallsQueue[(uint32_t)description];
+                auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + dcDesc.positionPS);
+                SetupPipelineResourceStates(ps);
+                SyncResources(block.ReadDependencies);
+                SyncResources(block.WrightDependencies);
+                ExecuteSetupPipeline(ps);
 
-                    break;
-                }
-                case EMachineCommands::CLEAR_DS:
-                {
-                    auto& desc = *(ClearDepthStencilDesc*)(dataQueue.data() + (uint32_t)description);
-                    auto* resource = &resourcesManager.GetResource(desc.resourceView);
-                    resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
-                    RenderDevice->SyncResourcesState(&resource, 1);
-                    RenderDevice->ClearDepthStencil(
-                        (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
-                        desc.depth,
-                        desc.stencil
-                    );
-                    break;
-                }
-                case EMachineCommands::BEGIN_EVENT:
-                {
-                    const char* name = (char*)(dataQueue.data() + (uint32_t)description);
-                    // std::cout << name << std::endl;
-                    // PullPointer(std::strlen(name) + 1);
-                    RenderDevice->BeginEvent(name);
-                    break;
-                }
-                case EMachineCommands::END_EVENT:
-                {
-                    RenderDevice->EndEvent();
+                //auto drawData = *(DrawCall*)description;
+                RenderDevice->Draw(dcDesc.dc);
+                drawCallsQueueShift++;
+                break;
+            }
+            case EMachineCommands::CLEAR_PIPELINE:
+            {
+                RenderDevice->ClearState();
+                break;
+            }
+            case EMachineCommands::CLEAR_RT:
+            {
+                auto& desc = *(ClearRenderTargetDesc*)(dataQueue.data() + (uint32_t)description);
+                auto* resource = &resourcesManager.GetResource(desc.resourceView);
+                resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
+                RenderDevice->SyncResourcesState(&resource, 1);
+                RenderDevice->ClearRenderTarget(
+                    (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
+                    desc.color);
 
-                    break;
-                }
+                break;
+            }
+            case EMachineCommands::CLEAR_DS:
+            {
+                auto& desc = *(ClearDepthStencilDesc*)(dataQueue.data() + (uint32_t)description);
+                auto* resource = &resourcesManager.GetResource(desc.resourceView);
+                resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
+                RenderDevice->SyncResourcesState(&resource, 1);
+                RenderDevice->ClearDepthStencil(
+                    (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
+                    desc.depth,
+                    desc.stencil
+                );
+                break;
+            }
+            case EMachineCommands::BEGIN_EVENT:
+            {
+                const char* name = (char*)(dataQueue.data() + (uint32_t)description);
+                // std::cout << name << std::endl;
+                // PullPointer(std::strlen(name) + 1);
+                RenderDevice->BeginEvent(name);
+                break;
+            }
+            case EMachineCommands::END_EVENT:
+            {
+                RenderDevice->EndEvent();
+
+                break;
+            }
             }
         }
         std::cout << std::flush;

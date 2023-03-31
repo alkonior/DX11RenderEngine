@@ -109,6 +109,7 @@ public:
     VirtualMachine(const VirtualMachine&&) = delete;
     ~VirtualMachine();
 
+    void OptimizeRenderGraph();
     void RunVM();
     void AddComand();
     void Present();
@@ -119,7 +120,6 @@ public:
 
     void BeginEvent(const char* name);
     void EndEvent();
-
 
 #pragma region Resources
 

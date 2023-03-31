@@ -272,6 +272,9 @@
       <Project>{eed93469-9dcf-4a80-a11f-0d9bcb560b25}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\VirtualMachine\Optimizer.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
