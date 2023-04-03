@@ -1344,7 +1344,6 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         params.srvCount = Pipeline.srvCount;
         params.samplersCount = Pipeline.samplersNum;
         auto rs = FetchRS(params);
-        mCommandList->SetGraphicsRootSignature(rs);
         ps.pRootSignature = rs;
         auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuWriteHandle();
 
@@ -1399,9 +1398,17 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         if (currentPipeline != newPipeline)
         {
             currentPipeline = newPipeline;
+            mCommandList->SetGraphicsRootSignature(rs);
+            currentRoot = rs;
             mCommandList->SetPipelineState(newPipeline.Get());
             currentTopology = ToD3DPT[to_underlying(Pipeline.topology)];
             mCommandList->IASetPrimitiveTopology(ToD3DPT[to_underlying(Pipeline.topology)]);
+        }
+        
+        if (currentRoot != rs)
+        {
+            currentRoot = rs;
+            mCommandList->SetPipelineState(newPipeline.Get());
         }
 
         if (
@@ -1447,9 +1454,8 @@ D3D12_RECT m_scissorRect[20];
 
 void RenderDeviceDX12::SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num)
 {
-    //if ( || num != d3d11viewportsNum)
+    if (ToD3D12Viewports(viewports, d3d12viewports, m_scissorRect, num, d3d11viewportsNum))
     {
-        ToD3D12Viewports(viewports, d3d12viewports, m_scissorRect, num);
         d3d11viewportsNum = num;
         mCommandList->RSSetViewports(num, d3d12viewports);
         mCommandList->RSSetScissorRects(num, m_scissorRect);
@@ -1506,10 +1512,10 @@ void RenderDeviceDX12::SetupSamplers(const Compressed::SamplerStateDesc samplers
     }
     else
     {
-        if (isCompute)
-            mCommandList->SetComputeRootDescriptorTable(1, cachedSamplerhandle);
-        else
-            mCommandList->SetGraphicsRootDescriptorTable(1, cachedSamplerhandle);
+        //if (isCompute)
+        //    mCommandList->SetComputeRootDescriptorTable(1, cachedSamplerhandle);
+        //else
+        //    mCommandList->SetGraphicsRootDescriptorTable(1, cachedSamplerhandle);
     }
 }
 

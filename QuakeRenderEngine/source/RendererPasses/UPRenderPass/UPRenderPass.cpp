@@ -103,11 +103,23 @@ void UPRenderPass::Render() {
 		auto  pLightMap = drawCalls[i].lightMap.texture;
 		renderDevice->VerifyPixelTexture(1, pLightMap);
 	
-
-		dataBuffer.world = drawCalls[i].data.position.GetTransform();
-		dataBuffer.texOffset = drawCalls[i].data.texOffset;
-		dataBuffer.color = drawCalls[i].data.light;
-		renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
+		bool df = false;
+		if (dataBuffer.world != drawCalls[i].data.position.GetTransform())
+		{
+			df = true;
+			dataBuffer.world = drawCalls[i].data.position.GetTransform();
+		}
+		if (dataBuffer.texOffset != drawCalls[i].data.texOffset) {
+			df = true;
+			dataBuffer.texOffset = drawCalls[i].data.texOffset;
+		};
+		if (dataBuffer.color != drawCalls[i].data.light)
+		{
+			df = true;
+			dataBuffer.color = drawCalls[i].data.light;
+		}
+		if (df)
+			renderDevice->SetConstBuffer(pDataCB, &dataBuffer);
 
 
 		if (drawCalls[i].data.dynamicLight)

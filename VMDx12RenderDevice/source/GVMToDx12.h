@@ -183,9 +183,9 @@ std::vector<D3D12_INPUT_ELEMENT_DESC> inline ToD3D11(const InputAssemblerDeclara
 	return result;
 }
 
-bool inline ToD3D12Viewports(const Compressed::ViewportDesc viewports[], D3D12_VIEWPORT d3d11viewports[20], D3D12_RECT scissorsRect[20], uint8_t num)
+bool ToD3D12Viewports(const Compressed::ViewportDesc viewports[], D3D12_VIEWPORT d3d11viewports[20], D3D12_RECT scissorsRect[20], uint8_t num, uint8_t d3d11viewportsNum)
 {
-	bool result = false;
+	bool result = num != d3d11viewportsNum;
 	for (int i = 0; i < num; i++)
 	{
 		if (((D3D12_VIEWPORT*)viewports)[i] != d3d11viewports[i])

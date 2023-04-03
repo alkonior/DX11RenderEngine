@@ -200,9 +200,12 @@ public:
     void ClearState() override;
     void SetupViewports(const Compressed::ViewportDesc viewports[], uint8_t num);
     void SetupSamplers(const Compressed::SamplerStateDesc samplers[], uint8_t num, bool isCompute);
+    
     Compressed::SamplerStateDesc  cachedSamplers[20];
     uint8_t cachedSamplersNUm = 0;
     D3D12_GPU_DESCRIPTOR_HANDLE cachedSamplerhandle;
+
+    ID3D12RootSignature* currentRoot = nullptr;
     
     D3D12_CPU_DESCRIPTOR_HANDLE currentDSV = {0}; 
     Microsoft::WRL::ComPtr<ID3D12PipelineState> currentPipeline = nullptr;
