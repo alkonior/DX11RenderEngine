@@ -8,24 +8,20 @@ GVM::RenderGraphNode::RenderGraphNode(EMachineCommands Command, void* Descriptio
 
 
 
-bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
+bool GVM::SyncThreadBlock::TryAdd(
     const ResourceStateTransition transitionsIn[50],
-    uint8_t transitionsNum
+    uint8_t transitionsNum,
+    TryAddResult& result
 )
 {
-    static std::vector<ResourceStateTransition> NewBeginTrans;
-    static std::vector<ResourceStateTransition> NewEndTrans;
-    NewBeginTrans.clear();
-    NewEndTrans.clear();
-
-    bool result = true;
+    result.NewBeginTrans.clear();
+    result.NewEndTrans.clear();
 
     for (int i = 0; i < transitionsNum; i++)
     {
-        
         auto curTransition = transitionsIn[i];
         uint8_t flags = curTransition.flags;
-        curTransition.flags = flags & (!ResourceStateTransition::END);
+        curTransition.flags = flags & (~ResourceStateTransition::END);
         if (flags == ResourceStateTransition::DefInvalidFlag)
         {
             for (const auto& transition : *transitionsEnd)
@@ -39,8 +35,25 @@ bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
                     return false;
                 }
             }
-            NewBeginTrans.push_back(curTransition);
-            NewEndTrans.push_back(curTransition);
+            curTransition.flags = flags;
+            result.NewBeginTrans.push_back(curTransition);
+            result.NewEndTrans.push_back(curTransition);
+        }
+        if (curTransition.StateTo == curTransition.StateFrom)
+        {
+            for (const auto& transition : *transitionsEnd)
+            {
+                if (curTransition.resource == transition.resource)
+                {
+                    if (curTransition.StateTo == transition.StateTo)
+                    {
+                        goto end_cycle;
+                    }
+                    return false;
+                }
+            }
+            result.NewEndTrans.push_back(curTransition);
+            goto end_cycle;
         }
         if (flags & ResourceStateTransition::BEGIN)
         {
@@ -55,9 +68,9 @@ bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
                     return false;
                 }
             }
-            NewBeginTrans.push_back(curTransition);
+            result.NewBeginTrans.push_back(curTransition);
         }
-        curTransition.flags = flags & (!ResourceStateTransition::WRITE);
+        curTransition.flags = flags & (~ResourceStateTransition::BEGIN);
         if (flags & ResourceStateTransition::END)
         {
             for (const auto& transition : *transitionsEnd)
@@ -71,22 +84,26 @@ bool GVM::SyncThreadBlock::TryAdd(const RenderGraphNode& Node,
                     return false;
                 }
             }
-                NewEndTrans.push_back(curTransition);
+            result.NewEndTrans.push_back(curTransition);
         }
 end_cycle: {}
     }
-    
-    for (auto& readDep : NewBeginTrans)
+    return true;
+}
+
+void GVM::SyncThreadBlock::Add(const RenderGraphNode& Node, const TryAddResult& result)
+{
+    for (auto& readDep : result.NewBeginTrans)
     {
         transitionsBegin->push_back(readDep);
     }
-    for (auto& wrightDep : NewEndTrans)
+    for (auto& wrightDep : result.NewEndTrans)
     {
         transitionsEnd->push_back(wrightDep);
     }
 
     GraphicsNodes.push_back(Node);
-    return true;
+    
 }
 
 
@@ -110,22 +127,46 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
     //    return;
     //}
     //}
-
-
-    if (!Blocks.rbegin()->TryAdd(Node, transitionsIn.data(), transitionsIn.size()))
+    static TryAddResult tryAddResult;
+    
+    if (Blocks.rbegin()->TryAdd(
+     transitionsIn.data(),
+     transitionsIn.size(),
+     tryAddResult))
     {
-        TransitionPull.resize(Blocks.size()+1);
-        Blocks.emplace_back(TransitionPull.rbegin()->first, TransitionPull.rbegin()->second);
-        bool succses = (Blocks[Blocks.size() - 1].TryAdd(Node, transitionsIn.data(), transitionsIn.size()));
-        assert(succses);
+        static TryAddResult tryAddResultSecond;
+        int iterationsCount = 0;
+        
+        while (
+        (iterationsCount + 1) <= MaxIterationToAdd &&
+        (Blocks.rbegin()+(iterationsCount+1) != Blocks.rend()) &&
+        (Blocks.rbegin()+(iterationsCount+1))->TryAdd(
+            transitionsIn.data(),
+            transitionsIn.size(),
+            tryAddResultSecond)
+           )
+        {
+            iterationsCount++;
+            tryAddResult = std::move(tryAddResultSecond);
+        }
+        (Blocks.rbegin()+iterationsCount)->Add(Node, tryAddResult);
+    }else
+    {
+        ResizeTransitionsPull(Blocks.size()+1);
+        Blocks.emplace_back(TransitionsPull[Blocks.size()].first,
+            TransitionsPull[Blocks.size()].second);
+        bool success = (Blocks[Blocks.size() - 1].TryAdd(transitionsIn.data(), transitionsIn.size(), tryAddResult));
+        assert(success);
+        Blocks[Blocks.size() - 1].Add(Node, tryAddResult);
     }
+ 
 }
 
 
 void GVM::RenderGraph::Clear()
 {
     Blocks.clear();
-    for (auto& [l, r] : TransitionPull)
+    for (auto& [l, r] : TransitionsPull)
     {
         if (l->capacity() > 1.5*l->size())
             l->shrink_to_fit();
@@ -134,5 +175,5 @@ void GVM::RenderGraph::Clear()
         l->clear();
         r->clear();
     }
-    Blocks.emplace_back(TransitionPull[0].first, TransitionPull[0].second);
+    Blocks.emplace_back(TransitionsPull[0].first, TransitionsPull[0].second);
 }

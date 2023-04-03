@@ -132,7 +132,7 @@ private:
 
     
 protected:
-
+    std::vector<ID3D12Resource*> Resources;
     IResource* CreateResource(const GpuResource& ResourceDesc) override;
 public:
     void DestroyResource(const RESOURCEHANDLE resource) override;
@@ -183,7 +183,7 @@ public:
 
     void SyncBlockExecutionStart() override
     { }
-    void SyncResourcesState(GpuResource * data[], size_t size) override;
+    void SyncResourcesState(std::vector<ResourceStateTransition>& transitions) override;
     void SyncBlockExecutionEnd() override{};
 
 #pragma endregion

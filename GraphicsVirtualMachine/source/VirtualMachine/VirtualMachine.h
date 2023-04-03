@@ -26,14 +26,11 @@ class VirtualMachine {
     RenderGraph renderGraph;
     
     
-    std::vector<Resource*> LastPsReadDep;
-    std::vector<Resource*> LastPsWriteDep;
+    std::vector<ResourceStateTransition> LastPsTransitions;
 
     //uint32_t PushData(void* data, uint32_t dataLength);
 
     void PushCommand(EMachineCommands command);
-    void SyncResources(std::vector<Resource*>& resorces);
-
 #pragma region Data
     void PushData(const void* data, uint32_t dataSize);
 
@@ -97,8 +94,7 @@ class VirtualMachine {
 #pragma Commands
 
     void ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps);
-    void GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps);
-    void SetupPipelineResourceStates(Compressed::PipelineSnapshot* ps);
+    void GetPipelineResourceTransitions(Compressed::PipelineSnapshot* ps);
 
 #pragma endregion
 
@@ -111,7 +107,7 @@ public:
 
     void OptimizeRenderGraph();
     void RunVM();
-    void AddComand();
+   // void AddComand();
     void Present();
 
     size_t lastPSPosition = 0;

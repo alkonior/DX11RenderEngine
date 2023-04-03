@@ -514,11 +514,11 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
 
 IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& ResourceDesc)
 {
+    ID3D12Resource* defaultBuffer = nullptr;
     switch (ResourceDesc.resourceDescription.Dimension)
     {
         case EResourceDimension::RESOURCE_DIMENSION_BUFFER:
         {
-            ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
             ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -528,12 +528,11 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_PPV_ARGS(&defaultBuffer)));
-
-            return (IRenderDevice::IResource*)defaultBuffer;
+            break;
         }
         case EResourceDimension::RESOURCE_DIMENSION_TEXTURE1D:
         {
-            ID3D12Resource* defaultBuffer;
+            //ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
             ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -546,16 +545,15 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
                     1,
                     ToDx12TextureFlags(ResourceDesc.resourceBindings)
                 ),
-                D3D12_RESOURCE_STATE_COMMON,
+                D3D12_RESOURCE_STATE_GENERIC_READ,
                 CreateClearValue(ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
                     ResourceDesc.resourceBindings),
                 IID_PPV_ARGS(&defaultBuffer)));
-
-            return (IRenderDevice::IResource*)defaultBuffer;
+            break;
         }
         case EResourceDimension::RESOURCE_DIMENSION_TEXTURE2D:
         {
-            ID3D12Resource* defaultBuffer;
+            //ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
             ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -575,12 +573,11 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
                 CreateClearValue(ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
                     ResourceDesc.resourceBindings),
                 IID_PPV_ARGS(&defaultBuffer)));
-
-            return (IRenderDevice::IResource*)defaultBuffer;
+            break;
         }
         case EResourceDimension::RESOURCE_DIMENSION_TEXTURE3D:
         {
-            ID3D12Resource* defaultBuffer;
+            //ID3D12Resource* defaultBuffer;
 
             // Create the actual default buffer resource.
             ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -598,13 +595,19 @@ IRenderDevice::IResource* RenderDeviceDX12::CreateResource(const GpuResource& Re
                 CreateClearValue(ToD3D_TextureFormat[to_underlying(ResourceDesc.resourceDescription.Format)],
                     ResourceDesc.resourceBindings),
                 IID_PPV_ARGS(&defaultBuffer)));
+            break;
 
-            return (IRenderDevice::IResource*)defaultBuffer;
         }
         default:
             break;
     }
-    return nullptr;
+    Resources.resize((uintptr_t)ResourceDesc.id+1);
+    Resources[(uintptr_t)ResourceDesc.id] = defaultBuffer;
+    if (defaultBuffer == nullptr)
+    {
+        defaultBuffer = nullptr;
+    }
+    return (IRenderDevice::IResource*)defaultBuffer;
 }
 
 enum RootParameterIndex
@@ -1058,13 +1061,13 @@ void UploadBufferData(
     // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
     // the intermediate upload heap data will be copied to mBuffer.
     auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                          ToDx12(resource.currentState),
+                                                          ToDx12(resource.realState),
                                                           D3D12_RESOURCE_STATE_COPY_DEST);
     cmdList->ResourceBarrier(1, &transtion);
 
     UpdateSubresources<1>(cmdList, buffer, uploadBuffer.Get(), 0, 0, 1, &subResourceData);
     transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                     D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+                                                     D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.realState));
     cmdList->ResourceBarrier(1, &transtion);
 
     // Note: uploadBuffer has to be kept alive after the above function calls because
@@ -1130,7 +1133,7 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
 
 
     auto transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                          ToDx12(resource.currentState),
+                                                          ToDx12(resource.realState),
                                                           D3D12_RESOURCE_STATE_COPY_DEST);
     if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
     {
@@ -1177,7 +1180,7 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
                                                              D3D12_RESOURCE_STATE_COPY_DEST,
                                                              D3D12_RESOURCE_STATE_COPY_SOURCE);
         transtions[1] = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                             ToDx12(resource.currentState),
+                                                             ToDx12(resource.realState),
                                                              D3D12_RESOURCE_STATE_COPY_DEST);
 
 
@@ -1195,7 +1198,7 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
 
         mCommandList->CopyTextureRegion(&Dst, rect.Left, rect.Top, rect.Front, &Src, nullptr);
         transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                         D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+                                                         D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.realState));
         mCommandList->ResourceBarrier(1, &transtion);
     }
     else
@@ -1245,36 +1248,42 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
         //uploadBuffer->Unmap(0, NULL);
 
         transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                         ToDx12(resource.currentState), D3D12_RESOURCE_STATE_COPY_DEST);
+                                                         ToDx12(resource.realState), D3D12_RESOURCE_STATE_COPY_DEST);
         mCommandList->ResourceBarrier(1, &transtion);
         mCommandList->CopyBufferRegion(buffer, rect.Left, currentBufferUploadBuffer.Get(),
                                        currentBufferUploadBufferShift, requiredSize);
         currentBufferUploadBufferShift += requiredSize;
         transtion = CD3DX12_RESOURCE_BARRIER::Transition(buffer,
-                                                         D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.currentState));
+                                                         D3D12_RESOURCE_STATE_COPY_DEST, ToDx12(resource.realState));
         mCommandList->ResourceBarrier(1, &transtion);
     }
 
     //todo Обсудить ибо грустно и 0 идей... Вроде идея есть.... текстуры говно....
 }
 
-void RenderDeviceDX12::SyncResourcesState(GpuResource* data[], size_t size)
+void RenderDeviceDX12::SyncResourcesState(std::vector<ResourceStateTransition>& transitions)
 {
-    if (size == 0)
+    if (transitions.size() == 0)
         return;
     static std::vector<D3D12_RESOURCE_BARRIER> bariers;
     bariers.clear();
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < transitions.size(); i++)
     {
-        if (data[i]->currentState != data[i]->nextState)
+        if (transitions[i].flags != ResourceStateTransition::DefInvalidFlag &&
+            transitions[i].StateTo != transitions[i].StateFrom)
         {
             bariers.push_back(
                 CD3DX12_RESOURCE_BARRIER::Transition(
-                    (ID3D12Resource*)data[i]->resource,
-                    ToDx12(data[i]->currentState),
-                    ToDx12(data[i]->nextState)));
-            data[i]->currentState = data[i]->nextState;
+                    Resources[(uintptr_t)transitions[i].resource],
+                    ToDx12(transitions[i].StateFrom),
+                    ToDx12(transitions[i].StateTo),
+                    D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+                    transitions[i].flags & ResourceStateTransition::BEGIN ?
+                    D3D12_RESOURCE_BARRIER_FLAG_BEGIN_ONLY :
+                    D3D12_RESOURCE_BARRIER_FLAG_END_ONLY)
+                    );
         }
+        
     }
     if (bariers.size() > 0)
         mCommandList->ResourceBarrier(bariers.size(), bariers.data());

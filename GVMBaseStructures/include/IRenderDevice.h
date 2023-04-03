@@ -9,6 +9,7 @@ class VirtualMachine;
 class ResourcesManager;
 class GpuResource;
 class GpuResourceView;
+struct ResourceStateTransition;
 
 enum RenderDeviceLimitations {
     MAX_RENDERTARGET_ATTACHMENTS = 8,
@@ -132,7 +133,7 @@ public:
 
 
     virtual void SyncBlockExecutionStart() = 0;
-    virtual void SyncResourcesState(GpuResource* data[], size_t size) = 0;
+    virtual void SyncResourcesState(std::vector<ResourceStateTransition>& transitions) = 0;
     virtual void SyncBlockExecutionEnd() = 0;
 
 #pragma region SetupPipeline

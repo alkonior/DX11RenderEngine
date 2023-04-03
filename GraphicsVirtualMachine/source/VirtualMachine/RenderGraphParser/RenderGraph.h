@@ -33,36 +33,19 @@ struct RenderGraphNode : public std::tuple<EMachineCommands, void*> {
     //std::vector<Resource*> ReadDependencies;
     //std::vector<Resource*> WrightDependencies;
 };
-struct ResourceStateTransition {
-    enum : uint8_t {
-        BEGIN = 1,
-        END = 2,
-        READ = 4,
-        WRITE = 8
-    };
-    static constexpr uint8_t DefReadFlag = BEGIN | END | READ;
-    static constexpr uint8_t DefWriteFlag = BEGIN | END | WRITE;
-    static constexpr uint8_t DefInvalidFlag = 1 | 2;
-    
-    ResourceStateTransition(
-        int8_t flags,
-        IRenderDevice::RESOURCEHANDLE resource,
-        GpuResource::ResourceState StateFrom,
-        GpuResource::ResourceState StateTo
-    ) : flags(flags), resource(resource), StateFrom(StateFrom), StateTo(StateTo) {};
-    
-    uint8_t flags;// 1 - begin, 2 end, 3 both, 4 - read, 8 - write
-    GpuResource::ResourceState StateFrom;
-    GpuResource::ResourceState StateTo;
-    IRenderDevice::RESOURCEHANDLE resource;
-    
-    inline bool operator==(const ResourceStateTransition& rhs) const
+
+
+struct TryAddResult {
+    std::vector<ResourceStateTransition> NewBeginTrans;
+    std::vector<ResourceStateTransition> NewEndTrans;
+
+    TryAddResult& operator=(TryAddResult&& rhs) noexcept
     {
-        return
-        rhs.resource == resource
-        && (rhs.flags == flags)
-        && rhs.StateFrom == StateFrom
-        && rhs.StateTo == StateTo;
+        NewBeginTrans = std::move(rhs.NewBeginTrans);
+        NewEndTrans = std::move(rhs.NewEndTrans);
+        rhs.NewBeginTrans.clear();
+        rhs.NewEndTrans.clear();
+        return *this;
     }
 };
 
@@ -82,9 +65,15 @@ struct SyncThreadBlock {
     transitionsEnd  (transitionsEnd)
     {}
     
-    bool TryAdd(const RenderGraphNode&,
-    const ResourceStateTransition transitions[50],
-    uint8_t transitionsNum
+    bool TryAdd(
+    const ResourceStateTransition transitionsIn[50],
+    uint8_t transitionsNum,
+    TryAddResult& result
+    );
+    
+    void Add(
+    const RenderGraphNode&,
+    const TryAddResult& result
     );
         
     std::shared_ptr<std::vector<ResourceStateTransition>> transitionsBegin;
@@ -100,12 +89,29 @@ public:
     std::vector<std::pair<
         std::shared_ptr<std::vector<ResourceStateTransition>>,
         std::shared_ptr<std::vector<ResourceStateTransition>>>
-        > TransitionPull;
+        > TransitionsPull;
     uint32_t TransitionPullShift  = 0;
 
+    const uint8_t MaxIterationToAdd = 5;
+
     RenderGraph(IRenderDevice* Device) {
-        TransitionPull.push_back({});
-        Blocks.emplace_back(TransitionPull[0].first, TransitionPull[0].second);
+        TransitionsPull.push_back({});
+        TransitionsPull[0].first  = std::make_shared<std::vector<ResourceStateTransition>>();
+        TransitionsPull[0].second  = std::make_shared<std::vector<ResourceStateTransition>>();
+        Blocks.emplace_back(TransitionsPull[0].first, TransitionsPull[0].second);
+    }
+
+    void ResizeTransitionsPull(size_t size)
+    {
+        TransitionsPull.resize(size);
+        for (auto& tp : TransitionsPull)
+        {
+            if (tp.first == nullptr)
+            {
+                tp.first  = std::make_shared<std::vector<ResourceStateTransition>>();
+                tp.second  = std::make_shared<std::vector<ResourceStateTransition>>();
+            }
+        }
     }
     
     void AddCommand(

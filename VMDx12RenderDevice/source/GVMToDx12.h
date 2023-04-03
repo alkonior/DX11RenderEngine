@@ -657,6 +657,7 @@ constexpr D3D12_RESOURCE_STATES inline ToDx12(GpuResource::ResourceState state)
 	case GpuResource::ResourceState::RESOURCE_STATE_SHADING_RATE_SOURCE: return D3D12_RESOURCE_STATE_SHADING_RATE_SOURCE;
 	case GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ: return D3D12_RESOURCE_STATE_GENERIC_READ;
 	case GpuResource::ResourceState::RESOURCE_STATE_PRESENT: return D3D12_RESOURCE_STATE_PRESENT;
+	case GpuResource::ResourceState::RESOURCE_STATE_ALL_SHADER_RESOURCE: return D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	case GpuResource::ResourceState::RESOURCE_STATE_UNDEFINED:
 		assert(false);
 		return D3D12_RESOURCE_STATE_VIDEO_DECODE_READ; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

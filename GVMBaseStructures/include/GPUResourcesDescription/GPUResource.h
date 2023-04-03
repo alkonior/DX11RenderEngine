@@ -82,6 +82,7 @@ public:
         RESOURCE_STATE_SHADING_RATE_SOURCE,
         RESOURCE_STATE_GENERIC_READ,
         RESOURCE_STATE_PRESENT,
+        RESOURCE_STATE_ALL_SHADER_RESOURCE,
         RESOURCE_STATE_UNDEFINED,
         
     }; 
@@ -91,6 +92,7 @@ public:
     uint32_t resourceBindings = 0;
     bool isRequiredUpdate = true;
     ResourceState currentState = ResourceState::RESOURCE_STATE_COMMON;
+    ResourceState realState = ResourceState::RESOURCE_STATE_COMMON;
 
     std::vector<ResourceView*> views;
 
@@ -101,5 +103,52 @@ public:
 
 protected:
 };
+
+struct ResourceStateTransition {
+    enum : uint8_t {
+        BEGIN = 1,
+        END = 2,
+        READ = 4,
+        WRITE = 8
+    };
+    static constexpr uint8_t DefReadFlag = BEGIN | END | READ;
+    static constexpr uint8_t DefWriteFlag = BEGIN | END | WRITE;
+    static constexpr uint8_t DefInvalidFlag = 1 | 2;
+    
+    ResourceStateTransition(
+        int8_t flags,
+        Resource* resource,
+        GpuResource::ResourceState StateFrom,
+        GpuResource::ResourceState StateTo
+    ) : flags(flags), resource(resource), StateFrom(StateFrom), StateTo(StateTo) {};
+    
+    Resource*  resource;
+    uint8_t flags;// 1 - begin, 2 end, 3 both, 4 - read, 8 - write
+    GpuResource::ResourceState StateFrom;
+    GpuResource::ResourceState StateTo;
+    
+    inline bool operator==(const ResourceStateTransition& rhs) const
+    {
+        return
+        rhs.resource == resource
+        && (rhs.flags == flags)
+        && rhs.StateFrom == StateFrom
+        && rhs.StateTo == StateTo;
+    }
+};
+
+inline ResourceStateTransition MakeTransition(
+        GpuResource& resource,
+        uint8_t flags,
+        GpuResource::ResourceState StateTo)
+{
+    auto state = resource.currentState;
+    resource.currentState = StateTo;
+    return ResourceStateTransition(
+    flags,
+    resource.id,
+    state,
+    StateTo);
+}
 
 }

@@ -110,8 +110,8 @@ namespace Compressed {
         Shader*                     DS;
         
         InputLayout*                vertexDeclaration;
-        DepthStencilView*           DepthBuffer;
-        IndexBufferView*            indexBuffer;
+        DepthStencilView*           depthBufferView;
+        IndexBufferView*            indexBufferView;
 
         //RenderTargetDesc*           RenderTargets = {};
         //SamplerStateDesc*           Samplers = {};

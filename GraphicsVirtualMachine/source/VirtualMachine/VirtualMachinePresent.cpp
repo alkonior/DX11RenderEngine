@@ -1,4 +1,6 @@
-﻿#include "VirtualMachine.h"
+﻿#include <cassert>
+
+#include "VirtualMachine.h"
 #include <iostream>
 #include <unordered_set>
 
@@ -68,8 +70,8 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
             else
                 pipelineDescription.RTVFormats[i] = rtvView.rtViewDescription.Format;
         }
-        if (ps->DepthBuffer)
-            pipelineDescription.DSVFormat = resourcesManager.GetResourceView(ps->DepthBuffer).dbViewDescription.Format;
+        if (ps->depthBufferView)
+            pipelineDescription.DSVFormat = resourcesManager.GetResourceView(ps->depthBufferView).dbViewDescription.Format;
         else
             pipelineDescription.DSVFormat = EDepthFormat::FORMAT_UNKNOWN;
         for (int i = ps->renderTargetsNum; i < MAX_RENDERTARGET_ATTACHMENTS; i++)
@@ -97,11 +99,11 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
         RenderDevice->SetupVertexBuffers((const IRenderDevice::VERTEXBUFFERVIEWHANDLE*)vertexBuffers,
             ps->vertexBuffersNum);
         RenderDevice->SetupIndexBuffer(
-            (IRenderDevice::INDEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ps->indexBuffer));
+            (IRenderDevice::INDEXBUFFERVIEWHANDLE)resourcesManager.GetRealResourceView(ps->indexBufferView));
 
         RenderDevice->SetupRenderTargets(
             (const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, ps->renderTargetsNum,
-            (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(ps->DepthBuffer));
+            (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(ps->depthBufferView));
     }
     pipelineDescription.uaCount = ps->uaTargetsNum;
 
@@ -129,11 +131,10 @@ void VirtualMachine::ExecuteSetupPipeline(Compressed::PipelineSnapshot* ps)
     RenderDevice->SetupTextures(textures, ps->texturesNum);
 }
 
-void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapshot* ps)
+void VirtualMachine::GetPipelineResourceTransitions(Compressed::PipelineSnapshot* ps)
 {
-    LastPsReadDep.clear();
-    LastPsWriteDep.clear();
-    std::unordered_set<Resource*> LastPsReadDepMap, LastPsWriteDepMap;
+    LastPsTransitions.clear();
+    //std::unordered_set<Resource*> LastPsReadDepMap, LastPsWriteDepMap;
 
     auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data + ps->RenderTargetsShift);
     auto UATargets = (UATargetView**)(ps->Data + ps->UATargetsShift);
@@ -142,105 +143,70 @@ void VirtualMachine::GetPipelineResourceDependencies(Compressed::PipelineSnapsho
     for (int i = 0; i < ps->renderTargetsNum; i++)
     {
         if (RenderTargets[i].rtv != nullptr)
-            LastPsWriteDepMap.insert(resourcesManager.
-                                     GetResourceView(RenderTargets[i].rtv).resource);
+            LastPsTransitions.push_back(
+                MakeTransition(resourcesManager.GetResource(RenderTargets[i].rtv),
+                    ResourceStateTransition::DefWriteFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET
+                ));
     }
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
     {
         if (UATargets[i] != nullptr)
-            LastPsWriteDepMap.insert(
-                resourcesManager.GetResourceView(UATargets[i]).resource);
+            LastPsTransitions.push_back(
+                MakeTransition(resourcesManager.GetResource(UATargets[i]),
+                    ResourceStateTransition::DefWriteFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_UNORDERED_ACCESS
+                ));
     }
 
 
-    auto VertexBuffers = (VertexBufferView**)(ps->Data + ps->VertexBuffersShift);
-    auto Textures = (ResourceView**)(ps->Data + ps->TexturesShift);
-    auto ConstBuffers = (ConstBufferView**)(ps->Data + ps->ConstBuffersShift);
+    auto VertexBuffersViews = (VertexBufferView**)(ps->Data + ps->VertexBuffersShift);
+    auto TexturesViews = (ResourceView**)(ps->Data + ps->TexturesShift);
+    auto ConstBuffersViews = (ConstBufferView**)(ps->Data + ps->ConstBuffersShift);
 
     for (int i = 0; i < ps->vertexBuffersNum; i++)
     {
-        if (VertexBuffers[i] != nullptr)
-            LastPsReadDepMap.insert(
-                resourcesManager.GetResourceView(VertexBuffers[i]).resource);
+        if (VertexBuffersViews[i] != nullptr)
+            LastPsTransitions.push_back(
+                MakeTransition(resourcesManager.GetResource(VertexBuffersViews[i]),
+                    ResourceStateTransition::DefReadFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER
+                ));
     }
     for (int i = 0; i < ps->texturesNum; i++)
     {
-        if (Textures[i] != nullptr)
-            LastPsReadDepMap.insert(
-                resourcesManager.GetResourceView(Textures[i]).resource);
+        if (TexturesViews[i] != nullptr)
+            LastPsTransitions.push_back(
+                MakeTransition(resourcesManager.GetResource(TexturesViews[i]),
+                    ResourceStateTransition::DefReadFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_ALL_SHADER_RESOURCE
+                ));
     }
     for (int i = 0; i < ps->constBuffersNum; i++)
     {
-        if (ConstBuffers[i] != nullptr)
-            LastPsReadDepMap.insert(
-                resourcesManager.GetResourceView(ConstBuffers[i]).resource);
+        if (ConstBuffersViews[i] != nullptr)
+            LastPsTransitions.push_back(
+                MakeTransition(resourcesManager.GetResource(ConstBuffersViews[i]),
+                    ResourceStateTransition::DefReadFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER
+                ));
     }
 
-    if (ps->indexBuffer != nullptr)
-        LastPsReadDepMap.insert(
-            resourcesManager.GetResourceView(ps->indexBuffer).resource);
-
-    for (auto& readDep : LastPsReadDepMap)
-    {
-        LastPsReadDep.push_back(readDep);
-    }
-    for (auto& wrightDep : LastPsWriteDepMap)
-    {
-        LastPsWriteDep.push_back(wrightDep);
-    }
-}
-
-void VirtualMachine::SetupPipelineResourceStates(Compressed::PipelineSnapshot* ps)
-{
-    auto RenderTargets = (Compressed::RenderTargetDesc*)(ps->Data + ps->RenderTargetsShift);
-    auto UATargets = (UATargetView**)(ps->Data + ps->UATargetsShift);
+    if (ps->indexBufferView != nullptr)
+        LastPsTransitions.push_back(
+            MakeTransition(resourcesManager.GetResource(ps->indexBufferView),
+                ResourceStateTransition::DefReadFlag,
+                GpuResource::ResourceState::RESOURCE_STATE_INDEX_BUFFER
+            ));
 
 
-    for (int i = 0; i < ps->renderTargetsNum; i++)
-    {
-        if (RenderTargets[i].rtv != nullptr)
-            resourcesManager.GetResource(RenderTargets[i].rtv).nextState =
-                GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
-    }
-
-    for (int i = 0; i < ps->uaTargetsNum; i++)
-    {
-        if (UATargets[i] != nullptr)
-            resourcesManager.GetResource(UATargets[i]).nextState =
-                GpuResource::ResourceState::RESOURCE_STATE_UNORDERED_ACCESS;
-    }
-
-
-    auto VertexBuffers = (VertexBufferView**)(ps->Data + ps->VertexBuffersShift);
-    auto Textures = (ResourceView**)(ps->Data + ps->TexturesShift);
-    auto ConstBuffers = (ConstBufferView**)(ps->Data + ps->ConstBuffersShift);
-
-    for (int i = 0; i < ps->vertexBuffersNum; i++)
-    {
-        if (VertexBuffers[i] != nullptr)
-            resourcesManager.GetResource(VertexBuffers[i]).nextState =
-                GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
-    }
-    for (int i = 0; i < ps->texturesNum; i++)
-    {
-        if (Textures[i] != nullptr)
-            resourcesManager.GetResource(Textures[i]).nextState =
-                GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-    }
-    for (int i = 0; i < ps->constBuffersNum; i++)
-    {
-        if (ConstBuffers[i] != nullptr)
-            resourcesManager.GetResource(ConstBuffers[i]).nextState =
-                GpuResource::ResourceState::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
-    }
-
-    if (ps->indexBuffer != nullptr)
-        resourcesManager.GetResource(ps->indexBuffer).nextState =
-            GpuResource::ResourceState::RESOURCE_STATE_INDEX_BUFFER;
-    if (ps->DepthBuffer != nullptr)
-        resourcesManager.GetResource(ps->DepthBuffer).nextState =
-            GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
+    if (ps->depthBufferView != nullptr)
+        LastPsTransitions.push_back(
+            MakeTransition(resourcesManager.GetResource(ps->depthBufferView),
+                ResourceStateTransition::DefReadFlag,
+                GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE
+            ));
 }
 
 void VirtualMachine::PushCommand(EMachineCommands command)
@@ -260,12 +226,13 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             {
                 ResourceStateTransition(
                     ResourceStateTransition::DefInvalidFlag,
-                    resource.resource,
+                    resource.id,
                     GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ,
                     GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
             }
         );
         resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+        resource.realState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
         break;
     }
 
@@ -280,12 +247,13 @@ void VirtualMachine::PushCommand(EMachineCommands command)
             {
                 ResourceStateTransition(
                     ResourceStateTransition::DefInvalidFlag,
-                    resource.resource,
+                    resource.id,
                     resource.currentState,
                     GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
             }
         );
         resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
+        resource.realState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
         break;
     }
 
@@ -312,9 +280,13 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 EMachineCommands::SET_RESOURCE_DATA,
                 (void*)
                 ((uint8_t*)&description - dataQueue.data())
-            },
-            {},
-            {description.resource}
+            }, {
+                ResourceStateTransition(
+                    ResourceStateTransition::DefInvalidFlag,
+                    description.resource,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
+            }
         );
         break;
     }
@@ -330,44 +302,27 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 (void*)
                 ((uint8_t*)&description - dataQueue.data())
             },
-            {},
-            {description.resource}
+            {
+                ResourceStateTransition(
+                    ResourceStateTransition::DefInvalidFlag,
+                    description.resource,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ,
+                    GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ)
+            }
         );
         break;
     }
-
-    //case EMachineCommands::SETUP_PIPELINE:
-    //{
-    //    auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + pipelinesQueueShift);
-//
-    //    GetPipelineResourceDependencies(ps);
-//
-    //    renderGraph.AddCommand(
-    //        {
-    //            EMachineCommands::SETUP_PIPELINE,
-    //            (void*)pipelinesQueueShift
-    //        },
-    //        {LastPsReadDep},
-    //        {}
-    //    );
-//
-    //    break;
-    //}
-
     case EMachineCommands::DRAW:
     {
         auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + drawCallsQueue[drawCallsQueueShift].positionPS);
-        //
-
-        GetPipelineResourceDependencies(ps);
+        GetPipelineResourceTransitions(ps);
 
         renderGraph.AddCommand(
             {
                 EMachineCommands::DRAW,
                 (void*)drawCallsQueueShift
             },
-            LastPsReadDep,
-            LastPsWriteDep
+            LastPsTransitions
         );
         drawCallsQueueShift++;
         break;
@@ -387,8 +342,12 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 (void*)
                 ((uint8_t*)&desc - dataQueue.data())
             },
-            {},
-            {resourcesManager.GetResourceView(desc.resourceView).resource}
+            {
+                MakeTransition(
+                    resourcesManager.GetResource(desc.resourceView),
+                    ResourceStateTransition::DefWriteFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET)
+            }
         );
         break;
     }
@@ -401,8 +360,12 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 (void*)
                 ((uint8_t*)&desc - dataQueue.data())
             },
-            {},
-            {resourcesManager.GetResourceView(desc.resourceView).resource}
+            {
+                MakeTransition(
+                    resourcesManager.GetResource(desc.resourceView),
+                    ResourceStateTransition::DefWriteFlag,
+                    GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE)
+            }
         );
         break;
     }
@@ -418,7 +381,6 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 (void*)
                 ((uint8_t*)name - dataQueue.data())
             },
-            {},
             {}
         );
         break;
@@ -430,7 +392,6 @@ void VirtualMachine::PushCommand(EMachineCommands command)
                 EMachineCommands::END_EVENT,
                 nullptr
             },
-            {},
             {}
         );
 
@@ -439,26 +400,22 @@ void VirtualMachine::PushCommand(EMachineCommands command)
     }
 }
 
-void VirtualMachine::SyncResources(std::vector<Resource*>& resorces)
-{
-    static std::vector<GpuResource*> gpu;
-    gpu.clear();
-    for (auto r : resorces)
-        gpu.push_back(&resourcesManager.GetResource(r));
-    RenderDevice->SyncResourcesState(gpu.data(), gpu.size());
-}
-
-
 void VirtualMachine::RunVM()
 {
     int comandIndex = 0;
 
     for (auto& block : renderGraph.Blocks)
     {
-        SyncResources(block.ReadDependencies);
-        SyncResources(block.WrightDependencies);
+        RenderDevice->SyncResourcesState(*block.transitionsBegin);
+        RenderDevice->SyncResourcesState(*block.transitionsEnd);
+        
+        for (auto& transition : *block.transitionsEnd)
+        {
+            if (transition.flags != ResourceStateTransition::DefInvalidFlag)
+                resourcesManager.GetResource(transition.resource).realState = transition.StateTo;
+        }
 
-        for (auto& [command, description] : block.Nodes)
+        for (auto& [command, description] : block.GraphicsNodes)
         {
             comandIndex++;
             switch (command)
@@ -467,8 +424,6 @@ void VirtualMachine::RunVM()
             {
                 auto& resource = resourcesManager.GetResource((Resource*)(description));
                 resource.resource = RenderDevice->CreateResource(resource); //todo
-                resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
                 break;
             }
 
@@ -477,8 +432,6 @@ void VirtualMachine::RunVM()
                 auto& resource = resourcesManager.GetResource((Resource*)description);
                 RenderDevice->DestroyResource(resource.resource);
                 resource.resource = RenderDevice->CreateResource(resource);
-                resource.currentState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
-                resource.nextState = GpuResource::ResourceState::RESOURCE_STATE_GENERIC_READ;
                 break;
             }
 
@@ -527,11 +480,7 @@ void VirtualMachine::RunVM()
             {
                 auto& dcDesc = drawCallsQueue[(uint32_t)description];
                 auto* ps = (Compressed::PipelineSnapshot*)((pipelinesQueue.data()) + dcDesc.positionPS);
-                SetupPipelineResourceStates(ps);
-                SyncResources(block.ReadDependencies);
-                SyncResources(block.WrightDependencies);
                 ExecuteSetupPipeline(ps);
-
                 //auto drawData = *(DrawCall*)description;
                 RenderDevice->Draw(dcDesc.dc);
                 drawCallsQueueShift++;
@@ -545,9 +494,6 @@ void VirtualMachine::RunVM()
             case EMachineCommands::CLEAR_RT:
             {
                 auto& desc = *(ClearRenderTargetDesc*)(dataQueue.data() + (uint32_t)description);
-                auto* resource = &resourcesManager.GetResource(desc.resourceView);
-                resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET;
-                RenderDevice->SyncResourcesState(&resource, 1);
                 RenderDevice->ClearRenderTarget(
                     (IRenderDevice::RENDERTARGETVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
                     desc.color);
@@ -558,8 +504,6 @@ void VirtualMachine::RunVM()
             {
                 auto& desc = *(ClearDepthStencilDesc*)(dataQueue.data() + (uint32_t)description);
                 auto* resource = &resourcesManager.GetResource(desc.resourceView);
-                resource->nextState = GpuResource::ResourceState::RESOURCE_STATE_DEPTH_WRITE;
-                RenderDevice->SyncResourcesState(&resource, 1);
                 RenderDevice->ClearDepthStencil(
                     (IRenderDevice::DEPTHSTENCILVIEWHANDLE)resourcesManager.GetRealResourceView(desc.resourceView),
                     desc.depth,
@@ -578,13 +522,19 @@ void VirtualMachine::RunVM()
             case EMachineCommands::END_EVENT:
             {
                 RenderDevice->EndEvent();
-
                 break;
             }
             }
         }
         std::cout << std::flush;
     }
+
+    
+    for (auto& resource : resourcesManager.Resources)
+    {
+        assert(resource.currentState == resource.realState);
+    }
+
 
     static IRenderDevice::RENDERTARGETVIEWHANDLE renderTargets[1] = {nullptr};
     RenderDevice->SetupRenderTargets((const IRenderDevice::RENDERTARGETVIEWHANDLE*)renderTargets, 1, {});
