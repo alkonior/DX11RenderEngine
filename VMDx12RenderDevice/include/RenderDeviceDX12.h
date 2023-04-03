@@ -203,6 +203,17 @@ public:
     Compressed::SamplerStateDesc  cachedSamplers[20];
     uint8_t cachedSamplersNUm = 0;
     D3D12_GPU_DESCRIPTOR_HANDLE cachedSamplerhandle;
+    
+    D3D12_CPU_DESCRIPTOR_HANDLE currentDSV = {0}; 
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> currentPipeline = nullptr;
+    ID3D12DescriptorHeap* ppCuurentHeaps[2] = {nullptr, nullptr};
+    D3D12_GPU_DESCRIPTOR_HANDLE currentDH = {0};
+    D3D12_PRIMITIVE_TOPOLOGY currentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    float CurrentBlendFactor[4] = {0.0,0.0,0.0,0.0};
+    uint64_t currentIndexBuffer = 0;
+    D3D12_CPU_DESCRIPTOR_HANDLE renderTargetsHandles[8];
+    ID3D12RootSignature* currentRootSignature = nullptr;
+
 #pragma endregion
 
     void ClearRenderTarget(RENDERTARGETVIEWHANDLE rtView, FColor color) override;

@@ -103,13 +103,16 @@ public:
 
     void ResizeTransitionsPull(size_t size)
     {
-        TransitionsPull.resize(size);
-        for (auto& tp : TransitionsPull)
+        if (TransitionsPull.size() < size)
         {
-            if (tp.first == nullptr)
+            TransitionsPull.resize(size);
+            for (auto& tp : TransitionsPull)
             {
-                tp.first  = std::make_shared<std::vector<ResourceStateTransition>>();
-                tp.second  = std::make_shared<std::vector<ResourceStateTransition>>();
+                if (tp.first == nullptr)
+                {
+                    tp.first  = std::make_shared<std::vector<ResourceStateTransition>>();
+                    tp.second  = std::make_shared<std::vector<ResourceStateTransition>>();
+                }
             }
         }
     }

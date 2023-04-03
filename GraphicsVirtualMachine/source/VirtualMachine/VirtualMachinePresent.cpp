@@ -148,6 +148,16 @@ void VirtualMachine::GetPipelineResourceTransitions(Compressed::PipelineSnapshot
                     ResourceStateTransition::DefWriteFlag,
                     GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET
                 ));
+        else
+        {
+            LastPsTransitions.push_back(
+                ResourceStateTransition(
+                    ResourceStateTransition::DefInvalidFlag,
+                    nullptr,
+                    GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET,
+                    GpuResource::ResourceState::RESOURCE_STATE_RENDER_TARGET
+                ));
+        }
     }
 
     for (int i = 0; i < ps->uaTargetsNum; i++)
@@ -408,7 +418,7 @@ void VirtualMachine::RunVM()
     {
         RenderDevice->SyncResourcesState(*block.transitionsBegin);
         RenderDevice->SyncResourcesState(*block.transitionsEnd);
-        
+
         for (auto& transition : *block.transitionsEnd)
         {
             if (transition.flags != ResourceStateTransition::DefInvalidFlag)
@@ -529,7 +539,7 @@ void VirtualMachine::RunVM()
         std::cout << std::flush;
     }
 
-    
+
     for (auto& resource : resourcesManager.Resources)
     {
         assert(resource.currentState == resource.realState);
