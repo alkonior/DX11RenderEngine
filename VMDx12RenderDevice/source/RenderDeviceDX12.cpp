@@ -143,49 +143,34 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
         CreateRtvAndDsvDescriptorHeaps();
 
         currentBufferUploadBufferSize = 10000;
-
-        ThrowIfFailed(md3dDevice->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-            D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer( currentBufferUploadBufferSize ),
-            D3D12_RESOURCE_STATE_GENERIC_READ,
-            nullptr,
-            IID_PPV_ARGS(&currentBufferUploadBuffer)));
+        for(int i = 0; i < SwapChainBufferCount; i++)
+        {
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+                D3D12_HEAP_FLAG_NONE,
+                &CD3DX12_RESOURCE_DESC::Buffer( currentBufferUploadBufferSize ),
+                D3D12_RESOURCE_STATE_GENERIC_READ,
+                nullptr,
+                IID_PPV_ARGS(&currentBufferUploadBuffer)));
+            
+            Frames[i].uploadBuffer = currentBufferUploadBuffer;
+            Frames[i].currentBufferUploadBufferSize = currentBufferUploadBufferSize;
+        }
+        
+        Frames[mCurrBackBuffer].uploadBuffers.clear();
+        Frames[mCurrBackBuffer].uploadTextureBuffers.clear();
+        currentBufferUploadBuffer =  Frames[mCurrBackBuffer].uploadBuffer;
+        mCommandList =  Frames[mCurrBackBuffer].mCommandList;
+        mDirectCmdListAlloc =  Frames[mCurrBackBuffer].mDirectCmdListAlloc;
+        mGpuSamplerHeapInterface =  Frames[mCurrBackBuffer].mGpuSamplerHeapInterface;
+        mGpuShvCbUaHeapInterface =  Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface;
         bufferUploadBuffers.push_back(currentBufferUploadBuffer);
-
+        
         ThrowIfFailed(currentBufferUploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&currentBufferUploadBufferPtr)));
-        /*
-
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC ps;
-        ps.RasterizerState = {
-            .FillMode = D3D12_FILL_MODE_SOLID,
-            .CullMode = D3D12_CULL_MODE_FRONT,
-        };
-        ps.HS = {nullptr, 0};
-        ps.DS = {nullptr, 0};
-        ps.VS = {nullptr, 0};
-        ps.PS = {nullptr, 0};
-        ps.GS = {nullptr, 0};
-        ps.InputLayout = {
-            .pInputElementDescs = nullptr,
-            .NumElements = 0,
-        };
-        ps.DepthStencilState = {
-                .DepthEnable = false
-            },
-            ps.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        ps.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-        ps.NumRenderTargets = 0;
-        ps.SampleDesc.Count = 0;
-        ps.BlendState = ToD3D12Blend({});
-        ps.pRootSignature = FetchRS({});
-        ps.BlendState.IndependentBlendEnable=false;
-        ps.BlendState.AlphaToCoverageEnable=false;
-        ps.StreamOutput.NumEntries = 0;
-        ps.StreamOutput.NumStrides = 0;
-        md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&mDefaultPS));
-         */
-
+        
+        mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+            D3D12_RESOURCE_STATE_PRESENT,
+            D3D12_RESOURCE_STATE_RENDER_TARGET));
 
         //CreateDefaultHandles();
         ThrowIfFailed(md3dDevice->CreateCommittedResource(
@@ -328,36 +313,46 @@ void RenderDeviceDX12::CreateCommandObjects(const RenderDeviceInitParams& initPa
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     ThrowIfFailed(md3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue)));
+    for (int i =0 ; i < SwapChainBufferCount ; i++)
+    {
+        ThrowIfFailed(md3dDevice->CreateCommandAllocator(
+            D3D12_COMMAND_LIST_TYPE_DIRECT,
+            IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
 
-    ThrowIfFailed(md3dDevice->CreateCommandAllocator(
-        D3D12_COMMAND_LIST_TYPE_DIRECT,
-        IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
+        ThrowIfFailed(md3dDevice->CreateCommandList(
+            0,
+            D3D12_COMMAND_LIST_TYPE_DIRECT,
+            mDirectCmdListAlloc.Get(), // Associated command allocator
+            nullptr, // Initial PipelineStateObject
+            IID_PPV_ARGS(mCommandList.GetAddressOf())));
 
-    ThrowIfFailed(md3dDevice->CreateCommandList(
-        0,
-        D3D12_COMMAND_LIST_TYPE_DIRECT,
-        mDirectCmdListAlloc.Get(), // Associated command allocator
-        nullptr, // Initial PipelineStateObject
-        IID_PPV_ARGS(mCommandList.GetAddressOf())));
+        // Start off in a closed state.  This is because the first time we refer 
+        // to the command list we will Reset it, and it needs to be closed before
+        // calling Reset.
+        mCommandList->Close();
 
-    // Start off in a closed state.  This is because the first time we refer 
-    // to the command list we will Reset it, and it needs to be closed before
-    // calling Reset.
-    mCommandList->Close();
+        // Wait until frame commands are complete.  This waiting is inefficient and is
+        // done for simplicity.  Later we will show how to organize our rendering code
+        // so we do not have to wait per frame.
+        FlushCommandQueue();
 
-    // Wait until frame commands are complete.  This waiting is inefficient and is
-    // done for simplicity.  Later we will show how to organize our rendering code
-    // so we do not have to wait per frame.
-    FlushCommandQueue();
+        if (i == 0)
+        {
+            // Reuse the memory associated with command recording.
+            // We can only reset when the associated command lists have finished execution on the GPU.
+            ThrowIfFailed(mDirectCmdListAlloc->Reset());
 
+            // A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+            // Reusing the command list reuses memory.
+            ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+        }
 
-    // Reuse the memory associated with command recording.
-    // We can only reset when the associated command lists have finished execution on the GPU.
-    ThrowIfFailed(mDirectCmdListAlloc->Reset());
-
-    // A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-    // Reusing the command list reuses memory.
-    ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+        Frames[i].mDirectCmdListAlloc = mDirectCmdListAlloc;
+        Frames[i].mCommandList = mCommandList;
+        Frames[i].fenceValue = mCurrentFence;
+    }
+    mCommandList = Frames[0].mCommandList;
+    mDirectCmdListAlloc = Frames[0].mDirectCmdListAlloc;
 }
 
 void RenderDeviceDX12::CreateSwapChain(const RenderDeviceInitParams& initParams)
@@ -446,28 +441,30 @@ void RenderDeviceDX12::CreateRtvAndDsvDescriptorHeaps()
         //    D3D12_RESOURCE_STATE_COMMON , D3D12_RESOURCE_STATE_PRESENT));
         md3dDevice->CreateRenderTargetView(mSwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
         rtvHeapHandle.Offset(1, mRtvDescriptorSize);
+
+        CreateDH(
+            D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER,
+            2048,
+            D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+            0,
+            mGpuSamplerHeapInterface
+        );
+
+        CreateDH(
+            D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+            (DX12Limitations::maxUA + DX12Limitations::maxTextures + DX12Limitations::maxConstBuffers) * 1000,
+            D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+            0,
+            mGpuShvCbUaHeapInterface
+        );
+        
+        Frames[i].mGpuSamplerHeapInterface = mGpuSamplerHeapInterface;
+        Frames[i].mGpuShvCbUaHeapInterface = mGpuShvCbUaHeapInterface;
     }
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-        D3D12_RESOURCE_STATE_PRESENT,
-        D3D12_RESOURCE_STATE_RENDER_TARGET));
 
     //GPU Descriptor heaps
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER,
-        2048,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        0,
-        mGpuSamplerHeapInterface
-    );
 
-    CreateDH(
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        (DX12Limitations::maxUA + DX12Limitations::maxTextures + DX12Limitations::maxConstBuffers) * 1000,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        0,
-        mGpuShvCbUaHeapInterface
-    );
 
     ID3D12DescriptorHeap* ppHeaps[] = {mGpuShvCbUaHeapInterface->Heap(),mGpuSamplerHeapInterface->Heap()};
     mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
@@ -1577,17 +1574,63 @@ void RenderDeviceDX12::Present()
 
     // swap the back and front buffers
     ThrowIfFailed(mSwapChain->Present(0, 0));
-    mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
     // Wait until frame commands are complete.  This waiting is inefficient and is
     // done for simplicity.  Later we will show how to organize our rendering code
     // so we do not have to wait per frame.
-    FlushCommandQueue();
+    mCurrentFence++;
 
+    // Add an instruction to the command queue to set a new fence point.  Because we 
+    // are on the GPU timeline, the new fence point won't be set until the GPU finishes
+    // processing all the commands prior to this Signal().
+    ThrowIfFailed(mCommandQueue->Signal(mFence.Get(), mCurrentFence));
+
+    Frames[mCurrBackBuffer].mDirectCmdListAlloc = mDirectCmdListAlloc;
+    Frames[mCurrBackBuffer].mCommandList = mCommandList;
+    Frames[mCurrBackBuffer].uploadBuffers = std::move(bufferUploadBuffers);
+    Frames[mCurrBackBuffer].uploadTextureBuffers = std::move(uploadTextureBuffers);
+    Frames[mCurrBackBuffer].uploadBuffer = currentBufferUploadBuffer;
+    Frames[mCurrBackBuffer].fenceValue = mCurrentFence;
+    Frames[mCurrBackBuffer].mGpuSamplerHeapInterface = mGpuSamplerHeapInterface;
+    Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface = mGpuShvCbUaHeapInterface;
+    Frames[mCurrBackBuffer].currentBufferUploadBufferSize = currentBufferUploadBufferSize;
+    
+///thread Shinanigans
+///
+    mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+    
+    // Wait until the GPU has completed commands up to this fence point.
+    if (mFence->GetCompletedValue() < Frames[mCurrBackBuffer].fenceValue)
+    {
+        HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+
+        // Fire event when GPU hits current fence.  
+        ThrowIfFailed(mFence->SetEventOnCompletion(Frames[mCurrBackBuffer].fenceValue, eventHandle));
+
+        // Wait until the GPU hits current fence event is fired.
+        WaitForSingleObject(eventHandle, INFINITE);
+        CloseHandle(eventHandle);
+    }
+    
+    Frames[mCurrBackBuffer].uploadBuffers.clear();
+    Frames[mCurrBackBuffer].uploadTextureBuffers.clear();
+    currentBufferUploadBuffer =  Frames[mCurrBackBuffer].uploadBuffer;
+    mCommandList =  Frames[mCurrBackBuffer].mCommandList;
+    mDirectCmdListAlloc =  Frames[mCurrBackBuffer].mDirectCmdListAlloc;
+    mGpuSamplerHeapInterface =  Frames[mCurrBackBuffer].mGpuSamplerHeapInterface;
+    mGpuShvCbUaHeapInterface =  Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface;
+    currentBufferUploadBufferSize =  Frames[mCurrBackBuffer].currentBufferUploadBufferSize;
+    
     bufferUploadBuffers.clear();
     bufferUploadBuffers.push_back(currentBufferUploadBuffer);
-    currentBufferUploadBufferShift = 0;
+    
+    mGpuShvCbUaHeapInterface->next = 0;
+    mGpuSamplerHeapInterface->next = 0;
+    mGpuShvCbUaHeapInterface->writeNext = 0;
+    mGpuSamplerHeapInterface->writeNext = 0;
 
+
+    currentBufferUploadBufferShift = 0;
     currentBufferUploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&currentBufferUploadBufferPtr));
 
     // Reuse the memory associated with command recording.
@@ -1606,11 +1649,6 @@ void RenderDeviceDX12::Present()
     auto color = {0.f,0.f,0.f,1.f};
     mCommandList->ClearRenderTargetView(CurrentBackBufferView(), color.begin(), 0, NULL);
 
-    uploadTextureBuffers.clear();
-    mGpuShvCbUaHeapInterface->next = 0;
-    mGpuSamplerHeapInterface->next = 0;
-    mGpuShvCbUaHeapInterface->writeNext = 0;
-    mGpuSamplerHeapInterface->writeNext = 0;
 }
 
 void RenderDeviceDX12::SetupVertexBuffers(const VERTEXBUFFERVIEWHANDLE vertexBuffersOut[], uint8_t num)

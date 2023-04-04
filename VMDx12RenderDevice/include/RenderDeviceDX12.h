@@ -47,7 +47,7 @@ public:
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
     uint8_t d3d11viewportsNum = 0;
 
-    static const int SwapChainBufferCount = 2;
+    static const int SwapChainBufferCount = 3;
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
     UINT BackBufferWidth = 0;
@@ -232,6 +232,23 @@ public:
     
     void BeginEvent(const char* name) override;
     void EndEvent() override;
+
+
+    struct FrameData {
+        Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mDirectCmdListAlloc;
+        Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+        std::vector<wrl::ComPtr<ID3D12Resource>> uploadBuffers;
+        std::vector<wrl::ComPtr<ID3D12Resource>> uploadTextureBuffers;
+        
+        DirectX::DescriptorHeap* mGpuSamplerHeapInterface;
+        DirectX::DescriptorHeap* mGpuShvCbUaHeapInterface;
+        
+        wrl::ComPtr<ID3D12Resource> uploadBuffer;
+        size_t currentBufferUploadBufferSize;
+        uint32_t fenceValue;
+    };
+
+    FrameData Frames[3];
     
 };
 
