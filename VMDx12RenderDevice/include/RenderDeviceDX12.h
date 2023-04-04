@@ -47,7 +47,11 @@ public:
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
     uint8_t d3d11viewportsNum = 0;
 
+#if defined(_DEBUG)
+    static const int SwapChainBufferCount = 2;
+#else
     static const int SwapChainBufferCount = 3;
+#endif
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
     UINT BackBufferWidth = 0;

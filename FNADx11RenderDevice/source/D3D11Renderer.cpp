@@ -463,8 +463,8 @@ GVM::DepthStencilStateDesc ToGVM(const DepthStencilState& dsState)
 {
     GVM::DepthStencilStateDesc result;
     result.DepthEnable = dsState.depthBufferEnable;
-    result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
-    result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
+    result.StencilEnable = dsState.stencilEnable;
+    result.DepthWriteMask = dsState.depthBufferWriteEnable ? GVM::EDepthWriteMask::DEPTH_WRITE_MASK_ALL : GVM::EDepthWriteMask::DEPTH_WRITE_MASK_ZERO;
     result.FrontFace.StencilFunc = ToGVM(dsState.stencilFunction);
 
     //todo

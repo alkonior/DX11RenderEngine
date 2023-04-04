@@ -45,6 +45,7 @@ HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std
 	:
 	Exception(line, file),
 	hr(hr) {
+	info += what();
 	// join all info messages with newlines into single string
 	for (const auto& m : infoMsgs) {
 		info += m;

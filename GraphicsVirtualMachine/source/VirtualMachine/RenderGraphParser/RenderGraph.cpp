@@ -45,6 +45,10 @@ bool GVM::SyncThreadBlock::TryAdd(
             {
                 if (curTransition.resource == transition.resource)
                 {
+                    if (transition.flags & ResourceStateTransition::WRITE)
+                    {
+                        return false;
+                    }
                     if (curTransition.StateTo == transition.StateTo)
                     {
                         goto end_cycle;
@@ -137,8 +141,7 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
         static TryAddResult tryAddResultSecond;
         int iterationsCount = 0;
         
-        while (
-        (iterationsCount + 1) <= MaxIterationToAdd &&
+        while ((iterationsCount + 1) <= MaxIterationToAdd &&
         (Blocks.rbegin()+(iterationsCount+1) != Blocks.rend()) &&
         (Blocks.rbegin()+(iterationsCount+1))->TryAdd(
             transitionsIn.data(),
