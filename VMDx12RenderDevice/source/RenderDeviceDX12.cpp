@@ -1385,11 +1385,17 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         }
         else
         {
+            auto resulthr = (md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
+            if (newPipeline == nullptr)
+            { 
+                throw HrException(0, "1", resulthr);
+            }
+            pipelineStates.insert({psid,newPipeline});
+#if _DEBUG
             std::wstring psName = L"Pipeline_";
             psName.append(std::to_wstring(psid));
-            ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&ps, IID_PPV_ARGS(&newPipeline)));
-            pipelineStates.insert({psid,newPipeline});
             newPipeline->SetName(psName.c_str());
+#endif
         }
 
         if (currentPipeline != newPipeline)

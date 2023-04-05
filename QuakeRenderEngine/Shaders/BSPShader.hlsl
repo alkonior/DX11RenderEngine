@@ -7,6 +7,7 @@ struct VSIn {
 	float3 normal  : NORMAL;
 	float2 uv      : TEXCOORD;
 	float2 luv     : LIGHTTEXCOORD;
+	float2 dluv    : DLIGHTTEXCOORD;
 };
 
 
@@ -43,6 +44,9 @@ PSIn vsIn(VSIn input) {
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
+#if DYNAMIC
+	vso.luv = input.dluv;// ;
+#endif
 	vso.normal = mul(float4(input.normal, 0), upCosntBuffer.world).xyz;
 	return vso;
 }

@@ -34,6 +34,7 @@ const D3D11_INPUT_ELEMENT_DESC  DefaultInputElements[] =
 	{ "NORMAL",           0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TEXCOORD",         0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "LIGHTTEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "DLIGHTTEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 Renderer::InputLayoutDescription UPRenderPass::UPRenderPassProvider::GetInputLayoutDescription(uint32_t definesFlags) {
@@ -43,7 +44,8 @@ Renderer::InputLayoutDescription UPRenderPass::UPRenderPassProvider::GetInputLay
 const ShaderDefines UPRendererDefines[] = {
 	ShaderDefines("RED"),
 	ShaderDefines("ALPHA"),
-	ShaderDefines("LIGHTMAPPED")
+	ShaderDefines("LIGHTMAPPED"),
+	ShaderDefines("DYNAMIC")
 };
 
 const char* UPRenderPass::UPRenderPassProvider::GetShaderName()

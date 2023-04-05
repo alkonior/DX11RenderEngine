@@ -7,6 +7,7 @@ struct UPVertex {
     float3 normal;
     float2 texcoord;
     float2 lightTexcoord;
+    float2 dynamicLightTexcoord;
 };
 
 struct ParticleVertex {

@@ -154,7 +154,7 @@ void UPRenderPass::PostRender()
 	{
 		if (drawCall.data.dynamicLight)
 		{
-			delete[] drawCall.data.lightUpdate->data;
+			//delete[] drawCall.data.lightUpdate->data;
 			delete drawCall.data.lightUpdate;
 		}
 	}
