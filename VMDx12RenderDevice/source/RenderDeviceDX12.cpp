@@ -1126,20 +1126,38 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
         D3D12_RESOURCE_STATE_COPY_DEST);
     if (bufferDescription.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER)
     {
-        uploadTextureBuffers.push_back(nullptr);
-        auto& m_texture = uploadTextureBuffers[uploadTextureBuffers.size() - 1];
+        Microsoft::WRL::ComPtr<ID3D12Resource> m_texture;
         D3D12_RESOURCE_DESC textureDesc = bufferDescription;
         textureDesc.Width = (rect.Right - rect.Left);
         textureDesc.Height = (rect.Bottom - rect.Top);
         textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-        ThrowIfFailed(md3dDevice->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-            D3D12_HEAP_FLAG_NONE,
-            &textureDesc,
-            D3D12_RESOURCE_STATE_COPY_DEST,
-            nullptr,
-            IID_PPV_ARGS(&m_texture)));
+        UploadTextureDesc uData;
+        uData.width = textureDesc.Width-1;
+        uData.height = textureDesc.Height-1;
+        uData.format = textureDesc.Format;
+        bool isSmall =  textureDesc.Width  <= 256 &&textureDesc.Height <= 256;
+        if (isSmall && hashedUploadTextureBuffers.contains(uData.data))
+        {
+            m_texture = hashedUploadTextureBuffers[uData.data];
+            transtion = CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
+            D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+            mCommandList->ResourceBarrier(1, &transtion);
+        }else
+        {
+            ThrowIfFailed(md3dDevice->CreateCommittedResource(
+                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                D3D12_HEAP_FLAG_NONE,
+                &textureDesc,
+                D3D12_RESOURCE_STATE_COPY_DEST,
+                nullptr,
+                IID_PPV_ARGS(&m_texture)));
+            uploadTextureBuffers.push_back(m_texture);
+            if (isSmall)
+            {
+                hashedUploadTextureBuffers.insert({uData.data, m_texture});
+            }
+        }
 
         const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, 1);
 
@@ -1341,9 +1359,10 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         params.srvCount = Pipeline.srvCount;
         params.samplersCount = Pipeline.samplersNum;
         auto rs = FetchRS(params);
-        ps.pRootSignature = rs;
         auto handlesSRV = mGpuShvCbUaHeapInterface->GetCurrentGpuWriteHandle();
 
+        
+        ps.pRootSignature = rs;
         if (Pipeline.HS)
             ps.HS = shaders[((uint32_t)Pipeline.HS) - 1];
         if (Pipeline.PS)
@@ -1355,14 +1374,6 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
         if (Pipeline.GS)
             ps.GS = shaders[((uint32_t)Pipeline.GS) - 1];
         ps.InputLayout = inputLayouts[(uint32_t)Pipeline.layout - 1];
-
-        //SetupInputLayout(Pipeline.layout);
-        //
-        SetupViewports(Pipeline.viewports, Pipeline.viewportsNum);
-        //SetupBlendState(Pipeline.blendState);
-        //SetupDepthStencilState(Pipeline.depthStencilState);
-        //SetupRasterizerState(Pipeline.rasterizerState);
-        //SetupPrimitiveTopology(Pipeline.topology);
         ps.BlendState = ToD3D12Blend(Pipeline.blendState);
         ps.DSVFormat = ToD3D_DepthFormat[to_underlying(Pipeline.DSVFormat)];
         ps.RasterizerState = ToDX12RSState(Pipeline.rasterizerState);
@@ -1377,6 +1388,9 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
             ps.RTVFormats[i] = ToD3D_TextureFormat[to_underlying(Pipeline.RTVFormats[i])];
         }
         ps.SampleDesc.Quality = 0;
+
+
+        
         string_id psid = SIDRT((char*)&ps, sizeof(ps));
 
         if (pipelineStates.count(psid) > 0)
@@ -1414,6 +1428,8 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
             mCommandList->SetPipelineState(newPipeline.Get());
         }
 
+        SetupViewports(Pipeline.viewports, Pipeline.viewportsNum);
+        
         if (
             CurrentBlendFactor[0] != Pipeline.blendState.desc.BlendFactor[0] ||
             CurrentBlendFactor[1] != Pipeline.blendState.desc.BlendFactor[1] ||
@@ -1439,8 +1455,10 @@ void RenderDeviceDX12::SetupPipeline(const PipelineDescription& Pipeline)
             mGpuShvCbUaHeapInterface->Heap(),
             mGpuSamplerHeapInterface->Heap()
         };
-        if (ppCuurentHeaps[0] != ppHeaps[0] || ppCuurentHeaps[1] != ppHeaps[0])
+        if (ppCuurentHeaps[0] != ppHeaps[0] || ppCuurentHeaps[1] != ppHeaps[1])
         {
+            ppCuurentHeaps[0] = ppHeaps[0];
+            ppCuurentHeaps[1] = ppHeaps[1];
             mCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
         }
         if (currentDH.ptr != handlesSRV.ptr)
@@ -1512,13 +1530,6 @@ void RenderDeviceDX12::SetupSamplers(const Compressed::SamplerStateDesc samplers
             mCommandList->SetComputeRootDescriptorTable(1, handlesSamplers);
         else
             mCommandList->SetGraphicsRootDescriptorTable(1, handlesSamplers);
-    }
-    else
-    {
-        //if (isCompute)
-        //    mCommandList->SetComputeRootDescriptorTable(1, cachedSamplerhandle);
-        //else
-        //    mCommandList->SetGraphicsRootDescriptorTable(1, cachedSamplerhandle);
     }
 }
 

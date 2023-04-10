@@ -127,75 +127,77 @@ void RenderSystem::BeginFrame()
     }
 }
 
-#define GFX_CATCH_RENDER(render) try {render;} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c,1); success = false; }
-//#define GFX_CATCH_RENDER(render) {render}
+//#define GFX_CATCH_RENDER(render) try {render;} catch (const std::exception& exe) {printf_s(exe.what()); printf_s("\n"); static char c[100]; scanf_s("%s", c,1); success = false; }
+#define GFX_CATCH_RENDER(render) {render;}
 
 bool RenderSystem::RenderFrame()
 {
-    pRenderer->ClearState();
-
-    //managerTAA.UpdateHaltonSequence();
-    //taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
-    //pRenderer->SetConstBuffer(pLocalConstants, &taaConstants);
-    //pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
-
-    BaseRenderSystem::Present();
-
     bool success = true;
-    pRenderer->BeginEvent("BSP draw.");
-    GFX_CATCH_RENDER(renderPassUP.Render());
-    pRenderer->EndEvent();
-
-    pRenderer->BeginEvent("BloomMask draw.");
-    //GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
-    pRenderer->EndEvent();
-
-    pRenderer->BeginEvent("Static motion blur draw.");
-    //GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
-    pRenderer->EndEvent();
     
-    pRenderer->BeginEvent("Particles draw.");
-    GFX_CATCH_RENDER(renderPassParticles.Render(););
-    pRenderer->EndEvent();
+    {
+        pRenderer->ClearState();
 
-    pRenderer->BeginEvent("Models draw.");
-    renderPassModels.Render(); 
-    pRenderer->EndEvent();
+        //managerTAA.UpdateHaltonSequence();
+        //taaConstants.taaPixelShift = managerTAA.HaltonSequence[managerTAA.HaltonIndex];
+        //pRenderer->SetConstBuffer(pLocalConstants, &taaConstants);
+        //pRenderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
 
-    pRenderer->BeginEvent("Dynamic motion blur draw.");
-    //GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
-    pRenderer->EndEvent();
+        BaseRenderSystem::Present();
+
+        pRenderer->BeginEvent("BSP draw.");
+        GFX_CATCH_RENDER(renderPassUP.Render());
+        pRenderer->EndEvent();
+
+        pRenderer->BeginEvent("BloomMask draw.");
+        //GFX_CATCH_RENDER(managerBloom.RenderBloomMask(*this););
+        pRenderer->EndEvent();
+
+        pRenderer->BeginEvent("Static motion blur draw.");
+        //GFX_CATCH_RENDER(managerMB.RenderStatic(*this););
+        pRenderer->EndEvent();
+    
+        pRenderer->BeginEvent("Particles draw.");
+        GFX_CATCH_RENDER(renderPassParticles.Render(););
+        pRenderer->EndEvent();
+
+        pRenderer->BeginEvent("Models draw.");
+        renderPassModels.Render(); 
+        pRenderer->EndEvent();
+
+        pRenderer->BeginEvent("Dynamic motion blur draw.");
+        //GFX_CATCH_RENDER(managerMB.RenderDynamic(*this););
+        pRenderer->EndEvent();
 
 
-    pRenderer->BeginEvent("SSAO draw.");
-    GFX_CATCH_RENDER(renderPassSSAO.Render(););
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("SSAO draw.");
+        GFX_CATCH_RENDER(renderPassSSAO.Render(););
+        pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("Sky draw.");
-    //GFX_CATCH_RENDER(managerSkybox.Render(*this););
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("Sky draw.");
+        //GFX_CATCH_RENDER(managerSkybox.Render(*this););
+        pRenderer->EndEvent();
 
 
-    pRenderer->BeginEvent("Bloom pass.");
-    //GFX_CATCH_RENDER(managerBloom.Render(*this););
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("Bloom pass.");
+        //GFX_CATCH_RENDER(managerBloom.Render(*this););
+        pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("PostProcess draw.");
-    GFX_CATCH_RENDER(renderPassPP.Render(););
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("PostProcess draw.");
+        GFX_CATCH_RENDER(renderPassPP.Render(););
+        pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("TAA-pass.");
-    renderPassTAA.Render();
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("TAA-pass.");
+        renderPassTAA.Render();
+        pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("UI draw.");
-    renderPassUI.Render();
-    pRenderer->EndEvent();
+        pRenderer->BeginEvent("UI draw.");
+        renderPassUI.Render();
+        pRenderer->EndEvent();
 
-    pRenderer->BeginEvent("IMGUI draw.");
-    //renderPassIMGUI.Render();
-    pRenderer->EndEvent();
-
+        pRenderer->BeginEvent("IMGUI draw.");
+        //renderPassIMGUI.Render();
+        pRenderer->EndEvent();
+    }
 
     GFX_CATCH_RENDER(pRenderer->RunVM(););
     return success;

@@ -65,7 +65,7 @@ float4 psIn(PSIn input) : SV_Target
 #ifndef ALPHA
     float4 color = diffuseColor.Sample(blureSampler, texCoord);
     float4 light = lightmap.Sample(blureSampler, texCoord);
-    light = light * occlusion.Sample(pointSampler, texCoord).xxxx;
+    //light = light * occlusion.Sample(pointSampler, texCoord).xxxx;
     light.rgb += ppCosntBuffer.lightAdd.xxx;
     float4 bloom = bloomMask.Sample(blureSampler, texCoord);
     

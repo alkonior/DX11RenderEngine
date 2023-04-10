@@ -14,6 +14,7 @@
 //#include "RenderDeviceDX11.h"
 #include "DX11ShadersCompiler.h"
 #include "GraphicsAPI.h"
+#include <iostream>
 
 
 #pragma warning( disable : 26812 )
@@ -82,6 +83,12 @@ typedef GVM::RenderDeviceDX11 RenderDevice;
 D3D11Renderer::D3D11Renderer(PresentationParameters presentationParameters, uint8_t debugMode) :
     IRenderer(presentationParameters, debugMode)
 {
+#ifdef DX12
+    std::cout << "DX12" << std::endl << std::flush;
+#endif
+#ifdef DX11
+    std::cout << "DX11" << std::endl << std::flush;
+#endif
     auto ppppp = new PlatformHandle();
     ppppp->hwnd = (HWND)presentationParameters.deviceWindowHandle;
     GVM::RenderDeviceInitParams init{

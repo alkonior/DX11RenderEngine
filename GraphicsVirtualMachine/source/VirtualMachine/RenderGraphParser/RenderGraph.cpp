@@ -45,12 +45,9 @@ bool GVM::SyncThreadBlock::TryAdd(
             {
                 if (curTransition.resource == transition.resource)
                 {
-                    if (transition.flags & ResourceStateTransition::WRITE)
+                    if ((transition.flags & ResourceStateTransition::WRITE) && (curTransition.StateTo == transition.StateTo))
                     {
-                        return false;
-                    }
-                    if (curTransition.StateTo == transition.StateTo)
-                    {
+                        result.forceAdd = true;
                         goto end_cycle;
                     }
                     return false;
@@ -139,9 +136,10 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
      tryAddResult))
     {
         static TryAddResult tryAddResultSecond;
-        int iterationsCount = 0;
+        uint8_t iterationsCount = 0;
         
-        while ((iterationsCount + 1) <= MaxIterationToAdd &&
+        while (!tryAddResult.forceAdd &&
+            (iterationsCount + 1) <= MaxIterationToAdd &&
         (Blocks.rbegin()+(iterationsCount+1) != Blocks.rend()) &&
         (Blocks.rbegin()+(iterationsCount+1))->TryAdd(
             transitionsIn.data(),
@@ -169,14 +167,14 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
 void GVM::RenderGraph::Clear()
 {
     Blocks.clear();
-    for (auto& [l, r] : TransitionsPull)
-    {
-        if (l->capacity() > 1.5*l->size())
-            l->shrink_to_fit();
-        if (r->capacity() > 1.5*r->size())
-            r->shrink_to_fit();
-        l->clear();
-        r->clear();
-    }
+    //for (auto& [l, r] : TransitionsPull)
+    //{
+    //    if (l->capacity() > 1.5*l->size())
+    //        l->shrink_to_fit();
+    //    if (r->capacity() > 1.5*r->size())
+    //        r->shrink_to_fit();
+    //    l->clear();
+    //    r->clear();
+    //}
     Blocks.emplace_back(TransitionsPull[0].first, TransitionsPull[0].second);
 }

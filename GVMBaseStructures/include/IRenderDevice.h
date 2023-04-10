@@ -19,9 +19,6 @@ enum RenderDeviceLimitations {
     MAX_CONSTBUFFER_ATTACHMENTS = 15,
 };
 
-#ifndef DX11
-#define DX12
-#endif
 
 struct PipelineDescription;
 class IRenderDevice {

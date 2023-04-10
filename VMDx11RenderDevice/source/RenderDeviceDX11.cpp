@@ -1263,6 +1263,7 @@ void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout)
 
 void RenderDeviceDX11::SetupPipeline(const PipelineDescription& Pipeline)
 {
+    context->ClearState();
     if (Pipeline.isCS)
     {
         SetupShader(Pipeline.CS, EShaderType::COMPUTE_SHADER);
@@ -1409,7 +1410,7 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
         {
         case EDrawCallType::DRAW_INDEXED:
         {
-            context->DrawIndexed(call.IndexCountPerInstance, call.StartInstanceLocation, call.BaseVertexLocation);
+            context->DrawIndexed(call.IndexCountPerInstance, call.StartIndexLocation, call.BaseVertexLocation);
             break;
         }
         case EDrawCallType::DRAW:

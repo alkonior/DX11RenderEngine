@@ -7,6 +7,7 @@
 #include "IRenderDevice.h"
 #include "GraphicsExceptions/DxgiInfoManager.h"
 
+#define XXH_INLINE_ALL
 #include "SID.h"
 
 
@@ -50,7 +51,7 @@ public:
 #if defined(_DEBUG)
     static const int SwapChainBufferCount = 2;
 #else
-    static const int SwapChainBufferCount = 3;
+    static const int SwapChainBufferCount = 5;
 #endif
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
@@ -149,7 +150,21 @@ public:
     void* GetNativeTexture(RESOURCEVIEWHANDLE view) override;
 private:
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> uploadTextureBuffers;
-    std::map<string_id, Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
+
+    struct UploadTextureDesc
+    {
+        union {
+            struct {
+                uint8_t width;
+                uint8_t height;
+                uint8_t format;
+            }; 
+            uint32_t data;
+        };
+    };
+
+    std::unordered_map<uint32_t, Microsoft::WRL::ComPtr<ID3D12Resource>> hashedUploadTextureBuffers;
+    std::unordered_map<string_id, Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
 
     std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
     D3D12_CPU_DESCRIPTOR_HANDLE FetchSamplerState(const Compressed::SamplerStateDesc& state);
@@ -252,7 +267,7 @@ public:
         uint32_t fenceValue;
     };
 
-    FrameData Frames[3];
+    FrameData Frames[SwapChainBufferCount];
     
 };
 

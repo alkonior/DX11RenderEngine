@@ -38,7 +38,7 @@ struct RenderGraphNode : public std::tuple<EMachineCommands, void*> {
 struct TryAddResult {
     std::vector<ResourceStateTransition> NewBeginTrans;
     std::vector<ResourceStateTransition> NewEndTrans;
-
+    bool forceAdd = false; 
     TryAddResult& operator=(TryAddResult&& rhs) noexcept
     {
         NewBeginTrans = std::move(rhs.NewBeginTrans);
@@ -63,7 +63,10 @@ struct SyncThreadBlock {
         ) :
     transitionsBegin(transitionsBegin),
     transitionsEnd  (transitionsEnd)
-    {}
+    {
+        transitionsBegin->clear();
+        transitionsEnd->clear();
+    }
     
     bool TryAdd(
     const ResourceStateTransition transitionsIn[50],
@@ -92,7 +95,7 @@ public:
         > TransitionsPull;
     uint32_t TransitionPullShift  = 0;
 
-    const uint8_t MaxIterationToAdd = 5;
+    const uint8_t MaxIterationToAdd = 2;
 
     RenderGraph(IRenderDevice* Device) {
         TransitionsPull.push_back({});

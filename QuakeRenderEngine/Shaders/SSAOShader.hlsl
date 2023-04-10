@@ -102,7 +102,7 @@ void main( uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : S
 	float occlusionSum = 0.0f;
 	
 	// Sample neighboring points about p in the hemisphere oriented by n.
-	
+	[unroll]
 	for(int i = 0; i < gSampleCount; ++i)
 	{
 		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
