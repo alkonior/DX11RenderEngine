@@ -1263,7 +1263,6 @@ void RenderDeviceDX11::SetupInputLayout(IInputLayout* layout)
 
 void RenderDeviceDX11::SetupPipeline(const PipelineDescription& Pipeline)
 {
-    context->ClearState();
     if (Pipeline.isCS)
     {
         SetupShader(Pipeline.CS, EShaderType::COMPUTE_SHADER);
@@ -1300,8 +1299,18 @@ void RenderDeviceDX11::SetupPipeline(const PipelineDescription& Pipeline)
         SetupDepthStencilState(Pipeline.depthStencilState);
         SetupRasterizerState(Pipeline.rasterizerState);
         SetupPrimitiveTopology(Pipeline.topology);
-        
     }
+
+    for (int i = 0; i < Textures.size(); i ++)
+        Textures[i] = nullptr;
+    context->CSSetShaderResources(0, Textures.size(), Textures.data());
+    context->PSSetShaderResources(0, Textures.size(), Textures.data());
+    context->GSSetShaderResources(0, Textures.size(), Textures.data());
+    context->DSSetShaderResources(0, Textures.size(), Textures.data());
+    context->HSSetShaderResources(0, Textures.size(), Textures.data());
+    context->VSSetShaderResources(0, Textures.size(), Textures.data());
+    SetupUATargets(nullptr, MAX_RENDERTARGET_ATTACHMENTS);
+    SetupRenderTargets(nullptr, MAX_RENDERTARGET_ATTACHMENTS, {0});
 }
 
 void RenderDeviceDX11::ClearState()

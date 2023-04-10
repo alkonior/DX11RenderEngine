@@ -1136,8 +1136,7 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
         uData.width = textureDesc.Width-1;
         uData.height = textureDesc.Height-1;
         uData.format = textureDesc.Format;
-        bool isSmall =  textureDesc.Width  <= 256 &&textureDesc.Height <= 256;
-        if (isSmall && hashedUploadTextureBuffers.contains(uData.data))
+        if (hashedUploadTextureBuffers.contains(uData.data))
         {
             m_texture = hashedUploadTextureBuffers[uData.data];
             transtion = CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(),
@@ -1153,10 +1152,7 @@ void RenderDeviceDX12::SetSubresourceData(const GpuResource& resource, uint16_t 
                 nullptr,
                 IID_PPV_ARGS(&m_texture)));
             uploadTextureBuffers.push_back(m_texture);
-            if (isSmall)
-            {
-                hashedUploadTextureBuffers.insert({uData.data, m_texture});
-            }
+            hashedUploadTextureBuffers.insert({uData.data, m_texture});
         }
 
         const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, 1);

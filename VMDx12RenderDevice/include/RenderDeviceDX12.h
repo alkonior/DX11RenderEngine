@@ -155,15 +155,15 @@ private:
     {
         union {
             struct {
-                uint8_t width;
-                uint8_t height;
+                uint16_t width;
+                uint16_t height;
                 uint8_t format;
             }; 
-            uint32_t data;
+            uint64_t data;
         };
     };
 
-    std::unordered_map<uint32_t, Microsoft::WRL::ComPtr<ID3D12Resource>> hashedUploadTextureBuffers;
+    std::unordered_map<uint64_t, Microsoft::WRL::ComPtr<ID3D12Resource>> hashedUploadTextureBuffers;
     std::unordered_map<string_id, Microsoft::WRL::ComPtr<ID3D12PipelineState>> pipelineStates;
 
     std::unordered_map<uint64_t, D3D12_CPU_DESCRIPTOR_HANDLE>hashSS;
