@@ -51,7 +51,7 @@ public:
 #if defined(_DEBUG)
     static const int SwapChainBufferCount = 2;
 #else
-    static const int SwapChainBufferCount = 5;
+    static const int SwapChainBufferCount = 10;
 #endif
     int mCurrBackBuffer = 0;
     Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
@@ -263,6 +263,7 @@ public:
         DirectX::DescriptorHeap* mGpuShvCbUaHeapInterface;
         
         wrl::ComPtr<ID3D12Resource> uploadBuffer;
+        BYTE* uploadBufferPtr = nullptr;
         size_t currentBufferUploadBufferSize;
         uint32_t fenceValue;
     };

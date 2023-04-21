@@ -95,7 +95,8 @@ public:
         > TransitionsPull;
     uint32_t TransitionPullShift  = 0;
 
-    const uint8_t MaxIterationToAdd = 2;
+    const uint8_t MaxIterationToAdd = 2;;
+    const bool enabled = false;
 
     RenderGraph(IRenderDevice* Device) {
         TransitionsPull.push_back({});

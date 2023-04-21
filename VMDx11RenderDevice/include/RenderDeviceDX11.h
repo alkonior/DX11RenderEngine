@@ -124,6 +124,7 @@ private:
     //ResourceViewDX12* vertexBuffer;
     size_t indexElementSize;
 
+    ID3D11Buffer* upploadBuffer;
     ///* Resource Caches */
     //PackedStateArray blendStateCache;
     //PackedStateArray depthStencilStateCache;

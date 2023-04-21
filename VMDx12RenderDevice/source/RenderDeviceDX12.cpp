@@ -155,18 +155,20 @@ RenderDeviceDX12::RenderDeviceDX12(const RenderDeviceInitParams& initParams, boo
             
             Frames[i].uploadBuffer = currentBufferUploadBuffer;
             Frames[i].currentBufferUploadBufferSize = currentBufferUploadBufferSize;
+            ThrowIfFailed(Frames[i].uploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&Frames[i].uploadBufferPtr)));
+            
         }
         
         Frames[mCurrBackBuffer].uploadBuffers.clear();
         Frames[mCurrBackBuffer].uploadTextureBuffers.clear();
         currentBufferUploadBuffer =  Frames[mCurrBackBuffer].uploadBuffer;
+        currentBufferUploadBufferPtr = Frames[mCurrBackBuffer].uploadBufferPtr;
         mCommandList =  Frames[mCurrBackBuffer].mCommandList;
         mDirectCmdListAlloc =  Frames[mCurrBackBuffer].mDirectCmdListAlloc;
         mGpuSamplerHeapInterface =  Frames[mCurrBackBuffer].mGpuSamplerHeapInterface;
         mGpuShvCbUaHeapInterface =  Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface;
         bufferUploadBuffers.push_back(currentBufferUploadBuffer);
         
-        ThrowIfFailed(currentBufferUploadBuffer->Map(0, NULL, reinterpret_cast<void**>(&currentBufferUploadBufferPtr)));
         
         mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
             D3D12_RESOURCE_STATE_PRESENT,
@@ -1577,7 +1579,7 @@ void RenderDeviceDX12::Present()
 
     ThrowIfFailed(mCommandList->Close());
 
-    currentBufferUploadBuffer->Unmap(0, &D3D12_RANGE(0, currentBufferUploadBufferShift));
+    //currentBufferUploadBuffer->Unmap(0, &D3D12_RANGE(0, currentBufferUploadBufferShift));
 
     // Add the command list to the queue for execution.
     ID3D12CommandList* cmdsLists[] = {mCommandList.Get()};
@@ -1607,6 +1609,7 @@ void RenderDeviceDX12::Present()
     Frames[mCurrBackBuffer].mGpuSamplerHeapInterface = mGpuSamplerHeapInterface;
     Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface = mGpuShvCbUaHeapInterface;
     Frames[mCurrBackBuffer].currentBufferUploadBufferSize = currentBufferUploadBufferSize;
+    Frames[mCurrBackBuffer].uploadBufferPtr = currentBufferUploadBufferPtr;
     
 ///thread Shinanigans
 ///
@@ -1633,6 +1636,7 @@ void RenderDeviceDX12::Present()
     mGpuSamplerHeapInterface =  Frames[mCurrBackBuffer].mGpuSamplerHeapInterface;
     mGpuShvCbUaHeapInterface =  Frames[mCurrBackBuffer].mGpuShvCbUaHeapInterface;
     currentBufferUploadBufferSize =  Frames[mCurrBackBuffer].currentBufferUploadBufferSize;
+    currentBufferUploadBufferPtr =  Frames[mCurrBackBuffer].uploadBufferPtr;
     
     bufferUploadBuffers.clear();
     bufferUploadBuffers.push_back(currentBufferUploadBuffer);

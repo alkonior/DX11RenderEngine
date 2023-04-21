@@ -161,6 +161,20 @@ RenderDeviceDX11::RenderDeviceDX11(const RenderDeviceInitParams& initParams, boo
     this->vertexBuffers.resize(32);
     this->vertexBufferOffsets.resize(32);
     this->vertexBufferStrides.resize(32);
+
+
+    D3D11_BUFFER_DESC dx11desc;
+
+
+    /* Initialize descriptor */
+    dx11desc.ByteWidth = 256;
+    dx11desc.Usage = D3D11_USAGE_DYNAMIC;
+    dx11desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    dx11desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    dx11desc.MiscFlags = 0;
+    device->CreateBuffer
+    (&dx11desc, nullptr, &upploadBuffer);
+    
 }
 
 RenderDeviceDX11::~RenderDeviceDX11()
@@ -1451,4 +1465,8 @@ void RenderDeviceDX11::Draw(const DrawCall& call)
 void RenderDeviceDX11::Present()
 {
     GFX_THROW_INFO(swapchain->Present(syncInterval, 0));
+    //context->Flush();
+    //D3D11_MAPPED_SUBRESOURCE sb;
+    //context->Map(upploadBuffer,0,D3D11_MAP_WRITE_DISCARD,0, &sb);
+    //context->Unmap(upploadBuffer,0);
 }

@@ -130,7 +130,7 @@ void GVM::RenderGraph::AddCommand(RenderGraphNode Node,
     //}
     static TryAddResult tryAddResult;
     
-    if (Blocks.rbegin()->TryAdd(
+    if (enabled && Blocks.rbegin()->TryAdd(
      transitionsIn.data(),
      transitionsIn.size(),
      tryAddResult))
