@@ -1,6 +1,6 @@
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/MotionBlurRenderer\MotionBlurConstBuffer.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/MotionBlurRenderer\MotionBlurConstBuffer.h"
 
 struct VSIn
 {
@@ -75,8 +75,7 @@ PSOut psIn(PSIn input) : SV_Target{
     previousPos /= previousPos.w;
     // Use this frame's position and last frame's to compute the pixel
     // velocity.
-    float2 velocity = (currentPos - previousPos)/2.f * motionBlurCosntBuffer.strength
-    *mainConstants.dt;
+    float2 velocity = float2(0.001,0);
     // Get the initial color at this pixel.
     float4 color = diffuseColor.Sample(basicSampler, texCoord);
     float4 bloomColor = bloomMask.Sample(basicSampler, texCoord);
@@ -102,7 +101,7 @@ PSOut psIn(PSIn input) : SV_Target{
     
     // Average all of the samples to get the final blur color.
     pso.color = color / totalStrength;
-    pso.light = light / motionBlurCosntBuffer.numSampes;\
+    pso.light = light / motionBlurCosntBuffer.numSampes;
     pso.color.w = 1;
     pso.light.w = 1;
 

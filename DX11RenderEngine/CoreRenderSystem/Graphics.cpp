@@ -34,6 +34,7 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	taaConstants.taaStrength = 1;
 	renderer->VerifyConstBuffer(pLocalConstants, taaShiftBuffer.slot);
 
+	renderPasses.push_back(&managerBloom);
 	renderPasses.push_back(&managerSkybox);
 	renderPasses.push_back(&managerUI);
 	renderPasses.push_back(&managerModels);
@@ -41,7 +42,6 @@ Graphics::Graphics(HWND hWnd, size_t width, size_t height)
 	renderPasses.push_back(&managerUP);
 	renderPasses.push_back(&managerPostProcess);
 	renderPasses.push_back(&managerParticles);
-	renderPasses.push_back(&managerBloom);
 	renderPasses.push_back(&managerFXAA);
 	renderPasses.push_back(&managerTAA);
 	renderPasses.push_back(&managerSSAO);

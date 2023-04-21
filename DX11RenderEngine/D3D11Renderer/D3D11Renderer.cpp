@@ -2326,7 +2326,7 @@ namespace Renderer
 
         wrl::ComPtr<ID3D10Blob> pPSData;
         wrl::ComPtr<ID3D10Blob> psErrorBlob;
-#if _DEBUG
+#if 1
         bool compiled = false;
         try
         {
@@ -2343,21 +2343,24 @@ namespace Renderer
         catch (HrException exe)
         {
             CompileException ce{
-                __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
+                __LINE__, __FILE__, (hr), {}, (char*)psErrorBlob->GetBufferPointer(),
+                "shaderData.name"
             };
             throw ce;
         }
         catch (InfoException exe)
         {
             CompileException ce{
-                __LINE__, __FILE__, (hr), infoManager.GetMessages(), (char*)psErrorBlob->GetBufferPointer(),
-                shaderData.name
+                __LINE__, __FILE__, (hr), {}, (char*)psErrorBlob->GetBufferPointer(),
+                "shaderData.name"
             };
             throw ce;
         }
 #else
-        GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pPSData, &psErrorBlob));
+        D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
+            d3ddefines.data(), (ID3DInclude*)shaderData.includes,
+            shaderData.enteryPoint, shaderData.target,
+            shaderData.flags, shaderData.flags << 8u, &pPSData, &psErrorBlob);
         GFX_THROW_INFO(device->CreatePixelShader(pPSData->GetBufferPointer(), pPSData->GetBufferSize(), nullptr, &result->pComputeShader));
 #endif
         return result;
@@ -2543,7 +2546,11 @@ namespace Renderer
             throw;
         }
 #else
-        GFX_THROW_INFO(D3DCompile(shaderData, dataSize, NULL, d3ddefines.data(), (ID3DInclude*)includes, enteryPoint, target, flags, flags << 8u, &pVSData, &psErrorBlob));
+
+        D3DCompile(shaderData.shaderData, shaderData.dataSize, NULL,
+            d3ddefines.data(), (ID3DInclude*)shaderData.includes,
+            shaderData.enteryPoint, shaderData.target,
+            shaderData.flags, shaderData.flags << 8u, &pVSData, &psErrorBlob);
 
         GFX_THROW_INFO(device->CreateVertexShader(pVSData->GetBufferPointer(), pVSData->GetBufferSize(), nullptr, &result->pVertexShader));
         GFX_THROW_INFO(device->CreateInputLayout(

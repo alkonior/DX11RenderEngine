@@ -24,8 +24,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem\Renderers\TAARenderer\TAARendererConstBuffer.h"
 
 // Whether to use real 16-bit floats
 // Use only with DXIL with SM6.2 and "-enable-16bit-types" as a compiler option
@@ -311,17 +311,17 @@ void main( uint3 inDispatchIdx : SV_DispatchThreadID, uint3 inGroupID : SV_Group
         // final weight for lerp between the current frame colour and the temporal history colour
         const fp16_t weight = rawHistoryColour.a * velocityConfidenceFactor * depthDiffFactor;
 
-        finalColour = fp16_t4( GetFinalColour( currentFrameColour, historyColour, weight ) );
+        finalColour = fp16_t4( GetFinalColour( currentFrameColour, historyColour, 0.9 ) );
     }
 
     else
     {
         const float3 filteredCurrentColourNeightbourhood = GetCurrentColourNeighbourhood( currentFrameColour, groupST ) * DebugColourNoHistory();
-        finalColour = fp16_t4( filteredCurrentColourNeightbourhood, 0.5f );
+        finalColour = fp16_t4( filteredCurrentColourNeightbourhood, 0.9f );
     }
 
     // Store the final pixel colour
-    OutTexture[ inDispatchIdx.xy ] = finalColour.rgba;
+    OutTexture[ inDispatchIdx.xy ] = float4(currentFrameColour.rgb,1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,12 +379,12 @@ fp16_t LuminanceRec709( fp16_t3 inRGB )
 
 fp16_t3 Reinhard( fp16_t3 inRGB )
 {
-    return inRGB / ( fp16_t( 1.f ) + LuminanceRec709( inRGB ) );
+    return inRGB ;
 }
 
 fp16_t3 InverseReinhard( fp16_t3 inRGB )
 {
-    return inRGB / ( fp16_t( 1.f ) - LuminanceRec709( inRGB ) );
+    return inRGB ;
 }
 
 #if 1 == USE_TGSM

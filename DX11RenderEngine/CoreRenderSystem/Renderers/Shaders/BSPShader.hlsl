@@ -1,12 +1,13 @@
 #define HLSL
-#include "P:/Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/CoreRenderSystem/CoreShaderInclude.h"
-#include "P:/Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/CoreRenderSystem/Renderers/UPRenderer/UPConstBuffers.h"
+#include "E:/Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/CoreRenderSystem/CoreShaderInclude.h"
+#include "E:/Quake-2/ref_dx11rg/DX11RenderEngine/DX11RenderEngine/CoreRenderSystem/Renderers/UPRenderer/UPConstBuffers.h"
 
 struct VSIn {
 	float3 pos     : Position;
 	float3 normal  : NORMAL;
 	float2 uv      : TEXCOORD;
-	float2 luv     : LIGHTTEXCOORD;
+	float2 luv     : LIGHTTEXCOORD; 
+	float2 dluv    : DLIGHTTEXCOORD;
 };
 
 
@@ -43,6 +44,9 @@ PSIn vsIn(VSIn input) {
 	
 	vso.uv = input.uv - upCosntBuffer.texOffset;
 	vso.luv = input.luv;// ;
+#if DYNAMIC
+	vso.luv = input.dluv;// ;
+#endif
 	vso.normal = mul(float4(input.normal, 0), upCosntBuffer.world);
 	return vso;
 }

@@ -148,7 +148,7 @@ void UPRenderer::Clear(GraphicsBase& gfx) {
 	{
 		if (drawCall.data.dynamicLight)
 		{
-			delete[] drawCall.data.lightUpdate->data;
+		//	delete[] drawCall.data.lightUpdate->data;
 			delete drawCall.data.lightUpdate;
 		}
 	}

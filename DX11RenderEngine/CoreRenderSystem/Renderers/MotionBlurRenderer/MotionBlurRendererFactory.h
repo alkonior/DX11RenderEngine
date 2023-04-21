@@ -25,7 +25,7 @@ public:
 #ifdef _DEBUG 
 		D3DCOMPILE_DEBUG
 #else
-0
+			D3DCOMPILE_DEBUG
 #endif
 ) {}
 };

@@ -1,6 +1,6 @@
 #define HLSL
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
-#include "P:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/PPRenderer\PPConstBuffer.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/CoreShaderInclude.h"
+#include "E:\Quake-2\ref_dx11rg\DX11RenderEngine\DX11RenderEngine\CoreRenderSystem/Renderers/PPRenderer\PPConstBuffer.h"
 
 struct VSIn
 {
@@ -51,7 +51,7 @@ float4 psIn(PSIn input) : SV_Target
 	return lightmap.Sample(blureSampler, texCoord);
 #endif
 #ifdef OCCLUSIONONLY
-     x.xyz = occlusion.Sample(blureSampler, texCoord);
+     x.xyz = saturate(saturate(occlusion.Sample(blureSampler, texCoord)-0.3)*7);
 #ifdef ALPHA
     return float4(0,0,0,0);
 #endif

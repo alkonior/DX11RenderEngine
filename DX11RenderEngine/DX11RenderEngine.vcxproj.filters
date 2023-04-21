@@ -332,6 +332,15 @@
     <ClInclude Include="Utils\include\halton.h">
       <Filter>RenderEngine</Filter>
     </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORendererConstBuffer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORendererFactory.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORenderer.h">
+      <Filter>RenderEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -401,13 +410,13 @@
     <ClCompile Include="CoreRenderSystem\Renderers\PPRenderer\PPRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\MotionBlurRenderer\MotionBlurRenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\Renderers\QuadRenderer.cpp" />
-    <ClCompile Include="CoreRenderSystem\Renderers\Shaders\PixelPacking_Velocity.hlsl" />
     <ClCompile Include="CoreRenderSystem\Renderers\TAARenderer\TAARenderer.cpp" />
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\BlendStates.cpp" />
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\DSStates.cpp" />
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\RasterizerStates.cpp" />
     <ClCompile Include="CoreRenderSystem\ResourceManagers\States\Samplers.cpp" />
     <ClCompile Include="Utils\src\halton.cpp" />
+    <ClCompile Include="CoreRenderSystem\Renderers\SSAORenderer\SSAORenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\include\SimpleMath.inl">
@@ -425,6 +434,7 @@
     <None Include="CoreRenderSystem\Renderers\Shaders\SkyShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\UIShader.hlsl" />
     <None Include="CoreRenderSystem\Renderers\Shaders\TAAShader.hlsl" />
+    <None Include="CoreRenderSystem\Renderers\Shaders\SSAOShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11RenderEngine.rc">

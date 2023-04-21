@@ -5,7 +5,8 @@ enum UPDefines  : uint64_t {
     UPZERO = 0,
     UPRED = 1,
     UPALPHA = 2,
-    UPLIGHTMAPPED = 4
+    UPLIGHTMAPPED = 4,
+    DYNAMIC = 8
 };
 
 using Renderer::ShaderDefines;
@@ -13,7 +14,8 @@ using Renderer::ShaderDefines;
 const ShaderDefines UPRendererDefines[] = {
     ShaderDefines("RED"),
     ShaderDefines("ALPHA"),
-    ShaderDefines("LIGHTMAPPED")
+    ShaderDefines("LIGHTMAPPED"),
+    ShaderDefines("DYNAMIC"),
 };
 
 
